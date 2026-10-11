@@ -984,6 +984,11 @@
     } else {
       dom.moonIcon.style.display = 'none';
       dom.sunIcon.style.display = 'block';
+      // Kullanıcı açık temaya geçtiğinde eğer kart kağıdı rengi 'dark' (koyu) kalmışsa,
+      // açık temada siyah kutu ve okunaksızlık oluşmaması için varsayılan beyaz temaya geçir
+      if (state.cardTheme === 'dark') {
+        applyCardTheme('white');
+      }
     }
   }
 
@@ -997,6 +1002,10 @@
   // KART KAĞIT RENGİ & GELİŞMİŞ AYARLAR
   // ==========================================
   function applyCardTheme(theme) {
+    // Açık temadayken 'dark' kağıt rengi seçilmesini önle (açık modda ferah ve okunaklı kağıt teması)
+    if (state.activeTheme === 'light' && theme === 'dark') {
+      theme = 'white';
+    }
     state.cardTheme = theme || 'white';
     dom.html.setAttribute('data-card-theme', state.cardTheme);
     localStorage.setItem('kelime_card_theme', state.cardTheme);
@@ -2211,6 +2220,71 @@
         });
       }
     }
+
+    // Kitaptaki Üniteler ve %75 İlerleme Durumunu Listele
+    renderStudentUnitProgressUI();
+  }
+
+  /**
+   * Öğrenci Profilinde Kitaptaki Üniteleri, İlerleme Yüzdelerini ve %75 Açılma Kuralını Gösterir
+   */
+  function renderStudentUnitProgressUI() {
+    const listEl = document.getElementById('profUnitsProgressList');
+    if (!listEl) return;
+
+    const langCode = state.activeLanguage;
+    const targetLevel = state.userLevel || getLevelForTrack(langCode, state.userTrack);
+    const units = getUnitsData().filter(u => u.dil === langCode && (!targetLevel || u.seviye === targetLevel));
+
+    if (!units || units.length === 0) {
+      listEl.innerHTML = '<div class="unit-duration-empty">Müfredat ünite bilgisi bulunamadı.</div>';
+      return;
+    }
+
+    const lockMap = getUnitLockStatusMap(langCode, targetLevel);
+    listEl.innerHTML = '';
+
+    units.forEach((unit, idx) => {
+      const lockInfo = lockMap[unit.unite_no] || { isUnlocked: idx === 0, progress: { percent: 0, isPassed75: false, learned: 0, total: 0 } };
+      const prog = lockInfo.progress || getUnitProgress(unit, langCode);
+      const isUnlocked = lockInfo.isUnlocked;
+      const isPassed = prog.isPassed75;
+      const isComplete = prog.total > 0 && prog.learned >= prog.total;
+
+      const itemEl = document.createElement('div');
+      itemEl.className = `prof-unit-progress-item ${!isUnlocked ? 'is-locked' : ''} ${isComplete ? 'is-complete' : ''}`;
+
+      // Durum Rozeti
+      let badgeHtml = '';
+      if (!isUnlocked) {
+        badgeHtml = '<span class="pup-badge pup-locked">🔒 Kilitli</span>';
+      } else if (isComplete) {
+        badgeHtml = '<span class="pup-badge pup-completed">🏆 %100 Tamamlandı</span>';
+      } else if (isPassed) {
+        badgeHtml = `<span class="pup-badge pup-passed">✅ %${prog.percent} (Açıldı)</span>`;
+      } else {
+        badgeHtml = `<span class="pup-badge pup-progress">%${prog.percent} (Hedef %75)</span>`;
+      }
+
+      itemEl.innerHTML = `
+        <div class="pup-header">
+          <div class="pup-title-wrap">
+            <span class="pup-unit-num">${idx + 1}</span>
+            <div class="pup-names">
+              <span class="pup-title">${unit.baslik || `Ünite ${unit.unite_no}`}</span>
+              <span class="pup-counts">${prog.learned} / ${prog.total} kelime öğrenildi</span>
+            </div>
+          </div>
+          ${badgeHtml}
+        </div>
+        <div class="pup-bar-track" title="%${prog.percent} tamamlandı (Baraj: %75)">
+          <div class="pup-bar-fill" style="width: ${Math.min(100, prog.percent)}%;"></div>
+          <div class="pup-bar-threshold" title="%75 Kuralı Eşiği" style="left: 75%;"></div>
+        </div>
+      `;
+
+      listEl.appendChild(itemEl);
+    });
   }
 
   // Ünitenin başlama ve bitiş sürelerini kaydetme
@@ -7618,6 +7692,20 @@
   }
 
   function renderScrambleUI() {
+    const wordCount = (scrambleState.originalWords && scrambleState.originalWords.length) || 0;
+    const scrambleCard = dom.scrambleSlots ? dom.scrambleSlots.closest('.game-card') : null;
+
+    if (scrambleCard) {
+      scrambleCard.classList.remove('scramble-compact', 'scramble-dense', 'scramble-ultra-dense');
+      if (wordCount >= 14) {
+        scrambleCard.classList.add('scramble-ultra-dense');
+      } else if (wordCount >= 10) {
+        scrambleCard.classList.add('scramble-dense');
+      } else if (wordCount >= 7) {
+        scrambleCard.classList.add('scramble-compact');
+      }
+    }
+
     dom.scrambleSlots.innerHTML = '';
     scrambleState.userSlots.forEach((slot, idx) => {
       const div = document.createElement('div');
