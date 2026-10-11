@@ -12187,4 +12187,217 @@ html[data-flip-speed="slow"] .flashcard {
   color: #f87171 !important;
 }
 
+/* ==========================================================================
+   EKRAN & iOS GÖRÜNÜM UYUMU (FIT TO SCREEN & COMPACT ADAPTATION ENGINE)
+   ========================================================================== */
+
+/* iOS Cihaz & Güvenli Alan Dengelemesi */
+html.ios-device body {
+  -webkit-text-size-adjust: 100%;
+}
+
+html.ios-device .app-container {
+  height: 100dvh;
+  min-height: -webkit-fill-available;
+  max-height: -webkit-fill-available;
+  padding-bottom: max(env(safe-area-inset-bottom, 0px), 8px);
+}
+
+/* Ekrana Tam Sığdır Modu (Kompakt %100 Görünürlük) */
+html[data-screen-fit="fit"] .app-header,
+html.screen-fit-compact .app-header {
+  padding: 6px 12px !important;
+  min-height: 48px !important;
+}
+
+html[data-screen-fit="fit"] .brand-name,
+html.screen-fit-compact .brand-name {
+  font-size: 1.55rem !important;
+}
+
+html[data-screen-fit="fit"] .card-filter-tabs-container,
+html.screen-fit-compact .card-filter-tabs-container {
+  margin-bottom: 2px !important;
+  gap: 4px !important;
+}
+
+html[data-screen-fit="fit"] .card-tab-btn,
+html.screen-fit-compact .card-tab-btn {
+  padding: 5px 10px !important;
+  font-size: 0.8rem !important;
+}
+
+html[data-screen-fit="fit"] .card-pure-section,
+html.screen-fit-compact .card-pure-section {
+  padding: 4px 10px max(env(safe-area-inset-bottom, 8px), 10px) 10px !important;
+  gap: 6px !important;
+  justify-content: space-between !important;
+}
+
+html[data-screen-fit="fit"] .flashcard-wrapper,
+html.screen-fit-compact .flashcard-wrapper {
+  max-height: clamp(250px, 46vh, 360px) !important;
+  min-height: 200px !important;
+  flex: 1 1 auto !important;
+}
+
+html[data-screen-fit="fit"] .card-face,
+html.screen-fit-compact .card-face {
+  border-radius: 18px !important;
+}
+
+html[data-screen-fit="fit"] .card-face .card-top,
+html.screen-fit-compact .card-face .card-top {
+  padding: 8px 12px 4px 12px !important;
+}
+
+html[data-screen-fit="fit"] .card-face .card-center,
+html.screen-fit-compact .card-face .card-center {
+  padding: 4px 12px !important;
+  gap: 4px !important;
+}
+
+html[data-screen-fit="fit"] .card-face .card-word,
+html[data-screen-fit="fit"] .card-face .card-target-word,
+html.screen-fit-compact .card-face .card-word,
+html.screen-fit-compact .card-face .card-target-word {
+  font-size: clamp(1.4rem, 4.2vh, 1.85rem) !important;
+  margin-bottom: 2px !important;
+}
+
+html[data-screen-fit="fit"] .card-face .card-meaning,
+html.screen-fit-compact .card-face .card-meaning {
+  font-size: clamp(1.2rem, 3.8vh, 1.6rem) !important;
+  margin-bottom: 2px !important;
+}
+
+html[data-screen-fit="fit"] .card-face .example-box,
+html.screen-fit-compact .card-face .example-box {
+  padding: 6px 10px !important;
+  margin-top: 4px !important;
+  border-radius: 10px !important;
+}
+
+html[data-screen-fit="fit"] .card-face .example-sentence,
+html.screen-fit-compact .card-face .example-sentence {
+  font-size: clamp(0.74rem, 1.8vh, 0.82rem) !important;
+  line-height: 1.3 !important;
+}
+
+html[data-screen-fit="fit"] .card-face .example-translation,
+html.screen-fit-compact .card-face .example-translation {
+  font-size: clamp(0.68rem, 1.6vh, 0.76rem) !important;
+  line-height: 1.25 !important;
+}
+
+html[data-screen-fit="fit"] .card-face .card-bottom,
+html.screen-fit-compact .card-face .card-bottom {
+  padding: 4px 12px 8px 12px !important;
+}
+
+html[data-screen-fit="fit"] .card-face .card-flip-pill,
+html.screen-fit-compact .card-face .card-flip-pill {
+  padding: 4px 10px !important;
+  font-size: 0.74rem !important;
+}
+
+html[data-screen-fit="fit"] .card-action-bar-under,
+html.screen-fit-compact .card-action-bar-under {
+  padding-bottom: max(env(safe-area-inset-bottom, 8px), 8px) !important;
+  gap: 10px !important;
+  margin-top: 2px !important;
+}
+
+html[data-screen-fit="fit"] .card-nav-action-btn,
+html.screen-fit-compact .card-nav-action-btn {
+  width: 42px !important;
+  height: 42px !important;
+}
+
+html[data-screen-fit="fit"] .card-main-learned-btn,
+html.screen-fit-compact .card-main-learned-btn {
+  height: 42px !important;
+  font-size: 0.86rem !important;
+  padding: 0 16px !important;
+}
+
+/* Onboarding & Welcome Ekranı Uyumu */
+html[data-screen-fit="fit"] .onboarding-card,
+html.screen-fit-compact .onboarding-card {
+  max-height: 94dvh !important;
+  max-height: -webkit-fill-available !important;
+  padding: 10px 14px !important;
+  gap: 8px !important;
+  border-radius: 22px !important;
+}
+
+html[data-screen-fit="fit"] .welcome-screen-view,
+html.screen-fit-compact .welcome-screen-view {
+  gap: clamp(6px, 1.5vh, 12px) !important;
+  padding: 4px 0 !important;
+}
+
+html[data-screen-fit="fit"] .welcome-school-badge,
+html.screen-fit-compact .welcome-school-badge {
+  padding: 4px 12px 4px 6px !important;
+}
+
+html[data-screen-fit="fit"] .welcome-brand-name,
+html.screen-fit-compact .welcome-brand-name {
+  font-size: clamp(2rem, 5vh, 2.6rem) !important;
+}
+
+html[data-screen-fit="fit"] .welcome-showcase-card,
+html.screen-fit-compact .welcome-showcase-card {
+  padding: 10px 12px !important;
+  gap: 6px !important;
+}
+
+html[data-screen-fit="fit"] .welcome-actions-container,
+html.screen-fit-compact .welcome-actions-container {
+  gap: 8px !important;
+}
+
+html[data-screen-fit="fit"] .welcome-action-btn,
+html.screen-fit-compact .welcome-action-btn {
+  padding: 10px 14px !important;
+  border-radius: 16px !important;
+}
+
+html[data-screen-fit="fit"] .welcome-action-btn .wab-title,
+html.screen-fit-compact .welcome-action-btn .wab-title {
+  font-size: 0.88rem !important;
+}
+
+html[data-screen-fit="fit"] .welcome-action-btn .wab-sub,
+html.screen-fit-compact .welcome-action-btn .wab-sub {
+  font-size: 0.68rem !important;
+}
+
+html[data-screen-fit="fit"] .welcome-action-guest,
+html.screen-fit-compact .welcome-action-guest {
+  padding: 7px 14px !important;
+  font-size: 0.78rem !important;
+}
+
+/* Küçük Ekran Yüksekliği (< 720px) için Otomatik Koruma */
+@media (max-height: 720px) {
+  .app-header {
+    padding: 6px 12px !important;
+    min-height: 48px !important;
+  }
+  .card-pure-section {
+    padding: 4px 10px max(env(safe-area-inset-bottom, 8px), 8px) 10px !important;
+    gap: 6px !important;
+  }
+  .flashcard-wrapper {
+    max-height: clamp(240px, 46vh, 350px) !important;
+    min-height: 190px !important;
+  }
+  .card-action-bar-under {
+    padding-bottom: max(env(safe-area-inset-bottom, 8px), 8px) !important;
+  }
+}
+
+
 

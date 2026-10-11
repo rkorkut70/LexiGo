@@ -7,8 +7,8 @@
 (function () {
   'use strict';
 
-  const APP_VERSION = 'v1.4.5';
-  const CURRENT_APP_BUILD = 'lexiq_build_17_clean';
+  const APP_VERSION = 'v1.4.6';
+  const CURRENT_APP_BUILD = 'lexiq_build_18_clean';
 
   // Build 13 temiz kurulum / sıfırlama güvencesi (Kullanıcı verilerini sıfırla, Hoş Geldin ekranını garantile)
   if (!localStorage.getItem(CURRENT_APP_BUILD)) {
@@ -44,6 +44,7 @@
     gameHaptic: localStorage.getItem('kelime_game_haptic') !== 'false',
     fontFamily: localStorage.getItem('kelime_font_family') || 'system',
     flipSpeed: localStorage.getItem('kelime_flip_speed') || 'normal',
+    screenFit: localStorage.getItem('lexiq_screen_fit') || 'auto', // 'auto' | 'fit' | 'standard'
     linedPaper: localStorage.getItem('kelime_lined_paper') === 'true',
     reverseMode: localStorage.getItem('kelime_reverse_mode') === 'true',
     autoplayAudio: localStorage.getItem('kelime_autoplay_audio') === 'true',
@@ -747,6 +748,10 @@
     settingsTabPanels: document.querySelectorAll('.settings-tab-panel'),
     colorPaletteBtns: document.querySelectorAll('.color-palette-btn'),
     fontSizeBtns: document.querySelectorAll('#fontSizeSegmentGroup .setting-segment-btn'),
+    screenFitBtns: document.querySelectorAll('#screenFitSegmentGroup .setting-segment-btn'),
+    screenFitBtnsData: document.querySelectorAll('#screenFitSegmentGroupData .setting-segment-btn'),
+    screenFitBadge: document.getElementById('screenFitBadge'),
+    screenFitBadgeData: document.getElementById('screenFitBadgeData'),
     settingFontFamilySelect: document.getElementById('settingFontFamilySelect'),
     flipSpeedBtns: document.querySelectorAll('#cardFlipSpeedSegmentGroup .setting-segment-btn'),
     settingLinedPaper: document.getElementById('settingLinedPaper'),
@@ -869,6 +874,7 @@
     applyFlipSpeed(state.flipSpeed);
     applyStudyReminder(state.studyReminder);
     applyLinedPaper(state.linedPaper);
+    applyScreenFit(state.screenFit, false);
     setupEventListeners();
     updateArenaHeaderAndStats();
     updateArenaBadgeDot();
@@ -1046,6 +1052,58 @@
       dom.flipSpeedBtns.forEach(btn => {
         btn.classList.toggle('active', btn.getAttribute('data-speed') === state.flipSpeed);
       });
+    }
+  }
+
+  function isIOSDevice() {
+    return /iPad|iPhone|iPod/.test(navigator.userAgent) || 
+      (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+  }
+
+  function applyScreenFit(mode, showNotification) {
+    state.screenFit = mode || 'auto';
+    localStorage.setItem('lexiq_screen_fit', state.screenFit);
+    dom.html.setAttribute('data-screen-fit', state.screenFit);
+
+    const isIOS = isIOSDevice();
+    if (isIOS) {
+      dom.html.classList.add('ios-device');
+    }
+
+    const isCompactNeeded = (state.screenFit === 'fit') || 
+      (state.screenFit === 'auto' && (isIOS || window.innerHeight < 740));
+
+    if (isCompactNeeded) {
+      dom.html.classList.add('screen-fit-compact');
+    } else {
+      dom.html.classList.remove('screen-fit-compact');
+    }
+
+    const updateBtns = (buttons) => {
+      if (buttons && buttons.length > 0) {
+        buttons.forEach(btn => {
+          btn.classList.toggle('active', btn.getAttribute('data-fit') === state.screenFit);
+        });
+      }
+    };
+    updateBtns(dom.screenFitBtns);
+    updateBtns(dom.screenFitBtnsData);
+
+    const badgeText = state.screenFit === 'auto'
+      ? (isCompactNeeded ? 'Otomatik (iOS)' : 'Otomatik')
+      : (state.screenFit === 'fit' ? 'Ekrana Sığdır' : 'Standart');
+
+    if (dom.screenFitBadge) dom.screenFitBadge.textContent = badgeText;
+    if (dom.screenFitBadgeData) dom.screenFitBadgeData.textContent = badgeText;
+
+    if (showNotification) {
+      if (state.screenFit === 'auto') {
+        showToast(isCompactNeeded ? '🌟 Otomatik iOS Uyumu: Görüntü ekrana tam sığdırıldı.' : '🌟 Otomatik Ekran Uyumu Devrede', 2500);
+      } else if (state.screenFit === 'fit') {
+        showToast('📐 Ekrana Tam Sığdır Modu Açıldı (Kompakt %100 Görünür)', 2500);
+      } else {
+        showToast('🖥️ Standart Geniş Görünüm Devrede', 2500);
+      }
     }
   }
 
@@ -7789,6 +7847,32 @@
         });
       });
     }
+
+    // Ekran & iOS Görünüm Uyumu Butonları
+    const handleScreenFitClick = (btn) => {
+      const mode = btn.getAttribute('data-fit');
+      if (mode) {
+        applyScreenFit(mode, true);
+      }
+    };
+
+    if (dom.screenFitBtns) {
+      dom.screenFitBtns.forEach(btn => {
+        btn.addEventListener('click', () => handleScreenFitClick(btn));
+      });
+    }
+
+    if (dom.screenFitBtnsData) {
+      dom.screenFitBtnsData.forEach(btn => {
+        btn.addEventListener('click', () => handleScreenFitClick(btn));
+      });
+    }
+
+    window.addEventListener('resize', () => {
+      if (state.screenFit === 'auto') {
+        applyScreenFit('auto', false);
+      }
+    });
 
     // Çizgili Kağıt Dokusu
     if (dom.settingLinedPaper) {

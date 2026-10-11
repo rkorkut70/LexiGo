@@ -15,7 +15,7 @@
   <meta http-equiv="Expires" content="0">
   <title>LexiQ • Çok Dilli Akıllı Kelime Kartları</title>
   <link rel="icon" type="image/jpeg" href="logo.jpg">
-  <link rel="stylesheet" href="style.css?v=1.4.5">
+  <link rel="stylesheet" href="style.css?v=1.4.6">
 </head>
 <body>
   <div class="app-container">
@@ -1150,7 +1150,7 @@
         <div class="welcome-hero-section">
           <div class="welcome-brand-wrapper">
             <h1 class="welcome-brand-name">Lexi<span class="welcome-brand-q">Q</span></h1>
-            <span class="welcome-version-pill">v1.4.5</span>
+            <span class="welcome-version-pill">v1.4.6</span>
           </div>
           <p class="welcome-hero-tagline">Akıllı Tekrar • Kelime Arenası • Kalıcı Başarı</p>
         </div>
@@ -1635,7 +1635,7 @@
         <div class="about-hero-box">
           <div class="about-brand-row">
             <span class="about-brand">Lexi<span class="brand-highlight">Q</span></span>
-            <span class="about-version-pill" id="aboutAppVersion">v1.4.5</span>
+            <span class="about-version-pill" id="aboutAppVersion">v1.4.6</span>
           </div>
           <p class="about-tagline">Müfredat Tabanlı Çok Dilli Kelime Arenası</p>
         </div>
@@ -2479,6 +2479,22 @@
               </div>
             </div>
 
+            <!-- Ekran & iOS Görüntü Uyumu (Ekrana Sığdır) -->
+            <div class="setting-block">
+              <div class="setting-block-header">
+                <span class="setting-block-label">📱 Ekran &amp; iOS Görünüm Uyumu</span>
+                <span class="setting-badge-pill" id="screenFitBadge">Otomatik</span>
+              </div>
+              <div class="setting-segment-compact" id="screenFitSegmentGroup">
+                <button type="button" class="setting-segment-btn active" data-fit="auto" title="iOS ve cihaz ekranına göre akıllı otomatik uyum">🌟 Otomatik (iOS)</button>
+                <button type="button" class="setting-segment-btn" data-fit="fit" title="Tüm kart ve butonları ekrana tam sığdırır">📐 Ekrana Sığdır</button>
+                <button type="button" class="setting-segment-btn" data-fit="standard" title="Standart geniş görünüm">🖥️ Standart</button>
+              </div>
+              <p class="setting-block-hint" style="font-size: 0.74rem; color: var(--text-muted); margin-top: 6px; line-height: 1.35;">
+                iPhone ve Safari'de alt çubuk veya dar ekran nedeniyle kartların ve butonların taşmasını önler; görüntüyü ekrana %100 tam sığdırır.
+              </p>
+            </div>
+
             <!-- Kart Yazı Boyutu (5 Kademeli Kompakt Seçim) -->
             <div class="setting-block">
               <div class="setting-block-header">
@@ -2931,6 +2947,25 @@
               </div>
 
               <div class="data-hub-list">
+                <!-- Ekran & iOS Görünüm Uyumu -->
+                <div class="data-hub-row-item" style="padding: 12px 14px; background: var(--bg-surface); border: 1px solid var(--border-color); border-radius: 14px; display: flex; flex-direction: column; gap: 8px; margin-bottom: 8px;">
+                  <div style="display: flex; align-items: center; justify-content: space-between;">
+                    <div class="dh-row-left" style="display: flex; align-items: center; gap: 10px;">
+                      <span class="dh-row-icon" style="font-size: 1.25rem;">📱</span>
+                      <div class="dh-row-text">
+                        <strong style="font-size: 0.9rem; color: var(--text-main);">Ekran &amp; iOS Görünüm Uyumu</strong>
+                        <div style="font-size: 0.74rem; color: var(--text-muted);">Ekrana tam sığdırma ve kompakt görünüm</div>
+                      </div>
+                    </div>
+                    <span class="setting-badge-pill" id="screenFitBadgeData">Otomatik</span>
+                  </div>
+                  <div class="setting-segment-compact" id="screenFitSegmentGroupData">
+                    <button type="button" class="setting-segment-btn active" data-fit="auto">🌟 Otomatik</button>
+                    <button type="button" class="setting-segment-btn" data-fit="fit">📐 Ekrana Sığdır</button>
+                    <button type="button" class="setting-segment-btn" data-fit="standard">🖥️ Standart</button>
+                  </div>
+                </div>
+
                 <!-- Önbellek Temizle -->
                 <button type="button" id="clearCacheBtn" class="data-hub-row-btn">
                   <div class="dh-row-left">
@@ -3203,7 +3238,7 @@
       <div class="confirm-icon-wrap" style="font-size: 2.8rem; margin-bottom: 8px;">🎉</div>
       <h3 class="confirm-title" style="font-size: 1.3rem; font-weight: 800; margin: 0 0 6px 0;">LexiQ Güncellendi!</h3>
       <div class="app-update-version-badge" style="display: inline-block; padding: 4px 14px; border-radius: 20px; font-size: 0.84rem; font-weight: 800; margin-bottom: 14px;">
-        Sürüm <span id="appUpdateVersionText">v1.4.5</span>
+        Sürüm <span id="appUpdateVersionText">v1.4.6</span>
       </div>
       <div class="update-notes-box" style="text-align: left; border-radius: 16px; padding: 14px 16px; font-size: 0.88rem; line-height: 1.6; margin-bottom: 18px; max-height: 280px; overflow-y: auto;">
         <div class="update-notes-title" style="font-weight: 800; margin-bottom: 8px; display: flex; align-items: center; gap: 6px;">
@@ -3278,11 +3313,11 @@
   <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-storage-compat.js"></script>
-  <script src="firebase_backend.js?v=1.4.5"></script>
+  <script src="firebase_backend.js?v=1.4.6"></script>
 
   <!-- Kelime Verisi ve Uygulama Mantığı (Sadece Standart Vanilla JS) -->
-  <script src="words_data.js?v=1.4.5"></script>
-  <script src="app.js?v=1.4.5"></script>
+  <script src="words_data.js?v=1.4.6"></script>
+  <script src="app.js?v=1.4.6"></script>
 
   </body>
 </html>

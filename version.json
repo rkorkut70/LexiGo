@@ -1,12 +1,12 @@
 {
-  "version": "v1.4.5",
-  "versionCode": 29,
+  "version": "v1.4.6",
+  "versionCode": 30,
   "releaseDate": "2026-10-11",
   "notes": [
-    "iOS ve mobil cihazlarda Açık & Koyu Temaya tam uyumlu, 3D derinlikli modern Karşılama (Welcome) ekranı tasarlandı",
-    "Giriş ve Kayıt butonları duvara basılan taktil 3D fiziksel düğme mekanizmasına kavuşturuldu; açık temada buton metinlerinin görünmez olma sorunu tamamen giderildi",
-    "ADÜ YDYO kurumsal üst rozeti ve 2x2 özellik vitrini yüksek kontrastlı, kesikli çizgili ve kabartmalı 3D panellerle yenilendi",
-    "Açık temada (aydınlık mod) tüm oyun mesajları, tur sonu özetleri ve kutlama bannerlarının kristal netliğinde okunabilirliği pekiştirildi",
-    "Tüm platformlar (iOS Web/PWA ve Android APK/AAB) senkronize olarak v1.4.5 sürümüne güncellendi"
+    "iOS ve mobil cihazlarda ekran kesilmelerini ve kaydırma zorunluluğunu ortadan kaldıran 'Ekran & iOS Görünüm Uyumu' (Ekrana Sığdır) seçeneği eklendi",
+    "Ayarlar menüsünden (Kart ve Sistem sekmeleri) 'Otomatik (iOS)', 'Ekrana Sığdır' ve 'Standart' görünüm modları arasında anlık geçiş imkanı sunuldu",
+    "iPhone Safari alt araç çubuğu (floating toolbar), dinamik ada / çentik ve küçük ekranlı cihazlar için akıllı dikey adaptasyon motoru entegre edildi",
+    "Kart destesi, gezinme ve eylem butonları ('Öğrendim', 'Tekrar Et'), karşılama ve oyun modları tek bakışta ekrana %100 sığacak şekilde ölçeklendirildi",
+    "Tüm platformlar (iOS Web/PWA, Android APK & Google Play AAB) senkronize olarak v1.4.6 sürümüne güncellendi"
   ]
 }
