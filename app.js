@@ -9509,6 +9509,85 @@
       });
     }
 
+    // ==========================================
+    // GÜNCELLEME KONTROL SİSTEMİ (UPDATE CHECK)
+    // ==========================================
+    const REMOTE_VERSION_ENDPOINTS = [
+      'https://raw.githubusercontent.com/rkorkut70/lexiq/main/version.json',
+      'https://rkorkut70.github.io/lexiq/version.json',
+      'version.json'
+    ];
+
+    async function fetchRemoteVersion() {
+      for (const endpoint of REMOTE_VERSION_ENDPOINTS) {
+        try {
+          const sep = endpoint.includes('?') ? '&' : '?';
+          const res = await fetch(endpoint + sep + '_t=' + Date.now(), { cache: 'no-store' });
+          if (res.ok) {
+            const data = await res.json();
+            if (data && (data.version || data.versionCode)) {
+              return data;
+            }
+          }
+        } catch (e) {}
+      }
+      return null;
+    }
+
+    function getInstalledAppVersion() {
+      if (window.AndroidTTS && typeof window.AndroidTTS.getAppVersion === 'function') {
+        try {
+          const v = window.AndroidTTS.getAppVersion();
+          if (v) return v.replace(/\s*Beta/i, '').trim();
+        } catch (e) {}
+      }
+      return APP_VERSION;
+    }
+
+    function getInstalledAppVersionCode() {
+      if (window.AndroidTTS && typeof window.AndroidTTS.getAppVersionCode === 'function') {
+        try {
+          const code = window.AndroidTTS.getAppVersionCode();
+          if (code && !isNaN(code)) return parseInt(code, 10);
+        } catch (e) {}
+      }
+      return 32;
+    }
+
+    function openGooglePlayStore() {
+      if (window.AndroidTTS && typeof window.AndroidTTS.openPlayStore === 'function') {
+        window.AndroidTTS.openPlayStore();
+      } else {
+        const playUrl = 'https://play.google.com/store/apps/details?id=com.lexiq';
+        try {
+          window.open(playUrl, '_system') || window.open(playUrl, '_blank') || (window.location.href = playUrl);
+        } catch (e) {
+          window.location.href = playUrl;
+        }
+      }
+    }
+
+    function parseSemVer(v) {
+      if (!v) return [0, 0, 0];
+      const cleaned = v.replace(/^v/i, '').split('-')[0].trim();
+      return cleaned.split('.').map(n => parseInt(n, 10) || 0);
+    }
+
+    function isRemoteVersionNewer(remoteVer, currentVer, remoteCode, currentCode) {
+      if (remoteCode && currentCode && remoteCode !== currentCode) {
+        return remoteCode > currentCode;
+      }
+      const r = parseSemVer(remoteVer);
+      const c = parseSemVer(currentVer);
+      for (let i = 0; i < Math.max(r.length, c.length); i++) {
+        const rPart = r[i] || 0;
+        const cPart = c[i] || 0;
+        if (rPart > cPart) return true;
+        if (rPart < cPart) return false;
+      }
+      return false;
+    }
+
     async function purgeCacheAndReload(targetVersion) {
       showToast('🔄 Önbellek temizleniyor ve uygulama yenileniyor...', 2500);
       try {
@@ -9535,23 +9614,28 @@
     }
 
     async function checkAppUpdates(btnEl) {
+      const isAndroid = !!(window.AndroidTTS || window.location.protocol === 'file:' || /android/i.test(navigator.userAgent));
+      const currentVer = getInstalledAppVersion();
+      const currentCode = getInstalledAppVersionCode();
+
       if (btnEl) {
         btnEl.disabled = true;
         const origHtml = btnEl.innerHTML;
         btnEl.innerHTML = '<span>⏳</span><span>Denetleniyor...</span>';
         
         try {
-          const res = await fetch('version.json?_t=' + Date.now(), { cache: 'no-store' });
-          if (!res.ok) throw new Error('HTTP ' + res.status);
-          const data = await res.json();
-          const remoteVer = (data && data.version) ? data.version : APP_VERSION;
-          const isNewVersion = remoteVer !== APP_VERSION;
-
+          const data = await fetchRemoteVersion();
           btnEl.disabled = false;
           btnEl.innerHTML = origHtml;
 
+          if (!data) throw new Error('Sunucuya erişilemedi');
+
+          const remoteVer = (data && data.version) ? data.version : currentVer;
+          const remoteCode = (data && data.versionCode) ? parseInt(data.versionCode, 10) : 0;
+          const isNewVersion = isRemoteVersionNewer(remoteVer, currentVer, remoteCode, currentCode);
+
           const versionText = document.getElementById('appUpdateVersionText');
-          if (versionText) versionText.textContent = isNewVersion ? `${APP_VERSION} ➔ ${remoteVer}` : APP_VERSION;
+          if (versionText) versionText.textContent = isNewVersion ? `${currentVer} ➔ ${remoteVer}` : currentVer;
 
           const modalTitle = document.querySelector('#appUpdateModal .confirm-title');
           const modalIcon = document.querySelector('#appUpdateModal .confirm-icon-wrap');
@@ -9560,12 +9644,17 @@
           const forceRefreshBtn = document.getElementById('forceRefreshCacheBtn');
 
           if (isNewVersion) {
-            if (modalTitle) modalTitle.textContent = `🎉 Yeni Sürüm Hazır: ${remoteVer}!`;
+            if (modalTitle) modalTitle.textContent = isAndroid ? `🎉 Google Play'de Yeni Sürüm: ${remoteVer}!` : `🎉 Yeni Sürüm Hazır: ${remoteVer}!`;
             if (modalIcon) modalIcon.textContent = '🚀';
             if (applyBtn) {
               applyBtn.style.display = 'block';
-              applyBtn.textContent = `🚀 Şimdi Güncelle ve Yenile (${remoteVer})`;
-              applyBtn.onclick = () => purgeCacheAndReload(remoteVer);
+              if (isAndroid) {
+                applyBtn.innerHTML = `<span>🚀</span><span>Google Play'den Güncelle (${remoteVer})</span>`;
+                applyBtn.onclick = () => openGooglePlayStore();
+              } else {
+                applyBtn.innerHTML = `<span>🚀</span><span>Şimdi Güncelle ve Yenile (${remoteVer})</span>`;
+                applyBtn.onclick = () => purgeCacheAndReload(remoteVer);
+              }
             }
             if (forceRefreshBtn) forceRefreshBtn.style.display = 'none';
             if (notesBox && data.notes && Array.isArray(data.notes)) {
@@ -9578,26 +9667,52 @@
                 </ul>
               `;
             }
-            showToast(`🚀 Yeni ${remoteVer} sürümü mevcut! Güncellemek için butona dokunun.`, 4000);
+            showToast(isAndroid ? `🚀 Google Play'de yeni ${remoteVer} sürümü yayında! Dokunarak mağazadan güncelleyebilirsiniz.` : `🚀 Yeni ${remoteVer} sürümü mevcut! Güncellemek için butona dokunun.`, 4500);
           } else {
             if (modalTitle) modalTitle.textContent = '✅ Tebrikler! LexiQ Güncel';
             if (modalIcon) modalIcon.textContent = '🌟';
-            if (applyBtn) applyBtn.style.display = 'none';
-            if (forceRefreshBtn) {
-              forceRefreshBtn.style.display = 'block';
-              forceRefreshBtn.onclick = () => purgeCacheAndReload(APP_VERSION);
+
+            if (isAndroid) {
+              if (applyBtn) {
+                applyBtn.style.display = 'block';
+                applyBtn.style.background = 'linear-gradient(135deg, #0284c7, #0369a1)';
+                applyBtn.innerHTML = `<span>🏪</span><span>Google Play Mağazasında Aç</span>`;
+                applyBtn.onclick = () => openGooglePlayStore();
+              }
+              if (forceRefreshBtn) {
+                forceRefreshBtn.style.display = 'block';
+                forceRefreshBtn.textContent = '🔄 Yerel Önbelleği Sıfırla & Yenile';
+                forceRefreshBtn.onclick = () => purgeCacheAndReload(currentVer);
+              }
+              if (notesBox) {
+                notesBox.innerHTML = `
+                  <div style="font-weight: 700; color: #10b981; margin-bottom: 6px;">
+                    ✅ En Güncel Sürümü (${currentVer}) Kullanıyorsunuz
+                  </div>
+                  <p style="margin: 0; font-size: 0.85rem; color: var(--text-muted); line-height: 1.5;">
+                    Cihazınızdaki sürüm (${currentVer}) sunucudaki son yayınla eşleşmektedir. Google Play Store'da yeni yayınlanan bir güncellemeniz varsa aşağıdaki butona dokunarak mağaza sayfasından da kontrol edebilirsiniz.
+                  </p>
+                `;
+              }
+            } else {
+              if (applyBtn) applyBtn.style.display = 'none';
+              if (forceRefreshBtn) {
+                forceRefreshBtn.style.display = 'block';
+                forceRefreshBtn.textContent = '🔄 Önbelleği Temizle & Sayfayı Yenile';
+                forceRefreshBtn.onclick = () => purgeCacheAndReload(currentVer);
+              }
+              if (notesBox) {
+                notesBox.innerHTML = `
+                  <div style="font-weight: 700; color: #10b981; margin-bottom: 6px;">
+                    ✅ En Güncel Sürümü (${currentVer}) Kullanıyorsunuz
+                  </div>
+                  <p style="margin: 0; font-size: 0.85rem; color: var(--text-muted); line-height: 1.5;">
+                    Tüm özellikler ve ders içerikleri son sürümdedir. Eğer eski bir görünüm veya önbellek sorunu yaşıyorsanız aşağıdaki butona dokunarak önbelleği temizleyip sayfayı tazeleyebilirsiniz.
+                  </p>
+                `;
+              }
             }
-            if (notesBox) {
-              notesBox.innerHTML = `
-                <div style="font-weight: 700; color: #10b981; margin-bottom: 6px;">
-                  ✅ En Güncel Sürümü (${APP_VERSION}) Kullanıyorsunuz
-                </div>
-                <p style="margin: 0; font-size: 0.85rem; color: var(--text-muted); line-height: 1.5;">
-                  Tüm özellikler ve ders içerikleri son sürümdedir. Eğer eski bir görünüm veya önbellek sorunu yaşıyorsanız aşağıdaki butona dokunarak önbelleği temizleyip sayfayı tazeleyebilirsiniz.
-                </p>
-              `;
-            }
-            showToast(`✅ LexiQ en güncel sürümde (${APP_VERSION}).`, 'correct');
+            showToast(`✅ LexiQ en güncel sürümde (${currentVer}).`, 'correct');
           }
 
           if (appUpdateModal) {
@@ -9608,10 +9723,10 @@
         } catch (err) {
           btnEl.disabled = false;
           btnEl.innerHTML = origHtml;
-          showToast(`ℹ️ Mevcut sürüm: ${APP_VERSION} (Sunucu bağlantısı kontrol edilemedi)`, 3500);
+          showToast(`ℹ️ Mevcut sürüm: ${currentVer} (Canlı sunucu kontrol edilemedi)`, 3500);
         }
       } else {
-        showToast(`✅ En güncel sürümü (${APP_VERSION}) kullanıyorsunuz.`, 'correct');
+        showToast(`✅ En güncel sürümü (${currentVer}) kullanıyorsunuz.`, 'correct');
       }
     }
 
@@ -9627,14 +9742,22 @@
       aboutCheckUpdateBtn.addEventListener('click', () => checkAppUpdates(aboutCheckUpdateBtn));
     }
 
-    // Arka planda uzaktan sürüm kontrolü (özellikle iOS / Safari PWA kullanıcıları için)
+    // Arka planda uzaktan sürüm kontrolü (özellikle Android ve iOS / Safari PWA kullanıcıları için)
     setTimeout(async () => {
       try {
-        const res = await fetch('version.json?_t=' + Date.now(), { cache: 'no-store' });
-        if (res.ok) {
-          const data = await res.json();
-          if (data && data.version && data.version !== APP_VERSION) {
-            showToast(`🚀 LexiQ ${data.version} güncellemesi hazır! Ayarlar'dan güncelleyebilirsiniz.`, 5000);
+        const data = await fetchRemoteVersion();
+        if (data && (data.version || data.versionCode)) {
+          const currentVer = getInstalledAppVersion();
+          const currentCode = getInstalledAppVersionCode();
+          const remoteVer = (data && data.version) ? data.version : currentVer;
+          const remoteCode = (data && data.versionCode) ? parseInt(data.versionCode, 10) : 0;
+          if (isRemoteVersionNewer(remoteVer, currentVer, remoteCode, currentCode)) {
+            const isAndroid = !!(window.AndroidTTS || window.location.protocol === 'file:' || /android/i.test(navigator.userAgent));
+            if (isAndroid) {
+              showToast(`🚀 Google Play'de LexiQ ${remoteVer} güncellemesi hazır! Ayarlar'dan güncelleyebilirsiniz.`, 6000);
+            } else {
+              showToast(`🚀 LexiQ ${remoteVer} güncellemesi hazır! Ayarlar'dan güncelleyebilirsiniz.`, 5000);
+            }
           }
         }
       } catch (e) {}
