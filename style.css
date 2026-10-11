@@ -6638,7 +6638,7 @@ body[data-theme="dark"] .drawer-home-btn,
   box-sizing: border-box !important;
 }
 
-/* Onboarding Modal Kartı */
+/* Onboarding Modal Kartı (3D Kart Gövdesi) */
 .onboarding-card {
   max-width: 440px !important;
   width: 92% !important;
@@ -6647,6 +6647,9 @@ body[data-theme="dark"] .drawer-home-btn,
   height: auto !important;
   padding: clamp(14px, 2.5vh, 22px) clamp(12px, 3vw, 20px) !important;
   border-radius: 28px !important;
+  background: #ffffff !important;
+  border: 1.5px solid #e2e8f0 !important;
+  box-shadow: 0 25px 60px -15px rgba(0, 0, 0, 0.4), 0 0 0 1px rgba(255, 255, 255, 0.3) !important;
   position: relative;
   overflow-y: auto !important;
   overflow-x: hidden !important;
@@ -6660,8 +6663,14 @@ body[data-theme="dark"] .drawer-home-btn,
   box-sizing: border-box !important;
 }
 
+[data-theme="dark"] .onboarding-card {
+  background: linear-gradient(180deg, #1e293b 0%, #0f172a 100%) !important;
+  border: 1.5px solid rgba(255, 255, 255, 0.14) !important;
+  box-shadow: 0 25px 60px rgba(0, 0, 0, 0.75), 0 0 30px rgba(59, 130, 246, 0.2) !important;
+}
+
 /* ==========================================================================
-   YENİ DİNAMİK VE ÇEKİCİ WELCOME / HOŞ GELDİN EKRANI
+   YENİ DİNAMİK VE ÇEKİCİ WELCOME / HOŞ GELDİN EKRANI (3D & YÜKSEK OKUNURLUK)
    ========================================================================== */
 .welcome-screen-view {
   display: flex;
@@ -6673,9 +6682,9 @@ body[data-theme="dark"] .drawer-home-btn,
   max-width: 420px;
   margin: 0 auto;
   min-height: 100%;
-  padding: clamp(8px, 2vh, 18px) 0;
+  padding: clamp(8px, 1.8vh, 16px) 0;
   box-sizing: border-box;
-  gap: clamp(14px, 2.6vh, 24px);
+  gap: clamp(12px, 2.4vh, 22px);
 }
 
 .welcome-screen-view:not(.active),
@@ -6687,20 +6696,24 @@ body[data-theme="dark"] .drawer-home-btn,
   display: none !important;
 }
 
-/* Okul Üst Rozeti (Kompakt, Kurumsal ve Zarif) */
+/* 1. Okul Üst Rozeti (Kompakt, Kurumsal, 3D ve Net Okunabilir) */
 .welcome-school-badge {
   display: inline-flex;
   align-items: center;
   gap: 10px;
   padding: 6px 16px 6px 8px;
-  background: rgba(255, 255, 255, 0.05);
-  border: 1px solid rgba(255, 255, 255, 0.12);
+  background: linear-gradient(135deg, #f8fafc 0%, #eff6ff 100%);
+  border: 1.5px solid #bfdbfe;
   border-radius: 999px;
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
+  box-shadow: 0 3px 10px rgba(37, 99, 235, 0.08), inset 0 1px 0 #ffffff;
   max-width: 100%;
   transition: transform 0.2s ease;
+}
+
+[data-theme="dark"] .welcome-school-badge {
+  background: linear-gradient(135deg, rgba(30, 41, 59, 0.7) 0%, rgba(15, 23, 42, 0.8) 100%);
+  border-color: rgba(96, 165, 250, 0.35);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
 }
 
 .welcome-school-logo {
@@ -6708,9 +6721,13 @@ body[data-theme="dark"] .drawer-home-btn,
   height: clamp(34px, 4.8vh, 42px);
   border-radius: 50%;
   object-fit: cover;
-  border: 1.5px solid rgba(255, 255, 255, 0.3);
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.25);
+  border: 2px solid #3b82f6;
+  box-shadow: 0 2px 8px rgba(37, 99, 235, 0.25);
   flex-shrink: 0;
+}
+
+[data-theme="dark"] .welcome-school-logo {
+  border-color: rgba(255, 255, 255, 0.3);
 }
 
 .welcome-school-text {
@@ -6723,25 +6740,33 @@ body[data-theme="dark"] .drawer-home-btn,
 .welcome-school-title {
   font-size: clamp(0.70rem, 1.8vw, 0.78rem);
   font-weight: 800;
-  color: #f1f5f9;
+  color: #1e3a8a;
   letter-spacing: 0.04em;
   text-transform: uppercase;
   white-space: nowrap;
 }
 
+[data-theme="dark"] .welcome-school-title {
+  color: #f1f5f9;
+}
+
 .welcome-school-sub {
   font-size: clamp(0.58rem, 1.4vw, 0.66rem);
-  color: #94a3b8;
-  font-weight: 600;
+  color: #2563eb;
+  font-weight: 700;
   white-space: nowrap;
 }
 
-/* Ana Başlık ve Logo Bölümü */
+[data-theme="dark"] .welcome-school-sub {
+  color: #93c5fd;
+}
+
+/* 2. Ana Başlık ve 3D Logo Bölümü */
 .welcome-hero-section {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 4px;
+  gap: 6px;
   width: 100%;
 }
 
@@ -6753,45 +6778,69 @@ body[data-theme="dark"] .drawer-home-btn,
 }
 
 .welcome-brand-name {
-  font-size: clamp(2.4rem, 6.2vh, 3.4rem);
+  font-size: clamp(2.5rem, 6.4vh, 3.5rem);
   font-weight: 900;
   line-height: 1;
   letter-spacing: -0.035em;
-  color: #60a5fa;
-  text-shadow: 0 4px 28px rgba(96, 165, 250, 0.45);
+  color: #2563eb;
+  text-shadow: 0 3px 0 #1e40af, 0 8px 20px rgba(37, 99, 235, 0.3);
   margin: 0;
 }
 
+[data-theme="dark"] .welcome-brand-name {
+  color: #60a5fa;
+  text-shadow: 0 3px 0 #1e3a8a, 0 8px 24px rgba(96, 165, 250, 0.45);
+}
+
 .welcome-brand-q {
-  color: #38bdf8;
+  color: #0284c7;
+  background: linear-gradient(135deg, #0284c7 0%, #0d9488 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  filter: drop-shadow(0 3px 0 rgba(2, 132, 199, 0.4));
+}
+
+[data-theme="dark"] .welcome-brand-q {
   background: linear-gradient(135deg, #38bdf8 0%, #2dd4bf 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
-  text-shadow: 0 4px 28px rgba(56, 189, 248, 0.5);
+  filter: drop-shadow(0 3px 0 rgba(56, 189, 248, 0.4));
 }
 
 .welcome-version-pill {
-  font-size: 0.68rem;
+  font-size: 0.70rem;
   font-weight: 800;
-  padding: 3px 8px;
-  background: rgba(59, 130, 246, 0.15);
-  color: #60a5fa;
-  border: 1px solid rgba(59, 130, 246, 0.35);
+  padding: 3px 9px;
+  background: #eff6ff;
+  color: #1d4ed8;
+  border: 1.5px solid #bfdbfe;
   border-radius: 999px;
   align-self: flex-start;
   margin-top: 3px;
   letter-spacing: 0.02em;
+  box-shadow: 0 2px 0 #bfdbfe;
+}
+
+[data-theme="dark"] .welcome-version-pill {
+  background: rgba(59, 130, 246, 0.2);
+  color: #60a5fa;
+  border-color: rgba(59, 130, 246, 0.4);
+  box-shadow: 0 2px 0 rgba(59, 130, 246, 0.3);
 }
 
 .welcome-hero-tagline {
-  font-size: clamp(0.78rem, 2vw, 0.92rem);
+  font-size: clamp(0.80rem, 2vw, 0.94rem);
   font-weight: 700;
-  color: #cbd5e1;
+  color: #1e293b;
   margin: 0;
   letter-spacing: 0.02em;
 }
 
-/* YENİ: Tek Parça Bilgilendirme ve Vitrin Paneli (Mockup ile Birebir Uyumlu 2x2 Izgara) */
+[data-theme="dark"] .welcome-hero-tagline {
+  color: #e2e8f0;
+}
+
+/* 3. 3D Bilgilendirme ve Vitrin Paneli (2x2 Izgara) */
 .welcome-showcase-card {
   display: flex;
   flex-direction: column;
@@ -6799,13 +6848,17 @@ body[data-theme="dark"] .drawer-home-btn,
   width: 100%;
   max-width: 390px;
   padding: 16px 14px 16px 14px;
-  background: linear-gradient(150deg, rgba(30, 41, 59, 0.5) 0%, rgba(15, 23, 42, 0.75) 100%);
-  border: 1px solid rgba(255, 255, 255, 0.12);
-  border-radius: 24px;
-  box-shadow: 0 16px 36px -8px rgba(0, 0, 0, 0.45);
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
+  background: linear-gradient(150deg, #f8fafc 0%, #f1f5f9 100%);
+  border: 1.5px solid #cbd5e1;
+  border-radius: 22px;
+  box-shadow: 0 8px 20px -4px rgba(15, 23, 42, 0.08), inset 0 1px 0 #ffffff;
   box-sizing: border-box;
+}
+
+[data-theme="dark"] .welcome-showcase-card {
+  background: linear-gradient(150deg, rgba(30, 41, 59, 0.65) 0%, rgba(15, 23, 42, 0.8) 100%);
+  border-color: rgba(255, 255, 255, 0.14);
+  box-shadow: 0 16px 36px -8px rgba(0, 0, 0, 0.45), inset 0 1px 0 rgba(255, 255, 255, 0.08);
 }
 
 .welcome-showcase-header {
@@ -6814,17 +6867,21 @@ body[data-theme="dark"] .drawer-home-btn,
   justify-content: center;
   gap: 8px;
   font-size: 0.88rem;
-  font-weight: 700;
-  color: #f1f5f9;
+  font-weight: 800;
+  color: #0f172a;
   letter-spacing: 0.01em;
   padding-bottom: 2px;
 }
 
-.welcome-showcase-sparkle {
-  font-size: 0.95rem;
+[data-theme="dark"] .welcome-showcase-header {
+  color: #f1f5f9;
 }
 
-/* 2x2 Izgara - Kesikli Çizgili Ayrım (Mockuptaki Crosshair Tasarım) */
+.welcome-showcase-sparkle {
+  font-size: 1rem;
+}
+
+/* 2x2 Izgara - Kesikli Çizgili Ayrım */
 .welcome-showcase-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -6845,20 +6902,19 @@ body[data-theme="dark"] .drawer-home-btn,
   user-select: none;
 }
 
-/* 4 Çeyrek Hücre Ayrımı: Kesik Çizgiler */
 .welcome-grid-feature:nth-child(1) {
-  border-right: 1px dashed rgba(255, 255, 255, 0.14);
-  border-bottom: 1px dashed rgba(255, 255, 255, 0.14);
+  border-right: 1.5px dashed #cbd5e1;
+  border-bottom: 1.5px dashed #cbd5e1;
   padding: 8px 10px 14px 4px;
 }
 
 .welcome-grid-feature:nth-child(2) {
-  border-bottom: 1px dashed rgba(255, 255, 255, 0.14);
+  border-bottom: 1.5px dashed #cbd5e1;
   padding: 8px 4px 14px 12px;
 }
 
 .welcome-grid-feature:nth-child(3) {
-  border-right: 1px dashed rgba(255, 255, 255, 0.14);
+  border-right: 1.5px dashed #cbd5e1;
   padding: 14px 10px 8px 4px;
 }
 
@@ -6866,11 +6922,18 @@ body[data-theme="dark"] .drawer-home-btn,
   padding: 14px 4px 8px 12px;
 }
 
+[data-theme="dark"] .welcome-grid-feature:nth-child(1),
+[data-theme="dark"] .welcome-grid-feature:nth-child(2),
+[data-theme="dark"] .welcome-grid-feature:nth-child(3) {
+  border-color: rgba(255, 255, 255, 0.14);
+}
+
 .welcome-grid-feature .wgf-icon {
   font-size: 1.45rem;
   line-height: 1.15;
   flex-shrink: 0;
   margin-top: 2px;
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.15));
 }
 
 .welcome-grid-feature .wgf-text {
@@ -6881,21 +6944,29 @@ body[data-theme="dark"] .drawer-home-btn,
 }
 
 .welcome-grid-feature .wgf-title {
-  font-size: 0.82rem;
-  font-weight: 700;
-  color: #f8fafc;
+  font-size: 0.84rem;
+  font-weight: 800;
+  color: #0f172a;
   line-height: 1.25;
 }
 
+[data-theme="dark"] .welcome-grid-feature .wgf-title {
+  color: #f8fafc;
+}
+
 .welcome-grid-feature .wgf-desc {
-  font-size: 0.65rem;
-  color: #94a3b8;
-  font-weight: 400;
+  font-size: 0.67rem;
+  color: #475569;
+  font-weight: 500;
   line-height: 1.35;
   word-break: break-word;
 }
 
-/* Yenilenmiş Aksiyon Butonları */
+[data-theme="dark"] .welcome-grid-feature .wgf-desc {
+  color: #94a3b8;
+}
+
+/* 4. 3D Taktil Aksiyon Butonları */
 .welcome-actions-container {
   display: flex;
   flex-direction: column;
@@ -6909,18 +6980,22 @@ body[data-theme="dark"] .drawer-home-btn,
   align-items: center;
   gap: 14px;
   width: 100%;
-  padding: 14px 18px;
-  border-radius: 22px;
+  padding: 13px 18px;
+  border-radius: 20px;
   cursor: pointer;
   border: none;
   text-align: left;
-  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  transition: all 0.15s cubic-bezier(0.16, 1, 0.3, 1);
   box-sizing: border-box;
+  user-select: none;
+  -webkit-user-select: none;
+  position: relative;
 }
 
 .welcome-action-btn .wab-icon {
-  font-size: 1.5rem;
+  font-size: 1.6rem;
   flex-shrink: 0;
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.15));
 }
 
 .welcome-action-btn .wab-content {
@@ -6932,90 +7007,148 @@ body[data-theme="dark"] .drawer-home-btn,
 }
 
 .welcome-action-btn .wab-title {
-  font-size: 0.94rem;
+  font-size: 0.96rem;
   font-weight: 800;
   line-height: 1.25;
+  letter-spacing: -0.01em;
 }
 
 .welcome-action-btn .wab-sub {
-  font-size: 0.72rem;
+  font-size: 0.74rem;
   font-weight: 500;
   line-height: 1.3;
 }
 
 .welcome-action-btn .wab-arrow {
-  font-size: 1.15rem;
-  font-weight: 600;
+  font-size: 1.25rem;
+  font-weight: 800;
   transition: transform 0.2s ease, opacity 0.2s ease;
   flex-shrink: 0;
 }
 
-.welcome-action-btn:active .wab-arrow {
-  transform: translateX(4px);
+/* 1. Birincil Buton: Kayıt Ol (3D Mavi/İndigo Taktil) */
+.welcome-action-primary {
+  background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%) !important;
+  color: #ffffff !important;
+  border: 1px solid rgba(255, 255, 255, 0.35) !important;
+  border-top: 1px solid rgba(255, 255, 255, 0.5) !important;
+  box-shadow: 0 5px 0 #1d4ed8, 0 10px 22px rgba(37, 99, 235, 0.35) !important;
 }
 
-/* Birincil Buton: Kayıt Ol (Mockuptaki Parlak Mavi & İndigo Gradyan) */
-.welcome-action-primary {
-  background: linear-gradient(135deg, #3b82f6 0%, #6366f1 100%);
-  color: #ffffff;
-  border: 1px solid rgba(255, 255, 255, 0.25);
-  box-shadow: 0 10px 25px -4px rgba(59, 130, 246, 0.55), 0 0 15px rgba(99, 102, 241, 0.3);
+.welcome-action-primary .wab-title {
+  color: #ffffff !important;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
 }
 
 .welcome-action-primary .wab-sub {
-  color: rgba(255, 255, 255, 0.85);
+  color: #dbeafe !important;
+}
+
+.welcome-action-primary .wab-arrow {
+  color: #ffffff !important;
 }
 
 .welcome-action-primary:active {
-  transform: scale(0.985);
-  box-shadow: 0 4px 14px rgba(59, 130, 246, 0.4);
+  transform: translateY(3px) !important;
+  box-shadow: 0 2px 0 #1d4ed8, 0 5px 12px rgba(37, 99, 235, 0.25) !important;
 }
 
-/* İkincil Buton: Giriş Yap (Mockuptaki Koyu Buzlu Cam) */
+/* 2. İkincil Buton: Giriş Yap (3D Taktil Beyaz/Gri - Açık Modda %100 Okunur) */
 .welcome-action-secondary {
-  background: rgba(255, 255, 255, 0.04);
-  color: #f8fafc;
-  border: 1px solid rgba(255, 255, 255, 0.16);
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
-  backdrop-filter: blur(8px);
+  background: linear-gradient(145deg, #ffffff 0%, #f8fafc 100%) !important;
+  color: #0f172a !important;
+  border: 1.5px solid #cbd5e1 !important;
+  box-shadow: 0 4px 0 #94a3b8, 0 8px 18px rgba(0, 0, 0, 0.07) !important;
+}
+
+.welcome-action-secondary .wab-title {
+  color: #0f172a !important;
 }
 
 .welcome-action-secondary .wab-sub {
-  color: #94a3b8;
+  color: #475569 !important;
 }
 
 .welcome-action-secondary .wab-arrow {
-  color: rgba(255, 255, 255, 0.6);
+  color: #2563eb !important;
 }
 
 .welcome-action-secondary:active {
-  transform: scale(0.985);
-  background: rgba(255, 255, 255, 0.08);
+  transform: translateY(3px) !important;
+  box-shadow: 0 1px 0 #94a3b8, 0 4px 10px rgba(0, 0, 0, 0.05) !important;
+  background: #f1f5f9 !important;
 }
 
-/* Misafir Linki */
+[data-theme="dark"] .welcome-action-secondary {
+  background: linear-gradient(145deg, #1e293b 0%, #0f172a 100%) !important;
+  border: 1.5px solid rgba(255, 255, 255, 0.16) !important;
+  box-shadow: 0 4px 0 #020617, 0 8px 24px rgba(0, 0, 0, 0.45) !important;
+  color: #f8fafc !important;
+}
+
+[data-theme="dark"] .welcome-action-secondary .wab-title {
+  color: #f8fafc !important;
+}
+
+[data-theme="dark"] .welcome-action-secondary .wab-sub {
+  color: #94a3b8 !important;
+}
+
+[data-theme="dark"] .welcome-action-secondary .wab-arrow {
+  color: #60a5fa !important;
+}
+
+[data-theme="dark"] .welcome-action-secondary:active {
+  transform: translateY(3px) !important;
+  box-shadow: 0 1px 0 #020617, 0 4px 12px rgba(0, 0, 0, 0.3) !important;
+}
+
+/* 3. Misafir Linki (3D Hap Buton) */
 .welcome-action-guest {
   display: inline-flex;
   align-items: center;
   justify-content: center;
   gap: 7px;
-  background: transparent;
-  border: none;
-  color: #60a5fa;
-  font-size: 0.82rem;
-  font-weight: 600;
+  background: #eff6ff !important;
+  border: 1.5px solid #bfdbfe !important;
+  border-radius: 999px !important;
+  color: #1d4ed8 !important;
+  font-size: 0.84rem;
+  font-weight: 700;
   cursor: pointer;
-  padding: 6px 12px;
-  transition: color 0.2s ease, transform 0.2s ease;
+  padding: 10px 18px;
+  box-shadow: 0 3px 0 #bfdbfe, 0 4px 12px rgba(37, 99, 235, 0.08) !important;
+  transition: all 0.15s ease;
   width: 100%;
+  box-sizing: border-box;
 }
 
 .welcome-action-guest:hover {
-  color: #93c5fd;
+  background: #dbeafe !important;
+  color: #1e40af !important;
 }
 
 .welcome-action-guest:active {
-  transform: scale(0.98);
+  transform: translateY(2px) !important;
+  box-shadow: 0 1px 0 #bfdbfe !important;
+}
+
+[data-theme="dark"] .welcome-action-guest {
+  background: rgba(30, 41, 59, 0.7) !important;
+  border: 1.5px solid rgba(56, 189, 248, 0.35) !important;
+  border-radius: 999px !important;
+  color: #38bdf8 !important;
+  box-shadow: 0 3px 0 rgba(15, 23, 42, 0.9), 0 4px 14px rgba(0, 0, 0, 0.3) !important;
+}
+
+[data-theme="dark"] .welcome-action-guest:hover {
+  background: rgba(30, 41, 59, 0.9) !important;
+  color: #7dd3fc !important;
+}
+
+[data-theme="dark"] .welcome-action-guest:active {
+  transform: translateY(2px) !important;
+  box-shadow: 0 1px 0 rgba(15, 23, 42, 0.9) !important;
 }
 
 /* Sihirbaz İlerleme Noktaları */
