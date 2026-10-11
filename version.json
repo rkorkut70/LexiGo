@@ -1,12 +1,12 @@
 {
-  "version": "v1.4.6",
-  "versionCode": 30,
+  "version": "v1.4.7",
+  "versionCode": 31,
   "releaseDate": "2026-10-11",
   "notes": [
-    "iOS ve mobil cihazlarda ekran kesilmelerini ve kaydırma zorunluluğunu ortadan kaldıran 'Ekran & iOS Görünüm Uyumu' (Ekrana Sığdır) seçeneği eklendi",
-    "Ayarlar menüsünden (Kart ve Sistem sekmeleri) 'Otomatik (iOS)', 'Ekrana Sığdır' ve 'Standart' görünüm modları arasında anlık geçiş imkanı sunuldu",
-    "iPhone Safari alt araç çubuğu (floating toolbar), dinamik ada / çentik ve küçük ekranlı cihazlar için akıllı dikey adaptasyon motoru entegre edildi",
-    "Kart destesi, gezinme ve eylem butonları ('Öğrendim', 'Tekrar Et'), karşılama ve oyun modları tek bakışta ekrana %100 sığacak şekilde ölçeklendirildi",
-    "Tüm platformlar (iOS Web/PWA, Android APK & Google Play AAB) senkronize olarak v1.4.6 sürümüne güncellendi"
+    "Tüm uygulama arayüzünde kapsamlı 3D Dokunsal Derinlik (Tactile 3D Depth) ve Neomorfik/Claymorfik görsel dönüşüm tamamlandı",
+    "Açık Tema: Yumuşak gök mavisi degrade zemin (#d8e5f7 -> #b5cae6), saf beyaz 3D kartlar, 3D katmanlı desteler, 3D turuncu hap butonlar ve 3D mavi dairesel ses butonu ile yenilendi",
+    "Karanlık Tema: Derin gece kozmik indigo zemin (#090a1a -> #151736), neon mor/eflatun aura ışıması, neon camgöbeği hedef seçicisi ve 3D zümrüt yeşili 'Öğrendim' butonu ile yenilendi",
+    "Tüm butonlar ve sekmeler için fiziksel basılma (:active physics), alt tabaka kalınlığı ve yumuşak derinlik gölgeleri eklendi",
+    "Tüm platformlar (iOS Web/PWA, Android APK & Google Play AAB) senkronize olarak v1.4.7 sürümüne güncellendi"
   ]
 }

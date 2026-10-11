@@ -7,8 +7,8 @@
 (function () {
   'use strict';
 
-  const APP_VERSION = 'v1.4.6';
-  const CURRENT_APP_BUILD = 'lexiq_build_18_clean';
+  const APP_VERSION = 'v1.4.7';
+  const CURRENT_APP_BUILD = 'lexiq_build_19_clean';
 
   // Build 13 temiz kurulum / sıfırlama güvencesi (Kullanıcı verilerini sıfırla, Hoş Geldin ekranını garantile)
   if (!localStorage.getItem(CURRENT_APP_BUILD)) {
