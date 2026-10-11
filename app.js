@@ -7,7 +7,7 @@
 (function () {
   'use strict';
 
-  const APP_VERSION = 'v1.4.7';
+  const APP_VERSION = 'v1.4.8';
   const CURRENT_APP_BUILD = 'lexiq_build_19_clean';
 
   // Build 13 temiz kurulum / sıfırlama güvencesi (Kullanıcı verilerini sıfırla, Hoş Geldin ekranını garantile)
@@ -5455,6 +5455,7 @@
     }
 
     playSoundEffect('correct');
+    dom.gameRoundCompletedModal.style.zIndex = '200050';
     dom.gameRoundCompletedModal.style.display = 'flex';
     dom.gameRoundCompletedModal.classList.add('active');
   }
@@ -10123,38 +10124,74 @@
       }
     ];
 
-    const CARDS_TOUR_STEPS = [
-      {
-        targetSelector: '#flashcardWrapper',
-        title: '🔄 Karta Dokun ve Çevir',
-        desc: 'Kartın üzerine dokunarak Türkçe anlamını ve örnek cümlesini 3D olarak görebilirsin. Tekrar dokunarak ön yüze dönebilirsin.'
-      },
-      {
-        targetSelector: '#flashcardWrapper',
-        title: '👆 Sağa & Sola Kaydırma (Swipe)',
-        desc: 'Kartlar arasında parmağını sağa veya sola kaydırarak (swipe) hızlıca geçiş yapabilirsin.'
-      },
-      {
-        targetSelector: '#markLearnedBtn',
-        title: '✅ "Öğrendim" Olarak İşaretle',
-        desc: 'Kelimeyi iyice öğrendiğinde bu yeşil butona dokun. Kelime günlük hedefine eklenir ve hafızana kaydedilir.'
-      },
-      {
-        targetSelector: '.audio-controls-row',
-        title: '🔊 Sesli Telaffuz Dinle',
-        desc: 'US (Amerikan) veya UK (İngiliz) bayraklı butonlara dokunarak kelimenin anadili telaffuzunu dinleyebilirsin.'
-      },
-      {
-        targetSelector: '.card-filter-tabs-container',
-        title: '🎯 Günlük Hedef & İlerleme',
-        desc: 'Buradan günlük hedefini belirleyebilirsin. Hedefini tamamladığında Kelime Arenası oyunları açılır ve öğrendiklerini pekiştirebilirsin!'
+    function getCardsTourSteps() {
+      const lang = state.activeLanguage || 'EN-TR';
+      let audioStep;
+
+      if (lang === 'FR-TR') {
+        audioStep = {
+          targetSelector: '#pronounceBtn',
+          fallbackSelector: '.audio-controls-row',
+          title: '🔊 Fransızca Telaffuz Dinle',
+          desc: 'Mavi 3D hoparlör butonuna dokunarak kelimenin anadili Fransızca sesli telaffuzunu dinleyebilirsin.'
+        };
+      } else if (lang === 'DE-TR') {
+        audioStep = {
+          targetSelector: '#pronounceBtn',
+          fallbackSelector: '.audio-controls-row',
+          title: '🔊 Almanca Telaffuz Dinle',
+          desc: 'Mavi 3D hoparlör butonuna dokunarak kelimenin anadili Almanca sesli telaffuzunu dinleyebilirsin.'
+        };
+      } else {
+        audioStep = {
+          targetSelector: '#enAccentGroup',
+          fallbackSelector: '.audio-controls-row',
+          title: '🔊 Sesli Telaffuz Dinle',
+          desc: 'US (Amerikan) veya UK (İngiliz) bayraklı butonlara dokunarak kelimenin anadili telaffuzunu dinleyebilirsin.'
+        };
       }
-    ];
+
+      return [
+        {
+          targetSelector: '#flashcardWrapper',
+          title: '🔄 Karta Dokun ve Çevir',
+          desc: 'Kartın üzerine dokunarak Türkçe anlamını ve örnek cümlesini 3D olarak görebilirsin. Tekrar dokunarak ön yüze dönebilirsin.'
+        },
+        {
+          targetSelector: '#flashcardWrapper',
+          title: '👆 Sağa & Sola Kaydırma (Swipe)',
+          desc: 'Kartlar arasında parmağını sağa veya sola kaydırarak (swipe) hızlıca geçiş yapabilirsin.'
+        },
+        {
+          targetSelector: '#markLearnedBtn',
+          title: '✅ "Öğrendim" Olarak İşaretle',
+          desc: 'Kelimeyi iyice öğrendiğinde bu yeşil butona dokun. Kelime günlük hedefine eklenir ve hafızana kaydedilir.'
+        },
+        audioStep,
+        {
+          targetSelector: '.card-filter-tabs-container',
+          title: '🎯 Günlük Hedef & İlerleme',
+          desc: 'Buradan günlük hedefini belirleyebilirsin. Hedefini tamamladığında Kelime Arenası oyunları açılır ve öğrendiklerini pekiştirebilirsin!'
+        }
+      ];
+    }
 
     let activeTourType = 'home';
     let currentTourSteps = HOME_TOUR_STEPS;
     let currentTourIndex = 0;
     let currentHighlightedEl = null;
+
+    function getTourStepTarget(step) {
+      if (!step || !step.targetSelector) return null;
+      let el = document.querySelector(step.targetSelector);
+      if (!el || el.offsetParent === null || (window.getComputedStyle(el).display === 'none')) {
+        if (step.fallbackSelector) {
+          const fallbackEl = document.querySelector(step.fallbackSelector);
+          if (fallbackEl) el = fallbackEl;
+        }
+      }
+      return el;
+    }
 
     function updateTourPosition(targetEl) {
       if (!dom.tourBubble || !dom.tourArrow) return;
@@ -10225,7 +10262,7 @@
         currentHighlightedEl = null;
       }
 
-      const targetEl = document.querySelector(step.targetSelector);
+      const targetEl = getTourStepTarget(step);
       if (targetEl) {
         targetEl.classList.add('tour-highlight-target');
         currentHighlightedEl = targetEl;
@@ -10334,7 +10371,7 @@
       }
 
       activeTourType = 'cards';
-      currentTourSteps = CARDS_TOUR_STEPS;
+      currentTourSteps = getCardsTourSteps();
 
       setTimeout(() => {
         showTourStep(0);
@@ -10372,7 +10409,7 @@
     window.addEventListener('resize', () => {
       if (dom.lexiqTourOverlay && dom.lexiqTourOverlay.style.display !== 'none') {
         const step = currentTourSteps[currentTourIndex];
-        const targetEl = step ? document.querySelector(step.targetSelector) : null;
+        const targetEl = getTourStepTarget(step);
         updateTourPosition(targetEl);
       }
     });

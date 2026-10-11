@@ -1,12 +1,11 @@
 {
-  "version": "v1.4.7",
-  "versionCode": 31,
+  "version": "v1.4.8",
+  "versionCode": 32,
   "releaseDate": "2026-10-11",
   "notes": [
-    "Tüm uygulama arayüzünde kapsamlı 3D Dokunsal Derinlik (Tactile 3D Depth) ve Neomorfik/Claymorfik görsel dönüşüm tamamlandı",
-    "Açık Tema: Yumuşak gök mavisi degrade zemin (#d8e5f7 -> #b5cae6), saf beyaz 3D kartlar, 3D katmanlı desteler, 3D turuncu hap butonlar ve 3D mavi dairesel ses butonu ile yenilendi",
-    "Karanlık Tema: Derin gece kozmik indigo zemin (#090a1a -> #151736), neon mor/eflatun aura ışıması, neon camgöbeği hedef seçicisi ve 3D zümrüt yeşili 'Öğrendim' butonu ile yenilendi",
-    "Tüm butonlar ve sekmeler için fiziksel basılma (:active physics), alt tabaka kalınlığı ve yumuşak derinlik gölgeleri eklendi",
-    "Tüm platformlar (iOS Web/PWA, Android APK & Google Play AAB) senkronize olarak v1.4.7 sürümüne güncellendi"
+    "Dile Duyarlı Kart Rehberi: Fransızca ve Almanca dillerinde sesli telaffuz tanıtım baloncukları güncellendi; dile özel 3D telaffuz butonu tanıtımı getirildi.",
+    "Kelime Arenası Tur Sonu & Anti-Farming: Oyun alıştırması tur tamamlama ve yeni oyun yönlendirme ekranının oyun alanı arkasında kalma (z-index) sorunu giderildi; kupa ve önerilen oyun butonları sorunsuz görünür hale getirildi.",
+    "3D Dokunsal Tasarım & Kontrast: Açık ve koyu temalarda tüm butonlar, kartlar ve pencereler 3D derinlik ve yüksek kontrast ile optimize edildi.",
+    "Tüm platformlar (iOS Web/PWA, Android APK & Google Play AAB) senkronize olarak v1.4.8 sürümüne güncellendi."
   ]
 }

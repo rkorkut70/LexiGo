@@ -1639,7 +1639,7 @@ body[data-theme="dark"] .status-learned,
   display: flex;
   align-items: center;
   justify-content: center;
-  z-index: 10020;
+  z-index: 200020;
   padding: 20px;
   opacity: 0;
   pointer-events: none;
@@ -1651,19 +1651,23 @@ body[data-theme="dark"] .status-learned,
 .modal-overlay.active {
   opacity: 1;
   pointer-events: auto;
+  z-index: 200020;
 }
 
 #gameRoundCompletedModal,
-#dailyPracticeCompletedModal {
-  z-index: 10080 !important;
+#dailyPracticeCompletedModal,
+#badgeCelebrationModal {
+  z-index: 200050 !important;
 }
 
 #gameRoundCompletedModal.active,
-#dailyPracticeCompletedModal.active {
+#dailyPracticeCompletedModal.active,
+#badgeCelebrationModal.active {
   display: flex !important;
   opacity: 1 !important;
   pointer-events: auto !important;
   visibility: visible !important;
+  z-index: 200050 !important;
 }
 
 #gameRoundCompletedModal:not(.active),
@@ -1997,7 +2001,7 @@ body[data-theme="dark"] .status-learned,
   opacity: 0;
   pointer-events: none;
   transition: all 0.28s cubic-bezier(0.34, 1.56, 0.64, 1);
-  z-index: 100010;
+  z-index: 200100;
   box-shadow: 0 16px 44px rgba(15, 23, 42, 0.7), 0 0 28px rgba(129, 140, 248, 0.55);
   white-space: normal;
   max-width: 88vw;
@@ -2046,7 +2050,7 @@ body[data-theme="dark"] .status-learned,
   box-shadow: 0 14px 40px rgba(79, 70, 229, 0.45), 0 0 24px rgba(129, 140, 248, 0.35);
   opacity: 0;
   pointer-events: none;
-  z-index: 100000;
+  z-index: 200090;
   transition: all 0.32s cubic-bezier(0.34, 1.56, 0.64, 1);
   width: auto;
   min-width: 170px;
@@ -2683,8 +2687,8 @@ body[data-theme="dark"] .status-learned,
   left: 0;
   right: 0;
   bottom: 0;
-  z-index: 99999;
-  background: var(--bg-main);
+  z-index: 2000;
+  background: var(--bg-app-gradient, var(--bg-app));
   width: 100vw;
   height: 100dvh;
   height: 100vh;
