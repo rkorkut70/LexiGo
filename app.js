@@ -7,7 +7,7 @@
 (function () {
   'use strict';
 
-  const APP_VERSION = 'v1.7.7';
+  const APP_VERSION = 'v1.7.8';
   const CURRENT_APP_BUILD = 'lexiq_build_19_clean';
 
   // Build 13 temiz kurulum / sıfırlama güvencesi (Kullanıcı verilerini sıfırla, Hoş Geldin ekranını garantile)
@@ -7476,12 +7476,7 @@ let activeAvatarCategory = 'all';
 
     // Günün öğrenilen kelimelerini öncelikli olarak seç (havuzun önündeki kelimeler)
     const candidateSlice = pool.slice(0, Math.max(pairCount, Math.min(pairCount * 2, pool.length)));
-    // Sütun başlığında hedef dili göster (İngilizce / Almanca / Fransızca)
-    const targetColLabel = document.getElementById('matchTargetColLabel');
-    if (targetColLabel) {
-      const langNames = { EN: '🇬🇧 İngilizce', DE: '🇩🇪 Almanca', FR: '🇫🇷 Fransızca' };
-      targetColLabel.textContent = langNames[state.activeLanguage] || '🌐 Hedef Dil';
-    }
+    const selectedWords = candidateSlice.sort(() => Math.random() - 0.5).slice(0, pairCount);
 
     // Kullanıcı kuralı: Solda hedef dil kelimeleri, sağda Türkçe kelimeler
     const targetCards = selectedWords.map(w => {

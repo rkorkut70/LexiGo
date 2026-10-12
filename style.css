@@ -15002,38 +15002,7 @@ html.screen-fit-compact .welcome-action-guest {
    OYUN EKRANLARI ADAPTİF / RESPONSIVE SİSTEMİ (TABLET & MOBİL UYUMLU)
    ========================================================================== */
 
-/* Eşleştirme Oyunu Sütun Başlıkları & Kart Renk Vurguları */
-.match-columns-header {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 12px;
-  width: 100%;
-  margin-top: 6px;
-  margin-bottom: 6px;
-  box-sizing: border-box;
-}
 
-.match-col-header-pill {
-  padding: 6px 12px;
-  border-radius: 999px;
-  font-size: 0.78rem;
-  font-weight: 800;
-  text-align: center;
-  letter-spacing: 0.02em;
-  user-select: none;
-}
-
-.match-col-header-pill.target-pill {
-  background: rgba(99, 102, 241, 0.16);
-  color: #a5b4fc;
-  border: 1px solid rgba(99, 102, 241, 0.35);
-}
-
-.match-col-header-pill.tr-pill {
-  background: rgba(239, 68, 68, 0.14);
-  color: #fca5a5;
-  border: 1px solid rgba(239, 68, 68, 0.35);
-}
 
 /* Soldaki Hedef Dil Kartı ve Sağdaki Türkçe Kartı Ayrımı */
 .match-tile.match-tile-target {
@@ -15088,16 +15057,7 @@ html.screen-fit-compact .welcome-action-guest {
   /* -------------------------------------------
      A) KELİME EŞLEŞTİRME (MATCHING GAME) TABLET
      ------------------------------------------- */
-  .match-columns-header {
-    gap: 16px !important;
-    margin-top: 8px !important;
-    margin-bottom: 8px !important;
-  }
 
-  .match-col-header-pill {
-    padding: 8px 16px !important;
-    font-size: clamp(0.92rem, 1.6vw, 1.15rem) !important;
-  }
 
   .match-grid {
     grid-template-columns: 1fr 1fr !important; /* HER ZAMAN 2 SÜTUN: SOL HEDEF, SAĞ TR */

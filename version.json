@@ -1,11 +1,11 @@
 {
-  "version": "v1.7.7",
-  "versionCode": 57,
+  "version": "v1.7.8",
+  "versionCode": 58,
   "releaseDate": "2026-10-13",
   "notes": [
-    "🛠️ Oyun sahası görünürlük çakışması düzeltildi (Tek aktif oyun modu kuralı sağlandı)",
-    "🧩 Kelime Eşleme: Solda hedef dil, sağda Türkçe düzeni optimize edildi",
-    "📱 Tablet ve masaüstünde tam ekran alan kullanımı ve büyük tipografi korundu",
+    "✅ Kelime Eşleme: Kartların yüklenmeme sorunu düzeltildi, tüm kelimeler eksiksiz çıkıyor",
+    "✨ Eşleme başlığındaki hedef dil ve Türkçe hap etiketleri tamamen kaldırıldı, sade tasarıma dönüldü",
+    "🧩 Kart dizilimi: Solda hedef dil, sağda Türkçe düzeni pürüzsüz çalışıyor",
     "🛡️ Android Target SDK 36 Google Play Store tam uyumluluğu korundu"
   ]
 }
