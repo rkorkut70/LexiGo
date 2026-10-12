@@ -2109,6 +2109,10 @@
     }
 
     // Avatar Tıklama: Üstteki avatara tıklandığında kategorili avatar seçim penceresini aç
+    const settingOpenAvatarPickerBtn = document.getElementById('settingOpenAvatarPickerBtn');
+    if (settingOpenAvatarPickerBtn) {
+      settingOpenAvatarPickerBtn.onclick = () => openAvatarPickerModal();
+    }
     const heroAvatarBtn = document.getElementById('profHeroAvatarBtn');
     if (heroAvatarBtn) {
       heroAvatarBtn.onclick = () => {
@@ -2437,9 +2441,36 @@
     modal.classList.remove('active');
   }
 
+    // ==========================================
+  // ZENGİN & KATEGORİLİ AVATAR SİSTEMİ (80 ÖZGÜN AVATAR + EMOJİLER)
   // ==========================================
-  // ZENGİN & KATEGORİLİ AVATAR SEÇİM SİSTEMİ
-  // ==========================================
+  function isCustomAvatar(av) {
+    return typeof av === 'string' && av.startsWith('avatar_');
+  }
+
+  function getAvatarSrc(av) {
+    if (!isCustomAvatar(av)) return '';
+    return 'assets/avatars/' + av + '.jpg';
+  }
+
+  function setAvatarElement(el, avatarVal) {
+    if (!el) return;
+    const av = avatarVal || state.userAvatar || 'avatar_1_1';
+    if (isCustomAvatar(av)) {
+      el.innerHTML = '<img src="' + getAvatarSrc(av) + '" class="avatar-img-fluid" style="width:100%; height:100%; border-radius:50%; object-fit:cover; display:block;" alt="Avatar">';
+    } else {
+      el.textContent = av;
+    }
+  }
+
+  function getAvatarMarkup(avatarVal, sizeStyle = 'width:32px; height:32px;') {
+    const av = avatarVal || 'avatar_1_1';
+    if (isCustomAvatar(av)) {
+      return '<img src="' + getAvatarSrc(av) + '" class="avatar-img-inline" style="' + sizeStyle + ' border-radius:50%; object-fit:cover; display:inline-block; vertical-align:middle;" alt="Avatar">';
+    }
+    return '<span class="avatar-emoji-inline" style="display:inline-block; vertical-align:middle;">' + av + '</span>';
+  }
+
   const AVATAR_CATEGORIES = [
     {
       id: 'all',
@@ -2447,38 +2478,90 @@
       icon: '✨'
     },
     {
-      id: 'animals',
-      name: 'Hayvanlar',
-      icon: '🐾',
-      avatars: ['🦊', '🦁', '🐺', '🐼', '🐨', '🐯', '🐱', '🐶', '🦉', '🦄', '🐲', '🐻', '🐰', '🐸', '🐵', '🦅', '🐧', '🐙', '🐬', '🦋']
+      id: 'mascots',
+      name: 'Bilge Maskotlar',
+      icon: '🦊',
+      avatars: [
+        'avatar_8_1', 'avatar_8_2', 'avatar_8_3', 'avatar_8_4', 'avatar_8_5',
+        'avatar_8_6', 'avatar_8_7', 'avatar_8_8', 'avatar_8_9', 'avatar_8_10'
+      ]
     },
     {
-      id: 'nature',
-      name: 'Doğa & Evren',
-      icon: '🌿',
-      avatars: ['🌱', '🌲', '🌸', '🌻', '🍁', '🍄', '🌍', '🌙', '⭐', '☀️', '⚡', '🌊', '🌋', '🌈', '🪐', '☄️', '🔥', '❄️']
+      id: 'academic',
+      name: 'Kampüs & Akademi',
+      icon: '🎓',
+      avatars: [
+        'avatar_1_1', 'avatar_1_2', 'avatar_1_3', 'avatar_1_4', 'avatar_1_5',
+        'avatar_1_6', 'avatar_1_7', 'avatar_1_8', 'avatar_1_9', 'avatar_1_10'
+      ]
     },
     {
-      id: 'sci_fi',
-      name: 'Bilim & Kurgu',
-      icon: '🚀',
-      avatars: ['🚀', '🛸', '👽', '🤖', '👾', '🧬', '🔬', '🔭', '🛰️', '⚡', '💡', '🔮', '🕹️', '🧪']
+      id: 'library',
+      name: 'Kütüphane & Odak',
+      icon: '📚',
+      avatars: [
+        'avatar_2_1', 'avatar_2_2', 'avatar_2_3', 'avatar_2_4', 'avatar_2_5',
+        'avatar_2_6', 'avatar_2_7', 'avatar_2_8', 'avatar_2_9', 'avatar_2_10'
+      ]
     },
     {
-      id: 'abstract',
-      name: 'Soyut & Sembol',
-      icon: '💎',
-      avatars: ['💎', '👑', '🎯', '🔥', '✨', '⚡', '🎖️', '🏆', '🎨', '🎭', '🧩', '🧿', '🌀', '🛡️', '⚔️', '🗝️', '🔔', '🧭']
+      id: 'travel',
+      name: 'Seyyah & Erasmus',
+      icon: '✈️',
+      avatars: [
+        'avatar_3_1', 'avatar_3_2', 'avatar_3_3', 'avatar_3_4', 'avatar_3_5',
+        'avatar_3_6', 'avatar_3_7', 'avatar_3_8', 'avatar_3_9', 'avatar_3_10'
+      ]
     },
     {
-      id: 'fun',
-      name: 'Eğlenceli & Karakter',
-      icon: '😎',
-      avatars: ['😎', '🤠', '🥳', '🧐', '🦸', '🥷', '🧙', '🧑‍🚀', '🧑‍🎓', '🧝', '🧛', '👑', '👻', '🎩', '🍕', '☕']
+      id: 'british',
+      name: 'İngiliz Kültürü',
+      icon: '🇬🇧',
+      avatars: [
+        'avatar_4_1', 'avatar_4_2', 'avatar_4_3', 'avatar_4_4', 'avatar_4_5',
+        'avatar_4_6', 'avatar_4_7', 'avatar_4_8', 'avatar_4_9', 'avatar_4_10'
+      ]
+    },
+    {
+      id: 'french',
+      name: 'Fransız Sanatı',
+      icon: '🇫🇷',
+      avatars: [
+        'avatar_5_1', 'avatar_5_2', 'avatar_5_3', 'avatar_5_4', 'avatar_5_5',
+        'avatar_5_6', 'avatar_5_7', 'avatar_5_8', 'avatar_5_9', 'avatar_5_10'
+      ]
+    },
+    {
+      id: 'german',
+      name: 'Alman Düşüncesi',
+      icon: '🇩🇪',
+      avatars: [
+        'avatar_6_1', 'avatar_6_2', 'avatar_6_3', 'avatar_6_4', 'avatar_6_5',
+        'avatar_6_6', 'avatar_6_7', 'avatar_6_8', 'avatar_6_9', 'avatar_6_10'
+      ]
+    },
+    {
+      id: 'dorm',
+      name: 'Yurt & Sınavlar',
+      icon: '☕',
+      avatars: [
+        'avatar_7_1', 'avatar_7_2', 'avatar_7_3', 'avatar_7_4', 'avatar_7_5',
+        'avatar_7_6', 'avatar_7_7', 'avatar_7_8', 'avatar_7_9', 'avatar_7_10'
+      ]
+    },
+    {
+      id: 'emojis',
+      name: 'Klasik Emojiler',
+      icon: '🌟',
+      avatars: [
+        '🦊', '🦁', '🐺', '🐼', '🐨', '🐯', '🐱', '🐶', '🦉', '🦄', '🐲', '🐻',
+        '🚀', '🛸', '👽', '🤖', '👾', '💎', '👑', '🎯', '🔥', '✨', '⚡', '🏆',
+        '😎', '🤠', '🥳', '🧐', '🦸', '🥷', '🧙', '🧑‍🚀', '🧑‍🎓', '☕', '🍕'
+      ]
     }
   ];
 
-  let activeAvatarCategory = 'all';
+let activeAvatarCategory = 'all';
 
   function openAvatarPickerModal() {
     const modal = document.getElementById('avatarPickerModal');
@@ -2538,9 +2621,13 @@
     listToRender.forEach(av => {
       const btn = document.createElement('button');
       btn.type = 'button';
-      btn.className = `avatar-choice-btn ${state.userAvatar === av ? 'active' : ''}`;
-      btn.textContent = av;
-      btn.title = `Avatar: ${av}`;
+      btn.className = 'avatar-choice-btn ' + (state.userAvatar === av ? 'active' : '');
+      if (isCustomAvatar(av)) {
+        btn.innerHTML = '<img src="' + getAvatarSrc(av) + '" style="width:100%; height:100%; border-radius:12px; object-fit:cover; display:block;" alt="Avatar">';
+      } else {
+        btn.textContent = av;
+      }
+      btn.title = 'Avatar: ' + av;
       btn.onclick = () => {
         selectAvatar(av);
       };
@@ -2554,7 +2641,7 @@
 
     // Profil modalındaki avatarı güncelle
     const profHeroAvatar = document.getElementById('profHeroAvatar');
-    if (profHeroAvatar) profHeroAvatar.textContent = avatar;
+    if (profHeroAvatar) setAvatarElement(profHeroAvatar, avatar);
 
     // Genel UI güncelle (üst bar avatarı, vb.)
     if (typeof updateUserProfileUI === 'function') {
@@ -2564,7 +2651,7 @@
     }
 
     closeAvatarPickerModal();
-    showToast(`Yeni avatar seçildi: ${avatar} 🎉`);
+    showToast('Yeni avatar seçildi! 🎉');
   }
 
   function openSettingsModal(defaultTab = 'cards') {
@@ -2872,10 +2959,12 @@
   }
 
   function updateUserProfileUI() {
-    if (dom.headerUserAvatar) dom.headerUserAvatar.textContent = state.userAvatar;
+    if (dom.headerUserAvatar) setAvatarElement(dom.headerUserAvatar, state.userAvatar);
     if (dom.headerUserName) dom.headerUserName.textContent = state.userName;
-    if (dom.homeUserAvatar) dom.homeUserAvatar.textContent = state.userAvatar;
+    if (dom.homeUserAvatar) setAvatarElement(dom.homeUserAvatar, state.userAvatar);
     if (dom.homeUserName) dom.homeUserName.textContent = state.userName;
+    const profHeroAvatar = document.getElementById('profHeroAvatar');
+    if (profHeroAvatar) setAvatarElement(profHeroAvatar, state.userAvatar);
     if (dom.settingUserNameInput && document.activeElement !== dom.settingUserNameInput) {
       dom.settingUserNameInput.value = state.userName;
     }
@@ -3298,13 +3387,17 @@
       list = (found && found.avatars) ? found.avatars : [];
     }
 
-    const currentSelected = obState.avatar || '🦊';
+    const currentSelected = obState.avatar || 'avatar_1_1';
     list.forEach(av => {
       const btn = document.createElement('button');
       btn.type = 'button';
-      btn.className = `avatar-chip ${currentSelected === av ? 'active' : ''}`;
+      btn.className = 'avatar-chip ' + (currentSelected === av ? 'active' : '');
       btn.setAttribute('data-avatar', av);
-      btn.textContent = av;
+      if (isCustomAvatar(av)) {
+        btn.innerHTML = '<img src="' + getAvatarSrc(av) + '" style="width:100%; height:100%; border-radius:10px; object-fit:cover; display:block;" alt="Avatar">';
+      } else {
+        btn.textContent = av;
+      }
       btn.onclick = () => {
         obState.avatar = av;
         updateOnboardingAvatarUI(av);

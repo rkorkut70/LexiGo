@@ -14640,3 +14640,34 @@ html.screen-fit-compact .welcome-action-guest {
     grid-template-columns: repeat(3, 1fr) !important;
   }
 }
+
+/* 80 Özel Suluboya Avatarı İçin Görsel İyileştirmeleri */
+.avatar-choice-btn {
+  overflow: hidden !important;
+  padding: 3px !important;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.25) !important;
+}
+.avatar-choice-btn img {
+  width: 100% !important;
+  height: 100% !important;
+  border-radius: 12px !important;
+  object-fit: cover !important;
+  display: block !important;
+  transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1) !important;
+}
+.avatar-choice-btn:hover img {
+  transform: scale(1.12) !important;
+}
+.avatar-img-fluid {
+  width: 100% !important;
+  height: 100% !important;
+  border-radius: 50% !important;
+  object-fit: cover !important;
+  display: block !important;
+}
+.avatar-img-inline {
+  border-radius: 50% !important;
+  object-fit: cover !important;
+  vertical-align: middle !important;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.25) !important;
+}

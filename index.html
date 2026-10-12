@@ -2565,58 +2565,25 @@
               <input type="text" id="settingUserNameInput" class="setting-text-input" placeholder="Adınız..." maxlength="20">
             </div>
 
-            <div class="setting-block">
-              <span class="setting-block-label">Avatar</span>
-              <div class="setting-avatar-row" id="settingAvatarGrid">
-    <button type="button" class="setting-avatar-btn active" data-avatar="👽">👽</button>
-  <button type="button" class="setting-avatar-btn " data-avatar="👾">👾</button>
-  <button type="button" class="setting-avatar-btn " data-avatar="🤖">🤖</button>
-  <button type="button" class="setting-avatar-btn " data-avatar="👻">👻</button>
-  <button type="button" class="setting-avatar-btn " data-avatar="🤡">🤡</button>
-  <button type="button" class="setting-avatar-btn " data-avatar="💩">💩</button>
-  <button type="button" class="setting-avatar-btn " data-avatar="🎃">🎃</button>
-  <button type="button" class="setting-avatar-btn " data-avatar="👺">👺</button>
-  <button type="button" class="setting-avatar-btn " data-avatar="🐶">🐶</button>
-  <button type="button" class="setting-avatar-btn " data-avatar="🐱">🐱</button>
-  <button type="button" class="setting-avatar-btn " data-avatar="🐭">🐭</button>
-  <button type="button" class="setting-avatar-btn " data-avatar="🐹">🐹</button>
-  <button type="button" class="setting-avatar-btn " data-avatar="🐰">🐰</button>
-  <button type="button" class="setting-avatar-btn " data-avatar="🦊">🦊</button>
-  <button type="button" class="setting-avatar-btn " data-avatar="🐻">🐻</button>
-  <button type="button" class="setting-avatar-btn " data-avatar="🐼">🐼</button>
-  <button type="button" class="setting-avatar-btn " data-avatar="🐨">🐨</button>
-  <button type="button" class="setting-avatar-btn " data-avatar="🐯">🐯</button>
-  <button type="button" class="setting-avatar-btn " data-avatar="🦁">🦁</button>
-  <button type="button" class="setting-avatar-btn " data-avatar="🐮">🐮</button>
-  <button type="button" class="setting-avatar-btn " data-avatar="🐷">🐷</button>
-  <button type="button" class="setting-avatar-btn " data-avatar="🐸">🐸</button>
-  <button type="button" class="setting-avatar-btn " data-avatar="🐵">🐵</button>
-  <button type="button" class="setting-avatar-btn " data-avatar="🐧">🐧</button>
-  <button type="button" class="setting-avatar-btn " data-avatar="🦆">🦆</button>
-  <button type="button" class="setting-avatar-btn " data-avatar="🦉">🦉</button>
-  <button type="button" class="setting-avatar-btn " data-avatar="🦇">🦇</button>
-  <button type="button" class="setting-avatar-btn " data-avatar="🐺">🐺</button>
-  <button type="button" class="setting-avatar-btn " data-avatar="🐴">🐴</button>
-  <button type="button" class="setting-avatar-btn " data-avatar="🦄">🦄</button>
-  <button type="button" class="setting-avatar-btn " data-avatar="🐝">🐝</button>
-  <button type="button" class="setting-avatar-btn " data-avatar="🦋">🦋</button>
-  <button type="button" class="setting-avatar-btn " data-avatar="🐞">🐞</button>
-  <button type="button" class="setting-avatar-btn " data-avatar="🐢">🐢</button>
-  <button type="button" class="setting-avatar-btn " data-avatar="🐍">🐍</button>
-  <button type="button" class="setting-avatar-btn " data-avatar="🦖">🦖</button>
-  <button type="button" class="setting-avatar-btn " data-avatar="🐙">🐙</button>
-  <button type="button" class="setting-avatar-btn " data-avatar="🐠">🐠</button>
-  <button type="button" class="setting-avatar-btn " data-avatar="🐬">🐬</button>
-  <button type="button" class="setting-avatar-btn " data-avatar="🐳">🐳</button>
-  <button type="button" class="setting-avatar-btn " data-avatar="🐆">🐆</button>
-  <button type="button" class="setting-avatar-btn " data-avatar="🦓">🦓</button>
-  <button type="button" class="setting-avatar-btn " data-avatar="🦍">🦍</button>
-  <button type="button" class="setting-avatar-btn " data-avatar="🐘">🐘</button>
-  <button type="button" class="setting-avatar-btn " data-avatar="🦛">🦛</button>
-  <button type="button" class="setting-avatar-btn " data-avatar="🦒">🦒</button>
-  <button type="button" class="setting-avatar-btn " data-avatar="🦘">🦘</button>
-  <button type="button" class="setting-avatar-btn " data-avatar="🦩">🦩</button>
-</div>
+            <div class="setting-block" id="settingAvatarPickerBlock">
+              <div class="setting-block-header">
+                <span class="setting-block-label">Öğrenci Avatarı</span>
+                <span class="setting-badge-pill" style="background: rgba(99, 102, 241, 0.15); color: #818cf8; font-weight: 800;">80 Özel Avatar</span>
+              </div>
+              <div style="display: flex; align-items: center; justify-content: space-between; padding: 12px 14px; background: rgba(10, 12, 19, 0.6); border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 16px;">
+                <div style="display: flex; align-items: center; gap: 14px;">
+                  <div id="settingUserAvatarPreview" style="width: 52px; height: 52px; border-radius: 50%; border: 2.5px solid #6366f1; box-shadow: 0 4px 14px rgba(99, 102, 241, 0.35); overflow: hidden; display: flex; align-items: center; justify-content: center; font-size: 1.8rem; background: var(--bg-surface);">
+                    🦊
+                  </div>
+                  <div>
+                    <div style="font-size: 0.92rem; font-weight: 800; color: var(--text-main);">Karakterini Seç</div>
+                    <div style="font-size: 0.76rem; color: var(--text-muted);">8 tematik kategoride 80 suluboya avatar</div>
+                  </div>
+                </div>
+                <button type="button" class="btn btn-primary btn-sm" id="settingOpenAvatarPickerBtn" style="padding: 8px 14px; font-size: 0.82rem; border-radius: 12px; white-space: nowrap; cursor: pointer;">
+                  🎨 Değiştir
+                </button>
+              </div>
             </div>
 
             <div class="setting-block">
