@@ -15,7 +15,7 @@
   <meta http-equiv="Expires" content="0">
   <title>LexiQ • Çok Dilli Akıllı Kelime Kartları</title>
   <link rel="icon" type="image/jpeg" href="logo.jpg">
-  <link rel="stylesheet" href="style.css?v=1.6.3">
+  <link rel="stylesheet" href="style.css?v=1.7.0">
 </head>
 <body>
   <div class="app-container">
@@ -28,7 +28,7 @@
       <div class="header-actions">
         <!-- Sıralama Butonu -->
         <button id="leaderboardBtn" class="pill-btn user-header-btn leaderboard-header-btn" title="Liderlik Tablosu">
-          <span class="settings-btn-icon">🏆</span>
+          <img src="assets/icons/icon_3d_school.png" class="header-3d-icon" alt="Sıralama">
           <span class="header-btn-text">Sıralama</span>
         </button>
 
@@ -46,7 +46,7 @@
 
         <!-- Rozetler & XP Butonu -->
         <button id="badgesBtn" class="pill-btn xp-header-btn" title="Kazanılan Puan ve Rozetler Vitrini">
-          <span class="xp-star">⭐</span>
+          <img src="assets/icons/icon_3d_xp.png" class="header-3d-icon" alt="XP">
           <span id="headerXpText">0</span> <span class="xp-suffix">XP</span>
         </button>
 
@@ -138,7 +138,7 @@
           </div>
 
           <button id="homeStartBtn" class="home-cta-btn" type="button">
-            <span class="cta-icon">🃏</span>
+            <img src="assets/icons/icon_3d_cards.png" class="cta-3d-icon" alt="Kartlar">
             <span id="homeStartBtnText">Kelime Öğren</span>
             <svg class="cta-arrow" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
               <line x1="5" y1="12" x2="19" y2="12"></line>
@@ -150,7 +150,9 @@
         <!-- 2. KELİME ARENASI (SADE & KOMPAKT PRATİK KARTI) -->
         <section class="home-arena-banner-card" id="homeArenaBannerCard">
           <div class="home-arena-banner-left">
-            <div class="home-arena-banner-icon">🎮</div>
+            <div class="home-arena-banner-icon">
+              <img src="assets/icons/icon_3d_arena.png" class="banner-3d-icon" alt="Arena">
+            </div>
             <div class="home-arena-banner-text">
               <h3 class="home-arena-banner-title">Kelime Arenası</h3>
               <p class="home-arena-banner-desc" id="homeArenaSubtext">Öğrendiğin kelimelerle meydan oku ve yarış!</p>
@@ -165,7 +167,7 @@
         <section class="home-daily-progress-card">
           <div class="daily-progress-header">
             <div class="daily-progress-title-wrap">
-              <span class="daily-title-icon">🎯</span>
+              <img src="assets/icons/icon_3d_streak.png" class="stat-3d-icon" alt="Hedef">
               <div>
                 <h3 class="daily-card-title">Bugün Öğrenilen Kelimeler</h3>
                 <span class="daily-card-subtitle" id="dailyGoalSubtext">Günlük Hedef: 15 Kelime</span>
@@ -181,7 +183,7 @@
               <span class="daily-unit-label">Kelime</span>
             </div>
             <div class="daily-pills-col">
-              <span class="daily-pill streak-pill" id="homeStatStreak">🔥 1 Gün Seri</span>
+              <span class="daily-pill streak-pill" id="homeStatStreak"><img src="assets/icons/icon_3d_streak.png" class="pill-3d-icon" alt="Seri"> 1 Gün Seri</span>
               <span class="daily-pill remaining-pill" id="homeRemainingText">⏳ 15 Kalan</span>
             </div>
           </div>
@@ -525,7 +527,7 @@
           <!-- 1. Kart Eşleştirme (min 8) -->
           <div class="game-hub-card" data-game="match">
             <div class="game-hub-icon-wrap theme-indigo">
-              <span class="game-hub-icon">🃏</span>
+              <img src="assets/icons/icon_3d_cards.png" class="game-3d-icon" alt="Eşleştirme">
             </div>
             <div class="game-hub-info">
               <div class="game-hub-title-row">
@@ -540,7 +542,7 @@
           <!-- 2. Doğru mu Yanlış mı? (min 4) -->
           <div class="game-hub-card" data-game="truefalse">
             <div class="game-hub-icon-wrap theme-amber">
-              <span class="game-hub-icon">⚡</span>
+              <img src="assets/icons/icon_3d_xp.png" class="game-3d-icon" alt="Doğru Yanlış">
             </div>
             <div class="game-hub-info">
               <div class="game-hub-title-row">
@@ -555,7 +557,7 @@
           <!-- 3. Harf Tetrisi (min 3) -->
           <div class="game-hub-card" data-game="tetris">
             <div class="game-hub-icon-wrap theme-emerald">
-              <span class="game-hub-icon">🕹️</span>
+              <img src="assets/icons/icon_3d_arena.png" class="game-3d-icon" alt="Tetris">
             </div>
             <div class="game-hub-info">
               <div class="game-hub-title-row">
@@ -570,7 +572,7 @@
           <!-- 4. Harf Karıştırma (min 3) -->
           <div class="game-hub-card" data-game="anagram">
             <div class="game-hub-icon-wrap theme-blue">
-              <span class="game-hub-icon">🧩</span>
+              <img src="assets/icons/icon_3d_anagram.png" class="game-3d-icon" alt="Anagram">
             </div>
             <div class="game-hub-info">
               <div class="game-hub-title-row">
@@ -585,7 +587,7 @@
           <!-- 5. Dinle ve Yaz (min 4) -->
           <div class="game-hub-card" data-game="listen">
             <div class="game-hub-icon-wrap theme-purple">
-              <span class="game-hub-icon">🎧</span>
+              <img src="assets/icons/icon_3d_audio.png" class="game-3d-icon" alt="Dinle">
             </div>
             <div class="game-hub-info">
               <div class="game-hub-title-row">
@@ -600,7 +602,7 @@
           <!-- 6. 4 Şıklı Test (min 6) -->
           <div class="game-hub-card" data-game="quiz">
             <div class="game-hub-icon-wrap theme-rose">
-              <span class="game-hub-icon">🎯</span>
+              <img src="assets/icons/icon_3d_streak.png" class="game-3d-icon" alt="Test">
             </div>
             <div class="game-hub-info">
               <div class="game-hub-title-row">
@@ -615,7 +617,7 @@
           <!-- 7. Cümle Kurma (min 4) -->
           <div class="game-hub-card" data-game="scramble">
             <div class="game-hub-icon-wrap theme-cyan">
-              <span class="game-hub-icon">📝</span>
+              <img src="assets/icons/icon_3d_home.png" class="game-3d-icon" alt="Cümle">
             </div>
             <div class="game-hub-info">
               <div class="game-hub-title-row">
@@ -630,7 +632,7 @@
           <!-- 8. Boşluk Doldurma (min 5) -->
           <div class="game-hub-card" data-game="cloze">
             <div class="game-hub-icon-wrap theme-orange">
-              <span class="game-hub-icon">✨</span>
+              <img src="assets/icons/icon_3d_hint.png" class="game-3d-icon" alt="Boşluk">
             </div>
             <div class="game-hub-info">
               <div class="game-hub-title-row">
@@ -736,7 +738,7 @@
           <div class="game-card">
             <div class="game-card-header">
               <div class="game-header-left">
-                <button id="matchHintBtn" class="game-hint-btn" type="button" title="Bir Çift İpucu Göster (-5 XP)">💡 İpucu <span class="hint-cost-badge">-5 XP</span></button>
+                <button id="matchHintBtn" class="game-hint-btn" type="button" title="Bir Çift İpucu Göster (-5 XP)"><img src="assets/icons/icon_3d_hint.png" class="btn-3d-icon" alt="İpucu"> İpucu <span class="hint-cost-badge">-5 XP</span></button>
               </div>
               <div class="game-header-center"></div>
               <div class="game-card-header-actions">
@@ -759,7 +761,7 @@
           <div class="game-card">
             <div class="game-card-header">
               <div class="game-header-left">
-                <button id="tfHintBtn" class="game-hint-btn" type="button" title="Kelime Hakkında İpucu Al (-3 XP)">💡 İpucu <span class="hint-cost-badge">-3 XP</span></button>
+                <button id="tfHintBtn" class="game-hint-btn" type="button" title="Kelime Hakkında İpucu Al (-3 XP)"><img src="assets/icons/icon_3d_hint.png" class="btn-3d-icon" alt="İpucu"> İpucu <span class="hint-cost-badge">-3 XP</span></button>
               </div>
               <div class="game-header-center">
                 <button class="mini-audio-btn" id="tfAudioBtn" title="Telaffuzu Dinle" aria-label="Telaffuz" type="button">
@@ -807,7 +809,7 @@
           <div class="game-card tetris-card">
             <div class="game-card-header tetris-card-header">
               <div class="game-header-left tetris-header-left">
-                <button id="tetrisHintBtn" class="game-hint-btn" type="button" title="Sıradaki Harfi Doldur (-5 XP)">💡 İpucu <span class="hint-cost-badge">-5 XP</span></button>
+                <button id="tetrisHintBtn" class="game-hint-btn" type="button" title="Sıradaki Harfi Doldur (-5 XP)"><img src="assets/icons/icon_3d_hint.png" class="btn-3d-icon" alt="İpucu"> İpucu <span class="hint-cost-badge">-5 XP</span></button>
               </div>
               <div class="game-header-center">
                 <button class="mini-audio-btn" id="tetrisAudioBtn" title="Telaffuzu Dinle" aria-label="Telaffuz" type="button">
@@ -847,7 +849,7 @@
           <div class="game-card">
             <div class="game-card-header">
               <div class="game-header-left">
-                <button id="anagramHintBtn" class="game-hint-btn" type="button" title="Sıradaki Doğru Harfi Yerleştir (-5 XP)">💡 İpucu <span class="hint-cost-badge">-5 XP</span></button>
+                <button id="anagramHintBtn" class="game-hint-btn" type="button" title="Sıradaki Doğru Harfi Yerleştir (-5 XP)"><img src="assets/icons/icon_3d_hint.png" class="btn-3d-icon" alt="İpucu"> İpucu <span class="hint-cost-badge">-5 XP</span></button>
               </div>
               <div class="game-header-center">
                 <button class="mini-audio-btn" id="anagramAudioBtn" title="Telaffuzu Dinle" aria-label="Telaffuz" type="button">
@@ -896,7 +898,7 @@
           <div class="game-card">
             <div class="game-card-header">
               <div class="game-header-left">
-                <button id="listenHintBtn" class="game-hint-btn" type="button" title="Türkçe Anlam İpucu Al (-5 XP)">💡 İpucu <span class="hint-cost-badge">-5 XP</span></button>
+                <button id="listenHintBtn" class="game-hint-btn" type="button" title="Türkçe Anlam İpucu Al (-5 XP)"><img src="assets/icons/icon_3d_hint.png" class="btn-3d-icon" alt="İpucu"> İpucu <span class="hint-cost-badge">-5 XP</span></button>
               </div>
               <div class="game-header-center">
                 <button class="mini-audio-btn" id="listenHeaderAudioBtn" title="Sesi Dinle" aria-label="Telaffuz" type="button">
@@ -976,7 +978,7 @@
           <div class="game-card">
             <div class="game-card-header">
               <div class="game-header-left">
-                <button id="scrambleHintBtn" class="game-hint-btn" type="button" title="Sıradaki Doğru Kelimeyi Yerleştir (-5 XP)">💡 İpucu <span class="hint-cost-badge">-5 XP</span></button>
+                <button id="scrambleHintBtn" class="game-hint-btn" type="button" title="Sıradaki Doğru Kelimeyi Yerleştir (-5 XP)"><img src="assets/icons/icon_3d_hint.png" class="btn-3d-icon" alt="İpucu"> İpucu <span class="hint-cost-badge">-5 XP</span></button>
               </div>
               <div class="game-header-center">
                 <button class="mini-audio-btn" id="scrambleAudioBtn" title="Cümleyi Dinle" aria-label="Telaffuz" type="button">
@@ -1134,7 +1136,7 @@
         <div class="welcome-hero-section">
           <div class="welcome-brand-wrapper">
             <h1 class="welcome-brand-name">Lexi<span class="welcome-brand-q">Q</span></h1>
-            <span class="welcome-version-pill">v1.6.3</span>
+            <span class="welcome-version-pill">v1.7.0</span>
           </div>
           <!-- 3 Temel Başarı Sütunu (3D Pill Rozetleri) -->
           <div class="welcome-pillars-container">
@@ -1609,16 +1611,16 @@
       <!-- Sekmeler (Okul / Sınıfım / Şube Ligi / Şeref Kürsüsü) -->
       <div class="leaderboard-tabs-nav" id="leaderboardTabsNav">
         <button type="button" class="lb-tab-btn active" data-tab="global">
-          🌍 Okul
+          <img src="assets/icons/icon_3d_school.png" class="tab-3d-icon" alt="Okul"> Okul
         </button>
         <button type="button" class="lb-tab-btn" data-tab="class">
-          🏫 Sınıfım
+          <img src="assets/icons/icon_3d_home.png" class="tab-3d-icon" alt="Sınıfım"> Sınıfım
         </button>
         <button type="button" class="lb-tab-btn" data-tab="duels">
-          ⚔️ Şube Ligi
+          <img src="assets/icons/icon_3d_arena.png" class="tab-3d-icon" alt="Lig"> Şube Ligi
         </button>
         <button type="button" class="lb-tab-btn" data-tab="honor">
-          🏆 Kürsü
+          <img src="assets/icons/icon_3d_crown.png" class="tab-3d-icon" alt="Kürsü"> Kürsü
         </button>
       </div>
 
@@ -1850,7 +1852,7 @@
         <div class="about-hero-box">
           <div class="about-brand-row">
             <span class="about-brand">Lexi<span class="brand-highlight">Q</span></span>
-            <span class="about-version-pill" id="aboutAppVersion">v1.6.3</span>
+            <span class="about-version-pill" id="aboutAppVersion">v1.7.0</span>
             <span class="about-platform-badge" id="aboutPlatformBadge" style="display: none; font-size: 0.72rem; font-weight: 700; padding: 3px 9px; border-radius: 12px; background: rgba(59,130,246,0.15); color: #3b82f6; border: 1px solid rgba(59,130,246,0.3);"></span>
           </div>
           <p class="about-tagline">Müfredat Tabanlı Çok Dilli Kelime Arenası</p>
@@ -3423,7 +3425,7 @@
       <div class="confirm-icon-wrap" style="font-size: 2.8rem; margin-bottom: 8px;">🎉</div>
       <h3 class="confirm-title" style="font-size: 1.3rem; font-weight: 800; margin: 0 0 6px 0;">LexiQ Güncellendi!</h3>
       <div class="app-update-version-badge" style="display: inline-block; padding: 4px 14px; border-radius: 20px; font-size: 0.84rem; font-weight: 800; margin-bottom: 14px;">
-        Sürüm <span id="appUpdateVersionText">v1.6.3</span>
+        Sürüm <span id="appUpdateVersionText">v1.7.0</span>
       </div>
       <div class="update-notes-box" style="text-align: left; border-radius: 16px; padding: 14px 16px; font-size: 0.88rem; line-height: 1.6; margin-bottom: 18px; max-height: 280px; overflow-y: auto;">
         <div class="update-notes-title" style="font-weight: 800; margin-bottom: 8px; display: flex; align-items: center; gap: 6px;">
@@ -3495,11 +3497,11 @@
   <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-storage-compat.js"></script>
-  <script src="firebase_backend.js?v=1.6.3"></script>
+  <script src="firebase_backend.js?v=1.7.0"></script>
 
   <!-- Kelime Verisi ve Uygulama Mantığı (Sadece Standart Vanilla JS) -->
-  <script src="words_data.js?v=1.6.3"></script>
-  <script src="app.js?v=1.6.3"></script>
+  <script src="words_data.js?v=1.7.0"></script>
+  <script src="app.js?v=1.7.0"></script>
 
   </body>
 </html>

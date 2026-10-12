@@ -1,10 +1,11 @@
 {
-  "version": "v1.6.3",
-  "versionCode": 49,
+  "version": "v1.7.0",
+  "versionCode": 50,
   "releaseDate": "2026-10-13",
   "notes": [
-    "🏛️ Turnuva liderlik tablosunda 'Okul' sekmesi ilk sıraya ve varsayılana alındı",
-    "⚡ AGP 8.7.3 ve Android SDK 35 kararlı altyapı geçişi",
-    "🎓 Okul logosu ve görsel asset optimizasyonu"
+    "✨ 3D Özgün İkon Sistemi: Header, Arena ve Liderlik sekmelerinde zengin 3D görseller",
+    "🎮 Arena Oyun Kartları ve İpuçları için 3D görselleştirme",
+    "🏛️ Turnuva Liderler tablosunda Okul sekmesi varsayılan yapıldı",
+    "⚡ AGP 8.7.3 & Android SDK 35 kararlı altyapı performansı"
   ]
 }
