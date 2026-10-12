@@ -384,63 +384,43 @@
           </div>
         </div>
 
-        <!-- Günlük Hedef Tamamlandı Kutlama ve Yönlendirme Kartı -->
+        <!-- Günlük Hedef Tamamlandı Kutlama ve Yönlendirme Kartı (3D Dokunsal Tasarım & Sıfır Scroll) -->
         <div id="flashcardGoalCompletedView" class="goal-completed-full-view" style="display: none;">
-          <div class="completed-hero-icon">🏆</div>
-          <h2 class="completed-hero-title">🎯 Günlük Hedef Tamamlandı!</h2>
-          <p class="completed-hero-desc" id="cardCompletedFullDesc">
-            Tebrikler! Belirlediğin öğrenme hedefini başarıyla tamamladın. Öğrendiğin bu kelimeleri kalıcı hafızana almak için şimdi <strong>Kelime Arenası'nda eğlenceli etkinliklerle</strong> pratik yapma zamanı!
-          </p>
-
-          <!-- Kart Kullanım İpuçları & Kontroller Hatırlatması -->
-          <div class="card-tips-reminder-box">
-            <div class="tips-reminder-title">
-              <span>💡</span> Kart Kullanım İpuçları
-            </div>
-            <div class="tips-reminder-grid">
-              <div class="tip-reminder-item">
-                <span class="tip-icon">🔄</span>
-                <div>
-                  <strong>Karta Dokun:</strong>
-                  <span>3D çevirerek Türkçe anlam ve örneği gör</span>
-                </div>
-              </div>
-              <div class="tip-reminder-item">
-                <span class="tip-icon">👉</span>
-                <div>
-                  <strong>Swipe (Kaydır):</strong>
-                  <span>Sağa / sola kaydırarak kelime değiştir</span>
-                </div>
-              </div>
-              <div class="tip-reminder-item">
-                <span class="tip-icon">✅</span>
-                <div>
-                  <strong>Öğrendim:</strong>
-                  <span>Butona basarak hedefe kaydet</span>
-                </div>
-              </div>
-              <div class="tip-reminder-item">
-                <span class="tip-icon">🔊</span>
-                <div>
-                  <strong>Sesli Telaffuz:</strong>
-                  <span>US / UK butonlarıyla dinle</span>
-                </div>
-              </div>
-            </div>
+          <div class="completed-hero-badge-wrap">
+            <span class="completed-hero-icon-3d">🏆</span>
+            <div class="completed-hero-sparkles">✨</div>
+          </div>
+          
+          <div class="completed-hero-text-wrap">
+            <h2 class="completed-hero-title">🎯 Günlük Hedef Tamamlandı!</h2>
+            <p class="completed-hero-desc" id="cardCompletedFullDesc">
+              Tebrikler! Belirlediğin öğrenme hedefini başarıyla tamamladın. Öğrendiğin bu kelimeleri kalıcı hafızana almak için şimdi <strong>Kelime Arenası'nda eğlenceli etkinliklerle</strong> pratik yapma zamanı!
+            </p>
           </div>
 
-          <div class="completed-hero-actions">
-            <button id="cardFullArenaBtn" class="pill-btn primary-action-btn" type="button">
-              <span>🎮</span> Kelime Arenası'nda Başla
+          <!-- Başarı & Pekiştirme Öneri Çubuğu (Kompakt 3D Kart) -->
+          <div class="completed-hero-reward-pill">
+            <span class="reward-pill-icon">⚡</span>
+            <span class="reward-pill-text">Bugün hedeflenen tüm kelimeler başarıyla tamamlandı!</span>
+          </div>
+
+          <!-- 3D Dokunsal Aksiyon Butonları (2x2 Dengeli Grid - Sıfır Scroll) -->
+          <div class="completed-hero-actions-grid">
+            <button id="cardFullArenaBtn" class="pill-btn primary-action-btn card-hero-action-btn primary-3d-btn" type="button">
+              <span class="hero-action-icon">🎮</span>
+              <span class="hero-action-label">Arenaya Başla</span>
             </button>
-            <button id="cardFullHomeBtn" class="pill-btn secondary-btn" type="button">
-              <span>🏠</span> Giriş Sayfasına Dön
+            <button id="cardFullHomeBtn" class="pill-btn secondary-btn card-hero-action-btn secondary-3d-btn" type="button">
+              <span class="hero-action-icon">🏠</span>
+              <span class="hero-action-label">Ana Sayfa</span>
             </button>
-            <button id="cardFullLearnMoreBtn" class="pill-btn secondary-btn" type="button">
-              <span>➕</span> <span id="cardFullLearnMoreText">+5 Kelime Daha Öğren</span>
+            <button id="cardFullLearnMoreBtn" class="pill-btn secondary-btn card-hero-action-btn secondary-3d-btn" type="button">
+              <span class="hero-action-icon">➕</span>
+              <span class="hero-action-label" id="cardFullLearnMoreText">+5 Kelime Öğren</span>
             </button>
-            <button id="cardFullReviewLearnedBtn" class="pill-btn secondary-btn" type="button">
-              <span>👀</span> Öğrenilen Kelimeleri İncele
+            <button id="cardFullReviewLearnedBtn" class="pill-btn secondary-btn card-hero-action-btn secondary-3d-btn" type="button">
+              <span class="hero-action-icon">👀</span>
+              <span class="hero-action-label">Öğrenilenleri İncele</span>
             </button>
           </div>
         </div>
