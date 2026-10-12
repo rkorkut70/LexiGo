@@ -1,9 +1,10 @@
 {
-  "version": "v1.5.5",
-  "versionCode": 41,
+  "version": "v1.5.6",
+  "versionCode": 42,
   "releaseDate": "2026-10-12",
   "notes": [
-    "v1.5.5 - iOS ve Web güncelleme bildirim algoritması kararlı hale getirildi",
-    "3D derinlikli modern ayarlar ekranı ve performans optimizasyonları"
+    "🎨 80 Adet Özgün Suluboya Avatarı: 8 tematik kategoride yepyeni karakter koleksiyonu",
+    "✨ Gelişmiş Avatar Seçici & Profil Entegrasyonu",
+    "⚡ Yüksek performanslı hafif görsel mimarisi"
   ]
 }
