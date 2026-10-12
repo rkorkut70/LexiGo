@@ -1,11 +1,11 @@
 {
-  "version": "v1.7.6",
-  "versionCode": 56,
+  "version": "v1.7.7",
+  "versionCode": 57,
   "releaseDate": "2026-10-13",
   "notes": [
-    "🚀 iOS ve Web canlı güncelleme ve önbellek tazeleme deneyimi optimize edildi",
-    "🔒 Kaynak kodu deposu bağlantısı tamamen kaldırıldı, yerel uygulama içi yenileme korundu",
-    "🧩 Kelime Eşleme: Solda hedef dil, sağda Türkçe sütun düzeni aktif",
+    "🛠️ Oyun sahası görünürlük çakışması düzeltildi (Tek aktif oyun modu kuralı sağlandı)",
+    "🧩 Kelime Eşleme: Solda hedef dil, sağda Türkçe düzeni optimize edildi",
+    "📱 Tablet ve masaüstünde tam ekran alan kullanımı ve büyük tipografi korundu",
     "🛡️ Android Target SDK 36 Google Play Store tam uyumluluğu korundu"
   ]
 }

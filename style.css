@@ -15048,10 +15048,14 @@ html.screen-fit-compact .welcome-action-guest {
 @media (min-width: 600px) {
   .game-active-area {
     padding: 20px 24px calc(env(safe-area-inset-bottom, 0px) + 20px) 24px !important;
-    display: flex !important;
-    align-items: center !important;
-    justify-content: center !important;
+    align-items: center;
+    justify-content: center;
     height: 100% !important;
+  }
+
+  .game-active-area[style*="display: none"],
+  .game-active-area[style*="display:none"] {
+    display: none !important;
   }
 
   .game-card,
