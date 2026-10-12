@@ -10368,7 +10368,7 @@
           if (code && !isNaN(code)) return parseInt(code, 10);
         } catch (e) {}
       }
-      return 37;
+      return 40;
     }
 
     function getAppPlatform() {
@@ -10441,8 +10441,11 @@
       if (semVerOlder) return false;
       if (semVerNewer) return true;
 
-      // Sürüm metinleri eşitse ve versionCode tanımlıysa kontrol et
-      if (remoteCode && currentCode) {
+      // Semantik sürüm eşitse (örn. v1.5.4 === v1.5.4):
+      // Yalnızca native Android (Google Play) ortamında versionCode farkı dikkate alınır.
+      // iOS ve Web sürümlerinde semantik sürüm eşitse kesinlikle yeni sürüm YOKTUR.
+      const platform = getAppPlatform();
+      if (platform === 'android' && remoteCode && currentCode) {
         return remoteCode > currentCode;
       }
       return false;
