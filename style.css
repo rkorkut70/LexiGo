@@ -592,10 +592,10 @@ body[data-theme="dark"] .today-bar-track,
 .card-pure-section .flashcard-wrapper,
 .flashcard-wrapper {
   width: 100% !important;
-  max-width: 440px !important;
-  flex: 1 1 auto !important;
-  min-height: 280px !important;
-  max-height: clamp(340px, 58vh, 480px) !important;
+  max-width: 420px !important;
+  flex: 0 1 auto !important;
+  min-height: 220px !important;
+  max-height: clamp(240px, 42vh, 370px) !important;
   margin: 0 auto !important;
   position: relative;
   cursor: pointer;
@@ -12431,18 +12431,19 @@ html[data-flip-speed="slow"] .flashcard {
 .tour-bubble {
   position: fixed;
   z-index: 10025;
-  width: min(340px, calc(100vw - 32px));
+  width: min(340px, calc(100vw - 28px));
   max-width: 360px;
   background: #181b36;
   color: #f8fafc;
   border-radius: 18px;
-  padding: 16px 18px;
+  padding: 12px 16px !important;
   border: 1.5px solid rgba(139, 92, 246, 0.45);
   box-shadow: 0 16px 40px rgba(0, 0, 0, 0.65), 0 0 25px rgba(99, 102, 241, 0.3);
   transition: top 0.22s cubic-bezier(0.16, 1, 0.3, 1), left 0.22s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.2s ease;
   will-change: top, left;
   user-select: none;
   box-sizing: border-box;
+  max-height: calc(100vh - 48px) !important;
 }
 
 .tour-arrow {
@@ -12537,8 +12538,8 @@ html[data-flip-speed="slow"] .flashcard {
 }
 
 .tour-desc {
-  font-size: 0.88rem;
-  line-height: 1.5;
+  font-size: 0.84rem !important;
+  line-height: 1.45 !important;
   color: #cbd5e1;
   margin: 0;
 }
@@ -13490,9 +13491,9 @@ html.screen-fit-compact .card-pure-section {
 
 html[data-screen-fit="fit"] .flashcard-wrapper,
 html.screen-fit-compact .flashcard-wrapper {
-  max-height: clamp(300px, 54vh, 440px) !important;
-  min-height: 260px !important;
-  flex: 1 1 auto !important;
+  max-height: clamp(230px, 40vh, 350px) !important;
+  min-height: 210px !important;
+  flex: 0 1 auto !important;
 }
 
 html[data-screen-fit="fit"] .card-face,
@@ -13645,8 +13646,8 @@ html.screen-fit-compact .welcome-action-guest {
     gap: 6px !important;
   }
   .flashcard-wrapper {
-    max-height: clamp(300px, 54vh, 440px) !important;
-    min-height: 260px !important;
+    max-height: clamp(230px, 40vh, 350px) !important;
+    min-height: 210px !important;
   }
   .card-action-bar-under {
     padding-bottom: 0 !important;

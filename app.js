@@ -7,7 +7,7 @@
 (function () {
   'use strict';
 
-  const APP_VERSION = 'v1.5.7';
+  const APP_VERSION = 'v1.5.8';
   const CURRENT_APP_BUILD = 'lexiq_build_19_clean';
 
   // Build 13 temiz kurulum / sıfırlama güvencesi (Kullanıcı verilerini sıfırla, Hoş Geldin ekranını garantile)
@@ -11358,28 +11358,28 @@ let activeAvatarCategory = 'all';
       bubbleLeft = Math.max(12, Math.min(bubbleLeft, viewportWidth - bubbleWidth - 12));
 
       // Dikey konum: Hedefin altına mı üstüne mi yerleştirelim?
-      const spaceBelow = viewportHeight - rect.bottom;
+      const safeBottom = 32; // Android gesture / navigation bar alanı için güvenli alt pay
+      const spaceBelow = viewportHeight - rect.bottom - safeBottom;
       const spaceAbove = rect.top;
       let bubbleTop = 0;
       let arrowMode = 'top';
 
-      if (rect.height > viewportHeight * 0.45) {
-        // Geniş/büyük hedef (kart gibi): baloncuk ekranın en altına ergonomik oturur
-        bubbleTop = viewportHeight - bubbleHeight - 16;
-        arrowMode = 'hidden';
-      } else if (spaceBelow >= bubbleHeight + 18) {
-        bubbleTop = rect.bottom + 12;
+      if (spaceBelow >= bubbleHeight + 10) {
+        // Hedefin altında yeterli yer var: hedefin hemen altına yerleştir
+        bubbleTop = rect.bottom + 10;
         arrowMode = 'top';
-      } else if (spaceAbove >= bubbleHeight + 18) {
-        bubbleTop = rect.top - bubbleHeight - 12;
+      } else if (spaceAbove >= bubbleHeight + 14) {
+        // Hedefin üstünde yeterli yer var: hedefin üstüne yerleştir
+        bubbleTop = rect.top - bubbleHeight - 10;
         arrowMode = 'bottom';
       } else {
-        bubbleTop = Math.max(12, Math.min(rect.bottom + 10, viewportHeight - bubbleHeight - 14));
+        // Ekranın altına taşmayacak şekilde en ergonomik konuma sabitle
+        bubbleTop = Math.max(12, viewportHeight - bubbleHeight - safeBottom);
         arrowMode = 'hidden';
       }
 
       // Ekran dışına taşmaması için zorunlu dikey clamp
-      bubbleTop = Math.max(12, Math.min(bubbleTop, viewportHeight - bubbleHeight - 14));
+      bubbleTop = Math.max(12, Math.min(bubbleTop, viewportHeight - bubbleHeight - safeBottom));
 
       bubble.style.left = `${bubbleLeft}px`;
       bubble.style.top = `${bubbleTop}px`;
