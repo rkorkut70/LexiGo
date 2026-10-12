@@ -570,7 +570,7 @@
     tabContentPending: document.getElementById('tabContentPending'),
     tabContentLearned: document.getElementById('tabContentLearned'),
     inlineDailyGoalSelect: document.getElementById('inlineDailyGoalSelect'),
-    filterTabs: document.querySelectorAll('.filter-tab, .card-tab-btn'),
+    filterTabs: document.querySelectorAll('.filter-tab'),
     flashcardWrapper: document.getElementById('flashcardWrapper'),
     flashcard: document.getElementById('flashcard'),
     cardFrontFace: document.getElementById('cardFrontFace'),
@@ -788,6 +788,7 @@
     // Rehber & Tanıtım Turu (Speech Bubbles)
     lexiqTourOverlay: document.getElementById('lexiqTourOverlay'),
     tourBackdrop: document.getElementById('tourBackdrop'),
+    tourSpotlight: document.getElementById('tourSpotlight'),
     tourBubble: document.getElementById('tourBubble'),
     tourArrow: document.getElementById('tourArrow'),
     tourStepBadge: document.getElementById('tourStepBadge'),
@@ -3772,16 +3773,8 @@
     if (state.activeFilter === 'learned') {
       filtered = [...learnedWords];
     } else {
-      if (isFullUnitMode) {
-        filtered = [...unlearnedWords];
-      } else {
-        const remainingForGoal = Math.max(0, effectiveGoal - todayLearnedInUnit);
-        if (remainingForGoal === 0) {
-          filtered = []; // Günlük kota tamamlandı! Yeni kelimeler akmaz, kullanıcı aktivitelere teşvik edilir
-        } else {
-          filtered = unlearnedWords.slice(0, remainingForGoal);
-        }
-      }
+      // 'pending' filtresi: Ünitedeki tüm öğrenilmemiş kelimeler kesintisiz çalışılır
+      filtered = [...unlearnedWords];
     }
 
     // SRS / Akıllı Tekrar: Zor veya tekrar edilmesi gereken kelimeleri öne al
@@ -3866,7 +3859,7 @@
     if (dom.cardTodayProgressFill) dom.cardTodayProgressFill.style.width = `${percent}%`;
 
     // Sekmelerdeki hedef ve öğrenilen kelime sayıları
-    const pendingWordsCount = data.isFullUnitMode ? data.unlearnedCount : Math.max(0, targetCount - learnedCount);
+    const pendingWordsCount = data.unlearnedCount;
     if (dom.pendingTabCount) {
       dom.pendingTabCount.textContent = `(${pendingWordsCount})`;
     }
@@ -3926,9 +3919,33 @@
         dom.cardMeaningText.textContent = 'Henüz bu ünitede öğrenilmiş kelime bulunmuyor.';
         dom.cardExampleSentence.textContent = 'Öğrenilecekler sekmesine geçerek yeni kelimeler öğrenebilirsiniz.';
         dom.cardStatusBadge.textContent = 'Boş';
+        dom.cardSentenceTranslation.textContent = '';
+        dom.cardIndexCounter.textContent = '0 / 0';
+        dom.cardStatusBadge.className = 'card-status-badge status-learned';
+        if (dom.cardPhonetic) dom.cardPhonetic.style.display = 'none';
+        if (dom.cardPos) dom.cardPos.style.display = 'none';
+        if (dom.enAccentGroup) {
+          dom.enAccentGroup.classList.add('is-hidden');
+          dom.enAccentGroup.style.setProperty('display', 'none', 'important');
+        }
+        if (dom.pronounceBtn) {
+          dom.pronounceBtn.classList.add('is-hidden');
+          dom.pronounceBtn.style.setProperty('display', 'none', 'important');
+        }
+
+        if (dom.cardBottomControls) dom.cardBottomControls.style.display = 'flex';
+        if (dom.prevCardBtn) dom.prevCardBtn.disabled = true;
+        if (dom.nextCardBtn) dom.nextCardBtn.disabled = true;
+        if (dom.markLearnedBtn) {
+          dom.markLearnedBtn.disabled = true;
+          if (dom.markLearnedBtnText) dom.markLearnedBtnText.textContent = 'Öğrenildi';
+        }
+        if (dom.markRepeatBtn) dom.markRepeatBtn.disabled = true;
+        return;
       } else {
-        // 'pending' filtresinde ve kelimeler bitti -> KUTLAMA VE YÖNLENDİRME KARTI GÖRÜNÜR
+        // 'pending' filtresinde ve kelimeler bitti (Ünite %100 bitti) -> KUTLAMA VE YÖNLENDİRME KARTI GÖRÜNÜR
         if (dom.flashcardWrapper) dom.flashcardWrapper.style.display = 'none';
+        if (dom.cardBottomControls) dom.cardBottomControls.style.display = 'none';
         if (dom.cardNavBar) dom.cardNavBar.style.display = 'none';
         if (dom.actionPanel) dom.actionPanel.style.display = 'none';
 
@@ -3936,53 +3953,18 @@
           dom.flashcardGoalCompletedView.classList.remove('is-hidden');
           dom.flashcardGoalCompletedView.classList.add('active');
           dom.flashcardGoalCompletedView.style.setProperty('display', 'flex', 'important');
-          const isUnitFinished = unlearnedCount === 0;
           if (dom.cardCompletedFullDesc) {
-            if (isUnitFinished) {
-              dom.cardCompletedFullDesc.innerHTML = `Tebrikler! Bu ünitedeki <strong>tüm kelimeleri</strong> başarıyla öğrendin. Şimdi öğrendiğin kelimeleri kalıcı hafızana almak ve refleks haline getirmek için <strong>Kelime Arenası'nda eğlenceli etkinliklerle</strong> pratik yapma zamanı!`;
-            } else {
-              dom.cardCompletedFullDesc.innerHTML = `Tebrikler! Belirlediğin <strong>${baseGoal} kelimelik</strong> öğrenme hedefini başarıyla tamamladın. Öğrendiğin bu kelimeleri kalıcı hafızana almak ve refleks haline getirmek için şimdi <strong>Kelime Arenası'nda eğlenceli etkinliklerle</strong> pratik yapma zamanı!`;
-            }
+            dom.cardCompletedFullDesc.innerHTML = `Tebrikler! Bu ünitedeki <strong>tüm kelimeleri</strong> başarıyla öğrendin. Şimdi öğrendiğin kelimeleri kalıcı hafızana almak ve refleks haline getirmek için <strong>Kelime Arenası'nda eğlenceli etkinliklerle</strong> pratik yapma zamanı!`;
           }
           if (dom.cardFullLearnMoreText) {
-            dom.cardFullLearnMoreText.textContent = isUnitFinished ? 'Ünite Tamamlandı 🏆' : '+5 Kelime Daha Öğren';
+            dom.cardFullLearnMoreText.textContent = 'Ünite Tamamlandı 🏆';
           }
         }
+        return;
       }
-      dom.cardSentenceTranslation.textContent = '';
-      dom.cardIndexCounter.textContent = '0 / 0';
-      dom.cardStatusBadge.className = 'card-status-badge status-learned';
-      if (dom.cardPhonetic) dom.cardPhonetic.style.display = 'none';
-      if (dom.cardPos) dom.cardPos.style.display = 'none';
-      if (dom.enAccentGroup) {
-        dom.enAccentGroup.classList.add('is-hidden');
-        dom.enAccentGroup.style.setProperty('display', 'none', 'important');
-      }
-      if (dom.pronounceBtn) {
-        dom.pronounceBtn.classList.add('is-hidden');
-        dom.pronounceBtn.style.setProperty('display', 'none', 'important');
-      }
-
-      // Butonları ayarla: Hedef tamamlandığında (pending ve words bittiğinde) alttaki gereksiz 3'lü buton çubuğu gizlenerek kutunun tam oturması sağlanır
-      if (dom.cardBottomControls) {
-        dom.cardBottomControls.style.display = (state.activeFilter === 'learned') ? 'flex' : 'none';
-      }
-      if (dom.cardReviewGoArenaBtn) {
-        dom.cardReviewGoArenaBtn.style.setProperty('display', 'none', 'important');
-      }
-      if (dom.prevCardBtn) dom.prevCardBtn.disabled = true;
-      if (dom.nextCardBtn) dom.nextCardBtn.disabled = true;
-      if (dom.markLearnedBtn) {
-        dom.markLearnedBtn.disabled = true;
-        if (dom.markLearnedBtnText) {
-          dom.markLearnedBtnText.textContent = 'Hedef Tamamlandı';
-        }
-      }
-      if (dom.markRepeatBtn) dom.markRepeatBtn.disabled = true;
-      return;
     }
 
-    // Kelimeler varken kart ve kontroller normal gösterilir
+    // Kelimeler varken kart ve kontroller normal gösterilir, tamamlandı ekranı ASLA gösterilmez
     if (dom.flashcardWrapper) dom.flashcardWrapper.style.display = 'block';
     if (dom.cardNavBar) dom.cardNavBar.style.display = 'flex';
     if (dom.actionPanel) dom.actionPanel.style.display = 'block';
@@ -8617,7 +8599,6 @@
     // Kart Filtre Sekmeleri (Öğrenilecekler / Öğrenilenler)
     if (dom.cardTabPendingBtn) {
       dom.cardTabPendingBtn.addEventListener('click', () => {
-        if (state.activeFilter === 'pending') return;
         state.activeFilter = 'pending';
         localStorage.setItem('kelime_active_filter', 'pending');
         state.currentIndex = 0;
@@ -8628,7 +8609,6 @@
 
     if (dom.cardTabLearnedBtn) {
       dom.cardTabLearnedBtn.addEventListener('click', () => {
-        if (state.activeFilter === 'learned') return;
         state.activeFilter = 'learned';
         localStorage.setItem('kelime_active_filter', 'learned');
         state.currentIndex = 0;
@@ -10688,27 +10668,9 @@
     // Giriş Sayfası Aksiyon Butonları
     if (dom.homeStartBtn) {
       dom.homeStartBtn.addEventListener('click', () => {
-        const allWords = getWordsData().filter(w => w.dil === state.activeLanguage);
-        const unitWords = allWords.filter(w => w.unite_no === state.activeUnitNo);
-        const baseGoal = state.dailyGoal || 15;
-        const isFullUnitMode = baseGoal >= 999;
-        const effectiveGoal = isFullUnitMode ? unitWords.length : (baseGoal + (state.dailyGoalExtra || 0));
-        const startOfDay = new Date();
-        startOfDay.setHours(0, 0, 0, 0);
-        const startTimestamp = startOfDay.getTime();
-        const learnedToday = unitWords.filter(w => {
-          const rec = state.learnedMap[w.id];
-          return rec && rec.learned && (!rec.learnedAt || (state.sessionLearnedIds && state.sessionLearnedIds.has(w.id)) || rec.learnedAt >= startTimestamp || (Date.now() - rec.learnedAt < 24 * 60 * 60 * 1000));
-        }).length;
-
-        if (learnedToday >= effectiveGoal) {
-          state.activeFilter = 'learned';
-          localStorage.setItem('kelime_active_filter', 'learned');
-          state.currentIndex = 0;
-        } else {
-          state.activeFilter = 'pending';
-          localStorage.setItem('kelime_active_filter', 'pending');
-        }
+        state.activeFilter = 'pending';
+        localStorage.setItem('kelime_active_filter', 'pending');
+        state.currentIndex = 0;
         switchAppMode('flashcards');
       });
     }
@@ -10929,10 +10891,10 @@
     }
     if (dom.cardFullReviewLearnedBtn) {
       dom.cardFullReviewLearnedBtn.addEventListener('click', () => {
-        dom.filterTabs.forEach(t => t.classList.toggle('active', t.getAttribute('data-filter') === 'learned'));
         state.activeFilter = 'learned';
         localStorage.setItem('kelime_active_filter', 'learned');
         state.currentIndex = 0;
+        updateCardTabsUI();
         refreshWordsList();
       });
     }
@@ -11065,14 +11027,14 @@
         desc: 'Sıralama butonuna tıklayarak okulundaki ve genel listedeki yerini, en çok çalışan öğrencileri inceleyebilirsin.'
       },
       {
-        targetSelector: '#userProfileBtn',
-        title: '👤 Profil ve Ayarlar',
-        desc: 'İsmin, sınıfın ve avatarın burada yer alır. Tıklayarak profilini düzenleyebilir ve tüm ayarlara erişebilirsin.'
-      },
-      {
         targetSelector: '#badgesBtn',
         title: '⭐ XP ve Rozetler',
         desc: 'Kelime öğrendikçe ve oyunları tamamladıkça kazandığın toplam XP ve başarı rozetlerini buradan görebilirsin.'
+      },
+      {
+        targetSelector: '#userProfileBtn',
+        title: '👤 Profil ve Ayarlar',
+        desc: 'İsmin, sınıfın ve avatarın burada yer alır. Tıklayarak profilini düzenleyebilir ve tüm ayarlara erişebilirsin.'
       },
       {
         targetSelector: '#headerUnitSelectBtn',
@@ -11088,11 +11050,6 @@
         targetSelector: '#homeArenaBannerCard',
         title: '🎮 Kelime Arenası',
         desc: 'Öğrendiğin kelimeleri test et! Eşleştirme, Dinle & Yaz, Hızlı Test gibi 8 eğlenceli oyun seni bekliyor.'
-      },
-      {
-        targetSelector: '#userProfileBtn',
-        title: '🎉 Tanıtım Tamamlandı!',
-        desc: 'Tüm özellikleri öğrendin! İhtiyacın olduğunda bu rehber baloncuklarını Ayarlar menüsünden tekrar başlatabilirsin.'
       }
     ];
 
@@ -11127,12 +11084,7 @@
         {
           targetSelector: '#flashcardWrapper',
           title: '🔄 Karta Dokun ve Çevir',
-          desc: 'Kartın üzerine dokunarak Türkçe anlamını ve örnek cümlesini 3D olarak görebilirsin. Tekrar dokunarak ön yüze dönebilirsin.'
-        },
-        {
-          targetSelector: '#flashcardWrapper',
-          title: '👆 Sağa & Sola Kaydırma (Swipe)',
-          desc: 'Kartlar arasında parmağını sağa veya sola kaydırarak (swipe) hızlıca geçiş yapabilirsin.'
+          desc: 'Kartın üzerine dokunarak Türkçe anlamını ve örnek cümlesini görebilirsin. Sağa-sola kaydırarak kelimeler arasında gezinebilirsin.'
         },
         {
           targetSelector: '#markLearnedBtn',
@@ -11142,8 +11094,8 @@
         audioStep,
         {
           targetSelector: '.card-filter-tabs-container',
-          title: '🎯 Günlük Hedef & İlerleme',
-          desc: 'Buradan günlük hedefini belirleyebilirsin. Hedefini tamamladığında Kelime Arenası oyunları açılır ve öğrendiklerini pekiştirebilirsin!'
+          title: '🎯 Hedef & Öğrenilenler',
+          desc: 'Öğrenilecekler ve Öğrenilenler sekmeleri arasında geçiş yapabilir, günlük çalışma hedefini buradan ayarlayabilirsin.'
         }
       ];
     }
@@ -11170,8 +11122,10 @@
 
       const bubble = dom.tourBubble;
       const arrow = dom.tourArrow;
+      const spotlight = dom.tourSpotlight || document.getElementById('tourSpotlight');
 
       if (!targetEl) {
+        if (spotlight) spotlight.style.display = 'none';
         bubble.style.top = '50%';
         bubble.style.left = '50%';
         bubble.style.transform = 'translate(-50%, -50%)';
@@ -11183,40 +11137,60 @@
 
       const rect = targetEl.getBoundingClientRect();
       const bubbleWidth = bubble.offsetWidth || 320;
-      const bubbleHeight = bubble.offsetHeight || 150;
+      const bubbleHeight = bubble.offsetHeight || 160;
       const viewportWidth = window.innerWidth;
       const viewportHeight = window.innerHeight;
+
+      // Spotlight Vurgulama Kutusu
+      if (spotlight) {
+        const pad = 6;
+        spotlight.style.display = 'block';
+        spotlight.style.top = `${Math.max(0, rect.top - pad)}px`;
+        spotlight.style.left = `${Math.max(0, rect.left - pad)}px`;
+        spotlight.style.width = `${rect.width + pad * 2}px`;
+        spotlight.style.height = `${rect.height + pad * 2}px`;
+      }
 
       // Yatay konumu hesapla (ekran dışına taşmaması için clamp)
       const targetCenterX = rect.left + rect.width / 2;
       let bubbleLeft = targetCenterX - bubbleWidth / 2;
-      bubbleLeft = Math.max(16, Math.min(bubbleLeft, viewportWidth - bubbleWidth - 16));
+      bubbleLeft = Math.max(12, Math.min(bubbleLeft, viewportWidth - bubbleWidth - 12));
 
       // Dikey konum: Hedefin altına mı üstüne mi yerleştirelim?
       const spaceBelow = viewportHeight - rect.bottom;
+      const spaceAbove = rect.top;
       let bubbleTop = 0;
-      let isBelow = true;
+      let arrowMode = 'top';
 
-      if (spaceBelow >= bubbleHeight + 20 || rect.top < 120) {
+      if (rect.height > viewportHeight * 0.45) {
+        // Geniş/büyük hedef (kart gibi): baloncuk ekranın en altına ergonomik oturur
+        bubbleTop = viewportHeight - bubbleHeight - 16;
+        arrowMode = 'hidden';
+      } else if (spaceBelow >= bubbleHeight + 18) {
         bubbleTop = rect.bottom + 12;
-        isBelow = true;
+        arrowMode = 'top';
+      } else if (spaceAbove >= bubbleHeight + 18) {
+        bubbleTop = rect.top - bubbleHeight - 12;
+        arrowMode = 'bottom';
       } else {
-        bubbleTop = Math.max(12, rect.top - bubbleHeight - 12);
-        isBelow = false;
+        bubbleTop = Math.max(12, Math.min(rect.bottom + 10, viewportHeight - bubbleHeight - 14));
+        arrowMode = 'hidden';
       }
+
+      // Ekran dışına taşmaması için zorunlu dikey clamp
+      bubbleTop = Math.max(12, Math.min(bubbleTop, viewportHeight - bubbleHeight - 14));
 
       bubble.style.left = `${bubbleLeft}px`;
       bubble.style.top = `${bubbleTop}px`;
 
       // Konuşma balonu okunun yatay konumu (hedefin ortasını göstersin)
-      let arrowLeft = targetCenterX - bubbleLeft - 7;
-      arrowLeft = Math.max(18, Math.min(arrowLeft, bubbleWidth - 28));
-      arrow.style.left = `${arrowLeft}px`;
-
-      if (isBelow) {
-        arrow.className = 'tour-arrow arrow-top';
+      if (arrowMode === 'hidden') {
+        arrow.className = 'tour-arrow arrow-hidden';
       } else {
-        arrow.className = 'tour-arrow arrow-bottom';
+        let arrowLeft = targetCenterX - bubbleLeft - 7;
+        arrowLeft = Math.max(20, Math.min(arrowLeft, bubbleWidth - 30));
+        arrow.style.left = `${arrowLeft}px`;
+        arrow.className = `tour-arrow arrow-${arrowMode}`;
       }
     }
 
@@ -11238,7 +11212,7 @@
       if (targetEl) {
         targetEl.classList.add('tour-highlight-target');
         currentHighlightedEl = targetEl;
-        targetEl.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        targetEl.scrollIntoView({ behavior: 'auto', block: 'nearest' });
       }
 
       if (dom.tourStepBadge) dom.tourStepBadge.textContent = `${index + 1} / ${currentTourSteps.length}`;
@@ -11261,9 +11235,10 @@
         dom.lexiqTourOverlay.style.display = 'block';
       }
 
-      setTimeout(() => {
+      updateTourPosition(targetEl);
+      requestAnimationFrame(() => {
         updateTourPosition(targetEl);
-      }, 60);
+      });
     }
 
     function nextTourStep() {
@@ -11289,6 +11264,9 @@
       if (currentHighlightedEl) {
         currentHighlightedEl.classList.remove('tour-highlight-target');
         currentHighlightedEl = null;
+      }
+      if (dom.tourSpotlight) {
+        dom.tourSpotlight.style.display = 'none';
       }
       if (dom.lexiqTourOverlay) {
         dom.lexiqTourOverlay.style.display = 'none';

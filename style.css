@@ -12396,25 +12396,36 @@ html[data-flip-speed="slow"] .flashcard {
 .tour-backdrop {
   position: absolute;
   inset: 0;
-  background: rgba(10, 15, 29, 0.72);
-  backdrop-filter: blur(3px);
-  -webkit-backdrop-filter: blur(3px);
-  transition: opacity 0.3s ease;
+  background: transparent;
+  pointer-events: auto;
+}
+
+.tour-spotlight {
+  position: fixed;
+  border-radius: 14px;
+  box-shadow: 0 0 0 9999px rgba(10, 15, 29, 0.72);
+  border: 2px solid #38bdf8;
+  pointer-events: none;
+  z-index: 10022;
+  transition: top 0.22s cubic-bezier(0.16, 1, 0.3, 1), left 0.22s cubic-bezier(0.16, 1, 0.3, 1), width 0.22s ease, height 0.22s ease;
+  will-change: top, left, width, height;
 }
 
 .tour-bubble {
-  position: absolute;
+  position: fixed;
   z-index: 10025;
   width: min(340px, calc(100vw - 32px));
+  max-width: 360px;
   background: #181b36;
   color: #f8fafc;
   border-radius: 18px;
   padding: 16px 18px;
   border: 1.5px solid rgba(139, 92, 246, 0.45);
-  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.6), 0 0 25px rgba(99, 102, 241, 0.3);
-  transition: top 0.28s cubic-bezier(0.16, 1, 0.3, 1), left 0.28s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.2s ease;
+  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.65), 0 0 25px rgba(99, 102, 241, 0.3);
+  transition: top 0.22s cubic-bezier(0.16, 1, 0.3, 1), left 0.22s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.2s ease;
   will-change: top, left;
   user-select: none;
+  box-sizing: border-box;
 }
 
 .tour-arrow {
@@ -12424,7 +12435,7 @@ html[data-flip-speed="slow"] .flashcard {
   background: #181b36;
   z-index: 10026;
   pointer-events: none;
-  transition: left 0.28s cubic-bezier(0.16, 1, 0.3, 1);
+  transition: left 0.22s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .tour-arrow.arrow-top {
@@ -12432,6 +12443,7 @@ html[data-flip-speed="slow"] .flashcard {
   border-left: 1.5px solid rgba(139, 92, 246, 0.45);
   border-top: 1.5px solid rgba(139, 92, 246, 0.45);
   transform: rotate(45deg);
+  display: block;
 }
 
 .tour-arrow.arrow-bottom {
@@ -12439,6 +12451,7 @@ html[data-flip-speed="slow"] .flashcard {
   border-right: 1.5px solid rgba(139, 92, 246, 0.45);
   border-bottom: 1.5px solid rgba(139, 92, 246, 0.45);
   transform: rotate(45deg);
+  display: block;
 }
 
 .tour-arrow.arrow-hidden {
