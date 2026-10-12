@@ -471,15 +471,15 @@ body[data-theme="dark"] .unit-header-btn,
   min-height: 0 !important;
   display: flex !important;
   flex-direction: column !important;
-  justify-content: center !important;
+  justify-content: space-between !important;
   align-items: center !important;
-  padding: clamp(8px, 1.8vh, 16px) clamp(12px, 3.5vw, 18px) calc(clamp(16px, 3vh, 28px) + env(safe-area-inset-bottom, 0px)) clamp(12px, 3.5vw, 18px) !important;
+  padding: clamp(6px, 1.4vh, 12px) clamp(12px, 3.5vw, 18px) max(env(safe-area-inset-bottom, 10px), 14px) clamp(12px, 3.5vw, 18px) !important;
   max-width: 480px;
   width: 100%;
   margin: 0 auto;
   box-sizing: border-box;
   overflow: hidden !important;
-  gap: clamp(8px, 1.5vh, 14px);
+  gap: clamp(8px, 1.6vh, 14px);
 }
 
 /* Kart Üstünde Tek Satır: Bugün Öğrenilen Kelimeler */
@@ -588,14 +588,15 @@ body[data-theme="dark"] .today-bar-track,
   border-radius: 0 2px 2px 0;
 }
 
-/* Kart Sarmalayıcı: Geniş, esnek ve nefes alan merkezi kart */
+/* Kart Sarmalayıcı: Geniş, esnek ve nefes alan merkezi kart (3D Katmanlı) */
 .card-pure-section .flashcard-wrapper,
 .flashcard-wrapper {
   width: 100% !important;
+  max-width: 440px !important;
   flex: 1 1 auto !important;
-  min-height: 200px !important;
-  max-height: 440px !important;
-  margin: 0 !important;
+  min-height: 280px !important;
+  max-height: clamp(340px, 58vh, 480px) !important;
+  margin: 0 auto !important;
   position: relative;
   cursor: pointer;
   perspective: 1000px;
@@ -608,37 +609,11 @@ body[data-theme="dark"] .today-bar-track,
 
 /* Kart Altında Öğrenildi Üstünde Çıkan Alıştırma Alanına Git Butonu */
 .card-review-arena-btn {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
-  width: 100%;
-  max-width: 340px;
-  height: 42px;
-  padding: 0 18px;
-  border-radius: 9999px;
-  background: linear-gradient(135deg, #6366f1 0%, #4f46e5 100%);
-  color: #ffffff;
-  font-size: 0.88rem;
-  font-weight: 800;
-  border: none;
-  cursor: pointer;
-  box-shadow: 0 4px 14px rgba(99, 102, 241, 0.35);
-  margin: 0 auto;
-  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-  outline: none;
-  user-select: none;
-  box-sizing: border-box;
+  display: none !important;
 }
 
-.card-review-arena-btn:hover {
-  transform: translateY(-1px);
-  filter: brightness(1.08);
-  box-shadow: 0 6px 18px rgba(99, 102, 241, 0.45);
-}
-
-.card-review-arena-btn:active {
-  transform: scale(0.97);
+.card-review-arena-btn.is-hidden {
+  display: none !important;
 }
 
 /* Kart Altı Gezinme ve Öğrendim Aksiyon Çubuğu - 3D Tactile */
@@ -650,7 +625,7 @@ body[data-theme="dark"] .today-bar-track,
   width: 100% !important;
   max-width: 440px !important;
   margin: 0 auto !important;
-  padding-bottom: calc(32px + env(safe-area-inset-bottom, 12px)) !important;
+  padding-bottom: 0 !important;
   flex-shrink: 0 !important;
   box-sizing: border-box !important;
 }
@@ -1296,22 +1271,28 @@ body[data-theme="dark"] .status-learned,
 
 /* 3D MAVİ YUVARLAK SES / TELAFUZ BUTONU (REFERANS GÖRSELLERİ İLE BİREBİR) */
 .audio-btn {
-  display: inline-flex !important;
-  align-items: center !important;
-  justify-content: center !important;
-  width: 58px !important;
-  height: 58px !important;
-  min-width: 58px !important;
-  border-radius: 50% !important;
-  background: linear-gradient(180deg, #3b82f6 0%, #2563eb 60%, #1d4ed8 100%) !important;
-  border: none !important;
-  color: #ffffff !important;
-  box-shadow: 0 5px 0 #1e40af, 0 8px 18px rgba(37, 99, 235, 0.38) !important;
-  cursor: pointer !important;
-  margin-top: 6px !important;
-  transition: transform 0.12s ease, box-shadow 0.12s ease !important;
-  outline: none !important;
-  -webkit-tap-highlight-color: transparent !important;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 52px;
+  height: 52px;
+  min-width: 52px;
+  border-radius: 50%;
+  background: linear-gradient(180deg, #3b82f6 0%, #2563eb 60%, #1d4ed8 100%);
+  border: none;
+  color: #ffffff;
+  box-shadow: 0 4px 0 #1e40af, 0 6px 16px rgba(37, 99, 235, 0.35);
+  cursor: pointer;
+  margin: 4px auto 0 auto;
+  transition: transform 0.12s ease, box-shadow 0.12s ease;
+  outline: none;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.audio-btn[style*="display: none"],
+.audio-btn[style*="display:none"],
+.audio-btn.is-hidden {
+  display: none !important;
 }
 
 .audio-btn svg {
@@ -6427,7 +6408,7 @@ html:not([data-theme="dark"])[data-card-theme="dark"] .card-face {
   max-width: 480px !important;
   flex: 1 1 auto !important;
   min-height: 0 !important;
-  display: flex !important;
+  display: none !important;
   flex-direction: column !important;
   align-items: center !important;
   justify-content: space-evenly !important;
@@ -6442,6 +6423,17 @@ html:not([data-theme="dark"])[data-card-theme="dark"] .card-face {
   overflow: hidden !important;
   position: relative !important;
   transform: translateZ(0);
+}
+
+.goal-completed-full-view.active {
+  display: flex !important;
+}
+
+.goal-completed-full-view.is-hidden,
+.goal-completed-full-view:not(.active),
+.goal-completed-full-view[style*="display: none"],
+.goal-completed-full-view[style*="display:none"] {
+  display: none !important;
 }
 
 [data-theme="dark"] .goal-completed-full-view {
@@ -13443,8 +13435,8 @@ html.screen-fit-compact .card-pure-section {
 
 html[data-screen-fit="fit"] .flashcard-wrapper,
 html.screen-fit-compact .flashcard-wrapper {
-  max-height: clamp(250px, 46vh, 360px) !important;
-  min-height: 200px !important;
+  max-height: clamp(300px, 54vh, 440px) !important;
+  min-height: 260px !important;
   flex: 1 1 auto !important;
 }
 
@@ -13598,11 +13590,11 @@ html.screen-fit-compact .welcome-action-guest {
     gap: 6px !important;
   }
   .flashcard-wrapper {
-    max-height: clamp(240px, 46vh, 350px) !important;
-    min-height: 190px !important;
+    max-height: clamp(300px, 54vh, 440px) !important;
+    min-height: 260px !important;
   }
   .card-action-bar-under {
-    padding-bottom: max(env(safe-area-inset-bottom, 8px), 8px) !important;
+    padding-bottom: 0 !important;
   }
 }
 

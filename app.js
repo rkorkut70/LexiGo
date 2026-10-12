@@ -3869,7 +3869,11 @@
         if (dom.flashcardWrapper) dom.flashcardWrapper.style.display = 'block';
         if (dom.cardNavBar) dom.cardNavBar.style.display = 'flex';
         if (dom.actionPanel) dom.actionPanel.style.display = 'block';
-        if (dom.flashcardGoalCompletedView) dom.flashcardGoalCompletedView.style.display = 'none';
+        if (dom.flashcardGoalCompletedView) {
+          dom.flashcardGoalCompletedView.classList.remove('active');
+          dom.flashcardGoalCompletedView.classList.add('is-hidden');
+          dom.flashcardGoalCompletedView.style.setProperty('display', 'none', 'important');
+        }
 
         dom.cardTargetWord.textContent = 'Öğrenilen Kelime Yok';
         dom.cardMeaningText.textContent = 'Henüz bu ünitede öğrenilmiş kelime bulunmuyor.';
@@ -3882,7 +3886,9 @@
         if (dom.actionPanel) dom.actionPanel.style.display = 'none';
 
         if (dom.flashcardGoalCompletedView) {
-          dom.flashcardGoalCompletedView.style.display = 'flex';
+          dom.flashcardGoalCompletedView.classList.remove('is-hidden');
+          dom.flashcardGoalCompletedView.classList.add('active');
+          dom.flashcardGoalCompletedView.style.setProperty('display', 'flex', 'important');
           const isUnitFinished = unlearnedCount === 0;
           if (dom.cardCompletedFullDesc) {
             if (isUnitFinished) {
@@ -3901,14 +3907,22 @@
       dom.cardStatusBadge.className = 'card-status-badge status-learned';
       if (dom.cardPhonetic) dom.cardPhonetic.style.display = 'none';
       if (dom.cardPos) dom.cardPos.style.display = 'none';
-      if (dom.enAccentGroup) dom.enAccentGroup.style.display = 'none';
-      if (dom.pronounceBtn) dom.pronounceBtn.style.display = 'none';
+      if (dom.enAccentGroup) {
+        dom.enAccentGroup.classList.add('is-hidden');
+        dom.enAccentGroup.style.setProperty('display', 'none', 'important');
+      }
+      if (dom.pronounceBtn) {
+        dom.pronounceBtn.classList.add('is-hidden');
+        dom.pronounceBtn.style.setProperty('display', 'none', 'important');
+      }
 
       // Butonları ayarla: Hedef tamamlandığında (pending ve words bittiğinde) alttaki gereksiz 3'lü buton çubuğu gizlenerek kutunun tam oturması sağlanır
       if (dom.cardBottomControls) {
         dom.cardBottomControls.style.display = (state.activeFilter === 'learned') ? 'flex' : 'none';
       }
-      if (dom.cardReviewGoArenaBtn) dom.cardReviewGoArenaBtn.style.display = 'none';
+      if (dom.cardReviewGoArenaBtn) {
+        dom.cardReviewGoArenaBtn.style.setProperty('display', 'none', 'important');
+      }
       if (dom.prevCardBtn) dom.prevCardBtn.disabled = true;
       if (dom.nextCardBtn) dom.nextCardBtn.disabled = true;
       if (dom.markLearnedBtn) {
@@ -3925,7 +3939,11 @@
     if (dom.flashcardWrapper) dom.flashcardWrapper.style.display = 'block';
     if (dom.cardNavBar) dom.cardNavBar.style.display = 'flex';
     if (dom.actionPanel) dom.actionPanel.style.display = 'block';
-    if (dom.flashcardGoalCompletedView) dom.flashcardGoalCompletedView.style.display = 'none';
+    if (dom.flashcardGoalCompletedView) {
+      dom.flashcardGoalCompletedView.classList.remove('active');
+      dom.flashcardGoalCompletedView.classList.add('is-hidden');
+      dom.flashcardGoalCompletedView.style.setProperty('display', 'none', 'important');
+    }
 
     if (dom.cardBottomControls) dom.cardBottomControls.style.display = 'flex';
     if (dom.prevCardBtn) dom.prevCardBtn.disabled = (state.currentIndex <= 0);
@@ -3935,8 +3953,11 @@
     const currentWord = state.words[state.currentIndex];
     const isLearned = currentWord.ogrenilme_durumu === 1 || Boolean(state.learnedMap[currentWord.id] && state.learnedMap[currentWord.id].learned);
 
+    if (dom.cardReviewGoArenaBtn) {
+      dom.cardReviewGoArenaBtn.style.setProperty('display', 'none', 'important');
+    }
+
     if (isLearned) {
-      if (dom.cardReviewGoArenaBtn) dom.cardReviewGoArenaBtn.style.display = 'inline-flex';
       if (dom.markLearnedBtn) {
         dom.markLearnedBtn.disabled = true;
         dom.markLearnedBtn.classList.add('is-already-learned');
@@ -3949,7 +3970,6 @@
         dom.cardStatusBadge.className = 'card-status-badge status-learned';
       }
     } else {
-      if (dom.cardReviewGoArenaBtn) dom.cardReviewGoArenaBtn.style.display = 'none';
       if (dom.markLearnedBtn) {
         dom.markLearnedBtn.disabled = false;
         dom.markLearnedBtn.classList.remove('is-already-learned');
@@ -4020,18 +4040,30 @@
 
       // Telaffuz Kontrolleri
       if (currentWord.dil === 'EN-TR') {
-        dom.enAccentGroup.style.display = 'inline-flex';
-        dom.pronounceBtn.style.display = 'none';
+        if (dom.enAccentGroup) {
+          dom.enAccentGroup.classList.remove('is-hidden');
+          dom.enAccentGroup.style.setProperty('display', 'inline-flex', 'important');
+        }
+        if (dom.pronounceBtn) {
+          dom.pronounceBtn.classList.add('is-hidden');
+          dom.pronounceBtn.style.setProperty('display', 'none', 'important');
+        }
         if (state.activeEnAccent === 'UK') {
-          dom.pronounceUkBtn.classList.add('active');
-          dom.pronounceUsBtn.classList.remove('active');
+          if (dom.pronounceUkBtn) dom.pronounceUkBtn.classList.add('active');
+          if (dom.pronounceUsBtn) dom.pronounceUsBtn.classList.remove('active');
         } else {
-          dom.pronounceUsBtn.classList.add('active');
-          dom.pronounceUkBtn.classList.remove('active');
+          if (dom.pronounceUsBtn) dom.pronounceUsBtn.classList.add('active');
+          if (dom.pronounceUkBtn) dom.pronounceUkBtn.classList.remove('active');
         }
       } else {
-        dom.enAccentGroup.style.display = 'none';
-        dom.pronounceBtn.style.display = 'inline-flex';
+        if (dom.enAccentGroup) {
+          dom.enAccentGroup.classList.add('is-hidden');
+          dom.enAccentGroup.style.setProperty('display', 'none', 'important');
+        }
+        if (dom.pronounceBtn) {
+          dom.pronounceBtn.classList.remove('is-hidden');
+          dom.pronounceBtn.style.setProperty('display', 'inline-flex', 'important');
+        }
       }
 
       // Kart Arka Yüzü
