@@ -7,7 +7,7 @@
 (function () {
   'use strict';
 
-  const APP_VERSION = 'v1.7.4';
+  const APP_VERSION = 'v1.7.5';
   const CURRENT_APP_BUILD = 'lexiq_build_19_clean';
 
   // Build 13 temiz kurulum / sıfırlama güvencesi (Kullanıcı verilerini sıfırla, Hoş Geldin ekranını garantile)
@@ -912,7 +912,7 @@
           platformBadge.textContent = 'Android • Play Store';
           platformBadge.style.display = 'inline-block';
         } else {
-          platformBadge.textContent = 'Web • GitHub';
+          platformBadge.textContent = 'Web App';
           platformBadge.style.display = 'inline-block';
         }
       }
@@ -10541,15 +10541,6 @@ let activeAvatarCategory = 'all';
       }
     }
 
-    function openGitHubPage() {
-      const ghUrl = 'https://github.com/rkorkut70/lexiq';
-      try {
-        window.open(ghUrl, '_system') || window.open(ghUrl, '_blank') || (window.location.href = ghUrl);
-      } catch (e) {
-        window.location.href = ghUrl;
-      }
-    }
-
     function parseSemVer(v) {
       if (!v) return [0, 0, 0];
       const cleaned = v.replace(/^v/i, '').split('-')[0].trim();
@@ -10561,8 +10552,7 @@ let activeAvatarCategory = 'all';
       const cleanR = String(remoteVer).replace(/^v/i, '').split('-')[0].trim();
       const cleanC = String(currentVer).replace(/^v/i, '').split('-')[0].trim();
 
-      // Sürüm metinleri aynıysa (örn: 1.5.4 === 1.5.4 veya 1.5.5 === 1.5.5):
-      // iOS ve Web ortamlarında kesinlikle yeni sürüm YOKTUR.
+      // Sürüm metinleri aynıysa: yeni sürüm yoktur
       if (cleanR === cleanC) {
         const platform = getAppPlatform();
         if (platform === 'android' && remoteCode && currentCode) {
@@ -10585,7 +10575,7 @@ let activeAvatarCategory = 'all';
     }
 
     async function purgeCacheAndReload(targetVersion) {
-      showToast('🔄 GitHub önbelleği temizleniyor ve uygulama yenileniyor...', 2500);
+      showToast('🔄 Uygulama güncelleniyor ve yenileniyor...', 2500);
       try {
         if ('caches' in window) {
           const keys = await caches.keys();
@@ -10667,20 +10657,18 @@ let activeAvatarCategory = 'all';
               }
               showToast(`🚀 Yeni ${remoteVer} sürümü hazır! Güncellemek için dokunun.`, 4500);
             } else {
-              // Web / Masaüstü
-              if (modalTitle) modalTitle.textContent = `🎉 GitHub'da Yeni Sürüm: ${remoteVer}!`;
+              // Web / iOS / Diğer Platformlar
+              if (modalTitle) modalTitle.textContent = `🎉 Yeni Sürüm Yayında: ${remoteVer}!`;
               if (applyBtn) {
                 applyBtn.style.display = 'block';
                 applyBtn.style.background = 'linear-gradient(135deg, #2563eb, #1d4ed8)';
-                applyBtn.innerHTML = `<span>🚀</span><span>GitHub'dan Hemen Güncelle & Yenile (${remoteVer})</span>`;
+                applyBtn.innerHTML = `<span>🚀</span><span>Şimdi Güncelle & Yenile (${remoteVer})</span>`;
                 applyBtn.onclick = () => purgeCacheAndReload(remoteVer);
               }
               if (forceRefreshBtn) {
-                forceRefreshBtn.style.display = 'block';
-                forceRefreshBtn.innerHTML = `<span>🐙</span><span>GitHub Deposunu Aç</span>`;
-                forceRefreshBtn.onclick = () => openGitHubPage();
+                forceRefreshBtn.style.setProperty('display', 'none', 'important');
               }
-              showToast(`🚀 GitHub'da yeni ${remoteVer} sürümü mevcut! Güncellemek için butona dokunun.`, 4500);
+              showToast(`🚀 Yeni ${remoteVer} sürümü mevcut! Güncellemek için butona dokunun.`, 4500);
             }
 
             if (notesBox && data.notes && Array.isArray(data.notes)) {
@@ -10739,18 +10727,13 @@ let activeAvatarCategory = 'all';
                 `;
               }
             } else {
-              // Web
+              // Web ve Genel
               if (modalTitle) modalTitle.textContent = '✅ Tebrikler! LexiQ Güncel';
               if (applyBtn) {
-                applyBtn.style.display = 'block';
-                applyBtn.style.background = 'linear-gradient(135deg, #1e293b, #0f172a)';
-                applyBtn.innerHTML = `<span>🐙</span><span>GitHub Deposunu Aç (${currentVer})</span>`;
-                applyBtn.onclick = () => openGitHubPage();
+                applyBtn.style.setProperty('display', 'none', 'important');
               }
               if (forceRefreshBtn) {
-                forceRefreshBtn.style.display = 'block';
-                forceRefreshBtn.innerHTML = `<span>🔄</span><span>GitHub Önbelleğini Temizle & Yenile</span>`;
-                forceRefreshBtn.onclick = () => purgeCacheAndReload(currentVer);
+                forceRefreshBtn.style.setProperty('display', 'none', 'important');
               }
               if (notesBox) {
                 notesBox.innerHTML = `
@@ -10758,7 +10741,7 @@ let activeAvatarCategory = 'all';
                     ✅ En Güncel Sürümü (${currentVer}) Kullanıyorsunuz
                   </div>
                   <p style="margin: 0; font-size: 0.85rem; color: var(--text-muted); line-height: 1.5;">
-                    Tüm özellikler ve ders içerikleri son sürümdedir. GitHub önbelleğini tazelemek için aşağıdaki butonu kullanabilirsiniz.
+                    Tüm özellikler ve ders içerikleri son sürümdedir.
                   </p>
                 `;
               }
@@ -10809,7 +10792,7 @@ let activeAvatarCategory = 'all';
             } else if (platform === 'ios') {
               showToast(`🚀 iOS için LexiQ ${remoteVer} güncellemesi hazır! Hakkında bölümünden güncelleyebilirsiniz.`, 6000);
             } else {
-              showToast(`🚀 GitHub'da LexiQ ${remoteVer} güncellemesi hazır! Ayarlar'dan güncelleyebilirsiniz.`, 5000);
+              showToast(`🚀 LexiQ ${remoteVer} güncellemesi hazır! Ayarlar veya Hakkında bölümünden güncelleyebilirsiniz.`, 5000);
             }
           }
         }

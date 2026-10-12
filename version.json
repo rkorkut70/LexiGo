@@ -1,11 +1,11 @@
 {
-  "version": "v1.7.4",
-  "versionCode": 54,
+  "version": "v1.7.5",
+  "versionCode": 55,
   "releaseDate": "2026-10-13",
   "notes": [
-    "🧩 Kelime Eşleme: Solda hedef dil (İngilizce/Almanca/Fransızca), sağda Türkçe kelimeler düzeni",
-    "🔠 Oyun Ekranları Adaptiflik: Tablet ve büyük ekranlarda butonlarla birlikte harfler ve yazılar büyütüldü",
-    "📱 Cümle Kurma ve Boşluk Doldurma: Büyük ekranlarda tam alan doldurma ve kristal netliğinde tipografi",
+    "🔒 GitHub bağlantı ve yönlendirmeleri uygulamanın tümünden kaldırıldı",
+    "✨ Güncelleme kontrolünde sade, onaylayıcı ve mağaza/yerel güncelleme deneyimi sağlandı",
+    "🧩 Kelime Eşleme: Solda hedef dil, sağda Türkçe sütun düzeni korundu",
     "🛡️ Android Target SDK 36 Google Play Store tam uyumluluğu korundu"
   ]
 }
