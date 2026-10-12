@@ -1114,6 +1114,7 @@
         <span class="ob-step-dot" data-step="3"></span>
         <span class="ob-step-dot" data-step="4"></span>
         <span class="ob-step-dot" data-step="5"></span>
+        <span class="ob-step-dot" data-step="6"></span>
       </div>
 
       <!-- 1. ADIM: YENİ DİNAMİK & ÇEKİCİ KARŞILAMA VE GİRİŞ EKRANI -->
@@ -1181,7 +1182,7 @@
       <!-- 2. ADIM: İSİM & AVATAR -->
       <div class="onboarding-step-view" id="obStep1" style="display: none;">
         
-        <div class="ob-step-tag" style="margin-bottom:8px;">ADIM 1 / 5</div>
+        <div class="ob-step-tag" style="margin-bottom:8px;">ADIM 1 / 6</div>
         <h2 class="ob-title">Profilini Oluştur 👤</h2>
         <p class="ob-subtitle">Öğrenme maceranda seni temsil edecek adını ve avatarını belirle.</p>
 
@@ -1262,7 +1263,7 @@
 
       <!-- 2. ADIM: DİL SEÇİMİ -->
       <div class="onboarding-step-view" id="obStep2" style="display: none;">
-        <div class="ob-step-tag">ADIM 2 / 5</div>
+        <div class="ob-step-tag">ADIM 2 / 6</div>
         <h2 class="ob-title">Öğrenmek İstediğin Dil 🌍</h2>
         <p class="ob-subtitle">Hedef dilini seç. Bunu dilediğin zaman ayarlardan değiştirebilirsin.</p>
 
@@ -1301,7 +1302,7 @@
 
       <!-- 3. ADIM: RESMİ ŞUBE SEÇİMİ (23 RESMİ ŞUBE) -->
       <div class="onboarding-step-view" id="obStep3" style="display: none;">
-        <div class="ob-step-tag">ADIM 3 / 5</div>
+        <div class="ob-step-tag">ADIM 3 / 6</div>
         <h2 class="ob-title">Şubeni Seç 🏫</h2>
         <p class="ob-subtitle">Sınıf içi liderlik tablosu ve şubeler arası düelloda sınıfını temsil etmek için şubeni seç.</p>
 
@@ -1338,7 +1339,7 @@
 
       <!-- 4. ADIM: MÜFREDAT BİLGİSİ & GÜNLÜK HEDEF -->
       <div class="onboarding-step-view" id="obStep4" style="display: none;">
-        <div class="ob-step-tag">ADIM 4 / 5</div>
+        <div class="ob-step-tag">ADIM 4 / 6</div>
         <h2 class="ob-title">Rotan Oluşturuldu! 🗺️</h2>
         
         <div id="obTrackInfoBox" style="background: rgba(59, 130, 246, 0.1); border: 1px solid var(--accent); padding: 15px; border-radius: 8px; margin-bottom: 20px; font-size: 0.9rem; line-height: 1.4; color: var(--text-main); text-align: left;">
@@ -1364,7 +1365,7 @@
 
       <!-- 5. ADIM: GÜNLÜK SERİ SÖZÜ & MOTİVASYON (STREAK PLEDGE) -->
       <div class="onboarding-step-view" id="obStep5" style="display: none;">
-        <div class="ob-step-tag">ADIM 5 / 5</div>
+        <div class="ob-step-tag">ADIM 5 / 6</div>
         <h2 class="ob-title">Aralıksız Seri Sözü! 🔥</h2>
         <p class="ob-subtitle">Kelime öğrenmenin en güçlü sırrı her gün zinciri kırmamaktır.</p>
 
@@ -1410,6 +1411,68 @@
 
         <div class="ob-btn-row">
           <button type="button" class="pill-btn secondary-btn" id="obStep5BackBtn">← Geri</button>
+          <button type="button" class="pill-btn primary-action-btn" id="obStep5NextBtn">
+            İleri ➔
+          </button>
+        </div>
+      </div>
+
+      <!-- 6. ADIM: GÜNLÜK ÇALIŞMA HATIRLATICI -->
+      <div class="onboarding-step-view" id="obStep6" style="display: none;">
+        <div class="ob-step-tag">ADIM 6 / 6</div>
+        <h2 class="ob-title">Günlük Hatırlatıcı ⏰</h2>
+        <p class="ob-subtitle">Öğrenme ritmini korumak için sana en uygun çalışma saatini belirle.</p>
+
+        <!-- Motive Edici Bilgi Kutusu -->
+        <div class="ob-motivation-card" style="background: linear-gradient(135deg, rgba(59, 130, 246, 0.14) 0%, rgba(37, 99, 235, 0.05) 100%); border: 1.5px solid rgba(59, 130, 246, 0.35); border-radius: 16px; padding: 14px 16px; margin-bottom: 16px; text-align: left;">
+          <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 6px;">
+            <span style="font-size: 1.25rem;">🔔</span>
+            <strong style="font-size: 0.92rem; color: #3b82f6;">Her Gün Küçük Bir Hatırlatma!</strong>
+          </div>
+          <p style="font-size: 0.82rem; line-height: 1.45; color: var(--text-main); margin: 0 0 8px 0;">
+            Yoğun günlerde kelime pratiğini unutmamak için LexiQ sana her gün belirlediğin saatte dostane bir bildirim gönderir. Bu ayarı dilediğin zaman <strong>Ayarlar</strong> menüsünden değiştirebilirsin.
+          </p>
+        </div>
+
+        <!-- Hatırlatıcı Aç/Kapa ve Saat Seçimi -->
+        <div class="ob-field-group" style="text-align: left;">
+          <div style="display: flex; align-items: center; justify-content: space-between; padding: 12px 14px; background: var(--bg-card); border: 1.5px solid var(--border-color); border-radius: 14px; margin-bottom: 12px;">
+            <div>
+              <span style="display: block; font-size: 0.9rem; font-weight: 800; color: var(--text-main);">Günlük Hatırlatıcıyı Aç</span>
+              <span style="display: block; font-size: 0.74rem; color: var(--text-muted);">Belirlenen saatte sana haber verelim</span>
+            </div>
+            <label class="toggle-switch">
+              <input type="checkbox" id="obReminderToggle" checked>
+              <span class="toggle-slider"></span>
+            </label>
+          </div>
+
+          <div id="obReminderTimeContainer" style="display: flex; flex-direction: column; gap: 10px;">
+            <label class="ob-field-label" style="margin-bottom: 0;">Hatırlatma Saati:</label>
+            <div style="display: flex; gap: 8px; align-items: center;">
+              <input type="time" id="obReminderTimeInput" value="20:00" class="setting-time-input" style="padding: 10px 14px; border-radius: 12px; border: 1.5px solid var(--accent); background: var(--bg-surface); color: var(--text-main); font-size: 1.1rem; font-weight: 800; flex: 1; text-align: center;">
+            </div>
+
+            <!-- Hızlı Saat Seçenekleri -->
+            <div class="ob-reminder-presets" id="obReminderPresets" style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; margin-top: 4px;">
+              <button type="button" class="ob-preset-time-chip" data-time="09:00" style="padding: 8px 4px; border-radius: 10px; border: 1px solid var(--border-color); background: var(--bg-card); color: var(--text-main); font-size: 0.76rem; font-weight: 700; cursor: pointer; text-align: center;">
+                <span style="display:block; font-size: 0.9rem;">🌅</span>09:00
+              </button>
+              <button type="button" class="ob-preset-time-chip" data-time="16:00" style="padding: 8px 4px; border-radius: 10px; border: 1px solid var(--border-color); background: var(--bg-card); color: var(--text-main); font-size: 0.76rem; font-weight: 700; cursor: pointer; text-align: center;">
+                <span style="display:block; font-size: 0.9rem;">☀️</span>16:00
+              </button>
+              <button type="button" class="ob-preset-time-chip active" data-time="20:00" style="padding: 8px 4px; border-radius: 10px; border: 1.5px solid var(--accent); background: rgba(59, 130, 246, 0.15); color: var(--accent); font-size: 0.76rem; font-weight: 800; cursor: pointer; text-align: center;">
+                <span style="display:block; font-size: 0.9rem;">🌙</span>20:00 ⭐
+              </button>
+              <button type="button" class="ob-preset-time-chip" data-time="21:30" style="padding: 8px 4px; border-radius: 10px; border: 1px solid var(--border-color); background: var(--bg-card); color: var(--text-main); font-size: 0.76rem; font-weight: 700; cursor: pointer; text-align: center;">
+                <span style="display:block; font-size: 0.9rem;">🌃</span>21:30
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <div class="ob-btn-row">
+          <button type="button" class="pill-btn secondary-btn" id="obStep6BackBtn">← Geri</button>
           <button type="button" class="pill-btn primary-action-btn" id="obCompleteBtn">
             <span>🚀</span> Öğrenmeye Başla!
           </button>

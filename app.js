@@ -857,7 +857,13 @@
     obStep4BackBtn: document.getElementById('obStep4BackBtn'),
     obStep4NextBtn: document.getElementById('obStep4NextBtn'),
     obStep5BackBtn: document.getElementById('obStep5BackBtn'),
+    obStep5NextBtn: document.getElementById('obStep5NextBtn'),
+    obStep6BackBtn: document.getElementById('obStep6BackBtn'),
     obCompleteBtn: document.getElementById('obCompleteBtn'),
+    obReminderToggle: document.getElementById('obReminderToggle'),
+    obReminderTimeInput: document.getElementById('obReminderTimeInput'),
+    obReminderTimeContainer: document.getElementById('obReminderTimeContainer'),
+    obReminderPresets: document.querySelectorAll('.ob-preset-time-chip'),
 
     // Ayarlar Profil Paneli
     settingUserNameInput: document.getElementById('settingUserNameInput'),
@@ -3245,7 +3251,9 @@
     level: 'B1',
     unitNo: 1,
     dailyGoal: 15,
-    streakPledgeDays: 5
+    streakPledgeDays: 5,
+    reminderEnabled: true,
+    reminderTime: '20:00'
   };
 
   let activeObAvatarCat = 'all';
@@ -3460,10 +3468,27 @@
     if (stepNum === 4) {
       renderOnboardingUnits();
     }
+    if (stepNum === 6) {
+      if (dom.obReminderToggle) {
+        dom.obReminderToggle.checked = obState.reminderEnabled;
+      }
+      if (dom.obReminderTimeInput) {
+        dom.obReminderTimeInput.value = obState.reminderTime || '20:00';
+      }
+      if (dom.obReminderTimeContainer) {
+        dom.obReminderTimeContainer.style.opacity = obState.reminderEnabled ? '1' : '0.4';
+        dom.obReminderTimeContainer.style.pointerEvents = obState.reminderEnabled ? 'auto' : 'none';
+      }
+      if (dom.obReminderPresets) {
+        dom.obReminderPresets.forEach(chip => {
+          chip.classList.toggle('active', chip.getAttribute('data-time') === (obState.reminderTime || '20:00'));
+        });
+      }
+    }
 
     const stepIndicator = document.querySelector('.onboarding-steps-indicator');
     if (stepIndicator) {
-      stepIndicator.style.display = (stepNum >= 1 && stepNum <= 5) ? 'flex' : 'none';
+      stepIndicator.style.display = (stepNum >= 1 && stepNum <= 6) ? 'flex' : 'none';
     }
 
     const allSteps = (dom.obSteps && dom.obSteps.length) ? dom.obSteps : document.querySelectorAll('.onboarding-step-view');
@@ -3677,8 +3702,16 @@
     if (dom.inlineDailyGoalSelect) {
       dom.inlineDailyGoalSelect.value = String(state.dailyGoal);
     }
-    if (dom.settingDailyGoalSelect) {
-      dom.settingDailyGoalSelect.value = String(state.dailyGoal);
+    // Günlük Çalışma Hatırlatıcısını Kaydet
+    applyStudyReminder(obState.reminderEnabled);
+    if (obState.reminderEnabled && obState.reminderTime) {
+      state.studyReminderTimes = [obState.reminderTime];
+      localStorage.setItem('kelime_study_reminder_times', JSON.stringify(state.studyReminderTimes));
+      renderReminderTimesUI();
+      syncNativeStudyAlarms();
+      if ('Notification' in window && Notification.permission === 'default') {
+        Notification.requestPermission();
+      }
     }
 
     refreshWordsList();
@@ -8509,12 +8542,55 @@
       dom.obStep4NextBtn.addEventListener('click', () => goToOnboardingStep(5));
     }
 
-    // 5. Adım Günlük Seri Sözü & Motivasyon, Geri & Tamamla
+    // 5. Adım Günlük Seri Sözü & Motivasyon
     if (dom.obStep5BackBtn) {
       dom.obStep5BackBtn.addEventListener('click', () => goToOnboardingStep(4));
     }
+    if (dom.obStep5NextBtn) {
+      dom.obStep5NextBtn.addEventListener('click', () => goToOnboardingStep(6));
+    }
+
+    // 6. Adım Günlük Çalışma Hatırlatıcısı
+    if (dom.obStep6BackBtn) {
+      dom.obStep6BackBtn.addEventListener('click', () => goToOnboardingStep(5));
+    }
     if (dom.obCompleteBtn) {
       dom.obCompleteBtn.addEventListener('click', completeOnboarding);
+    }
+
+    if (dom.obReminderToggle) {
+      dom.obReminderToggle.addEventListener('change', (e) => {
+        obState.reminderEnabled = e.target.checked;
+        if (dom.obReminderTimeContainer) {
+          dom.obReminderTimeContainer.style.opacity = obState.reminderEnabled ? '1' : '0.4';
+          dom.obReminderTimeContainer.style.pointerEvents = obState.reminderEnabled ? 'auto' : 'none';
+        }
+      });
+    }
+
+    if (dom.obReminderTimeInput) {
+      dom.obReminderTimeInput.addEventListener('change', (e) => {
+        obState.reminderTime = e.target.value || '20:00';
+        if (dom.obReminderPresets) {
+          dom.obReminderPresets.forEach(chip => {
+            chip.classList.toggle('active', chip.getAttribute('data-time') === obState.reminderTime);
+          });
+        }
+      });
+    }
+
+    if (dom.obReminderPresets) {
+      dom.obReminderPresets.forEach(chip => {
+        chip.addEventListener('click', () => {
+          const timeVal = chip.getAttribute('data-time');
+          if (timeVal) {
+            obState.reminderTime = timeVal;
+            if (dom.obReminderTimeInput) dom.obReminderTimeInput.value = timeVal;
+            dom.obReminderPresets.forEach(c => c.classList.remove('active'));
+            chip.classList.add('active');
+          }
+        });
+      });
     }
 
     // Dil Butonu & Seçimi (Geriye Dönük Uyumluluk)

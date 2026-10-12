@@ -12850,6 +12850,31 @@ html[data-flip-speed="slow"] .flashcard {
   box-shadow: 0 0 12px rgba(249, 115, 22, 0.25);
 }
 
+.ob-preset-time-chip {
+  padding: 8px 6px;
+  border-radius: 12px;
+  border: 1.5px solid var(--border-color);
+  background: var(--bg-surface);
+  color: var(--text-main);
+  cursor: pointer;
+  text-align: center;
+  transition: all 0.2s ease;
+  font-size: 0.8rem;
+  font-weight: 700;
+}
+
+.ob-preset-time-chip:hover {
+  border-color: var(--accent);
+}
+
+.ob-preset-time-chip.active {
+  border-color: var(--accent) !important;
+  background: rgba(59, 130, 246, 0.18) !important;
+  color: var(--accent) !important;
+  box-shadow: 0 0 10px rgba(59, 130, 246, 0.3) !important;
+  font-weight: 800;
+}
+
 /* Şifre Değiştirme ve Güvenlik Modalı */
 .change-password-modal-card {
   border-radius: 24px !important;
