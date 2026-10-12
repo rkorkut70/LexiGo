@@ -7,7 +7,7 @@
 (function () {
   'use strict';
 
-  const APP_VERSION = 'v1.5.9';
+  const APP_VERSION = 'v1.6.0';
   const CURRENT_APP_BUILD = 'lexiq_build_19_clean';
 
   // Build 13 temiz kurulum / sıfırlama güvencesi (Kullanıcı verilerini sıfırla, Hoş Geldin ekranını garantile)
@@ -2469,6 +2469,12 @@
       } else if (el.id === 'homeUserAvatar' || el.classList.contains('greeting-avatar')) {
         el.style.width = '36px';
         el.style.height = '36px';
+      } else if (el.id === 'profHeroAvatar' || el.classList.contains('student-avatar-badge')) {
+        el.style.width = '52px';
+        el.style.height = '52px';
+      } else if (el.id === 'settingUserAvatarPreview') {
+        el.style.width = '52px';
+        el.style.height = '52px';
       }
       el.innerHTML = '<img src="' + getAvatarSrc(av) + '" class="avatar-img-fluid" style="width:100%; height:100%; border-radius:50%; object-fit:cover; display:block;" alt="Avatar">';
     } else {
