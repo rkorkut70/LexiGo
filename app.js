@@ -7,7 +7,7 @@
 (function () {
   'use strict';
 
-  const APP_VERSION = 'v1.5.0';
+  const APP_VERSION = 'v1.5.1';
   const CURRENT_APP_BUILD = 'lexiq_build_19_clean';
 
   // Build 13 temiz kurulum / sıfırlama güvencesi (Kullanıcı verilerini sıfırla, Hoş Geldin ekranını garantile)
@@ -10201,7 +10201,7 @@
           if (code && !isNaN(code)) return parseInt(code, 10);
         } catch (e) {}
       }
-      return 36;
+      return 37;
     }
 
     function getAppPlatform() {
