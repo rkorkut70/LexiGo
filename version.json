@@ -1,8 +1,9 @@
-﻿{
-    "releaseDate":  "2026-10-12",
-    "versionCode":  40,
-    "version":  "v1.5.4",
-    "notes":  [
-                  "v1.5.4 - Stabil güncelleme"
-              ]
+{
+  "version": "v1.5.5",
+  "versionCode": 41,
+  "releaseDate": "2026-10-12",
+  "notes": [
+    "v1.5.5 - iOS ve Web güncelleme bildirim algoritması kararlı hale getirildi",
+    "3D derinlikli modern ayarlar ekranı ve performans optimizasyonları"
+  ]
 }

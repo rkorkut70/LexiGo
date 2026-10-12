@@ -7,7 +7,7 @@
 (function () {
   'use strict';
 
-  const APP_VERSION = 'v1.5.4';
+  const APP_VERSION = 'v1.5.5';
   const CURRENT_APP_BUILD = 'lexiq_build_19_clean';
 
   // Build 13 temiz kurulum / sıfırlama güvencesi (Kullanıcı verilerini sıfırla, Hoş Geldin ekranını garantile)
@@ -10368,7 +10368,7 @@
           if (code && !isNaN(code)) return parseInt(code, 10);
         } catch (e) {}
       }
-      return 40;
+      return 41;
     }
 
     function getAppPlatform() {
@@ -10425,29 +10425,30 @@
     }
 
     function isRemoteVersionNewer(remoteVer, currentVer, remoteCode, currentCode) {
-      const r = parseSemVer(remoteVer);
-      const c = parseSemVer(currentVer);
-      
-      // Önce semantik sürüm kontrolü (örn. 1.5.0 vs 1.4.9)
-      let semVerNewer = false;
-      let semVerOlder = false;
+      if (!remoteVer || !currentVer) return false;
+      const cleanR = String(remoteVer).replace(/^v/i, '').split('-')[0].trim();
+      const cleanC = String(currentVer).replace(/^v/i, '').split('-')[0].trim();
+
+      // Sürüm metinleri aynıysa (örn: 1.5.4 === 1.5.4 veya 1.5.5 === 1.5.5):
+      // iOS ve Web ortamlarında kesinlikle yeni sürüm YOKTUR.
+      if (cleanR === cleanC) {
+        const platform = getAppPlatform();
+        if (platform === 'android' && remoteCode && currentCode) {
+          return Number(remoteCode) > Number(currentCode);
+        }
+        return false;
+      }
+
+      const r = parseSemVer(cleanR);
+      const c = parseSemVer(cleanC);
+
       for (let i = 0; i < Math.max(r.length, c.length); i++) {
         const rPart = r[i] || 0;
         const cPart = c[i] || 0;
-        if (rPart > cPart) { semVerNewer = true; break; }
-        if (rPart < cPart) { semVerOlder = true; break; }
+        if (rPart > cPart) return true;
+        if (rPart < cPart) return false;
       }
 
-      if (semVerOlder) return false;
-      if (semVerNewer) return true;
-
-      // Semantik sürüm eşitse (örn. v1.5.4 === v1.5.4):
-      // Yalnızca native Android (Google Play) ortamında versionCode farkı dikkate alınır.
-      // iOS ve Web sürümlerinde semantik sürüm eşitse kesinlikle yeni sürüm YOKTUR.
-      const platform = getAppPlatform();
-      if (platform === 'android' && remoteCode && currentCode) {
-        return remoteCode > currentCode;
-      }
       return false;
     }
 
