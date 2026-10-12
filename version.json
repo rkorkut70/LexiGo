@@ -1,10 +1,11 @@
 {
-  "version": "v1.7.2",
-  "versionCode": 52,
+  "version": "v1.7.3",
+  "versionCode": 53,
   "releaseDate": "2026-10-13",
   "notes": [
-    "🚀 Google Play Store uyumluluğu: Target SDK 36 ve Compile SDK 36 yükseltmesi",
-    "👤 Liderlik ve turnuva tablosunda suluboya ve özel avatarların görüntülenmesi",
-    "📱 Cümle kurma ve tüm oyun ekranları tablet ve mobil için tam adaptif/responsive"
+    "📱 Hakkında ekranı modern tam ekran (full-screen) deneyimine dönüştürüldü",
+    "🔒 Gizlilik Politikası sistem sekmesinden Hakkında ekranına taşındı ve öne çıkarıldı",
+    "⚙️ Sistem menüsüne hızlı 'Uygulama Hakkında & Gizlilik' geçiş bağlantısı eklendi",
+    "🛡️ Android Target SDK 36 Google Play Store tam uyumluluğu korundu"
   ]
 }

@@ -7,7 +7,7 @@
 (function () {
   'use strict';
 
-  const APP_VERSION = 'v1.7.2';
+  const APP_VERSION = 'v1.7.3';
   const CURRENT_APP_BUILD = 'lexiq_build_19_clean';
 
   // Build 13 temiz kurulum / sıfırlama güvencesi (Kullanıcı verilerini sıfırla, Hoş Geldin ekranını garantile)
@@ -10295,6 +10295,14 @@ let activeAvatarCategory = 'all';
       settingPrivacyBtn.addEventListener('click', () => {
         closeSettingsModal();
         openPrivacyModal();
+      });
+    }
+
+    const settingAboutBtn = document.getElementById('settingAboutBtn');
+    if (settingAboutBtn) {
+      settingAboutBtn.addEventListener('click', () => {
+        closeSettingsModal();
+        openAboutModal();
       });
     }
 
