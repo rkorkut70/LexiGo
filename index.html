@@ -15,7 +15,7 @@
   <meta http-equiv="Expires" content="0">
   <title>LexiQ • Çok Dilli Akıllı Kelime Kartları</title>
   <link rel="icon" type="image/jpeg" href="logo.jpg">
-  <link rel="stylesheet" href="style.css?v=1.5.2">
+  <link rel="stylesheet" href="style.css?v=1.5.3">
 </head>
 <body>
   <div class="app-container">
@@ -1134,7 +1134,7 @@
         <div class="welcome-hero-section">
           <div class="welcome-brand-wrapper">
             <h1 class="welcome-brand-name">Lexi<span class="welcome-brand-q">Q</span></h1>
-            <span class="welcome-version-pill">v1.5.2</span>
+            <span class="welcome-version-pill">v1.5.3</span>
           </div>
           <!-- 3 Temel Başarı Sütunu (3D Pill Rozetleri) -->
           <div class="welcome-pillars-container">
@@ -1585,19 +1585,19 @@
     </div>
   </div>
 
-  <!-- LİDERLİK & ŞUBE DÜELLO MODALI -->
-  <div id="leaderboardModal" class="modal-overlay" style="z-index: 10020;">
-    <div class="modal-card leaderboard-modal-card" style="max-width: 520px; width: 94%;">
-      <div class="modal-header">
+  <!-- LİDERLİK & ŞUBE DÜELLO MODALI (TAM EKRAN) -->
+  <div id="leaderboardModal" class="modal-overlay full-screen-modal" style="z-index: 10020;">
+    <div class="modal-card leaderboard-modal-card">
+      <div class="modal-header leaderboard-modal-header">
         <div style="display: flex; align-items: center; gap: 8px;">
           <span style="font-size: 1.35rem;">🏆</span>
           <h2 class="modal-title" style="margin: 0; font-size: 1.15rem;">Turnuva & Liderler</h2>
         </div>
         <div style="display: flex; align-items: center; gap: 6px;">
-          <button id="openTournamentGuideBtn" class="icon-btn" title="Turnuva Kuralları & Rehber" aria-label="Turnuva Kuralları" style="width: 32px; height: 32px; border-radius: 8px; font-size: 0.95rem; background: rgba(245, 158, 11, 0.15); color: #f59e0b; border: 1px solid rgba(245, 158, 11, 0.3);">
+          <button id="openTournamentGuideBtn" class="icon-btn" title="Turnuva Kuralları & Rehber" aria-label="Turnuva Kuralları" style="width: 34px; height: 34px; border-radius: 10px; font-size: 0.95rem; background: rgba(245, 158, 11, 0.15); color: #f59e0b; border: 1px solid rgba(245, 158, 11, 0.3);">
             ❓
           </button>
-          <button id="closeLeaderboardModalBtn" class="icon-btn" aria-label="Kapat">
+          <button id="closeLeaderboardModalBtn" class="icon-btn" aria-label="Kapat" style="width: 34px; height: 34px; border-radius: 10px;">
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
               <line x1="18" y1="6" x2="6" y2="18"></line>
               <line x1="6" y1="6" x2="18" y2="18"></line>
@@ -1607,110 +1607,113 @@
       </div>
       
       <!-- Sekmeler (Sınıfım / Şube Düelloları / Genel Sıralama / Şeref Kürsüsü) -->
-      <div class="leaderboard-tabs-nav" id="leaderboardTabsNav" style="display: flex; gap: 4px; padding: 5px; background: rgba(0,0,0,0.22); border-radius: 14px; margin-bottom: 12px; overflow-x: auto;">
-        <button type="button" class="lb-tab-btn active" data-tab="class" style="flex: 1; min-width: 74px; padding: 8px 3px; font-size: 0.78rem; font-weight: 800; border-radius: 10px; border: none; cursor: pointer; transition: all 0.2s; background: var(--accent); color: #fff;">
+      <div class="leaderboard-tabs-nav" id="leaderboardTabsNav">
+        <button type="button" class="lb-tab-btn active" data-tab="class">
           🏫 Sınıfım
         </button>
-        <button type="button" class="lb-tab-btn" data-tab="duels" style="flex: 1; min-width: 82px; padding: 8px 3px; font-size: 0.78rem; font-weight: 800; border-radius: 10px; border: none; cursor: pointer; transition: all 0.2s; background: transparent; color: var(--text-muted);">
+        <button type="button" class="lb-tab-btn" data-tab="duels">
           ⚔️ Şube Ligi
         </button>
-        <button type="button" class="lb-tab-btn" data-tab="honor" style="flex: 1; min-width: 78px; padding: 8px 3px; font-size: 0.78rem; font-weight: 800; border-radius: 10px; border: none; cursor: pointer; transition: all 0.2s; background: transparent; color: var(--text-muted);">
+        <button type="button" class="lb-tab-btn" data-tab="honor">
           🏆 Kürsü
         </button>
-        <button type="button" class="lb-tab-btn" data-tab="global" style="flex: 1; min-width: 74px; padding: 8px 3px; font-size: 0.78rem; font-weight: 800; border-radius: 10px; border: none; cursor: pointer; transition: all 0.2s; background: transparent; color: var(--text-muted);">
+        <button type="button" class="lb-tab-btn" data-tab="global">
           🌍 Okul
         </button>
       </div>
 
-      <!-- Kullanıcının Şube Seçimi Uyarısı (Eğer şube seçmemişse) -->
-      <div id="lbNoBranchAlert" style="display: none; padding: 12px 14px; background: rgba(245, 158, 11, 0.14); border: 1.5px solid rgba(245, 158, 11, 0.4); border-radius: 12px; margin-bottom: 12px; text-align: center;">
-        <div style="font-size: 0.88rem; font-weight: 800; color: #f59e0b; margin-bottom: 4px;">⚠️ Henüz Bir Şube Seçmedin</div>
-        <p style="font-size: 0.78rem; color: var(--text-main); margin-bottom: 8px;">Kendi sınıf arkadaşlarınla yarışmak ve haftalık düelloda şubeni temsil etmek için şubeni belirlemelisin.</p>
-        <button type="button" id="lbOpenBranchModalBtn" class="pill-btn primary-action-btn" style="padding: 6px 14px; font-size: 0.82rem;">Şubemi Seç 🏫</button>
-      </div>
-
-      <!-- Giriş Yapmamış Kullanıcı Bildirimi -->
-      <div class="leaderboard-user-status" id="leaderboardAuthStatus" style="display: none; margin-bottom: 12px;">
-        <div class="leaderboard-status-text">Sıralamanı görmek ve kaydetmek için giriş yapmalısın.</div>
-        <button class="btn btn-primary btn-sm" id="leaderboardLoginBtn">Giriş Yap</button>
-      </div>
-
-      <!-- PANEL 1: SINIFIM LİDERLİK TABLOSU -->
-      <div id="lbPanelClass" class="lb-panel" style="display: block;">
-        <div id="lbClassHeaderCard" style="display: flex; align-items: center; justify-content: space-between; padding: 10px 14px; background: rgba(59, 130, 246, 0.1); border: 1px solid rgba(59, 130, 246, 0.25); border-radius: 12px; margin-bottom: 10px;">
-          <div>
-            <span id="lbClassBranchBadge" style="font-size: 0.95rem; font-weight: 800; color: #3b82f6;">🏫 Şube: -</span>
-            <div id="lbClassTrackBadge" style="font-size: 0.74rem; color: var(--text-muted);">Kur bilgisi</div>
-          </div>
-          <div style="text-align: right;">
-            <span style="font-size: 0.72rem; font-weight: 700; color: #10b981; display: block;">⚡ Bu Hafta</span>
-            <span id="lbClassStudentCount" style="font-size: 0.74rem; color: var(--text-muted);">0 Öğrenci</span>
-          </div>
+      <!-- Kaydırılabilir İçerik Gövdesi -->
+      <div class="leaderboard-modal-body">
+        <!-- Kullanıcının Şube Seçimi Uyarısı (Eğer şube seçmemişse) -->
+        <div id="lbNoBranchAlert" style="display: none; padding: 12px 14px; background: rgba(245, 158, 11, 0.14); border: 1.5px solid rgba(245, 158, 11, 0.4); border-radius: 12px; margin-bottom: 12px; text-align: center;">
+          <div style="font-size: 0.88rem; font-weight: 800; color: #f59e0b; margin-bottom: 4px;">⚠️ Henüz Bir Şube Seçmedin</div>
+          <p style="font-size: 0.78rem; color: var(--text-main); margin-bottom: 8px;">Kendi sınıf arkadaşlarınla yarışmak ve haftalık düelloda şubeni temsil etmek için şubeni belirlemelisin.</p>
+          <button type="button" id="lbOpenBranchModalBtn" class="pill-btn primary-action-btn" style="padding: 6px 14px; font-size: 0.82rem;">Şubemi Seç 🏫</button>
         </div>
 
-        <div class="leaderboard-list" id="classLeaderboardList" style="max-height: 380px; overflow-y: auto;">
-          <div style="text-align: center; padding: 25px 15px; color: var(--text-muted); font-size: 0.86rem;">
-            <span>⏳ Sınıf sıralaması yükleniyor...</span>
-          </div>
+        <!-- Giriş Yapmamış Kullanıcı Bildirimi -->
+        <div class="leaderboard-user-status" id="leaderboardAuthStatus" style="display: none; margin-bottom: 12px;">
+          <div class="leaderboard-status-text">Sıralamanı görmek ve kaydetmek için giriş yapmalısın.</div>
+          <button class="btn btn-primary btn-sm" id="leaderboardLoginBtn">Giriş Yap</button>
         </div>
-      </div>
 
-      <!-- PANEL 2: ŞUBELER ARASI DÜELLO (LİG & EŞLEŞME) -->
-      <div id="lbPanelDuels" class="lb-panel" style="display: none;">
-        <!-- Haftalık Bilgi & Reset Sayacı -->
-        <div style="display: flex; align-items: center; justify-content: space-between; padding: 8px 12px; background: rgba(239, 68, 68, 0.1); border: 1px solid rgba(239, 68, 68, 0.25); border-radius: 12px; margin-bottom: 10px;">
-          <div style="display: flex; align-items: center; gap: 6px;">
-            <span style="font-size: 1.1rem;">🔥</span>
+        <!-- PANEL 1: SINIFIM LİDERLİK TABLOSU -->
+        <div id="lbPanelClass" class="lb-panel" style="display: flex;">
+          <div id="lbClassHeaderCard" style="display: flex; align-items: center; justify-content: space-between; padding: 10px 14px; background: rgba(59, 130, 246, 0.1); border: 1px solid rgba(59, 130, 246, 0.25); border-radius: 12px; margin-bottom: 10px; flex-shrink: 0;">
             <div>
-              <strong style="font-size: 0.85rem; color: #ef4444; display: block;">Haftalık Şube Ligi</strong>
-              <span id="lbDuelLangBadge" style="font-size: 0.72rem; color: var(--text-muted);">Aynı dildeki tüm şubeler yarışıyor</span>
+              <span id="lbClassBranchBadge" style="font-size: 0.95rem; font-weight: 800; color: #3b82f6;">🏫 Şube: -</span>
+              <div id="lbClassTrackBadge" style="font-size: 0.74rem; color: var(--text-muted);">Kur bilgisi</div>
+            </div>
+            <div style="text-align: right;">
+              <span style="font-size: 0.72rem; font-weight: 700; color: #10b981; display: block;">⚡ Bu Hafta</span>
+              <span id="lbClassStudentCount" style="font-size: 0.74rem; color: var(--text-muted);">0 Öğrenci</span>
             </div>
           </div>
-          <div style="text-align: right;">
-            <span style="font-size: 0.72rem; font-weight: 800; padding: 3px 8px; border-radius: 8px; background: rgba(239, 68, 68, 0.2); color: #ef4444; display: block;">Adil Ortalama XP</span>
-            <span id="lbDuelResetCountdown" style="font-size: 0.68rem; color: var(--text-muted);">Pazar 23:59 sıfırlanır</span>
-          </div>
-        </div>
 
-        <div class="leaderboard-list" id="duelsLeaderboardList" style="max-height: 380px; overflow-y: auto;">
-          <div style="text-align: center; padding: 25px 15px; color: var(--text-muted); font-size: 0.86rem;">
-            <span>⏳ Şube düelloları yükleniyor...</span>
-          </div>
-        </div>
-      </div>
-
-      <!-- PANEL 3: ŞEREF KÜRSÜSÜ / ŞAMPİYONLUK ARŞİVİ -->
-      <div id="lbPanelHonor" class="lb-panel" style="display: none;">
-        <div style="display: flex; align-items: center; justify-content: space-between; padding: 8px 12px; background: rgba(245, 158, 11, 0.12); border: 1px solid rgba(245, 158, 11, 0.3); border-radius: 12px; margin-bottom: 10px;">
-          <div style="display: flex; align-items: center; gap: 6px;">
-            <span style="font-size: 1.15rem;">👑</span>
-            <div>
-              <strong style="font-size: 0.84rem; color: #f59e0b; display: block;">Yıl Sonu Şampiyonluk Yarışı</strong>
-              <span style="font-size: 0.71rem; color: var(--text-muted);">Haftalık 1.lik (10p), 2.lik (6p), 3.lük (4p)</span>
+          <div class="leaderboard-list" id="classLeaderboardList">
+            <div style="text-align: center; padding: 25px 15px; color: var(--text-muted); font-size: 0.86rem;">
+              <span>⏳ Sınıf sıralaması yükleniyor...</span>
             </div>
           </div>
-          <span style="font-size: 0.7rem; font-weight: 800; padding: 3px 8px; border-radius: 8px; background: rgba(245, 158, 11, 0.22); color: #f59e0b;">Lig Puanı</span>
         </div>
 
-        <div class="leaderboard-list" id="honorLeaderboardList" style="max-height: 380px; overflow-y: auto;">
-          <div style="text-align: center; padding: 25px 15px; color: var(--text-muted); font-size: 0.86rem;">
-            <span>⏳ Şeref kürsüsü yükleniyor...</span>
+        <!-- PANEL 2: ŞUBELER ARASI DÜELLO (LİG & EŞLEŞME) -->
+        <div id="lbPanelDuels" class="lb-panel" style="display: none;">
+          <!-- Haftalık Bilgi & Reset Sayacı -->
+          <div style="display: flex; align-items: center; justify-content: space-between; padding: 8px 12px; background: rgba(239, 68, 68, 0.1); border: 1px solid rgba(239, 68, 68, 0.25); border-radius: 12px; margin-bottom: 10px; flex-shrink: 0;">
+            <div style="display: flex; align-items: center; gap: 6px;">
+              <span style="font-size: 1.1rem;">🔥</span>
+              <div>
+                <strong style="font-size: 0.85rem; color: #ef4444; display: block;">Haftalık Şube Ligi</strong>
+                <span id="lbDuelLangBadge" style="font-size: 0.72rem; color: var(--text-muted);">Aynı dildeki tüm şubeler yarışıyor</span>
+              </div>
+            </div>
+            <div style="text-align: right;">
+              <span style="font-size: 0.72rem; font-weight: 800; padding: 3px 8px; border-radius: 8px; background: rgba(239, 68, 68, 0.2); color: #ef4444; display: block;">Adil Ortalama XP</span>
+              <span id="lbDuelResetCountdown" style="font-size: 0.68rem; color: var(--text-muted);">Pazar 23:59 sıfırlanır</span>
+            </div>
+          </div>
+
+          <div class="leaderboard-list" id="duelsLeaderboardList">
+            <div style="text-align: center; padding: 25px 15px; color: var(--text-muted); font-size: 0.86rem;">
+              <span>⏳ Şube düelloları yükleniyor...</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- PANEL 3: ŞEREF KÜRSÜSÜ / ŞAMPİYONLUK ARŞİVİ -->
+        <div id="lbPanelHonor" class="lb-panel" style="display: none;">
+          <div style="display: flex; align-items: center; justify-content: space-between; padding: 8px 12px; background: rgba(245, 158, 11, 0.12); border: 1px solid rgba(245, 158, 11, 0.3); border-radius: 12px; margin-bottom: 10px; flex-shrink: 0;">
+            <div style="display: flex; align-items: center; gap: 6px;">
+              <span style="font-size: 1.15rem;">👑</span>
+              <div>
+                <strong style="font-size: 0.84rem; color: #f59e0b; display: block;">Yıl Sonu Şampiyonluk Yarışı</strong>
+                <span style="font-size: 0.71rem; color: var(--text-muted);">Haftalık 1.lik (10p), 2.lik (6p), 3.lük (4p)</span>
+              </div>
+            </div>
+            <span style="font-size: 0.7rem; font-weight: 800; padding: 3px 8px; border-radius: 8px; background: rgba(245, 158, 11, 0.22); color: #f59e0b;">Lig Puanı</span>
+          </div>
+
+          <div class="leaderboard-list" id="honorLeaderboardList">
+            <div style="text-align: center; padding: 25px 15px; color: var(--text-muted); font-size: 0.86rem;">
+              <span>⏳ Şeref kürsüsü yükleniyor...</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- PANEL 4: GENEL OKUL SIRALAMASI -->
+        <div id="lbPanelGlobal" class="lb-panel" style="display: none;">
+          <div style="padding: 6px 12px; margin-bottom: 8px; font-size: 0.74rem; color: var(--text-muted); text-align: center; flex-shrink: 0;">
+            🌍 Tüm diller ve kurlar genelinde tüm zamanlar XP sıralaması
+          </div>
+          <div class="leaderboard-list" id="globalLeaderboardList">
+            <!-- JS ile doldurulur -->
           </div>
         </div>
       </div>
 
-      <!-- PANEL 4: GENEL OKUL SIRALAMASI -->
-      <div id="lbPanelGlobal" class="lb-panel" style="display: none;">
-        <div style="padding: 6px 12px; margin-bottom: 8px; font-size: 0.74rem; color: var(--text-muted); text-align: center;">
-          🌍 Tüm diller ve kurlar genelinde tüm zamanlar XP sıralaması
-        </div>
-        <div class="leaderboard-list" id="globalLeaderboardList" style="max-height: 380px; overflow-y: auto;">
-          <!-- JS ile doldurulur -->
-        </div>
-      </div>
-
-      <!-- Alt Kısım: Kullanıcının Kendi Sırası Vurgusu -->
-      <div id="lbCurrentUserBar" style="display: none; margin-top: 10px; padding: 8px 12px; background: var(--bg-card); border: 2px solid var(--accent); border-radius: 12px; display: flex; align-items: center; justify-content: space-between;">
+      <!-- Alt Kısım: Kullanıcının Kendi Sırası Vurgusu (Sabit Alt Bar) -->
+      <div id="lbCurrentUserBar" style="display: none;">
         <div style="display: flex; align-items: center; gap: 8px;">
           <span id="lbMyRankBadge" style="font-size: 0.85rem; font-weight: 800; color: var(--accent);">#--</span>
           <span id="lbMyAvatar" style="font-size: 1.2rem;">🦊</span>
@@ -1724,15 +1727,15 @@
     </div>
   </div>
 
-  <!-- TURNUVA REHBERİ & YARDIM MODALI -->
-  <div id="tournamentGuideModal" class="modal-overlay" style="z-index: 10040; display: none;">
-    <div class="modal-card" style="max-width: 480px; width: 92%; padding: 22px; max-height: calc(100dvh - 40px); overflow-y: auto; text-align: left;">
-      <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 14px; border-bottom: 1px solid var(--border-color); padding-bottom: 10px;">
+  <!-- TURNUVA REHBERİ & YARDIM MODALI (TAM EKRAN) -->
+  <div id="tournamentGuideModal" class="modal-overlay full-screen-modal" style="z-index: 10040; display: none;">
+    <div class="modal-card tournament-guide-modal-card">
+      <div class="modal-header tournament-guide-header">
         <div style="display: flex; align-items: center; gap: 8px;">
           <span style="font-size: 1.4rem;">📖</span>
-          <h2 style="font-size: 1.15rem; font-weight: 900; margin: 0; color: var(--text-main);">Turnuva Kuralları & Rehber</h2>
+          <h2 class="modal-title" style="font-size: 1.15rem; font-weight: 900; margin: 0; color: var(--text-main);">Turnuva Kuralları & Rehber</h2>
         </div>
-        <button type="button" id="closeTournamentGuideBtn" class="icon-btn" aria-label="Kapat">
+        <button type="button" id="closeTournamentGuideBtn" class="icon-btn" aria-label="Kapat" style="width: 34px; height: 34px; border-radius: 10px;">
           <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
             <line x1="18" y1="6" x2="6" y2="18"></line>
             <line x1="6" y1="6" x2="18" y2="18"></line>
@@ -1740,58 +1743,62 @@
         </button>
       </div>
 
-      <!-- Kural Kartı 1: Adil Ortalama Sistemi -->
-      <div style="background: rgba(59, 130, 246, 0.08); border: 1.5px solid rgba(59, 130, 246, 0.25); border-radius: 12px; padding: 12px 14px; margin-bottom: 12px;">
-        <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 4px;">
-          <span style="font-size: 1.1rem;">⚖️</span>
-          <strong style="font-size: 0.9rem; color: #3b82f6;">Adil Ortalama Puan (B Kuralı)</strong>
-        </div>
-        <p style="font-size: 0.8rem; color: var(--text-muted); line-height: 1.45; margin: 0;">
-          Şubeler arası düelloda sınıf mevcudu adaletsizliği yaşanmaz! Şubenin lig puanı, <strong>Şubenin Toplam Haftalık XP'si ÷ Aktif Öğrenci Sayısı</strong> formülüyle hesaplanır. Az mevcutlu şubeler kalabalık sınıflarla tamamen eşit şartlarda yarışır.
-        </p>
-      </div>
+      <div class="tournament-guide-body">
+        <div class="tournament-guide-content">
+          <!-- Kural Kartı 1: Adil Ortalama Sistemi -->
+          <div style="background: rgba(59, 130, 246, 0.08); border: 1.5px solid rgba(59, 130, 246, 0.25); border-radius: 14px; padding: 14px 16px; margin-bottom: 12px;">
+            <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 6px;">
+              <span style="font-size: 1.2rem;">⚖️</span>
+              <strong style="font-size: 0.94rem; color: #3b82f6;">Adil Ortalama Puan (B Kuralı)</strong>
+            </div>
+            <p style="font-size: 0.84rem; color: var(--text-muted); line-height: 1.5; margin: 0;">
+              Şubeler arası düelloda sınıf mevcudu adaletsizliği yaşanmaz! Şubenin lig puanı, <strong>Şubenin Toplam Haftalık XP'si ÷ Aktif Öğrenci Sayısı</strong> formülüyle hesaplanır. Az mevcutlu şubeler kalabalık sınıflarla tamamen eşit şartlarda yarışır.
+            </p>
+          </div>
 
-      <!-- Kural Kartı 2: Diller Kendi Arasında Yarışır -->
-      <div style="background: rgba(239, 68, 68, 0.08); border: 1.5px solid rgba(239, 68, 68, 0.25); border-radius: 12px; padding: 12px 14px; margin-bottom: 12px;">
-        <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 4px;">
-          <span style="font-size: 1.1rem;">⚔️</span>
-          <strong style="font-size: 0.9rem; color: #ef4444;">Diller Arası Ayrım</strong>
-        </div>
-        <p style="font-size: 0.8rem; color: var(--text-muted); line-height: 1.45; margin: 0;">
-          Şube düelloları her dilin kendi içinde gerçekleşir:
-          <br>• <strong>İngilizce:</strong> 17 Şube (İHS 101 – 117)
-          <br>• <strong>Fransızca:</strong> 3 Şube (FHS 101 – 103)
-          <br>• <strong>Almanca:</strong> 3 Şube (AHS 101 – 103)
-          <br>Farklı dillerdeki şubeler birbirleriyle düello yapmaz.
-        </p>
-      </div>
+          <!-- Kural Kartı 2: Diller Kendi Arasında Yarışır -->
+          <div style="background: rgba(239, 68, 68, 0.08); border: 1.5px solid rgba(239, 68, 68, 0.25); border-radius: 14px; padding: 14px 16px; margin-bottom: 12px;">
+            <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 6px;">
+              <span style="font-size: 1.2rem;">⚔️</span>
+              <strong style="font-size: 0.94rem; color: #ef4444;">Diller Arası Ayrım</strong>
+            </div>
+            <p style="font-size: 0.84rem; color: var(--text-muted); line-height: 1.5; margin: 0;">
+              Şube düelloları her dilin kendi içinde gerçekleşir:
+              <br>• <strong>İngilizce:</strong> 17 Şube (İHS 101 – 117)
+              <br>• <strong>Fransızca:</strong> 3 Şube (FHS 101 – 103)
+              <br>• <strong>Almanca:</strong> 3 Şube (AHS 101 – 103)
+              <br>Farklı dillerdeki şubeler birbirleriyle düello yapmaz.
+            </p>
+          </div>
 
-      <!-- Kural Kartı 3: Haftalık Sıfırlanma & Şeref Kürsüsü -->
-      <div style="background: rgba(245, 158, 11, 0.08); border: 1.5px solid rgba(245, 158, 11, 0.25); border-radius: 12px; padding: 12px 14px; margin-bottom: 12px;">
-        <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 4px;">
-          <span style="font-size: 1.1rem;">🏆</span>
-          <strong style="font-size: 0.9rem; color: #f59e0b;">Haftalık Sıfırlanma & Yıl Sonu Şampiyonu</strong>
-        </div>
-        <p style="font-size: 0.8rem; color: var(--text-muted); line-height: 1.45; margin: 0;">
-          • Her <strong>Pazar gecesi 23:59</strong>'da haftalık sınıf ve şube sıralamaları sıfırlanır ve yeni hafta başlar.
-          <br>• Haftayı ilk 3'te bitiren şubeler lig puanı kazanır (1.ye 10p, 2.ye 6p, 3.ye 4p).
-          <br>• Sene sonunda bu puanlar toplanarak <strong>"Yılın Şampiyon Şubesi"</strong> ilan edilir!
-        </p>
-      </div>
+          <!-- Kural Kartı 3: Haftalık Sıfırlanma & Şeref Kürsüsü -->
+          <div style="background: rgba(245, 158, 11, 0.08); border: 1.5px solid rgba(245, 158, 11, 0.25); border-radius: 14px; padding: 14px 16px; margin-bottom: 12px;">
+            <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 6px;">
+              <span style="font-size: 1.2rem;">🏆</span>
+              <strong style="font-size: 0.94rem; color: #f59e0b;">Haftalık Sıfırlanma & Yıl Sonu Şampiyonu</strong>
+            </div>
+            <p style="font-size: 0.84rem; color: var(--text-muted); line-height: 1.5; margin: 0;">
+              • Her <strong>Pazar gecesi 23:59</strong>'da haftalık sınıf ve şube sıralamaları sıfırlanır ve yeni hafta başlar.
+              <br>• Haftayı ilk 3'te bitiren şubeler lig puanı kazanır (1.ye 10p, 2.ye 6p, 3.ye 4p).
+              <br>• Sene sonunda bu puanlar toplanarak <strong>"Yılın Şampiyon Şubesi"</strong> ilan edilir!
+            </p>
+          </div>
 
-      <!-- Kural Kartı 4: Şube Kilitleme -->
-      <div style="background: rgba(16, 185, 129, 0.08); border: 1.5px solid rgba(16, 185, 129, 0.25); border-radius: 12px; padding: 12px 14px; margin-bottom: 14px;">
-        <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 4px;">
-          <span style="font-size: 1.1rem;">🔒</span>
-          <strong style="font-size: 0.9rem; color: #10b981;">Kalıcı Şube Kaydı</strong>
-        </div>
-        <p style="font-size: 0.8rem; color: var(--text-muted); line-height: 1.45; margin: 0;">
-          Turnuva adaleti ve şube bütünlüğü için seçilen şube profilinize kilitlenir ve ayarlardan değiştirilemez.
-        </p>
-      </div>
+          <!-- Kural Kartı 4: Şube Kilitleme -->
+          <div style="background: rgba(16, 185, 129, 0.08); border: 1.5px solid rgba(16, 185, 129, 0.25); border-radius: 14px; padding: 14px 16px; margin-bottom: 16px;">
+            <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 6px;">
+              <span style="font-size: 1.2rem;">🔒</span>
+              <strong style="font-size: 0.94rem; color: #10b981;">Kalıcı Şube Kaydı</strong>
+            </div>
+            <p style="font-size: 0.84rem; color: var(--text-muted); line-height: 1.5; margin: 0;">
+              Turnuva adaleti ve şube bütünlüğü için seçilen şube profilinize kilitlenir ve ayarlardan değiştirilemez.
+            </p>
+          </div>
 
-      <div style="text-align: right;">
-        <button type="button" id="confirmTournamentGuideBtn" class="pill-btn primary-action-btn" style="padding: 9px 20px; font-size: 0.85rem; width: 100%;">Anladım, Yarışa Başla! 🚀</button>
+          <div style="text-align: right; padding-bottom: calc(env(safe-area-inset-bottom, 12px) + 8px);">
+            <button type="button" id="confirmTournamentGuideBtn" class="pill-btn primary-action-btn" style="padding: 13px 20px; font-size: 0.95rem; font-weight: 800; width: 100%; border-radius: 14px; box-shadow: 0 4px 14px rgba(37, 99, 235, 0.35);">Anladım, Yarışa Başla! 🚀</button>
+          </div>
+        </div>
       </div>
     </div>
   </div>
@@ -1843,7 +1850,7 @@
         <div class="about-hero-box">
           <div class="about-brand-row">
             <span class="about-brand">Lexi<span class="brand-highlight">Q</span></span>
-            <span class="about-version-pill" id="aboutAppVersion">v1.5.2</span>
+            <span class="about-version-pill" id="aboutAppVersion">v1.5.3</span>
             <span class="about-platform-badge" id="aboutPlatformBadge" style="display: none; font-size: 0.72rem; font-weight: 700; padding: 3px 9px; border-radius: 12px; background: rgba(59,130,246,0.15); color: #3b82f6; border: 1px solid rgba(59,130,246,0.3);"></span>
           </div>
           <p class="about-tagline">Müfredat Tabanlı Çok Dilli Kelime Arenası</p>
@@ -3465,7 +3472,7 @@
       <div class="confirm-icon-wrap" style="font-size: 2.8rem; margin-bottom: 8px;">🎉</div>
       <h3 class="confirm-title" style="font-size: 1.3rem; font-weight: 800; margin: 0 0 6px 0;">LexiQ Güncellendi!</h3>
       <div class="app-update-version-badge" style="display: inline-block; padding: 4px 14px; border-radius: 20px; font-size: 0.84rem; font-weight: 800; margin-bottom: 14px;">
-        Sürüm <span id="appUpdateVersionText">v1.5.2</span>
+        Sürüm <span id="appUpdateVersionText">v1.5.3</span>
       </div>
       <div class="update-notes-box" style="text-align: left; border-radius: 16px; padding: 14px 16px; font-size: 0.88rem; line-height: 1.6; margin-bottom: 18px; max-height: 280px; overflow-y: auto;">
         <div class="update-notes-title" style="font-weight: 800; margin-bottom: 8px; display: flex; align-items: center; gap: 6px;">
@@ -3537,11 +3544,11 @@
   <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-storage-compat.js"></script>
-  <script src="firebase_backend.js?v=1.5.2"></script>
+  <script src="firebase_backend.js?v=1.5.3"></script>
 
   <!-- Kelime Verisi ve Uygulama Mantığı (Sadece Standart Vanilla JS) -->
-  <script src="words_data.js?v=1.5.2"></script>
-  <script src="app.js?v=1.5.2"></script>
+  <script src="words_data.js?v=1.5.3"></script>
+  <script src="app.js?v=1.5.3"></script>
 
   </body>
 </html>

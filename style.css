@@ -13695,5 +13695,165 @@ html.screen-fit-compact .welcome-action-guest {
   border-color: rgba(245, 158, 11, 0.35) !important;
 }
 
+/* ============================================================
+   TURNUVA & LİDERLER VE TURNUVA REHBERİ TAM EKRAN TASARIMI
+   ============================================================ */
+#leaderboardModal.full-screen-modal,
+#tournamentGuideModal.full-screen-modal {
+  position: fixed !important;
+  inset: 0 !important;
+  width: 100vw !important;
+  height: 100% !important;
+  height: 100dvh !important;
+  height: 100vh !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  background: var(--bg-body, #0f172a) !important;
+  display: none;
+  flex-direction: column !important;
+  align-items: stretch !important;
+  justify-content: stretch !important;
+  z-index: 10020 !important;
+  overflow: hidden !important;
+  box-sizing: border-box !important;
+}
+
+#leaderboardModal.full-screen-modal.active,
+#tournamentGuideModal.full-screen-modal.active {
+  display: flex !important;
+}
+
+#leaderboardModal.full-screen-modal .leaderboard-modal-card,
+#tournamentGuideModal.full-screen-modal .tournament-guide-modal-card {
+  width: 100% !important;
+  max-width: 100% !important;
+  height: 100% !important;
+  height: 100dvh !important;
+  height: 100vh !important;
+  max-height: 100% !important;
+  max-height: 100dvh !important;
+  border-radius: 0 !important;
+  border: none !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  display: flex !important;
+  flex-direction: column !important;
+  box-shadow: none !important;
+  background: var(--bg-body, #0f172a) !important;
+  overflow: hidden !important;
+  box-sizing: border-box !important;
+  flex: 1 1 auto !important;
+  min-height: 0 !important;
+}
+
+/* Üst Başlık (Header) - Safe Area Uyumlu */
+#leaderboardModal.full-screen-modal .leaderboard-modal-header,
+#tournamentGuideModal.full-screen-modal .tournament-guide-header {
+  padding-top: calc(env(safe-area-inset-top, 10px) + 8px) !important;
+  padding-left: clamp(14px, 4vw, 24px) !important;
+  padding-right: clamp(14px, 4vw, 24px) !important;
+  padding-bottom: 12px !important;
+  background: var(--bg-surface) !important;
+  border-bottom: 1px solid var(--border-color) !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  flex-shrink: 0 !important;
+}
+
+/* Sekmeler Gezintisi */
+#leaderboardModal.full-screen-modal .leaderboard-tabs-nav {
+  display: flex !important;
+  gap: 6px !important;
+  padding: 8px clamp(12px, 3.5vw, 20px) !important;
+  background: var(--bg-surface) !important;
+  border-bottom: 1px solid var(--border-color) !important;
+  margin: 0 !important;
+  border-radius: 0 !important;
+  overflow-x: auto !important;
+  scrollbar-width: none !important;
+  -webkit-overflow-scrolling: touch !important;
+  flex-shrink: 0 !important;
+}
+
+#leaderboardModal.full-screen-modal .leaderboard-tabs-nav::-webkit-scrollbar {
+  display: none !important;
+}
+
+#leaderboardModal.full-screen-modal .lb-tab-btn {
+  flex: 1 0 auto !important;
+  min-width: 76px !important;
+  padding: 8px 12px !important;
+  font-size: 0.82rem !important;
+  font-weight: 800 !important;
+  border-radius: 12px !important;
+  border: none !important;
+  cursor: pointer !important;
+  transition: all 0.2s ease !important;
+  text-align: center !important;
+}
+
+/* İçerik Gövdesi - Tam Ekran Kaydırılabilir Alan */
+#leaderboardModal.full-screen-modal .leaderboard-modal-body,
+#tournamentGuideModal.full-screen-modal .tournament-guide-body {
+  flex: 1 1 auto !important;
+  min-height: 0 !important;
+  height: auto !important;
+  display: flex !important;
+  flex-direction: column !important;
+  overflow-y: auto !important;
+  overflow-x: hidden !important;
+  -webkit-overflow-scrolling: touch !important;
+  padding: 14px clamp(12px, 3.5vw, 20px) !important;
+  box-sizing: border-box !important;
+}
+
+#leaderboardModal.full-screen-modal .lb-panel {
+  flex: 1 1 auto !important;
+  min-height: 0 !important;
+  display: flex;
+  flex-direction: column !important;
+}
+
+#leaderboardModal.full-screen-modal .leaderboard-list {
+  max-height: none !important;
+  flex: 1 1 auto !important;
+  min-height: 200px !important;
+  overflow-y: auto !important;
+  padding-bottom: 14px !important;
+}
+
+/* Tablet ve Geniş Ekranda Dengeli Genişlik */
+@media (min-width: 640px) {
+  #leaderboardModal.full-screen-modal .leaderboard-modal-body > *,
+  #leaderboardModal.full-screen-modal .leaderboard-tabs-nav,
+  #tournamentGuideModal.full-screen-modal .tournament-guide-content {
+    max-width: 620px;
+    margin-left: auto !important;
+    margin-right: auto !important;
+    width: 100% !important;
+  }
+}
+
+/* Kullanıcının Sırası Vurgusu (Sabit Alt Bar) */
+#leaderboardModal.full-screen-modal #lbCurrentUserBar {
+  flex-shrink: 0 !important;
+  margin: 0 !important;
+  border-radius: 0 !important;
+  border-left: none !important;
+  border-right: none !important;
+  border-bottom: none !important;
+  border-top: 1.5px solid var(--border-color) !important;
+  padding-top: 10px !important;
+  padding-bottom: calc(env(safe-area-inset-bottom, 12px) + 8px) !important;
+  padding-left: clamp(14px, 4vw, 24px) !important;
+  padding-right: clamp(14px, 4vw, 24px) !important;
+  background: var(--bg-surface) !important;
+  box-shadow: 0 -4px 16px rgba(0, 0, 0, 0.2) !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+}
+
 
 

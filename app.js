@@ -7,7 +7,7 @@
 (function () {
   'use strict';
 
-  const APP_VERSION = 'v1.5.2';
+  const APP_VERSION = 'v1.5.3';
   const CURRENT_APP_BUILD = 'lexiq_build_19_clean';
 
   // Build 13 temiz kurulum / sıfırlama güvencesi (Kullanıcı verilerini sıfırla, Hoş Geldin ekranını garantile)
@@ -8940,10 +8940,10 @@
       const panelHonor = document.getElementById('lbPanelHonor');
       const panelGlobal = document.getElementById('lbPanelGlobal');
 
-      if (panelClass) panelClass.style.display = (tabName === 'class') ? 'block' : 'none';
-      if (panelDuels) panelDuels.style.display = (tabName === 'duels') ? 'block' : 'none';
-      if (panelHonor) panelHonor.style.display = (tabName === 'honor') ? 'block' : 'none';
-      if (panelGlobal) panelGlobal.style.display = (tabName === 'global') ? 'block' : 'none';
+      if (panelClass) panelClass.style.display = (tabName === 'class') ? 'flex' : 'none';
+      if (panelDuels) panelDuels.style.display = (tabName === 'duels') ? 'flex' : 'none';
+      if (panelHonor) panelHonor.style.display = (tabName === 'honor') ? 'flex' : 'none';
+      if (panelGlobal) panelGlobal.style.display = (tabName === 'global') ? 'flex' : 'none';
 
       if (tabName === 'class') {
         renderClassLeaderboard();
