@@ -1,11 +1,11 @@
 {
-  "version": "v1.7.5",
-  "versionCode": 55,
+  "version": "v1.7.6",
+  "versionCode": 56,
   "releaseDate": "2026-10-13",
   "notes": [
-    "🔒 GitHub bağlantı ve yönlendirmeleri uygulamanın tümünden kaldırıldı",
-    "✨ Güncelleme kontrolünde sade, onaylayıcı ve mağaza/yerel güncelleme deneyimi sağlandı",
-    "🧩 Kelime Eşleme: Solda hedef dil, sağda Türkçe sütun düzeni korundu",
+    "🚀 iOS ve Web canlı güncelleme ve önbellek tazeleme deneyimi optimize edildi",
+    "🔒 Kaynak kodu deposu bağlantısı tamamen kaldırıldı, yerel uygulama içi yenileme korundu",
+    "🧩 Kelime Eşleme: Solda hedef dil, sağda Türkçe sütun düzeni aktif",
     "🛡️ Android Target SDK 36 Google Play Store tam uyumluluğu korundu"
   ]
 }

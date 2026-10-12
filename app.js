@@ -7,7 +7,7 @@
 (function () {
   'use strict';
 
-  const APP_VERSION = 'v1.7.5';
+  const APP_VERSION = 'v1.7.6';
   const CURRENT_APP_BUILD = 'lexiq_build_19_clean';
 
   // Build 13 temiz kurulum / sıfırlama güvencesi (Kullanıcı verilerini sıfırla, Hoş Geldin ekranını garantile)
@@ -10657,7 +10657,7 @@ let activeAvatarCategory = 'all';
               }
               showToast(`🚀 Yeni ${remoteVer} sürümü hazır! Güncellemek için dokunun.`, 4500);
             } else {
-              // Web / iOS / Diğer Platformlar
+              // iOS, Web ve Masaüstü Canlı Güncelleme
               if (modalTitle) modalTitle.textContent = `🎉 Yeni Sürüm Yayında: ${remoteVer}!`;
               if (applyBtn) {
                 applyBtn.style.display = 'block';
@@ -10695,7 +10695,7 @@ let activeAvatarCategory = 'all';
               }
               if (forceRefreshBtn) {
                 forceRefreshBtn.style.display = 'block';
-                forceRefreshBtn.innerHTML = `<span>🔄</span><span>Yerel Önbelleği Sıfırla & Yenile</span>`;
+                forceRefreshBtn.innerHTML = `<span>🔄</span><span>Önbelleği Temizle & Yenile</span>`;
                 forceRefreshBtn.onclick = () => purgeCacheAndReload(currentVer);
               }
               if (notesBox) {
@@ -10708,29 +10708,14 @@ let activeAvatarCategory = 'all';
                   </p>
                 `;
               }
-            } else if (isIOS) {
-              if (modalTitle) modalTitle.textContent = '✅ Tebrikler! iOS Sürümü Güncel';
-              if (applyBtn) {
-                applyBtn.style.setProperty('display', 'none', 'important');
-              }
-              if (forceRefreshBtn) {
-                forceRefreshBtn.style.setProperty('display', 'none', 'important');
-              }
-              if (notesBox) {
-                notesBox.innerHTML = `
-                  <div style="font-weight: 700; color: #10b981; margin-bottom: 6px;">
-                    ✅ En Güncel iOS Sürümünü (${currentVer}) Kullanıyorsunuz
-                  </div>
-                  <p style="margin: 0; font-size: 0.85rem; color: var(--text-muted); line-height: 1.5;">
-                    Cihazınızdaki sürüm (${currentVer}) son yayınla tam olarak eşleşmektedir. Tüm özellikler ve ders içerikleri günceldir.
-                  </p>
-                `;
-              }
             } else {
-              // Web ve Genel
+              // iOS, Safari ve Web: Canlı Önbellek Yenileme Butonu Aktif
               if (modalTitle) modalTitle.textContent = '✅ Tebrikler! LexiQ Güncel';
               if (applyBtn) {
-                applyBtn.style.setProperty('display', 'none', 'important');
+                applyBtn.style.display = 'block';
+                applyBtn.style.background = 'linear-gradient(135deg, #0284c7, #0369a1)';
+                applyBtn.innerHTML = `<span>🔄</span><span>Önbelleği Temizle & Yenile</span>`;
+                applyBtn.onclick = () => purgeCacheAndReload(currentVer);
               }
               if (forceRefreshBtn) {
                 forceRefreshBtn.style.setProperty('display', 'none', 'important');
@@ -10741,7 +10726,7 @@ let activeAvatarCategory = 'all';
                     ✅ En Güncel Sürümü (${currentVer}) Kullanıyorsunuz
                   </div>
                   <p style="margin: 0; font-size: 0.85rem; color: var(--text-muted); line-height: 1.5;">
-                    Tüm özellikler ve ders içerikleri son sürümdedir.
+                    Cihazınızdaki sürüm (${currentVer}) son yayınla tam olarak eşleşmektedir. Tüm özellikler, kelimeler ve ders içerikleri günceldir. Dilediğiniz an yukarıdaki butona dokunarak yerel önbelleği tazeleyebilirsiniz.
                   </p>
                 `;
               }
