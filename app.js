@@ -103,6 +103,10 @@
     userEmail: localStorage.getItem('lexiq_user_email') || '',
     userTrack: localStorage.getItem('lexiq_user_track') || '4A',
     userLevel: localStorage.getItem('lexiq_user_level') || 'A2',
+    userBranch: localStorage.getItem('lexiq_user_branch') || '',
+    branchLocked: (localStorage.getItem('lexiq_branch_locked') === 'true') || !!localStorage.getItem('lexiq_user_branch'),
+    weeklyXp: parseInt(localStorage.getItem('lexiq_weekly_xp') || '0', 10),
+    weeklyWeekId: localStorage.getItem('lexiq_weekly_week') || (window.getCurrentWeekId ? window.getCurrentWeekId() : '2026-W42'),
     isOnboarded: localStorage.getItem('lexiq_user_onboarded') === 'true',
 
     // Oyun Aktif Kelime Durumu & Arena Tercihleri
@@ -1999,9 +2003,19 @@
     const accountStatus = document.getElementById('profAccountStatusText');
     const loginOutBtn = document.getElementById('profLoginOrOutBtn');
 
+    const branchBadge = document.getElementById('profHeroBranchBadge');
     if (heroAvatar) heroAvatar.textContent = state.userAvatar;
     if (heroName) heroName.textContent = state.userName;
     if (trackBadge) trackBadge.textContent = state.userTrack === '4B' ? '4B (B1 İleri)' : '4A (A2 Temel)';
+    if (branchBadge) {
+      if (state.userBranch) {
+        branchBadge.textContent = `🏫 Şube: ${state.userBranch}`;
+        branchBadge.style.display = 'inline-flex';
+      } else {
+        branchBadge.textContent = '🏫 Şube Seçilmedi';
+        branchBadge.style.display = 'inline-flex';
+      }
+    }
     if (langBadge) {
       const meta = LANG_META[state.activeLanguage] || { flag: '🇬🇧', name: 'İngilizce' };
       langBadge.textContent = `${meta.flag} ${meta.name.split('→')[0].trim()}`;
@@ -2878,6 +2892,21 @@
       state.userLevel = userData.level;
       localStorage.setItem('lexiq_user_level', userData.level);
     }
+    if (userData.branch) {
+      state.userBranch = userData.branch;
+      localStorage.setItem('lexiq_user_branch', userData.branch);
+    }
+    if (userData.branchLocked !== undefined) {
+      state.branchLocked = !!userData.branchLocked;
+      localStorage.setItem('lexiq_branch_locked', String(state.branchLocked));
+    }
+    const curW = window.getCurrentWeekId ? window.getCurrentWeekId() : '2026-W42';
+    if (userData.weeklyWeekId === curW && typeof userData.weeklyXp === 'number') {
+      state.weeklyXp = userData.weeklyXp;
+      state.weeklyWeekId = curW;
+      localStorage.setItem('lexiq_weekly_xp', String(userData.weeklyXp));
+      localStorage.setItem('lexiq_weekly_week', curW);
+    }
     if (userData.lang && LANG_META[userData.lang]) {
       state.activeLanguage = userData.lang;
       localStorage.setItem('kelime_active_lang', userData.lang);
@@ -2983,6 +3012,20 @@
     }
 
     updateSettingsTrackAndUnitDropdowns();
+
+    // Resmi Şube Gösterimi (Kilitli & Salt Okunur)
+    const branchTitleEl = document.getElementById('settingBranchTitle');
+    const branchSubEl = document.getElementById('settingBranchSub');
+    if (branchTitleEl) {
+      if (state.userBranch) {
+        const foundB = (window.SCHOOL_BRANCHES || []).find(b => b.code === state.userBranch);
+        branchTitleEl.textContent = foundB ? `${foundB.code} (${foundB.name})` : state.userBranch;
+        if (branchSubEl) branchSubEl.textContent = foundB ? `${foundB.trackName} - Sınıf İçi Liderlik & Düello` : 'Sınıf İçi Liderlik & Düello Şubesi';
+      } else {
+        branchTitleEl.textContent = 'Henüz Seçilmedi';
+        if (branchSubEl) branchSubEl.textContent = 'Liderlik menüsünden şubeni belirleyebilirsin';
+      }
+    }
 
     if (dom.settingDailyGoalSelect) {
       dom.settingDailyGoalSelect.value = String(state.dailyGoal || 15);
@@ -3410,10 +3453,48 @@
   };
 
   function renderOnboardingTracks() {
+    const branchSelect = document.getElementById('obBranchSelect');
+    const branches = (window.SCHOOL_BRANCHES || []).filter(b => b.lang === obState.lang);
+    if (branchSelect && branches.length > 0) {
+      branchSelect.innerHTML = '';
+      branches.forEach(b => {
+        const opt = document.createElement('option');
+        opt.value = b.code;
+        opt.textContent = `${b.code} - ${b.name} (${b.trackName})`;
+        branchSelect.appendChild(opt);
+      });
+
+      // Eğer mevcut seçili bir şube yoksa ilk şubeyi al
+      if (!obState.branch || !branches.some(b => b.code === obState.branch)) {
+        obState.branch = branches[0].code;
+      }
+      branchSelect.value = obState.branch;
+
+      // Şube değiştikçe track'i de otomatik şubeye uydur
+      branchSelect.onchange = (e) => {
+        obState.branch = e.target.value;
+        const selectedB = branches.find(b => b.code === obState.branch);
+        if (selectedB) {
+          obState.track = selectedB.track;
+          obState.level = selectedB.level;
+          obState.unitNo = calculateCurrentUnitByDate(obState.lang, obState.level);
+          syncTrackOptionCards();
+        }
+      };
+
+      const curB = branches.find(b => b.code === obState.branch);
+      if (curB) {
+        obState.track = curB.track;
+      }
+    }
+
     if (!obState.track) obState.track = '4A';
     obState.level = getLevelForTrack(obState.lang, obState.track);
     obState.unitNo = calculateCurrentUnitByDate(obState.lang, obState.level);
+    syncTrackOptionCards();
+  }
 
+  function syncTrackOptionCards() {
     if (dom.obTrackOptions) {
       dom.obTrackOptions.forEach(card => {
         const trackVal = card.getAttribute('data-track');
@@ -3512,6 +3593,17 @@
     state.dailyGoal = obState.dailyGoal || 15;
     state.dailyGoalExtra = 0;
     state.isOnboarded = true;
+
+    // Seçilen Şubeyi Kaydet ve Kilitle
+    if (obState.branch) {
+      state.userBranch = obState.branch;
+      state.branchLocked = true;
+      localStorage.setItem('lexiq_user_branch', obState.branch);
+      localStorage.setItem('lexiq_branch_locked', 'true');
+      if (typeof window.updateUserBranch === 'function') {
+        window.updateUserBranch(obState.branch);
+      }
+    }
 
     localStorage.setItem('lexiq_user_name', state.userName);
     localStorage.setItem('lexiq_user_avatar', state.userAvatar);
@@ -6195,6 +6287,17 @@
     const mult = getMultiplier();
     const earned = Math.round(basePoints * mult);
     state.xp += earned;
+
+    // Haftalık XP ve Hafta Takibi (Şube Liderliği ve Düellolar için)
+    const curWeek = window.getCurrentWeekId ? window.getCurrentWeekId() : '2026-W42';
+    if (state.weeklyWeekId !== curWeek) {
+      state.weeklyWeekId = curWeek;
+      state.weeklyXp = 0;
+      localStorage.setItem('lexiq_weekly_week', curWeek);
+    }
+    state.weeklyXp = (state.weeklyXp || 0) + earned;
+    localStorage.setItem('lexiq_weekly_xp', String(state.weeklyXp));
+
     state.streak++;
     if (state.streak > state.maxStreak) {
       state.maxStreak = state.streak;
@@ -8621,28 +8724,265 @@
     const leaderboardBtn = document.getElementById('leaderboardBtn');
     const leaderboardModal = document.getElementById('leaderboardModal');
     const closeLeaderboardModalBtn = document.getElementById('closeLeaderboardModalBtn');
+    let currentLbTab = 'class'; // 'class' | 'duels' | 'global'
 
-    async function openLeaderboardModal() {
+    async function openLeaderboardModal(initialTab = null) {
       if (!leaderboardModal) return;
+      if (initialTab) currentLbTab = initialTab;
       leaderboardModal.classList.add('active');
-      
-      const listContainer = leaderboardModal.querySelector('.leaderboard-list');
+
       const authStatus = document.getElementById('leaderboardAuthStatus');
-      
-      if (listContainer) {
-        listContainer.innerHTML = '<div style="text-align:center; padding: 20px; color: var(--text-dim);">Yükleniyor...</div>';
-      }
+      const noBranchAlert = document.getElementById('lbNoBranchAlert');
+
       if (authStatus) {
         authStatus.style.display = (window.fbUser) ? 'none' : 'flex';
       }
-      
+
+      // Şube uyarısı (kullanıcı şube seçmemişse)
+      if (noBranchAlert) {
+        noBranchAlert.style.display = (!state.userBranch) ? 'block' : 'none';
+      }
+
+      switchLeaderboardTab(currentLbTab);
+    }
+
+    function switchLeaderboardTab(tabName) {
+      currentLbTab = tabName;
+      // Tab butonları
+      const tabBtns = document.querySelectorAll('#leaderboardTabsNav .lb-tab-btn');
+      tabBtns.forEach(btn => {
+        const isAct = btn.getAttribute('data-tab') === tabName;
+        btn.classList.toggle('active', isAct);
+        btn.style.background = isAct ? 'var(--accent)' : 'transparent';
+        btn.style.color = isAct ? '#fff' : 'var(--text-muted)';
+      });
+
+      // Paneller
+      const panelClass = document.getElementById('lbPanelClass');
+      const panelDuels = document.getElementById('lbPanelDuels');
+      const panelGlobal = document.getElementById('lbPanelGlobal');
+
+      if (panelClass) panelClass.style.display = (tabName === 'class') ? 'block' : 'none';
+      if (panelDuels) panelDuels.style.display = (tabName === 'duels') ? 'block' : 'none';
+      if (panelGlobal) panelGlobal.style.display = (tabName === 'global') ? 'block' : 'none';
+
+      if (tabName === 'class') {
+        renderClassLeaderboard();
+      } else if (tabName === 'duels') {
+        renderDuelsLeaderboard();
+      } else if (tabName === 'global') {
+        renderGlobalLeaderboard();
+      }
+    }
+
+    // 1. Sınıfım Sıralamasını Getir & Çiz
+    async function renderClassLeaderboard() {
+      const listContainer = document.getElementById('classLeaderboardList');
+      const branchBadge = document.getElementById('lbClassBranchBadge');
+      const trackBadge = document.getElementById('lbClassTrackBadge');
+      const countBadge = document.getElementById('lbClassStudentCount');
+      const myBar = document.getElementById('lbCurrentUserBar');
+
+      if (myBar) myBar.style.display = 'none';
+
+      if (!state.userBranch) {
+        if (listContainer) {
+          listContainer.innerHTML = `
+            <div style="text-align:center; padding: 30px 15px; color: var(--text-muted);">
+              <div style="font-size: 2rem; margin-bottom: 8px;">🏫</div>
+              <strong style="color: var(--text-main); display: block; margin-bottom: 6px;">Henüz Şuben Belirlenmedi</strong>
+              <p style="font-size: 0.8rem; margin-bottom: 12px;">Sınıf içi haftalık liderlik tablosunu görmek için şubeni seçmelisin.</p>
+              <button type="button" class="pill-btn primary-action-btn" id="renderClassOpenBranchBtn" style="padding: 8px 18px; font-size: 0.84rem;">Şubemi Seç ➔</button>
+            </div>
+          `;
+          const btn = document.getElementById('renderClassOpenBranchBtn');
+          if (btn) btn.onclick = openSelectBranchModal;
+        }
+        if (branchBadge) branchBadge.textContent = '🏫 Şube: Seçilmedi';
+        if (trackBadge) trackBadge.textContent = 'Lütfen şubenizi belirleyin';
+        if (countBadge) countBadge.textContent = '0 Öğrenci';
+        return;
+      }
+
+      const branchObj = (window.SCHOOL_BRANCHES || []).find(b => b.code === state.userBranch);
+      if (branchBadge) branchBadge.textContent = `🏫 Şube: ${state.userBranch}`;
+      if (trackBadge) trackBadge.textContent = branchObj ? `${branchObj.trackName} (${branchObj.level} Seviyesi)` : 'Hazırlık Sınıfı';
+
+      if (listContainer) {
+        listContainer.innerHTML = '<div style="text-align:center; padding: 25px; color: var(--text-muted);">⏳ Sınıf arkadaşların aranıyor...</div>';
+      }
+
+      if (typeof window.fetchClassLeaderboard === 'function') {
+        try {
+          const members = await window.fetchClassLeaderboard(state.userBranch);
+          if (countBadge) countBadge.textContent = `${members.length} Öğrenci`;
+
+          if (listContainer) {
+            listContainer.innerHTML = '';
+            if (!members || members.length === 0) {
+              listContainer.innerHTML = '<div style="text-align:center; padding: 25px; color: var(--text-muted);">Bu şubede bu hafta henüz puan toplayan öğrenci yok. İlk sen ol! 🔥</div>';
+              return;
+            }
+
+            let myRank = null;
+            let currentRank = 1;
+            let prevXp = null;
+
+            members.forEach((user, index) => {
+              if (prevXp !== null && user.weeklyXp < prevXp) {
+                currentRank = index + 1;
+              }
+              prevXp = user.weeklyXp;
+              const rank = currentRank;
+
+              const isMe = (window.fbUser && user.uid === window.fbUser.uid) || (user.displayName === state.userName && user.avatar === state.userAvatar);
+              if (isMe) myRank = { rank, xp: user.weeklyXp };
+
+              const rankClass = rank === 1 ? 'rank-1' : (rank === 2 ? 'rank-2' : (rank === 3 ? 'rank-3' : ''));
+              const highlightStyle = isMe ? 'background: rgba(59, 130, 246, 0.15); border: 2px solid var(--accent);' : '';
+
+              listContainer.innerHTML += `
+                <div class="leaderboard-item ${rankClass}" style="${highlightStyle}">
+                  <div class="lb-rank">${rank}</div>
+                  <div class="lb-avatar">${user.avatar || '👤'}</div>
+                  <div class="lb-info">
+                    <div style="display:flex; align-items:center; gap:6px;">
+                      <div class="lb-name">${user.displayName || 'Öğrenci'}</div>
+                      ${isMe ? '<span style="font-size:0.72rem; font-weight:800; color:var(--accent);">(Sen)</span>' : ''}
+                    </div>
+                    <div class="lb-badge" style="color: var(--text-muted); font-size: 0.72rem;">Toplam: ${(user.totalXp || 0).toLocaleString()} XP</div>
+                  </div>
+                  <div class="lb-score" style="color: #10b981; font-weight: 800;">⚡ ${(user.weeklyXp || 0).toLocaleString()} XP</div>
+                </div>
+              `;
+            });
+
+            // Alt bar kullanıcı durumu
+            if (myBar && myRank) {
+              myBar.style.display = 'flex';
+              const rankB = document.getElementById('lbMyRankBadge');
+              const avB = document.getElementById('lbMyAvatar');
+              const nameB = document.getElementById('lbMyName');
+              const tagB = document.getElementById('lbMyBranchTag');
+              const scoreB = document.getElementById('lbMyScore');
+              if (rankB) rankB.textContent = `#${myRank.rank}`;
+              if (avB) avB.textContent = state.userAvatar;
+              if (nameB) nameB.textContent = state.userName;
+              if (tagB) tagB.textContent = `Şube: ${state.userBranch}`;
+              if (scoreB) scoreB.textContent = `⚡ ${myRank.xp.toLocaleString()} XP`;
+            }
+          }
+        } catch (e) {
+          console.warn('Class leaderboard error:', e);
+          if (listContainer) listContainer.innerHTML = '<div style="text-align:center; padding: 20px; color: var(--text-muted);">Sıralama yüklenirken hata oluştu.</div>';
+        }
+      }
+    }
+
+    // 2. Şubeler Arası Düello & Lig Tablosu
+    async function renderDuelsLeaderboard() {
+      const listContainer = document.getElementById('duelsLeaderboardList');
+      const langBadge = document.getElementById('lbDuelLangBadge');
+      const myBar = document.getElementById('lbCurrentUserBar');
+      if (myBar) myBar.style.display = 'none';
+
+      const targetLang = state.activeLanguage || 'EN-TR';
+      const langMeta = (typeof LANG_META !== 'undefined' && LANG_META[targetLang]) ? LANG_META[targetLang] : { name: 'İngilizce', flag: '🇬🇧' };
+      if (langBadge) langBadge.textContent = `${langMeta.flag} ${langMeta.name.split('→')[0].trim()} Şubeleri Arasında`;
+
+      if (listContainer) {
+        listContainer.innerHTML = '<div style="text-align:center; padding: 25px; color: var(--text-muted);">⏳ Şube düelloları hesaplanıyor...</div>';
+      }
+
+      if (typeof window.fetchClassDuels === 'function') {
+        try {
+          const res = await window.fetchClassDuels(targetLang);
+          const branches = (res && res.branches) || [];
+
+          if (listContainer) {
+            listContainer.innerHTML = '';
+            if (branches.length === 0) {
+              listContainer.innerHTML = '<div style="text-align:center; padding: 25px; color: var(--text-muted);">Bu dilde kayıtlı şube bulunamadı.</div>';
+              return;
+            }
+
+            // VS Karşılaşma Vitrini: İlk 2 şube arasındaki heyecanlı düello
+            if (branches.length >= 2 && branches[0].totalWeeklyXp > 0) {
+              const b1 = branches[0];
+              const b2 = branches[1];
+              listContainer.innerHTML += `
+                <div style="background: linear-gradient(135deg, rgba(239, 68, 68, 0.15), rgba(59, 130, 246, 0.15)); border: 2px solid rgba(239, 68, 68, 0.35); border-radius: 14px; padding: 12px; margin-bottom: 12px; text-align: center;">
+                  <div style="font-size: 0.76rem; font-weight: 800; color: #ef4444; letter-spacing: 0.5px; text-transform: uppercase; margin-bottom: 6px;">⚔️ Zirve Düellosu</div>
+                  <div style="display: flex; align-items: center; justify-content: space-around; gap: 8px;">
+                    <div style="flex: 1; text-align: center;">
+                      <div style="font-size: 1.15rem; font-weight: 900; color: #f59e0b;">👑 ${b1.code}</div>
+                      <div style="font-size: 0.72rem; color: var(--text-muted);">${b1.name}</div>
+                      <div style="font-size: 0.86rem; font-weight: 800; color: #10b981; margin-top: 2px;">Ø ${b1.avgWeeklyXp} XP</div>
+                    </div>
+                    <div style="font-size: 1.3rem; font-weight: 900; color: #ef4444;">VS</div>
+                    <div style="flex: 1; text-align: center;">
+                      <div style="font-size: 1.15rem; font-weight: 900; color: #3b82f6;">🛡️ ${b2.code}</div>
+                      <div style="font-size: 0.72rem; color: var(--text-muted);">${b2.name}</div>
+                      <div style="font-size: 0.86rem; font-weight: 800; color: #10b981; margin-top: 2px;">Ø ${b2.avgWeeklyXp} XP</div>
+                    </div>
+                  </div>
+                </div>
+              `;
+            }
+
+            let rank = 1;
+            branches.forEach((b, idx) => {
+              const isMyBranch = (state.userBranch && b.code === state.userBranch);
+              const rankClass = rank === 1 ? 'rank-1' : (rank === 2 ? 'rank-2' : (rank === 3 ? 'rank-3' : ''));
+              const highlightStyle = isMyBranch ? 'background: rgba(59, 130, 246, 0.16); border: 2px solid var(--accent);' : '';
+
+              listContainer.innerHTML += `
+                <div class="leaderboard-item ${rankClass}" style="${highlightStyle}">
+                  <div class="lb-rank">${idx + 1}</div>
+                  <div class="lb-avatar" style="font-size: 1.1rem; font-weight: 800; border-radius: 10px; background: rgba(59, 130, 246, 0.15); color: #3b82f6; width: 36px; height: 36px; display: flex; align-items: center; justify-content: center;">
+                    🏫
+                  </div>
+                  <div class="lb-info">
+                    <div style="display:flex; align-items:center; gap:6px;">
+                      <div class="lb-name" style="font-weight: 800;">${b.code} - ${b.name}</div>
+                      ${isMyBranch ? '<span style="font-size:0.72rem; font-weight:800; color:var(--accent);">(Şuben)</span>' : ''}
+                    </div>
+                    <div class="lb-badge" style="font-size: 0.72rem; color: var(--text-muted);">
+                      👥 ${b.studentCount} Öğrenci • Toplam: ${(b.totalWeeklyXp || 0).toLocaleString()} XP
+                    </div>
+                  </div>
+                  <div style="text-align: right;">
+                    <div class="lb-score" style="color: #ef4444; font-size: 0.95rem; font-weight: 900;">Ø ${b.avgWeeklyXp}</div>
+                    <span style="font-size: 0.68rem; color: var(--text-muted);">ort. puan</span>
+                  </div>
+                </div>
+              `;
+            });
+          }
+        } catch (e) {
+          console.warn('Duels leaderboard error:', e);
+          if (listContainer) listContainer.innerHTML = '<div style="text-align:center; padding: 20px; color: var(--text-muted);">Düellolar yüklenirken hata oluştu.</div>';
+        }
+      }
+    }
+
+    // 3. Genel Okul Sıralaması
+    async function renderGlobalLeaderboard() {
+      const listContainer = document.getElementById('globalLeaderboardList');
+      const myBar = document.getElementById('lbCurrentUserBar');
+      if (myBar) myBar.style.display = 'none';
+
+      if (listContainer) {
+        listContainer.innerHTML = '<div style="text-align:center; padding: 20px; color: var(--text-muted);">Yükleniyor...</div>';
+      }
+
       if (typeof window.fetchLeaderboard === 'function') {
         try {
           const leaders = await window.fetchLeaderboard();
           if (listContainer) {
             listContainer.innerHTML = '';
             if (!leaders || leaders.length === 0) {
-              listContainer.innerHTML = '<div style="text-align:center; padding: 20px; color: var(--text-dim);">Henüz lider tablosunda kimse yok.</div>';
+              listContainer.innerHTML = '<div style="text-align:center; padding: 20px; color: var(--text-muted);">Henüz lider tablosunda kimse yok.</div>';
             } else {
               let currentRank = 1;
               let previousXP = null;
@@ -8659,13 +8999,13 @@
                 if (user.xp >= 5000) badge = 'Efsane';
                 if (user.xp >= 10000) badge = 'Şampiyon';
                 
-                const isMe = (window.fbUser && user.uid === window.fbUser.uid) ? 'background: rgba(37, 99, 235, 0.1); border-left: 4px solid var(--accent);' : '';
+                const isMe = (window.fbUser && user.uid === window.fbUser.uid);
                 const userLang = user.lang || (isMe ? state.activeLanguage : 'EN-TR');
                 const flagIcon = getLangFlag(userLang);
                 const langTitle = (typeof LANG_META !== 'undefined' && LANG_META[userLang] && LANG_META[userLang].name) ? LANG_META[userLang].name : userLang;
                 
                 listContainer.innerHTML += `
-                  <div class="leaderboard-item rank-${rank}" style="${isMe}">
+                  <div class="leaderboard-item rank-${rank}" style="${isMe ? 'background: rgba(37, 99, 235, 0.1); border-left: 4px solid var(--accent);' : ''}">
                     <div class="lb-rank">${rank}</div>
                     <div class="lb-avatar">${user.avatar || '👻'}</div>
                     <div class="lb-info">
@@ -8683,15 +9023,91 @@
             }
           }
         } catch(e) {
-          console.warn('Leaderboard fetch error:', e);
+          console.warn('Global leaderboard error:', e);
         }
       }
     }
 
+    // Şube Seçim Modalı (selectBranchModal)
+    function openSelectBranchModal() {
+      const modal = document.getElementById('selectBranchModal');
+      const select = document.getElementById('modalBranchSelect');
+      if (!modal || !select) return;
+
+      const targetLang = state.activeLanguage || 'EN-TR';
+      const branches = (window.SCHOOL_BRANCHES || []).filter(b => b.lang === targetLang);
+      select.innerHTML = '';
+      branches.forEach(b => {
+        const opt = document.createElement('option');
+        opt.value = b.code;
+        opt.textContent = `${b.code} - ${b.name} (${b.trackName})`;
+        select.appendChild(opt);
+      });
+
+      modal.style.display = 'flex';
+      modal.classList.add('active');
+    }
+
+    function closeSelectBranchModal() {
+      const modal = document.getElementById('selectBranchModal');
+      if (modal) {
+        modal.style.display = 'none';
+        modal.classList.remove('active');
+      }
+    }
+
+    // Şube Seçimini Onayla
+    const confirmBranchBtn = document.getElementById('confirmBranchModalBtn');
+    if (confirmBranchBtn) {
+      confirmBranchBtn.addEventListener('click', async () => {
+        const select = document.getElementById('modalBranchSelect');
+        const chosenCode = select ? select.value : '';
+        if (!chosenCode) return;
+
+        state.userBranch = chosenCode;
+        state.branchLocked = true;
+        localStorage.setItem('lexiq_user_branch', chosenCode);
+        localStorage.setItem('lexiq_branch_locked', 'true');
+
+        if (typeof window.updateUserBranch === 'function') {
+          await window.updateUserBranch(chosenCode);
+        }
+
+        const foundB = (window.SCHOOL_BRANCHES || []).find(b => b.code === chosenCode);
+        if (foundB && foundB.track) {
+          state.userTrack = foundB.track;
+          state.userLevel = foundB.level;
+          localStorage.setItem('lexiq_user_track', foundB.track);
+          localStorage.setItem('lexiq_user_level', foundB.level);
+        }
+
+        updateUserProfileUI();
+        populateProfileSettingsTab();
+        closeSelectBranchModal();
+        showToast(`Şuben ${chosenCode} olarak kilitlendi! Başarılar! 🏆`);
+        renderClassLeaderboard();
+      });
+    }
+
+    const cancelBranchBtn = document.getElementById('cancelBranchModalBtn');
+    if (cancelBranchBtn) cancelBranchBtn.addEventListener('click', closeSelectBranchModal);
+
+    const openBranchAlertBtn = document.getElementById('lbOpenBranchModalBtn');
+    if (openBranchAlertBtn) openBranchAlertBtn.addEventListener('click', openSelectBranchModal);
+
+    // Tab Geçiş Olay Dinleyicileri
+    const lbTabBtns = document.querySelectorAll('#leaderboardTabsNav .lb-tab-btn');
+    lbTabBtns.forEach(btn => {
+      btn.addEventListener('click', () => {
+        const tab = btn.getAttribute('data-tab');
+        switchLeaderboardTab(tab);
+      });
+    });
+
     function closeLeaderboardModal() {
       if (leaderboardModal) leaderboardModal.classList.remove('active');
     }
-    if (leaderboardBtn) leaderboardBtn.addEventListener('click', openLeaderboardModal);
+    if (leaderboardBtn) leaderboardBtn.addEventListener('click', () => openLeaderboardModal());
     if (closeLeaderboardModalBtn) closeLeaderboardModalBtn.addEventListener('click', closeLeaderboardModal);
     if (leaderboardModal) leaderboardModal.addEventListener('click', (e) => {
       if (e.target === leaderboardModal) closeLeaderboardModal();

@@ -29,6 +29,50 @@ try {
 window.fbUser = null;
 window.cachedFbUserData = null;
 
+// ==========================================
+// ADÜ YDYO 23 RESMİ HAZIRLIK ŞUBESİ VE METADATA
+// ==========================================
+window.SCHOOL_BRANCHES = [
+  // İngilizce (EN-TR) - 17 Şube
+  { code: 'İHS 101', name: 'İHS 101', lang: 'EN-TR', track: '4B', level: 'B1', trackName: 'Üst Kur' },
+  { code: 'İHS 102', name: 'İHS 102', lang: 'EN-TR', track: '4B', level: 'B1', trackName: 'Üst Kur' },
+  { code: 'İHS 103', name: 'İHS 103', lang: 'EN-TR', track: '4B', level: 'B1', trackName: 'Üst Kur' },
+  { code: 'İHS 104', name: 'İHS 104', lang: 'EN-TR', track: '4B', level: 'B1', trackName: 'Üst Kur' },
+  { code: 'İHS 105', name: 'İHS 105', lang: 'EN-TR', track: '4B', level: 'B1', trackName: 'Üst Kur' },
+  { code: 'İHS 106', name: 'İHS 106', lang: 'EN-TR', track: '4B', level: 'B1', trackName: 'Üst Kur' },
+  { code: 'İHS 107', name: 'İHS 107', lang: 'EN-TR', track: '4B', level: 'B1', trackName: 'Üst Kur' },
+  { code: 'İHS 108', name: 'İHS 108', lang: 'EN-TR', track: '4B', level: 'B1', trackName: 'Üst Kur' },
+  { code: 'İHS 109', name: 'İHS 109', lang: 'EN-TR', track: '4B', level: 'B1', trackName: 'Üst Kur' },
+  { code: 'İHS 110', name: 'İHS 110', lang: 'EN-TR', track: '4B', level: 'B1', trackName: 'Üst Kur' },
+  { code: 'İHS 111', name: 'İHS 111', lang: 'EN-TR', track: '4B', level: 'B1', trackName: 'Üst Kur' },
+  { code: 'İHS 112', name: 'İHS 112', lang: 'EN-TR', track: '4A', level: 'A2', trackName: 'Alt Kur' },
+  { code: 'İHS 113', name: 'İHS 113', lang: 'EN-TR', track: '4A', level: 'A2', trackName: 'Alt Kur' },
+  { code: 'İHS 114', name: 'İHS 114', lang: 'EN-TR', track: '4A', level: 'A2', trackName: 'Alt Kur' },
+  { code: 'İHS 115', name: 'İHS 115', lang: 'EN-TR', track: '4A', level: 'A2', trackName: 'Alt Kur' },
+  { code: 'İHS 116', name: 'İHS 116', lang: 'EN-TR', track: '4A', level: 'A2', trackName: 'Alt Kur' },
+  { code: 'İHS 117', name: 'İHS 117', lang: 'EN-TR', track: '4A', level: 'A2', trackName: 'Alt Kur' },
+
+  // Fransızca (FR-TR) - 3 Şube
+  { code: 'FHS 101', name: 'FHS 101', lang: 'FR-TR', track: '4B', level: 'B1', trackName: 'Üst Kur' },
+  { code: 'FHS 102', name: 'FHS 102', lang: 'FR-TR', track: '4A', level: 'A2', trackName: 'Alt Kur' },
+  { code: 'FHS 103', name: 'FHS 103', lang: 'FR-TR', track: '4A', level: 'A1', trackName: 'Alt Kur' },
+
+  // Almanca (DE-TR) - 3 Şube
+  { code: 'AHS 101', name: 'AHS 101', lang: 'DE-TR', track: '4A', level: 'A1', trackName: 'Alt Kur' },
+  { code: 'AHS 102', name: 'AHS 102', lang: 'DE-TR', track: '4A', level: 'A2', trackName: 'Alt Kur' },
+  { code: 'AHS 103', name: 'AHS 103', lang: 'DE-TR', track: '4A', level: 'A1', trackName: 'Alt Kur' }
+];
+
+window.getCurrentWeekId = function() {
+  const d = new Date();
+  const date = new Date(Date.UTC(d.getFullYear(), d.getMonth(), d.getDate()));
+  const dayNum = date.getUTCDay() || 7;
+  date.setUTCDate(date.getUTCDate() + 4 - dayNum);
+  const yearStart = new Date(Date.UTC(date.getUTCFullYear(), 0, 1));
+  const weekNo = Math.ceil((((date - yearStart) / 86400000) + 1) / 7);
+  return `${date.getUTCFullYear()}-W${String(weekNo).padStart(2, '0')}`;
+};
+
 // Firebase Hata Mesajlarını Türkçeleştirme
 function getAuthErrorMessage(error) {
   if (!error) return "Bilinmeyen bir hata oluştu.";
@@ -114,6 +158,15 @@ async function syncUserData(user) {
   const resolvedTrack = (docData && docData.track) || localStorage.getItem('lexiq_user_track') || '4A';
   const resolvedLevel = (docData && docData.level) || localStorage.getItem('lexiq_user_level') || 'A2';
   const resolvedLang = (docData && docData.lang) || localStorage.getItem('kelime_active_lang') || 'EN-TR';
+  const resolvedBranch = (docData && docData.branch) || localStorage.getItem('lexiq_user_branch') || '';
+  const resolvedBranchLocked = (docData && docData.branchLocked) || (localStorage.getItem('lexiq_branch_locked') === 'true') || !!resolvedBranch;
+  const currentWeek = window.getCurrentWeekId ? window.getCurrentWeekId() : '2026-W42';
+  let resolvedWeeklyWeek = (docData && docData.weeklyWeekId) || localStorage.getItem('lexiq_weekly_week') || currentWeek;
+  let resolvedWeeklyXp = (docData && typeof docData.weeklyXp === 'number') ? docData.weeklyXp : parseInt(localStorage.getItem('lexiq_weekly_xp') || '0', 10);
+  if (resolvedWeeklyWeek !== currentWeek) {
+    resolvedWeeklyWeek = currentWeek;
+    resolvedWeeklyXp = 0;
+  }
 
   const localXP = parseInt(localStorage.getItem('kelime_xp') || '0', 10);
   const fbXP = (docData && typeof docData.xp === 'number') ? docData.xp : 0;
@@ -181,6 +234,10 @@ async function syncUserData(user) {
     track: resolvedTrack,
     level: resolvedLevel,
     lang: resolvedLang,
+    branch: resolvedBranch,
+    branchLocked: resolvedBranchLocked,
+    weeklyXp: resolvedWeeklyXp,
+    weeklyWeekId: resolvedWeeklyWeek,
     xp: bestXP,
     learnedMap: mergedLearnedMap,
     unlockedBadges: mergedBadges,
@@ -204,6 +261,10 @@ async function syncUserData(user) {
   localStorage.setItem('lexiq_user_track', resolvedTrack);
   localStorage.setItem('lexiq_user_level', resolvedLevel);
   localStorage.setItem('kelime_active_lang', resolvedLang);
+  localStorage.setItem('lexiq_user_branch', resolvedBranch);
+  localStorage.setItem('lexiq_branch_locked', resolvedBranchLocked ? 'true' : 'false');
+  localStorage.setItem('lexiq_weekly_xp', resolvedWeeklyXp.toString());
+  localStorage.setItem('lexiq_weekly_week', resolvedWeeklyWeek);
   localStorage.setItem('kelime_xp', bestXP.toString());
   localStorage.setItem('kelime_learned_map', JSON.stringify(mergedLearnedMap));
   localStorage.setItem('kelime_unlocked_badges', JSON.stringify(mergedBadges));
@@ -236,6 +297,10 @@ async function syncUserData(user) {
         track: resolvedTrack,
         level: resolvedLevel,
         lang: resolvedLang,
+        branch: resolvedBranch,
+        branchLocked: resolvedBranchLocked,
+        weeklyXp: resolvedWeeklyXp,
+        weeklyWeekId: resolvedWeeklyWeek,
         xp: bestXP,
         learnedMap: mergedLearnedMap,
         unlockedBadges: mergedBadges,
@@ -450,12 +515,14 @@ window.changeUserPassword = async function(currentPassword, newPassword) {
 // XP Artırma Fonksiyonu (Oyun bitimlerinde çağrılır)
 window.addXPToFirebase = function(xpGained) {
   if (!window.fbUser || !db || xpGained <= 0) return;
-  
+  const curWeek = window.getCurrentWeekId ? window.getCurrentWeekId() : '2026-W42';
   const userRef = db.collection('users').doc(window.fbUser.uid);
-  userRef.update({
+  userRef.set({
     xp: firebase.firestore.FieldValue.increment(xpGained),
+    weeklyXp: firebase.firestore.FieldValue.increment(xpGained),
+    weeklyWeekId: curWeek,
     lastActive: firebase.firestore.FieldValue.serverTimestamp()
-  }).catch(err => {
+  }, { merge: true }).catch(err => {
     console.error("XP artırma hatası:", err);
   });
 };
@@ -482,10 +549,18 @@ window.syncProgressToFirebase = function(customData, immediate = false) {
       unitDurations: Object.assign({}, localUnitDurations, (s.timeTracking?.unitDurations || {}))
     };
 
+    const curWeek = window.getCurrentWeekId ? window.getCurrentWeekId() : '2026-W42';
+
     const payload = {
       displayName: s.userName || localStorage.getItem('lexiq_user_name') || 'Öğrenci',
       avatar: s.userAvatar || localStorage.getItem('lexiq_user_avatar') || '🦊',
       lang: s.activeLanguage || localStorage.getItem('kelime_active_lang') || 'EN-TR',
+      branch: s.userBranch || localStorage.getItem('lexiq_user_branch') || '',
+      branchLocked: s.branchLocked || (localStorage.getItem('lexiq_branch_locked') === 'true') || !!(s.userBranch || localStorage.getItem('lexiq_user_branch')),
+      track: s.userTrack || localStorage.getItem('lexiq_user_track') || '4A',
+      level: s.userLevel || localStorage.getItem('lexiq_user_level') || 'A2',
+      weeklyXp: (s.weeklyXp !== undefined) ? s.weeklyXp : (parseInt(localStorage.getItem('lexiq_weekly_xp'), 10) || 0),
+      weeklyWeekId: s.weeklyWeekId || localStorage.getItem('lexiq_weekly_week') || curWeek,
       learnedMap: s.learnedMap || JSON.parse(localStorage.getItem('kelime_learned_map') || '{}'),
       unlockedBadges: s.unlockedBadges || JSON.parse(localStorage.getItem('kelime_unlocked_badges') || '[]'),
       maxStreak: (s.maxStreak !== undefined) ? s.maxStreak : (parseInt(localStorage.getItem('kelime_max_streak'), 10) || 0),
@@ -577,4 +652,149 @@ window.uploadCustomAvatar = async function(fileBlob) {
   }, { merge: true });
   
   return downloadURL;
+};
+
+// ==========================================
+// ŞUBE LİDERLİĞİ & ŞUBELER ARASI DÜELLO SİSTEMİ
+// ==========================================
+
+// 1. Sınıf İçi Liderlik Tablosunu Getir (Sadece kullanıcının kendi şubesindeki öğrenciler)
+window.fetchClassLeaderboard = async function(branchCode) {
+  if (!db || !branchCode) return [];
+  try {
+    const curWeek = window.getCurrentWeekId ? window.getCurrentWeekId() : '2026-W42';
+    // branch ile eşleşen öğrencileri al (üniversite sınıfı ~20-35 öğrenci)
+    const snapshot = await db.collection('users')
+                             .where('branch', '==', branchCode)
+                             .limit(60)
+                             .get();
+
+    const members = [];
+    snapshot.forEach(doc => {
+      const data = doc.data() || {};
+      const weeklyWeek = data.weeklyWeekId || '';
+      // Eğer haftalık ID uyuşuyorsa haftalık XP'yi, uyuşmuyorsa 0 kabul et
+      const weeklyXp = (weeklyWeek === curWeek && typeof data.weeklyXp === 'number') ? data.weeklyXp : 0;
+      members.push({
+        uid: doc.id,
+        displayName: data.displayName || 'Öğrenci',
+        avatar: data.avatar || '👤',
+        weeklyXp: weeklyXp,
+        totalXp: data.xp || 0,
+        branch: branchCode,
+        track: data.track || '',
+        level: data.level || ''
+      });
+    });
+
+    // Haftalık puana göre azalan sırala, eşitlikte genel XP
+    members.sort((a, b) => (b.weeklyXp - a.weeklyXp) || (b.totalXp - a.totalXp));
+    return members;
+  } catch (e) {
+    console.error("Sınıf liderlik tablosu alınamadı:", e);
+    return [];
+  }
+};
+
+// 2. Şubeler Arası Düello & Sıralama (Aynı dildeki tüm şubelerin haftalık kapışması)
+window.fetchClassDuels = async function(lang) {
+  if (!db) return { branches: [], curWeek: '2026-W42', activeCount: 0 };
+  try {
+    const targetLang = lang || localStorage.getItem('kelime_active_lang') || 'EN-TR';
+    const curWeek = window.getCurrentWeekId ? window.getCurrentWeekId() : '2026-W42';
+
+    // Bu dildeki resmi tanımlı şubeleri al
+    const officialBranches = (window.SCHOOL_BRANCHES || []).filter(b => b.lang === targetLang);
+
+    // Dildeki aktif kullanıcıları çek
+    const snapshot = await db.collection('users')
+                             .where('lang', '==', targetLang)
+                             .limit(400)
+                             .get();
+
+    // Şube bazında toplam haftalık XP ve öğrenci sayılarını hesapla
+    const branchStats = {};
+    officialBranches.forEach(b => {
+      branchStats[b.code] = {
+        code: b.code,
+        name: b.name,
+        track: b.track,
+        level: b.level,
+        trackName: b.trackName,
+        studentCount: 0,
+        totalWeeklyXp: 0,
+        totalCumulativeXp: 0,
+        topStudent: null
+      };
+    });
+
+    snapshot.forEach(doc => {
+      const data = doc.data() || {};
+      const bCode = data.branch;
+      if (bCode && branchStats[bCode]) {
+        const weeklyWeek = data.weeklyWeekId || '';
+        const userWeeklyXp = (weeklyWeek === curWeek && typeof data.weeklyXp === 'number') ? data.weeklyXp : 0;
+        
+        branchStats[bCode].studentCount += 1;
+        branchStats[bCode].totalWeeklyXp += userWeeklyXp;
+        branchStats[bCode].totalCumulativeXp += (data.xp || 0);
+
+        if (!branchStats[bCode].topStudent || userWeeklyXp > branchStats[bCode].topStudent.weeklyXp) {
+          branchStats[bCode].topStudent = {
+            displayName: data.displayName || 'Öğrenci',
+            avatar: data.avatar || '👤',
+            weeklyXp: userWeeklyXp
+          };
+        }
+      }
+    });
+
+    // Ortalama puanı (Adil Düello Metriği) ve başarı oranını hesapla
+    const branchList = Object.values(branchStats).map(b => {
+      const avgWeeklyXp = b.studentCount > 0 ? Math.round(b.totalWeeklyXp / b.studentCount) : 0;
+      return {
+        ...b,
+        avgWeeklyXp: avgWeeklyXp
+      };
+    });
+
+    // Ortalama haftalık puana göre sırala (Öğrenci sayısı az/çok olan şubeler adil yarışır)
+    branchList.sort((a, b) => (b.avgWeeklyXp - a.avgWeeklyXp) || (b.totalWeeklyXp - a.totalWeeklyXp));
+
+    return {
+      curWeek: curWeek,
+      branches: branchList,
+      totalBranches: branchList.length
+    };
+  } catch (e) {
+    console.error("Şubeler arası düello tablosu alınamadı:", e);
+    return { branches: [], curWeek: '2026-W42', totalBranches: 0 };
+  }
+};
+
+// 3. Kullanıcının Şubesini Belirle ve Kilitle (Tek Seferlik Seçim)
+window.updateUserBranch = async function(branchCode) {
+  if (!branchCode) return false;
+  try {
+    const curWeek = window.getCurrentWeekId ? window.getCurrentWeekId() : '2026-W42';
+    localStorage.setItem('lexiq_user_branch', branchCode);
+    localStorage.setItem('lexiq_branch_locked', 'true');
+
+    if (window.appState) {
+      window.appState.userBranch = branchCode;
+      window.appState.branchLocked = true;
+    }
+
+    if (window.fbUser && db) {
+      await db.collection('users').doc(window.fbUser.uid).set({
+        branch: branchCode,
+        branchLocked: true,
+        lastActive: firebase.firestore.FieldValue.serverTimestamp()
+      }, { merge: true });
+    }
+    return true;
+  } catch (e) {
+    console.error("Şube kaydedilemedi:", e);
+    return false;
+  }
 };

@@ -1318,26 +1318,37 @@
         </div>
       </div>
 
-      <!-- 3. ADIM: SEVİYE SEÇİMİ (VERİTABANINDAN DİNAMİK) -->
+      <!-- 3. ADIM: KUR & ŞUBE SEÇİMİ (23 RESMİ ŞUBE) -->
       <div class="onboarding-step-view" id="obStep3" style="display: none;">
         <div class="ob-step-tag">ADIM 3 / 4</div>
-        <h2 class="ob-title">Hangi Kurdasın? 📚</h2>
-        <p class="ob-subtitle">Öğrenimine uygun kuru (Track) seçmelisin.</p>
+        <h2 class="ob-title">Şubeni Seç 🏫</h2>
+        <p class="ob-subtitle">Sınıf içi liderlik tablosu ve şubeler arası düello için kendi şubeni seç.</p>
+
+        <div style="margin-bottom: 14px;">
+          <label style="display: block; font-size: 0.8rem; font-weight: 700; color: var(--text-muted); margin-bottom: 6px; text-transform: uppercase; letter-spacing: 0.5px;">Resmi Şuben:</label>
+          <select id="obBranchSelect" class="setting-select-box" style="width: 100%; padding: 12px 14px; font-size: 0.95rem; font-weight: 700; border-radius: 14px; background: var(--bg-card); border: 2px solid var(--accent); color: var(--text-main);">
+            <!-- JS ile aktif dile göre 23 resmi şube dinamik listelenir -->
+          </select>
+          <div style="display: flex; align-items: center; gap: 6px; margin-top: 8px; padding: 8px 12px; background: rgba(245, 158, 11, 0.12); border: 1px solid rgba(245, 158, 11, 0.3); border-radius: 10px; font-size: 0.76rem; color: #f59e0b; line-height: 1.35;">
+            <span>🔒</span>
+            <span><strong>Önemli:</strong> Şube seçimi bir kez yapılır ve daha sonra değiştirilemez!</span>
+          </div>
+        </div>
 
         <div class="ob-options-list" id="obTrackOptions">
-          <div class="ob-option-card active" data-track="4A">
-            <span class="ob-opt-flag" style="display:flex;align-items:center;justify-content:center;width:34px;height:34px;border-radius:10px;background:rgba(16,185,129,0.15);color:#10b981;font-weight:900;font-size:0.9rem;border:1.5px solid rgba(16,185,129,0.3);flex-shrink:0;">4A</span>
+          <div class="ob-option-card active" data-track="4A" id="obTrackCard4A">
+            <span class="ob-opt-flag" style="display:flex;align-items:center;justify-content:center;width:34px;height:34px;border-radius:10px;background:rgba(16,185,129,0.15);color:#10b981;font-weight:900;font-size:0.9rem;border:1.5px solid rgba(16,185,129,0.3);flex-shrink:0;">Alt</span>
             <div class="ob-opt-text">
-              <span class="ob-opt-title">Alt Kur (4A - A2 Seviyesi)</span>
-              <span class="ob-opt-desc">A2 Temel Müfredat: Başlangıç ve temel üniteler</span>
+              <span class="ob-opt-title" id="obTrackTitle4A">Alt Kur (A2 Seviyesi)</span>
+              <span class="ob-opt-desc" id="obTrackDesc4A">A2 Temel Müfredat: Başlangıç ve temel üniteler</span>
             </div>
             <span class="ob-check-mark">✓</span>
           </div>
-          <div class="ob-option-card" data-track="4B">
-            <span class="ob-opt-flag" style="display:flex;align-items:center;justify-content:center;width:34px;height:34px;border-radius:10px;background:rgba(59,130,246,0.15);color:#3b82f6;font-weight:900;font-size:0.9rem;border:1.5px solid rgba(59,130,246,0.3);flex-shrink:0;">4B</span>
+          <div class="ob-option-card" data-track="4B" id="obTrackCard4B">
+            <span class="ob-opt-flag" style="display:flex;align-items:center;justify-content:center;width:34px;height:34px;border-radius:10px;background:rgba(59,130,246,0.15);color:#3b82f6;font-weight:900;font-size:0.9rem;border:1.5px solid rgba(59,130,246,0.3);flex-shrink:0;">Üst</span>
             <div class="ob-opt-text">
-              <span class="ob-opt-title">Üst Kur (4B - B1 Seviyesi)</span>
-              <span class="ob-opt-desc">B1 İleri Müfredat: Orta ve ileri düzey üniteler</span>
+              <span class="ob-opt-title" id="obTrackTitle4B">Üst Kur (B1 Seviyesi)</span>
+              <span class="ob-opt-desc" id="obTrackDesc4B">B1 İleri Müfredat: Orta ve ileri düzey üniteler</span>
             </div>
             <span class="ob-check-mark">✓</span>
           </div>
@@ -1509,12 +1520,13 @@
     </div>
   </div>
 
-  <!-- LİDERLİK TABLOSU MODALI -->
+  <!-- LİDERLİK & ŞUBE DÜELLO MODALI -->
   <div id="leaderboardModal" class="modal-overlay" style="z-index: 10020;">
-    <div class="modal-card leaderboard-modal-card">
+    <div class="modal-card leaderboard-modal-card" style="max-width: 520px; width: 94%;">
       <div class="modal-header">
-        <div>
-          <h2 class="modal-title">🏆 Kelime Arenası Liderleri</h2>
+        <div style="display: flex; align-items: center; gap: 8px;">
+          <span style="font-size: 1.35rem;">🏆</span>
+          <h2 class="modal-title" style="margin: 0; font-size: 1.15rem;">Turnuva & Liderler</h2>
         </div>
         <button id="closeLeaderboardModalBtn" class="icon-btn" aria-label="Kapat">
           <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
@@ -1524,69 +1536,121 @@
         </button>
       </div>
       
-      <!-- Sekmeler (Haftalık / Tüm Zamanlar) -->
-      <div class="leaderboard-tabs">
-        <button class="leaderboard-tab active">Haftalık</button>
-        <button class="leaderboard-tab">Tüm Zamanlar</button>
+      <!-- Sekmeler (Sınıfım / Şube Düelloları / Genel Sıralama) -->
+      <div class="leaderboard-tabs-nav" id="leaderboardTabsNav" style="display: flex; gap: 6px; padding: 6px; background: rgba(0,0,0,0.2); border-radius: 14px; margin-bottom: 12px;">
+        <button type="button" class="lb-tab-btn active" data-tab="class" style="flex: 1; padding: 9px 4px; font-size: 0.82rem; font-weight: 800; border-radius: 10px; border: none; cursor: pointer; transition: all 0.2s; background: var(--accent); color: #fff;">
+          🏫 Sınıfım
+        </button>
+        <button type="button" class="lb-tab-btn" data-tab="duels" style="flex: 1; padding: 9px 4px; font-size: 0.82rem; font-weight: 800; border-radius: 10px; border: none; cursor: pointer; transition: all 0.2s; background: transparent; color: var(--text-muted);">
+          ⚔️ Şube Düellosu
+        </button>
+        <button type="button" class="lb-tab-btn" data-tab="global" style="flex: 1; padding: 9px 4px; font-size: 0.82rem; font-weight: 800; border-radius: 10px; border: none; cursor: pointer; transition: all 0.2s; background: transparent; color: var(--text-muted);">
+          🌍 Genel Okul
+        </button>
       </div>
 
-      <!-- Kullanıcının Mevcut Durumu (Giriş yapmamışsa) -->
-      <div class="leaderboard-user-status" id="leaderboardAuthStatus">
-        <div class="leaderboard-status-text">Sıralamanı görmek için giriş yapmalısın.</div>
+      <!-- Kullanıcının Şube Seçimi Uyarısı (Eğer şube seçmemişse) -->
+      <div id="lbNoBranchAlert" style="display: none; padding: 12px 14px; background: rgba(245, 158, 11, 0.14); border: 1.5px solid rgba(245, 158, 11, 0.4); border-radius: 12px; margin-bottom: 12px; text-align: center;">
+        <div style="font-size: 0.88rem; font-weight: 800; color: #f59e0b; margin-bottom: 4px;">⚠️ Henüz Bir Şube Seçmedin</div>
+        <p style="font-size: 0.78rem; color: var(--text-main); margin-bottom: 8px;">Kendi sınıf arkadaşlarınla yarışmak ve haftalık düelloda şubeni temsil etmek için şubeni belirlemelisin.</p>
+        <button type="button" id="lbOpenBranchModalBtn" class="pill-btn primary-action-btn" style="padding: 6px 14px; font-size: 0.82rem;">Şubemi Seç 🏫</button>
+      </div>
+
+      <!-- Giriş Yapmamış Kullanıcı Bildirimi -->
+      <div class="leaderboard-user-status" id="leaderboardAuthStatus" style="display: none; margin-bottom: 12px;">
+        <div class="leaderboard-status-text">Sıralamanı görmek ve kaydetmek için giriş yapmalısın.</div>
         <button class="btn btn-primary btn-sm" id="leaderboardLoginBtn">Giriş Yap</button>
       </div>
 
-      <!-- Liste Alanı -->
-      <div class="leaderboard-list">
-        <!-- 1. Sıra (Örnek) -->
-        <div class="leaderboard-item rank-1">
-          <div class="lb-rank">1</div>
-          <div class="lb-avatar">👨‍🚀</div>
-          <div class="lb-info">
-            <div class="lb-name">Kozmik Bilge</div>
-            <div class="lb-badge">Titanyum Efendi</div>
+      <!-- PANEL 1: SINIFIM LİDERLİK TABLOSU -->
+      <div id="lbPanelClass" class="lb-panel" style="display: block;">
+        <div id="lbClassHeaderCard" style="display: flex; align-items: center; justify-content: space-between; padding: 10px 14px; background: rgba(59, 130, 246, 0.1); border: 1px solid rgba(59, 130, 246, 0.25); border-radius: 12px; margin-bottom: 10px;">
+          <div>
+            <span id="lbClassBranchBadge" style="font-size: 0.95rem; font-weight: 800; color: #3b82f6;">🏫 Şube: -</span>
+            <div id="lbClassTrackBadge" style="font-size: 0.74rem; color: var(--text-muted);">Kur bilgisi</div>
           </div>
-          <div class="lb-score">14.500 XP</div>
-        </div>
-        <!-- 2. Sıra (Örnek) -->
-        <div class="leaderboard-item rank-2">
-          <div class="lb-rank">2</div>
-          <div class="lb-avatar">🦁</div>
-          <div class="lb-info">
-            <div class="lb-name">LexiAslan</div>
-            <div class="lb-badge">Altın Şövalye</div>
+          <div style="text-align: right;">
+            <span style="font-size: 0.72rem; font-weight: 700; color: #10b981; display: block;">⚡ Bu Hafta</span>
+            <span id="lbClassStudentCount" style="font-size: 0.74rem; color: var(--text-muted);">0 Öğrenci</span>
           </div>
-          <div class="lb-score">12.200 XP</div>
         </div>
-        <!-- 3. Sıra (Örnek) -->
-        <div class="leaderboard-item rank-3">
-          <div class="lb-rank">3</div>
-          <div class="lb-avatar">🦊</div>
-          <div class="lb-info">
-            <div class="lb-name">Hızlı Tilki</div>
-            <div class="lb-badge">Gümüş Usta</div>
+
+        <div class="leaderboard-list" id="classLeaderboardList" style="max-height: 380px; overflow-y: auto;">
+          <div style="text-align: center; padding: 25px 15px; color: var(--text-muted); font-size: 0.86rem;">
+            <span>⏳ Sınıf sıralaması yükleniyor...</span>
           </div>
-          <div class="lb-score">9.800 XP</div>
         </div>
-        <!-- Diğerleri (Örnek) -->
-        <div class="leaderboard-item">
-          <div class="lb-rank">4</div>
-          <div class="lb-avatar">🐱</div>
-          <div class="lb-info">
-            <div class="lb-name">Kelime Kedisi</div>
-            <div class="lb-badge">Bronz Çaylak</div>
+      </div>
+
+      <!-- PANEL 2: ŞUBELER ARASI DÜELLO (LİG & EŞLEŞME) -->
+      <div id="lbPanelDuels" class="lb-panel" style="display: none;">
+        <!-- Haftalık Bilgi & Reset Sayacı -->
+        <div style="display: flex; align-items: center; justify-content: space-between; padding: 8px 12px; background: rgba(239, 68, 68, 0.1); border: 1px solid rgba(239, 68, 68, 0.25); border-radius: 12px; margin-bottom: 10px;">
+          <div style="display: flex; align-items: center; gap: 6px;">
+            <span style="font-size: 1.1rem;">🔥</span>
+            <div>
+              <strong style="font-size: 0.85rem; color: #ef4444; display: block;">Haftalık Şube Ligi</strong>
+              <span id="lbDuelLangBadge" style="font-size: 0.72rem; color: var(--text-muted);">Aynı dildeki tüm şubeler yarışıyor</span>
+            </div>
           </div>
-          <div class="lb-score">6.100 XP</div>
+          <span style="font-size: 0.72rem; font-weight: 800; padding: 3px 8px; border-radius: 8px; background: rgba(239, 68, 68, 0.2); color: #ef4444;">Adil Ortalama XP</span>
         </div>
-        <div class="leaderboard-item">
-          <div class="lb-rank">5</div>
-          <div class="lb-avatar">🦉</div>
-          <div class="lb-info">
-            <div class="lb-name">Gece Kuşu</div>
-            <div class="lb-badge">Bronz Çaylak</div>
+
+        <div class="leaderboard-list" id="duelsLeaderboardList" style="max-height: 380px; overflow-y: auto;">
+          <div style="text-align: center; padding: 25px 15px; color: var(--text-muted); font-size: 0.86rem;">
+            <span>⏳ Şube düelloları yükleniyor...</span>
           </div>
-          <div class="lb-score">4.350 XP</div>
         </div>
+      </div>
+
+      <!-- PANEL 3: GENEL OKUL SIRALAMASI -->
+      <div id="lbPanelGlobal" class="lb-panel" style="display: none;">
+        <div style="padding: 6px 12px; margin-bottom: 8px; font-size: 0.74rem; color: var(--text-muted); text-align: center;">
+          🌍 Tüm diller ve kurlar genelinde tüm zamanlar XP sıralaması
+        </div>
+        <div class="leaderboard-list" id="globalLeaderboardList" style="max-height: 380px; overflow-y: auto;">
+          <!-- JS ile doldurulur -->
+        </div>
+      </div>
+
+      <!-- Alt Kısım: Kullanıcının Kendi Sırası Vurgusu -->
+      <div id="lbCurrentUserBar" style="display: none; margin-top: 10px; padding: 8px 12px; background: var(--bg-card); border: 2px solid var(--accent); border-radius: 12px; display: flex; align-items: center; justify-content: space-between;">
+        <div style="display: flex; align-items: center; gap: 8px;">
+          <span id="lbMyRankBadge" style="font-size: 0.85rem; font-weight: 800; color: var(--accent);">#--</span>
+          <span id="lbMyAvatar" style="font-size: 1.2rem;">🦊</span>
+          <div>
+            <strong id="lbMyName" style="font-size: 0.82rem; color: var(--text-main); display: block;">Sen</strong>
+            <span id="lbMyBranchTag" style="font-size: 0.7rem; color: var(--text-muted);">Şube: -</span>
+          </div>
+        </div>
+        <span id="lbMyScore" style="font-size: 0.9rem; font-weight: 900; color: #10b981;">0 XP</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- BİR DEFAYA MAHSUS ŞUBE SEÇME MODALI (Mevcut kullanıcılar için) -->
+  <div id="selectBranchModal" class="modal-overlay" style="z-index: 10030; display: none;">
+    <div class="modal-card" style="max-width: 440px; width: 92%; padding: 22px; text-align: center;">
+      <div style="font-size: 2.4rem; margin-bottom: 8px;">🏫</div>
+      <h2 style="font-size: 1.25rem; font-weight: 900; margin-bottom: 6px; color: var(--text-main);">Resmi Şubeni Seç</h2>
+      <p style="font-size: 0.84rem; color: var(--text-muted); margin-bottom: 16px; line-height: 1.4;">
+        Sınıf arkadaşlarınla liderlik yarışına katılmak ve şubeler arası düelloda sınıfını zafere taşımak için şubeni seç.
+      </p>
+
+      <div style="text-align: left; margin-bottom: 14px;">
+        <label style="display: block; font-size: 0.78rem; font-weight: 700; color: var(--text-muted); margin-bottom: 6px; text-transform: uppercase;">Şube Listesi:</label>
+        <select id="modalBranchSelect" class="setting-select-box" style="width: 100%; padding: 12px 14px; font-size: 0.95rem; font-weight: 700; border-radius: 12px; background: var(--bg-card); border: 2px solid var(--accent); color: var(--text-main);">
+          <!-- Dinamik doldurulacak -->
+        </select>
+        <div style="display: flex; align-items: center; gap: 6px; margin-top: 8px; padding: 8px 10px; background: rgba(245, 158, 11, 0.12); border: 1px solid rgba(245, 158, 11, 0.3); border-radius: 10px; font-size: 0.74rem; color: #f59e0b; line-height: 1.35;">
+          <span>🔒</span>
+          <span><strong>Önemli:</strong> Şube seçimi kalıcıdır ve sonradan ayarlardan değiştirilemez. Lütfen doğru şubeyi seçtiğinden emin ol!</span>
+        </div>
+      </div>
+
+      <div style="display: flex; gap: 8px; justify-content: flex-end; margin-top: 18px;">
+        <button type="button" id="cancelBranchModalBtn" class="pill-btn secondary-btn" style="padding: 10px 18px; font-size: 0.88rem;">Daha Sonra</button>
+        <button type="button" id="confirmBranchModalBtn" class="pill-btn primary-action-btn" style="padding: 10px 22px; font-size: 0.88rem;">Şubemi Onayla ➔</button>
       </div>
     </div>
   </div>
@@ -2126,6 +2190,7 @@
               </button>
               <div class="student-hero-badges">
                 <span class="student-track-badge" id="profHeroTrackBadge">4A (A2 Temel)</span>
+                <span class="student-track-badge" id="profHeroBranchBadge" style="background: rgba(59, 130, 246, 0.2); color: #3b82f6; border-color: rgba(59, 130, 246, 0.4);">🏫 Şube: -</span>
                 <span class="student-lang-badge" id="profHeroLangBadge">🇬🇧 İngilizce</span>
               </div>
             </div>
@@ -2429,6 +2494,22 @@
                 <option value="FR-TR">🇫🇷 Fransızca → Türkçe</option>
                 <option value="DE-TR">🇩🇪 Almanca → Türkçe</option>
               </select>
+            </div>
+
+            <div class="setting-block">
+              <span class="setting-block-label">Resmi Şube</span>
+              <div id="settingBranchDisplayBox" style="display: flex; align-items: center; justify-content: space-between; padding: 10px 14px; background: rgba(59, 130, 246, 0.08); border: 1.5px solid rgba(59, 130, 246, 0.3); border-radius: var(--radius-md);">
+                <div style="display: flex; align-items: center; gap: 8px;">
+                  <span style="font-size: 1.2rem;">🏫</span>
+                  <div>
+                    <div id="settingBranchTitle" style="font-size: 0.92rem; font-weight: 800; color: var(--text-main);">Henüz Seçilmedi</div>
+                    <div id="settingBranchSub" style="font-size: 0.75rem; color: var(--text-muted);">Sınıf İçi Liderlik & Düello Şubesi</div>
+                  </div>
+                </div>
+                <span id="settingBranchLockBadge" style="display: flex; align-items: center; gap: 4px; font-size: 0.74rem; font-weight: 800; padding: 3px 8px; border-radius: 8px; background: rgba(245, 158, 11, 0.15); color: #f59e0b; border: 1px solid rgba(245, 158, 11, 0.3);">
+                  <span>🔒</span> Kilitli
+                </span>
+              </div>
             </div>
 
             <div class="setting-block">
