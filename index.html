@@ -1113,6 +1113,7 @@
         <span class="ob-step-dot" data-step="2"></span>
         <span class="ob-step-dot" data-step="3"></span>
         <span class="ob-step-dot" data-step="4"></span>
+        <span class="ob-step-dot" data-step="5"></span>
       </div>
 
       <!-- 1. ADIM: YENİ DİNAMİK & ÇEKİCİ KARŞILAMA VE GİRİŞ EKRANI -->
@@ -1180,7 +1181,7 @@
       <!-- 2. ADIM: İSİM & AVATAR -->
       <div class="onboarding-step-view" id="obStep1" style="display: none;">
         
-        <div class="ob-step-tag" style="margin-bottom:8px;">ADIM 1 / 4</div>
+        <div class="ob-step-tag" style="margin-bottom:8px;">ADIM 1 / 5</div>
         <h2 class="ob-title">Profilini Oluştur 👤</h2>
         <p class="ob-subtitle">Öğrenme maceranda seni temsil edecek adını ve avatarını belirle.</p>
 
@@ -1261,7 +1262,7 @@
 
       <!-- 2. ADIM: DİL SEÇİMİ -->
       <div class="onboarding-step-view" id="obStep2" style="display: none;">
-        <div class="ob-step-tag">ADIM 2 / 4</div>
+        <div class="ob-step-tag">ADIM 2 / 5</div>
         <h2 class="ob-title">Öğrenmek İstediğin Dil 🌍</h2>
         <p class="ob-subtitle">Hedef dilini seç. Bunu dilediğin zaman ayarlardan değiştirebilirsin.</p>
 
@@ -1298,40 +1299,35 @@
         </div>
       </div>
 
-      <!-- 3. ADIM: KUR & ŞUBE SEÇİMİ (23 RESMİ ŞUBE) -->
+      <!-- 3. ADIM: RESMİ ŞUBE SEÇİMİ (23 RESMİ ŞUBE) -->
       <div class="onboarding-step-view" id="obStep3" style="display: none;">
-        <div class="ob-step-tag">ADIM 3 / 4</div>
+        <div class="ob-step-tag">ADIM 3 / 5</div>
         <h2 class="ob-title">Şubeni Seç 🏫</h2>
-        <p class="ob-subtitle">Sınıf içi liderlik tablosu ve şubeler arası düello için kendi şubeni seç.</p>
+        <p class="ob-subtitle">Sınıf içi liderlik tablosu ve şubeler arası düelloda sınıfını temsil etmek için şubeni seç.</p>
 
-        <div style="margin-bottom: 14px;">
-          <label style="display: block; font-size: 0.8rem; font-weight: 700; color: var(--text-muted); margin-bottom: 6px; text-transform: uppercase; letter-spacing: 0.5px;">Resmi Şuben:</label>
-          <select id="obBranchSelect" class="setting-select-box" style="width: 100%; padding: 12px 14px; font-size: 0.95rem; font-weight: 700; border-radius: 14px; background: var(--bg-card); border: 2px solid var(--accent); color: var(--text-main);">
-            <!-- JS ile aktif dile göre 23 resmi şube dinamik listelenir -->
-          </select>
-          <div style="display: flex; align-items: center; gap: 6px; margin-top: 8px; padding: 8px 12px; background: rgba(245, 158, 11, 0.12); border: 1px solid rgba(245, 158, 11, 0.3); border-radius: 10px; font-size: 0.76rem; color: #f59e0b; line-height: 1.35;">
-            <span>🔒</span>
-            <span><strong>Önemli:</strong> Şube seçimi bir kez yapılır ve daha sonra değiştirilemez!</span>
+        <div style="margin-bottom: 14px; text-align: left;">
+          <label for="obBranchSelect" style="display: block; font-size: 0.85rem; font-weight: 800; color: var(--text-main); margin-bottom: 8px; text-transform: uppercase; letter-spacing: 0.5px;">Resmi Hazırlık Şuben:</label>
+          <div style="position: relative;">
+            <select id="obBranchSelect" class="setting-select-box" style="width: 100%; padding: 14px 16px; font-size: 1rem; font-weight: 800; border-radius: 14px; background: var(--bg-card); border: 2.5px solid var(--accent); color: var(--text-main); cursor: pointer; outline: none;">
+              <!-- JS ile aktif dile göre 23 resmi şube dinamik listelenir -->
+            </select>
+          </div>
+          
+          <div style="display: flex; align-items: center; gap: 8px; margin-top: 10px; padding: 10px 14px; background: rgba(245, 158, 11, 0.12); border: 1.5px solid rgba(245, 158, 11, 0.35); border-radius: 12px; font-size: 0.78rem; color: #f59e0b; line-height: 1.4;">
+            <span style="font-size: 1rem;">🔒</span>
+            <span><strong>Önemli:</strong> Şube seçimi bir kez yapılır ve profilinize kilitlenir. Dönem sonu şampiyon şube bu seçimle belirlenir!</span>
           </div>
         </div>
 
-        <div class="ob-options-list" id="obTrackOptions">
-          <div class="ob-option-card active" data-track="4A" id="obTrackCard4A">
-            <span class="ob-opt-flag" style="display:flex;align-items:center;justify-content:center;width:34px;height:34px;border-radius:10px;background:rgba(16,185,129,0.15);color:#10b981;font-weight:900;font-size:0.9rem;border:1.5px solid rgba(16,185,129,0.3);flex-shrink:0;">Alt</span>
-            <div class="ob-opt-text">
-              <span class="ob-opt-title" id="obTrackTitle4A">Alt Kur (A2 Seviyesi)</span>
-              <span class="ob-opt-desc" id="obTrackDesc4A">A2 Temel Müfredat: Başlangıç ve temel üniteler</span>
-            </div>
-            <span class="ob-check-mark">✓</span>
+        <!-- Şubeye Göre Otomatik Belirlenen Kur ve Seviye Bilgi Kartı -->
+        <div id="obBranchMetaCard" style="background: rgba(59, 130, 246, 0.1); border: 1.5px solid rgba(59, 130, 246, 0.35); border-radius: 14px; padding: 14px 16px; margin-bottom: 18px; text-align: left;">
+          <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 6px;">
+            <span style="font-size: 0.82rem; font-weight: 700; color: var(--text-muted);">Müfredat Kuru:</span>
+            <span id="obBranchTrackBadge" style="font-size: 0.82rem; font-weight: 900; padding: 3px 10px; border-radius: 8px; background: #3b82f6; color: #ffffff;">Üst Kur (B1)</span>
           </div>
-          <div class="ob-option-card" data-track="4B" id="obTrackCard4B">
-            <span class="ob-opt-flag" style="display:flex;align-items:center;justify-content:center;width:34px;height:34px;border-radius:10px;background:rgba(59,130,246,0.15);color:#3b82f6;font-weight:900;font-size:0.9rem;border:1.5px solid rgba(59,130,246,0.3);flex-shrink:0;">Üst</span>
-            <div class="ob-opt-text">
-              <span class="ob-opt-title" id="obTrackTitle4B">Üst Kur (B1 Seviyesi)</span>
-              <span class="ob-opt-desc" id="obTrackDesc4B">B1 İleri Müfredat: Orta ve ileri düzey üniteler</span>
-            </div>
-            <span class="ob-check-mark">✓</span>
-          </div>
+          <p id="obBranchTrackDesc" style="font-size: 0.8rem; color: var(--text-main); margin: 0; line-height: 1.4;">
+            İHS 101-111 şubeleri B1 İleri Müfredat (Üst Kur) kapsamındadır.
+          </p>
         </div>
 
         <div class="ob-btn-row">
@@ -1342,7 +1338,7 @@
 
       <!-- 4. ADIM: MÜFREDAT BİLGİSİ & GÜNLÜK HEDEF -->
       <div class="onboarding-step-view" id="obStep4" style="display: none;">
-        <div class="ob-step-tag">ADIM 4 / 4</div>
+        <div class="ob-step-tag">ADIM 4 / 5</div>
         <h2 class="ob-title">Rotan Oluşturuldu! 🗺️</h2>
         
         <div id="obTrackInfoBox" style="background: rgba(59, 130, 246, 0.1); border: 1px solid var(--accent); padding: 15px; border-radius: 8px; margin-bottom: 20px; font-size: 0.9rem; line-height: 1.4; color: var(--text-main); text-align: left;">
@@ -1360,36 +1356,60 @@
           </div>
         </div>
 
-        <!-- İsteğe Bağlı Günlük Seri Çalışma Sözü (Streak Pledge) -->
-        <div class="ob-field-group" style="margin-top: 14px;">
-          <label class="ob-field-label" style="display: flex; align-items: center; justify-content: space-between;">
-            <span>🔥 Günlük Seri Sözü (İsteğe Bağlı):</span>
-            <span style="font-size: 0.72rem; color: #fbbf24; font-weight: 800; background: rgba(251, 191, 36, 0.15); padding: 2px 8px; border-radius: 10px;">Duolingo Modeli</span>
-          </label>
-          <p style="font-size: 0.78rem; color: var(--text-muted); margin: 2px 0 10px 0; line-height: 1.4;">
-            Her gün aralıksız çalışma sözü vererek alışkanlık kazan.
+        <div class="ob-btn-row">
+          <button type="button" class="pill-btn secondary-btn" id="obStep4BackBtn">← Geri</button>
+          <button type="button" class="pill-btn primary-action-btn" id="obStep4NextBtn">İleri ➔</button>
+        </div>
+      </div>
+
+      <!-- 5. ADIM: GÜNLÜK SERİ SÖZÜ & MOTİVASYON (STREAK PLEDGE) -->
+      <div class="onboarding-step-view" id="obStep5" style="display: none;">
+        <div class="ob-step-tag">ADIM 5 / 5</div>
+        <h2 class="ob-title">Aralıksız Seri Sözü! 🔥</h2>
+        <p class="ob-subtitle">Kelime öğrenmenin en güçlü sırrı her gün zinciri kırmamaktır.</p>
+
+        <!-- Motive Edici Bilgi Kutusu -->
+        <div class="ob-motivation-card" style="background: linear-gradient(135deg, rgba(245, 158, 11, 0.14) 0%, rgba(234, 179, 8, 0.05) 100%); border: 1.5px solid rgba(245, 158, 11, 0.35); border-radius: 16px; padding: 14px 16px; margin-bottom: 16px; text-align: left;">
+          <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 6px;">
+            <span style="font-size: 1.25rem;">⚡</span>
+            <strong style="font-size: 0.92rem; color: #f59e0b;">Küçük Adımlar, Devasa Sonuçlar!</strong>
+          </div>
+          <p style="font-size: 0.82rem; line-height: 1.45; color: var(--text-main); margin: 0 0 8px 0;">
+            Günde sadece <strong>10-15 dakikanı</strong> ayırarak her gün aralıksız pratik yap. Kelimeler kısa sürede refleks haline gelecek ve sınıf içi düellolarda şubenin zirveye tırmanmasını sağlayacaksın!
           </p>
-          <div class="ob-streak-pledge-grid" id="obStreakPledgeGrid" style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-bottom: 8px;">
+          <div style="display: flex; align-items: center; gap: 6px; font-size: 0.76rem; color: var(--text-muted); background: rgba(0,0,0,0.04); padding: 6px 10px; border-radius: 10px;">
+            <span>🎯</span>
+            <span>Kendine bir seri hedefi seç ve ilk günden alışkanlığını inşa et:</span>
+          </div>
+        </div>
+
+        <!-- Seri Seçenekleri Izgarası -->
+        <div class="ob-field-group">
+          <label class="ob-field-label" style="display: flex; align-items: center; justify-content: space-between;">
+            <span>Hedef Seri Süren:</span>
+            <span style="font-size: 0.72rem; color: #fbbf24; font-weight: 800; background: rgba(251, 191, 36, 0.15); padding: 2px 8px; border-radius: 10px;">Zinciri Kırma</span>
+          </label>
+          <div class="ob-streak-pledge-grid" id="obStreakPledgeGrid" style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 10px;">
             <button type="button" class="ob-streak-chip" data-streak-days="3">
-              <strong>3 Gün</strong>
-              <small style="display:block; font-size:0.68rem; opacity:0.85;">🎯 Hızlı Başlangıç</small>
+              <strong style="font-size: 1.05rem;">3 Gün</strong>
+              <small style="display:block; font-size:0.72rem; opacity:0.9; margin-top: 2px;">🎯 Başlangıç</small>
             </button>
             <button type="button" class="ob-streak-chip active" data-streak-days="5">
-              <strong>5 Gün ⭐</strong>
-              <small style="display:block; font-size:0.68rem; opacity:0.85;">🔥 Kararlı</small>
+              <strong style="font-size: 1.05rem;">5 Gün ⭐</strong>
+              <small style="display:block; font-size:0.72rem; opacity:0.9; margin-top: 2px;">🔥 Kararlı</small>
             </button>
             <button type="button" class="ob-streak-chip" data-streak-days="7">
-              <strong>7 Gün</strong>
-              <small style="display:block; font-size:0.68rem; opacity:0.85;">⚡ Şampiyon</small>
+              <strong style="font-size: 1.05rem;">7 Gün</strong>
+              <small style="display:block; font-size:0.72rem; opacity:0.9; margin-top: 2px;">⚡ Şampiyon</small>
             </button>
           </div>
-          <button type="button" id="obSkipStreakPledgeBtn" style="background:none; border:none; color:var(--text-muted); font-size:0.78rem; text-decoration:underline; cursor:pointer; width:100%; text-align:center; padding: 4px;">
-            Şimdilik söz verme (Daha sonra ayarlardan başlatabilirsin)
+          <button type="button" id="obSkipStreakPledgeBtn" style="background:none; border:none; color:var(--text-muted); font-size:0.78rem; text-decoration:underline; cursor:pointer; width:100%; text-align:center; padding: 6px;">
+            Şimdilik söz vermeden devam et (Ayarlardan dilediğin zaman başlatabilirsin)
           </button>
         </div>
 
         <div class="ob-btn-row">
-          <button type="button" class="pill-btn secondary-btn" id="obStep4BackBtn">← Geri</button>
+          <button type="button" class="pill-btn secondary-btn" id="obStep5BackBtn">← Geri</button>
           <button type="button" class="pill-btn primary-action-btn" id="obCompleteBtn">
             <span>🚀</span> Öğrenmeye Başla!
           </button>

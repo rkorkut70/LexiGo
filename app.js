@@ -854,6 +854,8 @@
     obUnitSelect: document.getElementById('obUnitSelect'),
     obGoalChips: document.querySelectorAll('#obGoalGrid .goal-chip'),
     obStep4BackBtn: document.getElementById('obStep4BackBtn'),
+    obStep4NextBtn: document.getElementById('obStep4NextBtn'),
+    obStep5BackBtn: document.getElementById('obStep5BackBtn'),
     obCompleteBtn: document.getElementById('obCompleteBtn'),
 
     // Ayarlar Profil Paneli
@@ -3193,6 +3195,43 @@
   }
 
   // ==========================================
+  // ADÜ YDYO 23 RESMİ HAZIRLIK ŞUBESİ VE METADATA
+  // ==========================================
+  const SCHOOL_BRANCHES = [
+    // İngilizce (EN-TR) - 17 Şube: İHS 101-111 Üst Kur, 112-117 Alt Kur
+    { code: 'İHS 101', name: 'İHS 101', lang: 'EN-TR', track: '4B', level: 'B1', trackName: 'Üst Kur' },
+    { code: 'İHS 102', name: 'İHS 102', lang: 'EN-TR', track: '4B', level: 'B1', trackName: 'Üst Kur' },
+    { code: 'İHS 103', name: 'İHS 103', lang: 'EN-TR', track: '4B', level: 'B1', trackName: 'Üst Kur' },
+    { code: 'İHS 104', name: 'İHS 104', lang: 'EN-TR', track: '4B', level: 'B1', trackName: 'Üst Kur' },
+    { code: 'İHS 105', name: 'İHS 105', lang: 'EN-TR', track: '4B', level: 'B1', trackName: 'Üst Kur' },
+    { code: 'İHS 106', name: 'İHS 106', lang: 'EN-TR', track: '4B', level: 'B1', trackName: 'Üst Kur' },
+    { code: 'İHS 107', name: 'İHS 107', lang: 'EN-TR', track: '4B', level: 'B1', trackName: 'Üst Kur' },
+    { code: 'İHS 108', name: 'İHS 108', lang: 'EN-TR', track: '4B', level: 'B1', trackName: 'Üst Kur' },
+    { code: 'İHS 109', name: 'İHS 109', lang: 'EN-TR', track: '4B', level: 'B1', trackName: 'Üst Kur' },
+    { code: 'İHS 110', name: 'İHS 110', lang: 'EN-TR', track: '4B', level: 'B1', trackName: 'Üst Kur' },
+    { code: 'İHS 111', name: 'İHS 111', lang: 'EN-TR', track: '4B', level: 'B1', trackName: 'Üst Kur' },
+    { code: 'İHS 112', name: 'İHS 112', lang: 'EN-TR', track: '4A', level: 'A2', trackName: 'Alt Kur' },
+    { code: 'İHS 113', name: 'İHS 113', lang: 'EN-TR', track: '4A', level: 'A2', trackName: 'Alt Kur' },
+    { code: 'İHS 114', name: 'İHS 114', lang: 'EN-TR', track: '4A', level: 'A2', trackName: 'Alt Kur' },
+    { code: 'İHS 115', name: 'İHS 115', lang: 'EN-TR', track: '4A', level: 'A2', trackName: 'Alt Kur' },
+    { code: 'İHS 116', name: 'İHS 116', lang: 'EN-TR', track: '4A', level: 'A2', trackName: 'Alt Kur' },
+    { code: 'İHS 117', name: 'İHS 117', lang: 'EN-TR', track: '4A', level: 'A2', trackName: 'Alt Kur' },
+
+    // Fransızca (FR-TR) - 3 Şube: FHS 101 Üst Kur, 102-103 Alt Kur
+    { code: 'FHS 101', name: 'FHS 101', lang: 'FR-TR', track: '4B', level: 'B1', trackName: 'Üst Kur' },
+    { code: 'FHS 102', name: 'FHS 102', lang: 'FR-TR', track: '4A', level: 'A2', trackName: 'Alt Kur' },
+    { code: 'FHS 103', name: 'FHS 103', lang: 'FR-TR', track: '4A', level: 'A1', trackName: 'Alt Kur' },
+
+    // Almanca (DE-TR) - 3 Şube: Tüm şubeler Alt Kur
+    { code: 'AHS 101', name: 'AHS 101', lang: 'DE-TR', track: '4A', level: 'A1', trackName: 'Alt Kur' },
+    { code: 'AHS 102', name: 'AHS 102', lang: 'DE-TR', track: '4A', level: 'A2', trackName: 'Alt Kur' },
+    { code: 'AHS 103', name: 'AHS 103', lang: 'DE-TR', track: '4A', level: 'A1', trackName: 'Alt Kur' }
+  ];
+  if (!window.SCHOOL_BRANCHES) {
+    window.SCHOOL_BRANCHES = SCHOOL_BRANCHES;
+  }
+
+  // ==========================================
   // İLK KULLANIM KURULUM SİHİRBAZI (ONBOARDING)
   // ==========================================
   const obState = {
@@ -3200,8 +3239,9 @@
     name: '',
     avatar: '🦊',
     lang: 'EN-TR',
-    track: '4A',
-    level: 'A2',
+    branch: 'İHS 101',
+    track: '4B',
+    level: 'B1',
     unitNo: 1,
     dailyGoal: 15,
     streakPledgeDays: 5
@@ -3422,7 +3462,7 @@
 
     const stepIndicator = document.querySelector('.onboarding-steps-indicator');
     if (stepIndicator) {
-      stepIndicator.style.display = (stepNum >= 1 && stepNum <= 4) ? 'flex' : 'none';
+      stepIndicator.style.display = (stepNum >= 1 && stepNum <= 5) ? 'flex' : 'none';
     }
 
     const allSteps = (dom.obSteps && dom.obSteps.length) ? dom.obSteps : document.querySelectorAll('.onboarding-step-view');
@@ -3454,74 +3494,81 @@
     'B2': 'İleri'
   };
 
+  function updateOnboardingBranchInfo() {
+    const branches = window.SCHOOL_BRANCHES || SCHOOL_BRANCHES;
+    const curB = branches.find(b => b.code === obState.branch) || branches[0];
+    const badgeEl = document.getElementById('obBranchTrackBadge');
+    const descEl = document.getElementById('obBranchTrackDesc');
+    if (curB) {
+      obState.track = curB.track;
+      obState.level = curB.level;
+      if (badgeEl) {
+        badgeEl.textContent = `${curB.trackName} (${curB.level} Seviyesi)`;
+        badgeEl.style.background = curB.track === '4B' ? '#3b82f6' : '#10b981';
+      }
+      if (descEl) {
+        if (curB.lang === 'EN-TR') {
+          descEl.textContent = curB.track === '4B'
+            ? `${curB.code} sınıfı İleri Müfredat (B1 Üst Kur) kapsamındadır. İHS 101 - 111 şubeleri Üst Kur olarak yarışır.`
+            : `${curB.code} sınıfı Temel Müfredat (A2 Alt Kur) kapsamındadır. İHS 112 - 117 şubeleri Alt Kur olarak yarışır.`;
+        } else if (curB.lang === 'FR-TR') {
+          descEl.textContent = curB.track === '4B'
+            ? `${curB.code} sınıfı Fransızca B1 Üst Kur müfredatındadır.`
+            : `${curB.code} sınıfı Fransızca Alt Kur (${curB.level}) müfredatındadır.`;
+        } else {
+          descEl.textContent = `${curB.code} sınıfı Almanca Alt Kur (${curB.level}) müfredatındadır.`;
+        }
+      }
+    }
+  }
+
   function renderOnboardingTracks() {
     const branchSelect = document.getElementById('obBranchSelect');
-    const branches = (window.SCHOOL_BRANCHES || []).filter(b => b.lang === obState.lang);
-    if (branchSelect && branches.length > 0) {
+    const allBranches = window.SCHOOL_BRANCHES || SCHOOL_BRANCHES;
+    const branches = allBranches.filter(b => b.lang === (obState.lang || 'EN-TR'));
+    
+    if (branchSelect) {
       branchSelect.innerHTML = '';
-      branches.forEach(b => {
+      if (branches.length === 0) {
         const opt = document.createElement('option');
-        opt.value = b.code;
-        opt.textContent = `${b.code} - ${b.name} (${b.trackName})`;
+        opt.value = '';
+        opt.textContent = 'Şube bulunamadı';
         branchSelect.appendChild(opt);
-      });
+      } else {
+        branches.forEach(b => {
+          const opt = document.createElement('option');
+          opt.value = b.code;
+          opt.textContent = `${b.code} (${b.trackName} - ${b.level})`;
+          branchSelect.appendChild(opt);
+        });
 
-      // Eğer mevcut seçili bir şube yoksa ilk şubeyi al
-      if (!obState.branch || !branches.some(b => b.code === obState.branch)) {
-        obState.branch = branches[0].code;
+        // Eğer mevcut seçili şube bu dilde yoksa ilk şubeyi al
+        if (!obState.branch || !branches.some(b => b.code === obState.branch)) {
+          obState.branch = branches[0].code;
+        }
+        branchSelect.value = obState.branch;
       }
-      branchSelect.value = obState.branch;
 
-      // Şube değiştikçe track'i de otomatik şubeye uydur
       branchSelect.onchange = (e) => {
         obState.branch = e.target.value;
-        const selectedB = branches.find(b => b.code === obState.branch);
-        if (selectedB) {
-          obState.track = selectedB.track;
-          obState.level = selectedB.level;
+        const curB = branches.find(b => b.code === obState.branch);
+        if (curB) {
+          obState.track = curB.track;
+          obState.level = curB.level;
           obState.unitNo = calculateCurrentUnitByDate(obState.lang, obState.level);
-          syncTrackOptionCards();
         }
+        updateOnboardingBranchInfo();
       };
 
       const curB = branches.find(b => b.code === obState.branch);
       if (curB) {
         obState.track = curB.track;
+        obState.level = curB.level;
+        obState.unitNo = calculateCurrentUnitByDate(obState.lang, obState.level);
       }
     }
 
-    if (!obState.track) obState.track = '4A';
-    obState.level = getLevelForTrack(obState.lang, obState.track);
-    obState.unitNo = calculateCurrentUnitByDate(obState.lang, obState.level);
-    syncTrackOptionCards();
-  }
-
-  function syncTrackOptionCards() {
-    if (dom.obTrackOptions) {
-      dom.obTrackOptions.forEach(card => {
-        const trackVal = card.getAttribute('data-track');
-        const isActive = trackVal === obState.track;
-        card.classList.toggle('active', isActive);
-
-        const lvl = getLevelForTrack(obState.lang, trackVal);
-        const titleEl = card.querySelector('.ob-opt-title');
-        const descEl = card.querySelector('.ob-opt-desc');
-        if (titleEl) {
-          if (trackVal === '4B') {
-            titleEl.textContent = `Üst Kur (4B - ${lvl} Seviyesi)`;
-          } else {
-            titleEl.textContent = `Alt Kur (4A - ${lvl} Seviyesi)`;
-          }
-        }
-        if (descEl) {
-          if (trackVal === '4B') {
-            descEl.textContent = `${lvl} İleri Müfredat: İlgili dönem ve üniteler`;
-          } else {
-            descEl.textContent = `${lvl} Temel Müfredat: Başlangıç ve temel üniteler`;
-          }
-        }
-      });
-    }
+    updateOnboardingBranchInfo();
   }
 
   function renderOnboardingUnits() {
@@ -8440,17 +8487,22 @@
     }
     if (dom.obStep3NextBtn) {
       dom.obStep3NextBtn.addEventListener('click', () => {
-        const activeTrackCard = document.querySelector('#obTrackOptions .ob-option-card.active');
-        if (activeTrackCard) {
-          obState.track = activeTrackCard.getAttribute('data-track') || '4A';
+        const branchSelect = document.getElementById('obBranchSelect');
+        if (branchSelect && branchSelect.value) {
+          obState.branch = branchSelect.value;
         }
-        obState.level = getLevelForTrack(obState.lang, obState.track);
+        const branches = window.SCHOOL_BRANCHES || SCHOOL_BRANCHES;
+        const curB = branches.find(b => b.code === obState.branch);
+        if (curB) {
+          obState.track = curB.track;
+          obState.level = curB.level;
+        }
         obState.unitNo = calculateCurrentUnitByDate(obState.lang, obState.level);
         goToOnboardingStep(4);
       });
     }
 
-    // 4. Adım Ünite ve Günlük Hedef Seçimi, Geri & Tamamla
+    // 4. Adım Ünite ve Günlük Hedef Seçimi, Geri & İleri
     if (dom.obUnitSelect) {
       dom.obUnitSelect.addEventListener('change', (e) => {
         obState.unitNo = parseInt(e.target.value, 10);
@@ -8470,6 +8522,14 @@
 
     if (dom.obStep4BackBtn) {
       dom.obStep4BackBtn.addEventListener('click', () => goToOnboardingStep(3));
+    }
+    if (dom.obStep4NextBtn) {
+      dom.obStep4NextBtn.addEventListener('click', () => goToOnboardingStep(5));
+    }
+
+    // 5. Adım Günlük Seri Sözü & Motivasyon, Geri & Tamamla
+    if (dom.obStep5BackBtn) {
+      dom.obStep5BackBtn.addEventListener('click', () => goToOnboardingStep(4));
     }
     if (dom.obCompleteBtn) {
       dom.obCompleteBtn.addEventListener('click', completeOnboarding);

@@ -13598,5 +13598,47 @@ html.screen-fit-compact .welcome-action-guest {
   }
 }
 
+/* Onboarding Şube Seçimi ve 5. Adım Motivasyon Stilleri */
+#obBranchSelect {
+  width: 100% !important;
+  padding: 13px 16px !important;
+  font-size: 1rem !important;
+  font-weight: 800 !important;
+  border-radius: 14px !important;
+  background: var(--bg-card, #ffffff) !important;
+  border: 2px solid var(--accent, #6366f1) !important;
+  color: var(--text-main, #1e293b) !important;
+  cursor: pointer !important;
+  outline: none !important;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05) !important;
+}
+
+[data-theme="dark"] #obBranchSelect {
+  background: #181b34 !important;
+  border-color: rgba(99, 102, 241, 0.6) !important;
+  color: #ffffff !important;
+}
+
+#obBranchSelect option {
+  background: var(--bg-card, #ffffff);
+  color: var(--text-main, #1e293b);
+  font-weight: 700;
+  padding: 8px 12px;
+}
+
+[data-theme="dark"] #obBranchSelect option {
+  background: #181b34;
+  color: #ffffff;
+}
+
+.ob-motivation-card {
+  transition: all 0.25s ease;
+}
+
+[data-theme="dark"] .ob-motivation-card {
+  background: linear-gradient(135deg, rgba(245, 158, 11, 0.16) 0%, rgba(234, 179, 8, 0.04) 100%) !important;
+  border-color: rgba(245, 158, 11, 0.35) !important;
+}
+
 
 
