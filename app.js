@@ -7,7 +7,7 @@
 (function () {
   'use strict';
 
-  const APP_VERSION = 'v1.7.3';
+  const APP_VERSION = 'v1.7.4';
   const CURRENT_APP_BUILD = 'lexiq_build_19_clean';
 
   // Build 13 temiz kurulum / sıfırlama güvencesi (Kullanıcı verilerini sıfırla, Hoş Geldin ekranını garantile)
@@ -7476,35 +7476,47 @@ let activeAvatarCategory = 'all';
 
     // Günün öğrenilen kelimelerini öncelikli olarak seç (havuzun önündeki kelimeler)
     const candidateSlice = pool.slice(0, Math.max(pairCount, Math.min(pairCount * 2, pool.length)));
-    const selectedWords = candidateSlice.sort(() => Math.random() - 0.5).slice(0, pairCount);
-    const deck = [];
+    // Sütun başlığında hedef dili göster (İngilizce / Almanca / Fransızca)
+    const targetColLabel = document.getElementById('matchTargetColLabel');
+    if (targetColLabel) {
+      const langNames = { EN: '🇬🇧 İngilizce', DE: '🇩🇪 Almanca', FR: '🇫🇷 Fransızca' };
+      targetColLabel.textContent = langNames[state.activeLanguage] || '🌐 Hedef Dil';
+    }
 
-    selectedWords.forEach(w => {
+    // Kullanıcı kuralı: Solda hedef dil kelimeleri, sağda Türkçe kelimeler
+    const targetCards = selectedWords.map(w => {
       markWordPracticedInGame(w.id);
-      deck.push({
+      return {
         id: w.id + '_word',
         pairId: w.id,
         type: 'word',
         text: w.kelime,
         lang: w.dil
-      });
-      deck.push({
-        id: w.id + '_tr',
-        pairId: w.id,
-        type: 'meaning',
-        text: getWordMeaning(w),
-        lang: 'TR'
-      });
-    });
+      };
+    }).sort(() => Math.random() - 0.5);
 
-    deck.sort(() => Math.random() - 0.5);
+    const turkishCards = selectedWords.map(w => ({
+      id: w.id + '_tr',
+      pairId: w.id,
+      type: 'meaning',
+      text: getWordMeaning(w),
+      lang: 'TR'
+    })).sort(() => Math.random() - 0.5);
+
+    // 2 sütunlu grid yapısı: Sol = Hedef Dil, Sağ = Türkçe
+    const deck = [];
+    for (let i = 0; i < pairCount; i++) {
+      deck.push(targetCards[i]);
+      deck.push(turkishCards[i]);
+    }
+
     matchState.cards = deck;
 
     dom.matchGrid.innerHTML = '';
     deck.forEach((cardItem, idx) => {
       cardItem.deckIdx = idx;
       const cardEl = document.createElement('div');
-      cardEl.className = 'match-tile';
+      cardEl.className = 'match-tile' + (cardItem.type === 'word' ? ' match-tile-target' : ' match-tile-tr');
       cardEl.textContent = cardItem.text;
       cardEl.dataset.pairId = cardItem.pairId;
       cardEl.dataset.idx = idx;

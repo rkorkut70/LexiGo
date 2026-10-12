@@ -1,11 +1,11 @@
 {
-  "version": "v1.7.3",
-  "versionCode": 53,
+  "version": "v1.7.4",
+  "versionCode": 54,
   "releaseDate": "2026-10-13",
   "notes": [
-    "📱 Hakkında ekranı modern tam ekran (full-screen) deneyimine dönüştürüldü",
-    "🔒 Gizlilik Politikası sistem sekmesinden Hakkında ekranına taşındı ve öne çıkarıldı",
-    "⚙️ Sistem menüsüne hızlı 'Uygulama Hakkında & Gizlilik' geçiş bağlantısı eklendi",
+    "🧩 Kelime Eşleme: Solda hedef dil (İngilizce/Almanca/Fransızca), sağda Türkçe kelimeler düzeni",
+    "🔠 Oyun Ekranları Adaptiflik: Tablet ve büyük ekranlarda butonlarla birlikte harfler ve yazılar büyütüldü",
+    "📱 Cümle Kurma ve Boşluk Doldurma: Büyük ekranlarda tam alan doldurma ve kristal netliğinde tipografi",
     "🛡️ Android Target SDK 36 Google Play Store tam uyumluluğu korundu"
   ]
 }
