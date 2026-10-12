@@ -570,6 +570,7 @@
     tabContentPending: document.getElementById('tabContentPending'),
     tabContentLearned: document.getElementById('tabContentLearned'),
     inlineDailyGoalSelect: document.getElementById('inlineDailyGoalSelect'),
+    inlineUnitTotalBadge: document.getElementById('inlineUnitTotalBadge'),
     filterTabs: document.querySelectorAll('.filter-tab'),
     flashcardWrapper: document.getElementById('flashcardWrapper'),
     flashcard: document.getElementById('flashcard'),
@@ -3793,26 +3794,18 @@
       const rec = state.learnedMap[w.id];
       if (!rec || !rec.learned) return false;
       if (state.sessionLearnedIds && state.sessionLearnedIds.has(w.id)) return true;
-      if (!rec.learnedAt) return true;
-      return (rec.learnedAt >= startTimestamp) || (Date.now() - rec.learnedAt < 24 * 60 * 60 * 1000);
+      if (!rec.learnedAt) return false;
+      return rec.learnedAt >= startTimestamp;
     }).length;
 
     const baseGoal = (state.dailyGoal && state.dailyGoal > 0) ? state.dailyGoal : 15;
     const isFullUnitMode = baseGoal === 999;
     const effectiveGoal = isFullUnitMode ? unitWords.length : (baseGoal + (state.dailyGoalExtra || 0));
-
-    // Filtreleme: Kullanıcı kart çalışırken öğrenilen kelimeler TEKRAR önüne gelmez
-    let filtered;
-    if (state.activeFilter === 'learned') {
-      filtered = [...learnedWords];
-    } else {
-      // 'pending' filtresi: Ünitedeki tüm öğrenilmemiş kelimeler kesintisiz çalışılır
-      filtered = [...unlearnedWords];
-    }
+    const remainingForGoal = isFullUnitMode ? unlearnedWords.length : Math.max(0, effectiveGoal - todayLearnedInUnit);
 
     // SRS / Akıllı Tekrar: Zor veya tekrar edilmesi gereken kelimeleri öne al
     if (state.srsPriority && state.activeFilter === 'pending') {
-      filtered.sort((a, b) => {
+      unlearnedWords.sort((a, b) => {
         const aRecord = state.learnedMap[a.id];
         const bRecord = state.learnedMap[b.id];
         // Daha önce öğrenilip tekrara düşenler veya ipucu kullanılanlar en başa
@@ -3820,6 +3813,23 @@
         const bScore = bRecord ? (bRecord.learnedAt ? 1 : 2) : 0;
         return bScore - aScore;
       });
+    }
+
+    // Filtreleme: Kullanıcı kart çalışırken öğrenilen kelimeler TEKRAR önüne gelmez
+    let filtered;
+    if (state.activeFilter === 'learned') {
+      filtered = [...learnedWords];
+    } else {
+      // 'pending' filtresi: Günlük kota kadar kelime gösterilir (Tüm Ünite seçilmişse hepsi)
+      if (isFullUnitMode) {
+        filtered = [...unlearnedWords];
+      } else {
+        if (remainingForGoal > 0) {
+          filtered = unlearnedWords.slice(0, remainingForGoal);
+        } else {
+          filtered = [];
+        }
+      }
     }
 
     if (state.isShuffled) {
@@ -3837,6 +3847,7 @@
       unlearnedCount: unlearnedWords.length,
       todayLearned: todayLearnedInUnit,
       effectiveGoal: effectiveGoal,
+      remainingForGoal: remainingForGoal,
       isFullUnitMode: isFullUnitMode
     });
     updateArenaBadgeDot();
@@ -3847,7 +3858,7 @@
       state.currentIndex = Math.max(0, state.words.length - 1);
     }
 
-    renderCard(unlearnedWords.length, baseGoal);
+    renderCard(unlearnedWords.length, effectiveGoal);
   }
 
   function updateProgressUI(data) {
@@ -3892,12 +3903,16 @@
     if (dom.cardTodayProgressFill) dom.cardTodayProgressFill.style.width = `${percent}%`;
 
     // Sekmelerdeki hedef ve öğrenilen kelime sayıları
-    const pendingWordsCount = data.unlearnedCount;
+    const pendingGoalCount = data.isFullUnitMode ? data.unlearnedCount : Math.min(data.remainingForGoal, data.unlearnedCount);
     if (dom.pendingTabCount) {
-      dom.pendingTabCount.textContent = `(${pendingWordsCount})`;
+      dom.pendingTabCount.textContent = `(${pendingGoalCount})`;
     }
     if (dom.learnedTabCount) {
       dom.learnedTabCount.textContent = `(${data.unitLearned})`;
+    }
+
+    if (dom.inlineUnitTotalBadge) {
+      dom.inlineUnitTotalBadge.textContent = `Ünitede Kalan: ${data.unlearnedCount}`;
     }
 
     // Inline hedef kutusu değerini senkronize et
@@ -3976,7 +3991,7 @@
         if (dom.markRepeatBtn) dom.markRepeatBtn.disabled = true;
         return;
       } else {
-        // 'pending' filtresinde ve kelimeler bitti (Ünite %100 bitti) -> KUTLAMA VE YÖNLENDİRME KARTI GÖRÜNÜR
+        // 'pending' filtresinde ve kelimeler bitti (Günlük hedef veya tüm ünite bitti) -> KUTLAMA VE YÖNLENDİRME KARTI GÖRÜNÜR
         if (dom.flashcardWrapper) dom.flashcardWrapper.style.display = 'none';
         if (dom.cardBottomControls) dom.cardBottomControls.style.display = 'none';
         if (dom.cardNavBar) dom.cardNavBar.style.display = 'none';
@@ -3987,10 +4002,14 @@
           dom.flashcardGoalCompletedView.classList.add('active');
           dom.flashcardGoalCompletedView.style.setProperty('display', 'flex', 'important');
           if (dom.cardCompletedFullDesc) {
-            dom.cardCompletedFullDesc.innerHTML = `Tebrikler! Bu ünitedeki <strong>tüm kelimeleri</strong> başarıyla öğrendin. Şimdi öğrendiğin kelimeleri kalıcı hafızana almak ve refleks haline getirmek için <strong>Kelime Arenası'nda eğlenceli etkinliklerle</strong> pratik yapma zamanı!`;
+            if (unlearnedCount === 0) {
+              dom.cardCompletedFullDesc.innerHTML = `Tebrikler! Bu ünitedeki <strong>tüm kelimeleri</strong> başarıyla öğrendin. Şimdi öğrendiğin kelimeleri kalıcı hafızana almak ve refleks haline getirmek için <strong>Kelime Arenası'nda eğlenceli etkinliklerle</strong> pratik yapma zamanı!`;
+            } else {
+              dom.cardCompletedFullDesc.innerHTML = `Tebrikler! Bugün belirlediğin <strong>${baseGoal} kelimelik</strong> günlük hedefini başarıyla tamamladın. Bu ünitede henüz öğrenilmemiş <strong>${unlearnedCount} kelime</strong> daha var. Dilersen <strong>+5 Kelime Öğren</strong> ile devam edebilir veya <strong>Kelime Arenası</strong>'nda pratik yapabilirsin!`;
+            }
           }
           if (dom.cardFullLearnMoreText) {
-            dom.cardFullLearnMoreText.textContent = 'Ünite Tamamlandı 🏆';
+            dom.cardFullLearnMoreText.textContent = unlearnedCount === 0 ? 'Ünite Tamamlandı 🏆' : '+5 Kelime Öğren';
           }
         }
         return;
