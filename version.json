@@ -1,10 +1,10 @@
 {
-  "version": "v1.7.1",
-  "versionCode": 51,
+  "version": "v1.7.2",
+  "versionCode": 52,
   "releaseDate": "2026-10-13",
   "notes": [
-    "👤 Liderlik ve turnuva tablosunda suluboya ve özel avatarların görüntülenmesi düzeltildi",
-    "📱 Cümle kurma ve tüm oyun ekranları tablet ve mobil için tam adaptif/responsive yapıldı",
-    "✨ Oyun kartı boyutları ve kelime parçacıkları geniş ekranlara uyarlandı"
+    "🚀 Google Play Store uyumluluğu: Target SDK 36 ve Compile SDK 36 yükseltmesi",
+    "👤 Liderlik ve turnuva tablosunda suluboya ve özel avatarların görüntülenmesi",
+    "📱 Cümle kurma ve tüm oyun ekranları tablet ve mobil için tam adaptif/responsive"
   ]
 }
