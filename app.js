@@ -7,7 +7,7 @@
 (function () {
   'use strict';
 
-  const APP_VERSION = 'v1.7.0';
+  const APP_VERSION = 'v1.7.1';
   const CURRENT_APP_BUILD = 'lexiq_build_19_clean';
 
   // Build 13 temiz kurulum / sıfırlama güvencesi (Kullanıcı verilerini sıfırla, Hoş Geldin ekranını garantile)
@@ -9137,7 +9137,7 @@ let activeAvatarCategory = 'all';
               listContainer.innerHTML += `
                 <div class="leaderboard-item ${rankClass}" style="${highlightStyle}">
                   <div class="lb-rank">${rank}</div>
-                  <div class="lb-avatar">${user.avatar || '👤'}</div>
+                  <div class="lb-avatar">${getAvatarMarkup(user.avatar || '🦊', 'width:38px; height:38px;')}</div>
                   <div class="lb-info">
                     <div style="display:flex; align-items:center; gap:6px;">
                       <div class="lb-name">${user.displayName || 'Öğrenci'}</div>
@@ -9378,7 +9378,7 @@ let activeAvatarCategory = 'all';
                 listContainer.innerHTML += `
                   <div class="leaderboard-item rank-${rank}" style="${isMe ? 'background: rgba(37, 99, 235, 0.1); border-left: 4px solid var(--accent);' : ''}">
                     <div class="lb-rank">${rank}</div>
-                    <div class="lb-avatar">${user.avatar || '👻'}</div>
+                    <div class="lb-avatar">${getAvatarMarkup(user.avatar || '🦊', 'width:38px; height:38px;')}</div>
                     <div class="lb-info">
                       <div style="display:flex; align-items:center; gap:6px; flex-wrap:wrap;">
                         <div class="lb-name">${user.displayName || 'Öğrenci'}</div>

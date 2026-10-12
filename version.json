@@ -1,11 +1,10 @@
 {
-  "version": "v1.7.0",
-  "versionCode": 50,
+  "version": "v1.7.1",
+  "versionCode": 51,
   "releaseDate": "2026-10-13",
   "notes": [
-    "✨ 3D Özgün İkon Sistemi: Header, Arena ve Liderlik sekmelerinde zengin 3D görseller",
-    "🎮 Arena Oyun Kartları ve İpuçları için 3D görselleştirme",
-    "🏛️ Turnuva Liderler tablosunda Okul sekmesi varsayılan yapıldı",
-    "⚡ AGP 8.7.3 & Android SDK 35 kararlı altyapı performansı"
+    "👤 Liderlik ve turnuva tablosunda suluboya ve özel avatarların görüntülenmesi düzeltildi",
+    "📱 Cümle kurma ve tüm oyun ekranları tablet ve mobil için tam adaptif/responsive yapıldı",
+    "✨ Oyun kartı boyutları ve kelime parçacıkları geniş ekranlara uyarlandı"
   ]
 }
