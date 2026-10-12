@@ -1,12 +1,12 @@
 {
   "version": "v1.4.9",
-  "versionCode": 33,
+  "versionCode": 34,
   "releaseDate": "2026-10-12",
   "notes": [
+    "iOS ve Android Arayüz & CSS Düzeltmesi: CSS ayrıştırma ve iOS Safari render sorunu giderildi, hoş geldin modalı okul logosu boyutları sınırlandırıldı.",
     "Kelime Arenası 3D Tactile Yenilemesi: Referans gece mavisi/indigo gradyanları, mor neon auralar ve kabartmalı claymorphic kartlar uygulandı.",
     "Dokunsal 3D Butonlar: Canlı zümrüt yeşili 'Oyna' ve 'Öğrendim' butonları, parlak mavi dairesel hoparlör butonları ve dokunsal amber mod değiştirici çubuğu eklendi.",
     "8 Eğitici Oyun 3D Görsel Dili: Kart Eşleştirme, Doğru/Yanlış, Harf Tetrisi, Anagram, Dinle-Yaz, Hızlı Test, Cümle Kurma ve Boşluk Doldurma buton ve taşları 3D formatına kavuştu.",
-    "Cümle Kurma Otomatik Adaptasyon: Fransızca ve Almanca uzun cümlelerde kelime kartları ve yuvaların çakışmasını önleyen dinamik kompakt ölçeklendirme getirildi.",
-    "Welcome Ekranı Düzenlemesi: Hoş geldin ekranı yatay ve dikey olarak ferahlatıldı, ünite ve oyun özetleri 'Hakkında' penceresine taşındı."
+    "Cümle Kurma Otomatik Adaptasyon: Fransızca ve Almanca uzun cümlelerde kelime kartları ve yuvaların çakışmasını önleyen dinamik kompakt ölçeklendirme getirildi."
   ]
 }
