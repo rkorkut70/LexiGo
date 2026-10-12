@@ -1,11 +1,10 @@
 {
-  "version": "v1.6.2",
-  "versionCode": 48,
+  "version": "v1.6.3",
+  "versionCode": 49,
   "releaseDate": "2026-10-13",
   "notes": [
-    "⚡ Android Gradle Plugin (AGP 8.7.3) & SDK 35 kararlı altyapı güncellemesi",
-    "🎓 Okul logosu ve görsel asset senkronizasyonu iyileştirildi",
-    "👤 Öğrenci profili avatar kalıcılığı optimize edildi",
-    "📱 iOS arayüz deneyimi sadeleştirildi"
+    "🏛️ Turnuva liderlik tablosunda 'Okul' sekmesi ilk sıraya ve varsayılana alındı",
+    "⚡ AGP 8.7.3 ve Android SDK 35 kararlı altyapı geçişi",
+    "🎓 Okul logosu ve görsel asset optimizasyonu"
   ]
 }

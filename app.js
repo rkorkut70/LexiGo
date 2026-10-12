@@ -7,7 +7,7 @@
 (function () {
   'use strict';
 
-  const APP_VERSION = 'v1.6.2';
+  const APP_VERSION = 'v1.6.3';
   const CURRENT_APP_BUILD = 'lexiq_build_19_clean';
 
   // Build 13 temiz kurulum / sıfırlama güvencesi (Kullanıcı verilerini sıfırla, Hoş Geldin ekranını garantile)
@@ -9013,11 +9013,11 @@ let activeAvatarCategory = 'all';
     const leaderboardBtn = document.getElementById('leaderboardBtn');
     const leaderboardModal = document.getElementById('leaderboardModal');
     const closeLeaderboardModalBtn = document.getElementById('closeLeaderboardModalBtn');
-    let currentLbTab = 'class'; // 'class' | 'duels' | 'global'
+    let currentLbTab = 'global'; // 'global' | 'class' | 'duels' | 'honor'
 
     async function openLeaderboardModal(initialTab = null) {
       if (!leaderboardModal) return;
-      if (initialTab) currentLbTab = initialTab;
+      currentLbTab = initialTab || 'global';
       leaderboardModal.classList.add('active');
 
       const authStatus = document.getElementById('leaderboardAuthStatus');

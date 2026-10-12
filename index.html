@@ -15,7 +15,7 @@
   <meta http-equiv="Expires" content="0">
   <title>LexiQ • Çok Dilli Akıllı Kelime Kartları</title>
   <link rel="icon" type="image/jpeg" href="logo.jpg">
-  <link rel="stylesheet" href="style.css?v=1.6.2">
+  <link rel="stylesheet" href="style.css?v=1.6.3">
 </head>
 <body>
   <div class="app-container">
@@ -1134,7 +1134,7 @@
         <div class="welcome-hero-section">
           <div class="welcome-brand-wrapper">
             <h1 class="welcome-brand-name">Lexi<span class="welcome-brand-q">Q</span></h1>
-            <span class="welcome-version-pill">v1.6.2</span>
+            <span class="welcome-version-pill">v1.6.3</span>
           </div>
           <!-- 3 Temel Başarı Sütunu (3D Pill Rozetleri) -->
           <div class="welcome-pillars-container">
@@ -1606,9 +1606,12 @@
         </div>
       </div>
       
-      <!-- Sekmeler (Sınıfım / Şube Düelloları / Genel Sıralama / Şeref Kürsüsü) -->
+      <!-- Sekmeler (Okul / Sınıfım / Şube Ligi / Şeref Kürsüsü) -->
       <div class="leaderboard-tabs-nav" id="leaderboardTabsNav">
-        <button type="button" class="lb-tab-btn active" data-tab="class">
+        <button type="button" class="lb-tab-btn active" data-tab="global">
+          🌍 Okul
+        </button>
+        <button type="button" class="lb-tab-btn" data-tab="class">
           🏫 Sınıfım
         </button>
         <button type="button" class="lb-tab-btn" data-tab="duels">
@@ -1616,9 +1619,6 @@
         </button>
         <button type="button" class="lb-tab-btn" data-tab="honor">
           🏆 Kürsü
-        </button>
-        <button type="button" class="lb-tab-btn" data-tab="global">
-          🌍 Okul
         </button>
       </div>
 
@@ -1637,8 +1637,18 @@
           <button class="btn btn-primary btn-sm" id="leaderboardLoginBtn">Giriş Yap</button>
         </div>
 
-        <!-- PANEL 1: SINIFIM LİDERLİK TABLOSU -->
-        <div id="lbPanelClass" class="lb-panel" style="display: flex;">
+        <!-- PANEL 1: GENEL OKUL SIRALAMASI -->
+        <div id="lbPanelGlobal" class="lb-panel" style="display: flex;">
+          <div style="padding: 6px 12px; margin-bottom: 8px; font-size: 0.74rem; color: var(--text-muted); text-align: center; flex-shrink: 0;">
+            🌍 Tüm diller ve kurlar genelinde tüm zamanlar XP sıralaması
+          </div>
+          <div class="leaderboard-list" id="globalLeaderboardList">
+            <!-- JS ile doldurulur -->
+          </div>
+        </div>
+
+        <!-- PANEL 2: SINIFIM LİDERLİK TABLOSU -->
+        <div id="lbPanelClass" class="lb-panel" style="display: none;">
           <div id="lbClassHeaderCard" style="display: flex; align-items: center; justify-content: space-between; padding: 10px 14px; background: rgba(59, 130, 246, 0.1); border: 1px solid rgba(59, 130, 246, 0.25); border-radius: 12px; margin-bottom: 10px; flex-shrink: 0;">
             <div>
               <span id="lbClassBranchBadge" style="font-size: 0.95rem; font-weight: 800; color: #3b82f6;">🏫 Şube: -</span>
@@ -1657,7 +1667,7 @@
           </div>
         </div>
 
-        <!-- PANEL 2: ŞUBELER ARASI DÜELLO (LİG & EŞLEŞME) -->
+        <!-- PANEL 3: ŞUBELER ARASI DÜELLO (LİG & EŞLEŞME) -->
         <div id="lbPanelDuels" class="lb-panel" style="display: none;">
           <!-- Haftalık Bilgi & Reset Sayacı -->
           <div style="display: flex; align-items: center; justify-content: space-between; padding: 8px 12px; background: rgba(239, 68, 68, 0.1); border: 1px solid rgba(239, 68, 68, 0.25); border-radius: 12px; margin-bottom: 10px; flex-shrink: 0;">
@@ -1681,7 +1691,7 @@
           </div>
         </div>
 
-        <!-- PANEL 3: ŞEREF KÜRSÜSÜ / ŞAMPİYONLUK ARŞİVİ -->
+        <!-- PANEL 4: ŞEREF KÜRSÜSÜ / ŞAMPİYONLUK ARŞİVİ -->
         <div id="lbPanelHonor" class="lb-panel" style="display: none;">
           <div style="display: flex; align-items: center; justify-content: space-between; padding: 8px 12px; background: rgba(245, 158, 11, 0.12); border: 1px solid rgba(245, 158, 11, 0.3); border-radius: 12px; margin-bottom: 10px; flex-shrink: 0;">
             <div style="display: flex; align-items: center; gap: 6px;">
@@ -1698,16 +1708,6 @@
             <div style="text-align: center; padding: 25px 15px; color: var(--text-muted); font-size: 0.86rem;">
               <span>⏳ Şeref kürsüsü yükleniyor...</span>
             </div>
-          </div>
-        </div>
-
-        <!-- PANEL 4: GENEL OKUL SIRALAMASI -->
-        <div id="lbPanelGlobal" class="lb-panel" style="display: none;">
-          <div style="padding: 6px 12px; margin-bottom: 8px; font-size: 0.74rem; color: var(--text-muted); text-align: center; flex-shrink: 0;">
-            🌍 Tüm diller ve kurlar genelinde tüm zamanlar XP sıralaması
-          </div>
-          <div class="leaderboard-list" id="globalLeaderboardList">
-            <!-- JS ile doldurulur -->
           </div>
         </div>
       </div>
@@ -1850,7 +1850,7 @@
         <div class="about-hero-box">
           <div class="about-brand-row">
             <span class="about-brand">Lexi<span class="brand-highlight">Q</span></span>
-            <span class="about-version-pill" id="aboutAppVersion">v1.6.2</span>
+            <span class="about-version-pill" id="aboutAppVersion">v1.6.3</span>
             <span class="about-platform-badge" id="aboutPlatformBadge" style="display: none; font-size: 0.72rem; font-weight: 700; padding: 3px 9px; border-radius: 12px; background: rgba(59,130,246,0.15); color: #3b82f6; border: 1px solid rgba(59,130,246,0.3);"></span>
           </div>
           <p class="about-tagline">Müfredat Tabanlı Çok Dilli Kelime Arenası</p>
@@ -3423,7 +3423,7 @@
       <div class="confirm-icon-wrap" style="font-size: 2.8rem; margin-bottom: 8px;">🎉</div>
       <h3 class="confirm-title" style="font-size: 1.3rem; font-weight: 800; margin: 0 0 6px 0;">LexiQ Güncellendi!</h3>
       <div class="app-update-version-badge" style="display: inline-block; padding: 4px 14px; border-radius: 20px; font-size: 0.84rem; font-weight: 800; margin-bottom: 14px;">
-        Sürüm <span id="appUpdateVersionText">v1.6.2</span>
+        Sürüm <span id="appUpdateVersionText">v1.6.3</span>
       </div>
       <div class="update-notes-box" style="text-align: left; border-radius: 16px; padding: 14px 16px; font-size: 0.88rem; line-height: 1.6; margin-bottom: 18px; max-height: 280px; overflow-y: auto;">
         <div class="update-notes-title" style="font-weight: 800; margin-bottom: 8px; display: flex; align-items: center; gap: 6px;">
@@ -3495,11 +3495,11 @@
   <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-storage-compat.js"></script>
-  <script src="firebase_backend.js?v=1.6.2"></script>
+  <script src="firebase_backend.js?v=1.6.3"></script>
 
   <!-- Kelime Verisi ve Uygulama Mantığı (Sadece Standart Vanilla JS) -->
-  <script src="words_data.js?v=1.6.2"></script>
-  <script src="app.js?v=1.6.2"></script>
+  <script src="words_data.js?v=1.6.3"></script>
+  <script src="app.js?v=1.6.3"></script>
 
   </body>
 </html>
