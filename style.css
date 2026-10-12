@@ -9296,21 +9296,67 @@ body[data-theme="dark"] .home-unit-select-btn:hover,
 /* ==========================================================================
    HAKKINDA MODALI (ABOUT MODAL)
    ========================================================================== */
+#aboutModal.modal-overlay {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: clamp(12px, 3vh, 24px) clamp(12px, 3vw, 20px);
+  padding-top: max(clamp(12px, 3vh, 24px), env(safe-area-inset-top, 16px));
+  padding-bottom: max(clamp(12px, 3vh, 24px), env(safe-area-inset-bottom, 16px));
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
 .about-modal-card {
-  max-width: 440px;
-  width: 92%;
-  padding: 22px 24px;
+  max-width: 450px;
+  width: 100%;
+  max-height: min(88vh, 740px);
+  max-height: min(88dvh, 740px);
+  display: flex;
+  flex-direction: column;
+  margin: auto; /* Yatay ve dikey mükemmel ortalama */
+  padding: 18px 20px 16px 20px;
   border-radius: 24px;
   background: var(--bg-card);
   box-shadow: 0 20px 50px rgba(0, 0, 0, 0.35);
   border: 1px solid var(--border-subtle);
+  overflow: hidden; /* Taşmaları ve köşe bozulmalarını engeller */
+  box-sizing: border-box;
+}
+
+#aboutModal .modal-header {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 10px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid var(--border-subtle);
 }
 
 .about-modal-body {
-  padding: 6px 0 0 0;
+  flex: 1 1 auto;
+  min-height: 0; /* Flex child scroll için zorunlu */
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  overscroll-behavior: contain;
+  padding: 4px 4px 6px 4px;
   display: flex;
   flex-direction: column;
-  gap: 14px;
+  gap: 12px;
+}
+
+.about-modal-body::-webkit-scrollbar {
+  width: 5px;
+}
+
+.about-modal-body::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.about-modal-body::-webkit-scrollbar-thumb {
+  background: rgba(156, 163, 175, 0.35);
+  border-radius: 10px;
 }
 
 .about-hero-box {
@@ -9581,6 +9627,11 @@ body[data-theme="dark"] .home-unit-select-btn:hover,
   grid-template-columns: 1fr 1fr;
   gap: 8px;
   margin-top: 2px;
+}
+
+#aboutCheckUpdateBtn {
+  grid-column: 1 / -1;
+  width: 100%;
 }
 
 .about-action-btn {
