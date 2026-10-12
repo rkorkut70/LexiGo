@@ -326,7 +326,9 @@
       localStorage.setItem('kelime_clean_wins', state.cleanWins);
       bonus = Math.max(1, Math.round(5 * gameRoundMult));
       state.xp += bonus;
+      state.weeklyXp = (state.weeklyXp || 0) + bonus;
       localStorage.setItem('kelime_xp', state.xp);
+      localStorage.setItem('lexiq_weekly_xp', String(state.weeklyXp));
       if (dom.headerXpText) dom.headerXpText.textContent = state.xp;
       if (dom.modalTotalXpText) dom.modalTotalXpText.textContent = `${(state.xp || 0).toLocaleString('tr-TR')} XP`;
     }
@@ -8760,16 +8762,20 @@
       // Paneller
       const panelClass = document.getElementById('lbPanelClass');
       const panelDuels = document.getElementById('lbPanelDuels');
+      const panelHonor = document.getElementById('lbPanelHonor');
       const panelGlobal = document.getElementById('lbPanelGlobal');
 
       if (panelClass) panelClass.style.display = (tabName === 'class') ? 'block' : 'none';
       if (panelDuels) panelDuels.style.display = (tabName === 'duels') ? 'block' : 'none';
+      if (panelHonor) panelHonor.style.display = (tabName === 'honor') ? 'block' : 'none';
       if (panelGlobal) panelGlobal.style.display = (tabName === 'global') ? 'block' : 'none';
 
       if (tabName === 'class') {
         renderClassLeaderboard();
       } else if (tabName === 'duels') {
         renderDuelsLeaderboard();
+      } else if (tabName === 'honor') {
+        renderHonorLeaderboard();
       } else if (tabName === 'global') {
         renderGlobalLeaderboard();
       }
@@ -8890,6 +8896,22 @@
       const langMeta = (typeof LANG_META !== 'undefined' && LANG_META[targetLang]) ? LANG_META[targetLang] : { name: 'İngilizce', flag: '🇬🇧' };
       if (langBadge) langBadge.textContent = `${langMeta.flag} ${langMeta.name.split('→')[0].trim()} Şubeleri Arasında`;
 
+      // Kalan süre sayacı (Bu Pazar 23:59:59)
+      const countdownEl = document.getElementById('lbDuelResetCountdown');
+      if (countdownEl) {
+        const now = new Date();
+        const day = now.getDay(); // 0: Pazar, 1: Pzt, ...
+        const daysUntilSunday = (7 - day) % 7;
+        const targetSunday = new Date(now);
+        targetSunday.setDate(now.getDate() + daysUntilSunday);
+        targetSunday.setHours(23, 59, 59, 999);
+        const diffMs = targetSunday - now;
+        const diffHours = Math.floor(diffMs / (1000 * 60 * 60));
+        const diffDays = Math.floor(diffHours / 24);
+        const remHours = diffHours % 24;
+        countdownEl.textContent = diffDays > 0 ? `⏳ Son ${diffDays} gün ${remHours}s` : `⏳ Son ${diffHours} saat`;
+      }
+
       if (listContainer) {
         listContainer.innerHTML = '<div style="text-align:center; padding: 25px; color: var(--text-muted);">⏳ Şube düelloları hesaplanıyor...</div>';
       }
@@ -8966,7 +8988,69 @@
       }
     }
 
-    // 3. Genel Okul Sıralaması
+    // 3. Şeref Kürsüsü ve Yıl Sonu Şampiyonluk Tablosu
+    async function renderHonorLeaderboard() {
+      const listContainer = document.getElementById('honorLeaderboardList');
+      const myBar = document.getElementById('lbCurrentUserBar');
+      if (myBar) myBar.style.display = 'none';
+
+      if (listContainer) {
+        listContainer.innerHTML = '<div style="text-align:center; padding: 25px; color: var(--text-muted);">⏳ Şeref kürsüsü hesaplanıyor...</div>';
+      }
+
+      if (typeof window.fetchHonorRollArchive === 'function') {
+        try {
+          const targetLang = state.activeLanguage || 'EN-TR';
+          const honors = await window.fetchHonorRollArchive(targetLang);
+
+          if (listContainer) {
+            listContainer.innerHTML = '';
+            if (!honors || honors.length === 0) {
+              listContainer.innerHTML = '<div style="text-align:center; padding: 25px; color: var(--text-muted);">Henüz arşivlenmiş hafta şampiyonluğu bulunmuyor. Her hafta pazar gecesi ilk 3 derece kaydedilir! 🏆</div>';
+              return;
+            }
+
+            honors.forEach((h, idx) => {
+              const isMyBranch = (state.userBranch && h.code === state.userBranch);
+              let medalIcon = '🎖️';
+              let rankStyle = '';
+              if (idx === 0) { medalIcon = '🥇'; rankStyle = 'rank-1'; }
+              else if (idx === 1) { medalIcon = '🥈'; rankStyle = 'rank-2'; }
+              else if (idx === 2) { medalIcon = '🥉'; rankStyle = 'rank-3'; }
+
+              const highlightStyle = isMyBranch ? 'background: rgba(245, 158, 11, 0.15); border: 2px solid #f59e0b;' : '';
+
+              listContainer.innerHTML += `
+                <div class="leaderboard-item ${rankStyle}" style="${highlightStyle}">
+                  <div class="lb-rank">${idx + 1}</div>
+                  <div class="lb-avatar" style="font-size: 1.15rem; width: 36px; height: 36px; border-radius: 10px; background: rgba(245, 158, 11, 0.15); display: flex; align-items: center; justify-content: center;">
+                    ${medalIcon}
+                  </div>
+                  <div class="lb-info">
+                    <div style="display:flex; align-items:center; gap:6px;">
+                      <div class="lb-name" style="font-weight: 800;">${h.code} - ${h.name}</div>
+                      ${isMyBranch ? '<span style="font-size:0.72rem; font-weight:800; color:#f59e0b;">(Şuben)</span>' : ''}
+                    </div>
+                    <div class="lb-badge" style="font-size: 0.72rem; color: var(--text-muted);">
+                      🥇 ${h.goldCount} Birincilik • 🥈 ${h.silverCount} İkincilik • 🥉 ${h.bronzeCount} Üçüncülük
+                    </div>
+                  </div>
+                  <div style="text-align: right;">
+                    <div class="lb-score" style="color: #f59e0b; font-size: 0.95rem; font-weight: 900;">${h.leaguePoints} Puan</div>
+                    <span style="font-size: 0.68rem; color: var(--text-muted);">Lig Derecesi</span>
+                  </div>
+                </div>
+              `;
+            });
+          }
+        } catch (e) {
+          console.warn('Honor leaderboard error:', e);
+          if (listContainer) listContainer.innerHTML = '<div style="text-align:center; padding: 20px; color: var(--text-muted);">Şeref kürsüsü yüklenirken hata oluştu.</div>';
+        }
+      }
+    }
+
+    // 4. Genel Okul Sıralaması
     async function renderGlobalLeaderboard() {
       const listContainer = document.getElementById('globalLeaderboardList');
       const myBar = document.getElementById('lbCurrentUserBar');
@@ -9026,6 +9110,34 @@
           console.warn('Global leaderboard error:', e);
         }
       }
+    }
+
+    // Turnuva Rehber Modalı Kontrolleri
+    const tournamentGuideModal = document.getElementById('tournamentGuideModal');
+    const openTournamentGuideBtn = document.getElementById('openTournamentGuideBtn');
+    const closeTournamentGuideBtn = document.getElementById('closeTournamentGuideBtn');
+    const confirmTournamentGuideBtn = document.getElementById('confirmTournamentGuideBtn');
+
+    function openTournamentGuide() {
+      if (tournamentGuideModal) {
+        tournamentGuideModal.style.display = 'flex';
+        tournamentGuideModal.classList.add('active');
+      }
+    }
+    function closeTournamentGuide() {
+      if (tournamentGuideModal) {
+        tournamentGuideModal.style.display = 'none';
+        tournamentGuideModal.classList.remove('active');
+      }
+    }
+
+    if (openTournamentGuideBtn) openTournamentGuideBtn.addEventListener('click', openTournamentGuide);
+    if (closeTournamentGuideBtn) closeTournamentGuideBtn.addEventListener('click', closeTournamentGuide);
+    if (confirmTournamentGuideBtn) confirmTournamentGuideBtn.addEventListener('click', closeTournamentGuide);
+    if (tournamentGuideModal) {
+      tournamentGuideModal.addEventListener('click', (e) => {
+        if (e.target === tournamentGuideModal) closeTournamentGuide();
+      });
     }
 
     // Şube Seçim Modalı (selectBranchModal)

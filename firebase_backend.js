@@ -792,9 +792,92 @@ window.updateUserBranch = async function(branchCode) {
         lastActive: firebase.firestore.FieldValue.serverTimestamp()
       }, { merge: true });
     }
+// 4. Şeref Kürsüsü ve Yıl Sonu Şampiyonluk Arşivi
+window.fetchHonorRollArchive = async function(lang) {
+  if (!db) return [];
+  try {
+    const targetLang = lang || localStorage.getItem('kelime_active_lang') || 'EN-TR';
+    const officialBranches = (window.SCHOOL_BRANCHES || []).filter(b => b.lang === targetLang);
+    
+    // Firestore'da 'tournament_archive' koleksiyonundan haftalık şampiyonları çek
+    const snapshot = await db.collection('tournament_archive')
+                             .where('lang', '==', targetLang)
+                             .orderBy('timestamp', 'desc')
+                             .limit(50)
+                             .get();
+
+    // Şubeler bazında lig puanı ve kazanılan madalya sayısını hesapla
+    // 1.lik = 10 Puan, 2.lik = 6 Puan, 3.lük = 4 Puan
+    const honorMap = {};
+    officialBranches.forEach(b => {
+      honorMap[b.code] = {
+        code: b.code,
+        name: b.name,
+        trackName: b.trackName,
+        leaguePoints: 0,
+        goldCount: 0,
+        silverCount: 0,
+        bronzeCount: 0,
+        weeklyTitles: []
+      };
+    });
+
+    snapshot.forEach(doc => {
+      const data = doc.data() || {};
+      const weekId = data.weekId || '';
+      
+      // 1. Şube (Altın Madalya - 10 Lig Puanı)
+      if (data.firstBranch && honorMap[data.firstBranch]) {
+        honorMap[data.firstBranch].leaguePoints += 10;
+        honorMap[data.firstBranch].goldCount += 1;
+        honorMap[data.firstBranch].weeklyTitles.push({ week: weekId, rank: 1, avgXp: data.firstAvg || 0 });
+      }
+      // 2. Şube (Gümüş Madalya - 6 Lig Puanı)
+      if (data.secondBranch && honorMap[data.secondBranch]) {
+        honorMap[data.secondBranch].leaguePoints += 6;
+        honorMap[data.secondBranch].silverCount += 1;
+        honorMap[data.secondBranch].weeklyTitles.push({ week: weekId, rank: 2, avgXp: data.secondAvg || 0 });
+      }
+      // 3. Şube (Bronz Madalya - 4 Lig Puanı)
+      if (data.thirdBranch && honorMap[data.thirdBranch]) {
+        honorMap[data.thirdBranch].leaguePoints += 4;
+        honorMap[data.thirdBranch].bronzeCount += 1;
+        honorMap[data.thirdBranch].weeklyTitles.push({ week: weekId, rank: 3, avgXp: data.thirdAvg || 0 });
+      }
+    });
+
+    // Lig puanına göre azalan sırala
+    const sortedHonor = Object.values(honorMap).sort((a, b) => {
+      return (b.leaguePoints - a.leaguePoints) || (b.goldCount - a.goldCount) || (b.silverCount - a.silverCount);
+    });
+
+    return sortedHonor;
+  } catch (e) {
+    console.error("Şeref kürsüsü verisi alınamadı:", e);
+    return [];
+  }
+};
+
+// 5. Otomatik / Manuel Hafta Kapanışı Arşivleme (Gerektiğinde haftalık dereceyi kaydetmek için)
+window.recordWeeklyChampionArchive = async function(weekId, lang, firstBranch, firstAvg, secondBranch, secondAvg, thirdBranch, thirdAvg) {
+  if (!db || !weekId || !firstBranch) return false;
+  try {
+    const docId = `${weekId}_${lang || 'EN-TR'}`;
+    await db.collection('tournament_archive').doc(docId).set({
+      weekId: weekId,
+      lang: lang || 'EN-TR',
+      firstBranch: firstBranch,
+      firstAvg: firstAvg || 0,
+      secondBranch: secondBranch || null,
+      secondAvg: secondAvg || 0,
+      thirdBranch: thirdBranch || null,
+      thirdAvg: thirdAvg || 0,
+      timestamp: firebase.firestore.FieldValue.serverTimestamp()
+    }, { merge: true });
     return true;
   } catch (e) {
-    console.error("Şube kaydedilemedi:", e);
+    console.warn("Haftalık şampiyonluk arşivlenemedi:", e);
     return false;
   }
 };
+
