@@ -1,10 +1,11 @@
 {
-  "version": "v1.6.0",
-  "versionCode": 46,
-  "releaseDate": "2026-10-12",
+  "version": "v1.6.1",
+  "versionCode": 47,
+  "releaseDate": "2026-10-13",
   "notes": [
-    "🎨 80 Adet Özgün Suluboya Avatarı: 8 tematik kategoride yepyeni karakter koleksiyonu",
-    "✨ Gelişmiş Avatar Seçici & Profil Entegrasyonu",
-    "⚡ Yüksek performanslı hafif görsel mimarisi"
+    "🎓 Okul logosu ve görsel asset senkronizasyonu iyileştirildi",
+    "👤 Öğrenci profili avatar görüntüleme ve kaydetme kalıcılığı düzeltildi",
+    "📱 iOS güncelleme arayüzü sadeleştirildi ve optimize edildi",
+    "📚 Kelime sözlüğü ve çeviriler güncellendi"
   ]
 }

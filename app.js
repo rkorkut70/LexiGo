@@ -7,7 +7,7 @@
 (function () {
   'use strict';
 
-  const APP_VERSION = 'v1.6.0';
+  const APP_VERSION = 'v1.6.1';
   const CURRENT_APP_BUILD = 'lexiq_build_19_clean';
 
   // Build 13 temiz kurulum / sıfırlama güvencesi (Kullanıcı verilerini sıfırla, Hoş Geldin ekranını garantile)
@@ -906,7 +906,7 @@
       if (platformBadge) {
         const plat = getAppPlatform();
         if (plat === 'ios') {
-          platformBadge.textContent = 'iOS • GitHub';
+          platformBadge.textContent = 'iOS';
           platformBadge.style.display = 'inline-block';
         } else if (plat === 'android') {
           platformBadge.textContent = 'Android • Play Store';
@@ -2016,7 +2016,7 @@
     const loginOutBtn = document.getElementById('profLoginOrOutBtn');
 
     const branchBadge = document.getElementById('profHeroBranchBadge');
-    if (heroAvatar) heroAvatar.textContent = state.userAvatar;
+    if (heroAvatar) setAvatarElement(heroAvatar, state.userAvatar);
     if (heroName) heroName.textContent = state.userName;
     if (trackBadge) trackBadge.textContent = state.userTrack === '4B' ? '4B (B1 İleri)' : '4A (A2 Temel)';
     if (branchBadge) {
@@ -3371,9 +3371,9 @@ let activeAvatarCategory = 'all';
     const previewEl = document.getElementById('obAvatarPreview');
     const subEl = document.getElementById('obAvatarTriggerSub');
     const indicatorEl = document.getElementById('obAvatarSelectedIndicator');
-    if (previewEl) previewEl.textContent = avatar;
+    if (previewEl) setAvatarElement(previewEl, avatar);
     if (subEl) subEl.textContent = `Seçili: ${avatar} (Değiştirmek için dokun)`;
-    if (indicatorEl) indicatorEl.textContent = avatar;
+    if (indicatorEl) setAvatarElement(indicatorEl, avatar);
 
     const grid = document.getElementById('obAvatarGrid');
     if (grid) {
@@ -9159,7 +9159,7 @@ let activeAvatarCategory = 'all';
               const tagB = document.getElementById('lbMyBranchTag');
               const scoreB = document.getElementById('lbMyScore');
               if (rankB) rankB.textContent = `#${myRank.rank}`;
-              if (avB) avB.textContent = state.userAvatar;
+              if (avB) setAvatarElement(avB, state.userAvatar);
               if (nameB) nameB.textContent = state.userName;
               if (tagB) tagB.textContent = `Şube: ${state.userBranch}`;
               if (scoreB) scoreB.textContent = `⚡ ${myRank.xp.toLocaleString()} XP`;
@@ -10643,7 +10643,7 @@ let activeAvatarCategory = 'all';
                 applyBtn.onclick = () => purgeCacheAndReload(remoteVer);
               }
               if (forceRefreshBtn) {
-                forceRefreshBtn.style.display = 'none';
+                forceRefreshBtn.style.setProperty('display', 'none', 'important');
               }
               showToast(`🚀 Yeni ${remoteVer} sürümü hazır! Güncellemek için dokunun.`, 4500);
             } else {
@@ -10703,13 +10703,10 @@ let activeAvatarCategory = 'all';
             } else if (isIOS) {
               if (modalTitle) modalTitle.textContent = '✅ Tebrikler! iOS Sürümü Güncel';
               if (applyBtn) {
-                applyBtn.style.display = 'block';
-                applyBtn.style.background = 'linear-gradient(135deg, #0f9 , #059669)';
-                applyBtn.innerHTML = `<span>🔄</span><span>Önbelleği Temizle & Yenile (${currentVer})</span>`;
-                applyBtn.onclick = () => purgeCacheAndReload(currentVer);
+                applyBtn.style.setProperty('display', 'none', 'important');
               }
               if (forceRefreshBtn) {
-                forceRefreshBtn.style.display = 'none';
+                forceRefreshBtn.style.setProperty('display', 'none', 'important');
               }
               if (notesBox) {
                 notesBox.innerHTML = `
@@ -10717,7 +10714,7 @@ let activeAvatarCategory = 'all';
                     ✅ En Güncel iOS Sürümünü (${currentVer}) Kullanıyorsunuz
                   </div>
                   <p style="margin: 0; font-size: 0.85rem; color: var(--text-muted); line-height: 1.5;">
-                    Cihazınızdaki sürüm (${currentVer}) son yayınla tam olarak eşleşmektedir. Herhangi bir önbellek uyuşmazlığında aşağıdaki butona dokunarak önbelleği temizleyebilirsiniz.
+                    Cihazınızdaki sürüm (${currentVer}) son yayınla tam olarak eşleşmektedir. Tüm özellikler ve ders içerikleri günceldir.
                   </p>
                 `;
               }
@@ -10790,7 +10787,7 @@ let activeAvatarCategory = 'all';
             if (platform === 'android') {
               showToast(`🚀 Google Play'de LexiQ ${remoteVer} güncellemesi hazır! Ayarlar'dan güncelleyebilirsiniz.`, 6000);
             } else if (platform === 'ios') {
-              showToast(`🚀 iOS (GitHub) için LexiQ ${remoteVer} güncellemesi hazır! Hakkında bölümünden güncelleyebilirsiniz.`, 6000);
+              showToast(`🚀 iOS için LexiQ ${remoteVer} güncellemesi hazır! Hakkında bölümünden güncelleyebilirsiniz.`, 6000);
             } else {
               showToast(`🚀 GitHub'da LexiQ ${remoteVer} güncellemesi hazır! Ayarlar'dan güncelleyebilirsiniz.`, 5000);
             }
