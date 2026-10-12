@@ -6529,12 +6529,20 @@
       };
     }
 
-    dom.badgesModal.classList.add('active');
+    dom.badgesModal.style.display = 'flex';
+    requestAnimationFrame(() => {
+      dom.badgesModal.classList.add('active');
+    });
   }
 
   function closeBadgesModal(force = false) {
     if (!force && Date.now() - badgesModalOpenedAt < 350) return;
     dom.badgesModal.classList.remove('active');
+    setTimeout(() => {
+      if (!dom.badgesModal.classList.contains('active')) {
+        dom.badgesModal.style.display = 'none';
+      }
+    }, 200);
   }
 
   // ==========================================
@@ -9809,10 +9817,22 @@
     }
     function openAboutModal() {
       updateAboutVersion();
-      if (aboutModal) aboutModal.classList.add('active');
+      if (aboutModal) {
+        aboutModal.style.display = 'flex';
+        requestAnimationFrame(() => {
+          aboutModal.classList.add('active');
+        });
+      }
     }
     function closeAboutModal() {
-      if (aboutModal) aboutModal.classList.remove('active');
+      if (aboutModal) {
+        aboutModal.classList.remove('active');
+        setTimeout(() => {
+          if (!aboutModal.classList.contains('active')) {
+            aboutModal.style.display = 'none';
+          }
+        }, 200);
+      }
     }
     updateAboutVersion();
     if (dom.brandHeaderHomeBtn) dom.brandHeaderHomeBtn.addEventListener('click', openAboutModal);
@@ -10181,7 +10201,7 @@
           if (code && !isNaN(code)) return parseInt(code, 10);
         } catch (e) {}
       }
-      return 32;
+      return 36;
     }
 
     function getAppPlatform() {
@@ -10238,16 +10258,25 @@
     }
 
     function isRemoteVersionNewer(remoteVer, currentVer, remoteCode, currentCode) {
-      if (remoteCode && currentCode && remoteCode !== currentCode) {
-        return remoteCode > currentCode;
-      }
       const r = parseSemVer(remoteVer);
       const c = parseSemVer(currentVer);
+      
+      // Önce semantik sürüm kontrolü (örn. 1.5.0 vs 1.4.9)
+      let semVerNewer = false;
+      let semVerOlder = false;
       for (let i = 0; i < Math.max(r.length, c.length); i++) {
         const rPart = r[i] || 0;
         const cPart = c[i] || 0;
-        if (rPart > cPart) return true;
-        if (rPart < cPart) return false;
+        if (rPart > cPart) { semVerNewer = true; break; }
+        if (rPart < cPart) { semVerOlder = true; break; }
+      }
+
+      if (semVerOlder) return false;
+      if (semVerNewer) return true;
+
+      // Sürüm metinleri eşitse ve versionCode tanımlıysa kontrol et
+      if (remoteCode && currentCode) {
+        return remoteCode > currentCode;
       }
       return false;
     }
