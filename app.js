@@ -886,6 +886,20 @@
       document.querySelectorAll('.welcome-version-pill, #aboutAppVersion, #appUpdateVersionText').forEach(el => {
         if (el) el.textContent = APP_VERSION;
       });
+      const platformBadge = document.getElementById('aboutPlatformBadge');
+      if (platformBadge) {
+        const plat = getAppPlatform();
+        if (plat === 'ios') {
+          platformBadge.textContent = 'iOS • GitHub';
+          platformBadge.style.display = 'inline-block';
+        } else if (plat === 'android') {
+          platformBadge.textContent = 'Android • Play Store';
+          platformBadge.style.display = 'inline-block';
+        } else {
+          platformBadge.textContent = 'Web • GitHub';
+          platformBadge.style.display = 'inline-block';
+        }
+      }
     } catch (e) {}
 
     // Firebase oturum verisi önceden geldiyse veya oturum açıksa hemen senkronize et
@@ -9642,6 +9656,31 @@
       return 32;
     }
 
+    function getAppPlatform() {
+      // 1. Android Native Uygulama (Java/Kotlin WebView köprüsü varsa)
+      if (window.AndroidTTS && typeof window.AndroidTTS.getAppVersion === 'function') {
+        return 'android';
+      }
+
+      // 2. iOS Tespiti (iPhone, iPad, iPod veya iPadOS Safari masaüstü modu)
+      const ua = (navigator.userAgent || '') + ' ' + (navigator.vendor || '');
+      const isIOS = /iPhone|iPad|iPod/i.test(ua) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+      if (isIOS) {
+        return 'ios';
+      }
+
+      // 3. Android Cihaz (Tarayıcı veya yerel paket)
+      if (/android/i.test(ua)) {
+        if (window.location.protocol === 'file:' || window.location.origin === 'file://') {
+          return 'android';
+        }
+        return 'android_web';
+      }
+
+      // 4. Genel Web / Masaüstü
+      return 'web';
+    }
+
     function openGooglePlayStore() {
       if (window.AndroidTTS && typeof window.AndroidTTS.openPlayStore === 'function') {
         window.AndroidTTS.openPlayStore();
@@ -9652,6 +9691,15 @@
         } catch (e) {
           window.location.href = playUrl;
         }
+      }
+    }
+
+    function openGitHubPage() {
+      const ghUrl = 'https://github.com/rkorkut70/lexiq';
+      try {
+        window.open(ghUrl, '_system') || window.open(ghUrl, '_blank') || (window.location.href = ghUrl);
+      } catch (e) {
+        window.location.href = ghUrl;
       }
     }
 
@@ -9677,7 +9725,7 @@
     }
 
     async function purgeCacheAndReload(targetVersion) {
-      showToast('🔄 Önbellek temizleniyor ve uygulama yenileniyor...', 2500);
+      showToast('🔄 GitHub önbelleği temizleniyor ve uygulama yenileniyor...', 2500);
       try {
         if ('caches' in window) {
           const keys = await caches.keys();
@@ -9702,7 +9750,9 @@
     }
 
     async function checkAppUpdates(btnEl) {
-      const isAndroid = !!(window.AndroidTTS || window.location.protocol === 'file:' || /android/i.test(navigator.userAgent));
+      const platform = getAppPlatform();
+      const isNativeAndroid = (platform === 'android');
+      const isIOS = (platform === 'ios');
       const currentVer = getInstalledAppVersion();
       const currentCode = getInstalledAppVersionCode();
 
@@ -9732,19 +9782,49 @@
           const forceRefreshBtn = document.getElementById('forceRefreshCacheBtn');
 
           if (isNewVersion) {
-            if (modalTitle) modalTitle.textContent = isAndroid ? `🎉 Google Play'de Yeni Sürüm: ${remoteVer}!` : `🎉 Yeni Sürüm Hazır: ${remoteVer}!`;
             if (modalIcon) modalIcon.textContent = '🚀';
-            if (applyBtn) {
-              applyBtn.style.display = 'block';
-              if (isAndroid) {
+
+            if (isNativeAndroid) {
+              if (modalTitle) modalTitle.textContent = `🎉 Google Play'de Yeni Sürüm: ${remoteVer}!`;
+              if (applyBtn) {
+                applyBtn.style.display = 'block';
+                applyBtn.style.background = 'linear-gradient(135deg, #0284c7, #0369a1)';
                 applyBtn.innerHTML = `<span>🚀</span><span>Google Play'den Güncelle (${remoteVer})</span>`;
                 applyBtn.onclick = () => openGooglePlayStore();
-              } else {
-                applyBtn.innerHTML = `<span>🚀</span><span>Şimdi Güncelle ve Yenile (${remoteVer})</span>`;
+              }
+              if (forceRefreshBtn) forceRefreshBtn.style.display = 'none';
+              showToast(`🚀 Google Play'de yeni ${remoteVer} sürümü yayında! Dokunarak mağazadan güncelleyebilirsiniz.`, 4500);
+            } else if (isIOS) {
+              if (modalTitle) modalTitle.textContent = `🎉 GitHub'da Yeni iOS Sürümü: ${remoteVer}!`;
+              if (applyBtn) {
+                applyBtn.style.display = 'block';
+                applyBtn.style.background = 'linear-gradient(135deg, #2563eb, #1d4ed8)';
+                applyBtn.innerHTML = `<span>🚀</span><span>GitHub'dan Hemen Güncelle & Yenile (${remoteVer})</span>`;
                 applyBtn.onclick = () => purgeCacheAndReload(remoteVer);
               }
+              if (forceRefreshBtn) {
+                forceRefreshBtn.style.display = 'block';
+                forceRefreshBtn.innerHTML = `<span>🐙</span><span>GitHub Deposunu Aç</span>`;
+                forceRefreshBtn.onclick = () => openGitHubPage();
+              }
+              showToast(`🚀 iOS için GitHub'da yeni ${remoteVer} sürümü hazır! Güncellemek için dokunun.`, 4500);
+            } else {
+              // Web / Masaüstü
+              if (modalTitle) modalTitle.textContent = `🎉 GitHub'da Yeni Sürüm: ${remoteVer}!`;
+              if (applyBtn) {
+                applyBtn.style.display = 'block';
+                applyBtn.style.background = 'linear-gradient(135deg, #2563eb, #1d4ed8)';
+                applyBtn.innerHTML = `<span>🚀</span><span>GitHub'dan Hemen Güncelle & Yenile (${remoteVer})</span>`;
+                applyBtn.onclick = () => purgeCacheAndReload(remoteVer);
+              }
+              if (forceRefreshBtn) {
+                forceRefreshBtn.style.display = 'block';
+                forceRefreshBtn.innerHTML = `<span>🐙</span><span>GitHub Deposunu Aç</span>`;
+                forceRefreshBtn.onclick = () => openGitHubPage();
+              }
+              showToast(`🚀 GitHub'da yeni ${remoteVer} sürümü mevcut! Güncellemek için butona dokunun.`, 4500);
             }
-            if (forceRefreshBtn) forceRefreshBtn.style.display = 'none';
+
             if (notesBox && data.notes && Array.isArray(data.notes)) {
               notesBox.innerHTML = `
                 <div style="font-weight: 800; margin-bottom: 8px; color: #fbbf24; display: flex; align-items: center; gap: 6px;">
@@ -9755,12 +9835,12 @@
                 </ul>
               `;
             }
-            showToast(isAndroid ? `🚀 Google Play'de yeni ${remoteVer} sürümü yayında! Dokunarak mağazadan güncelleyebilirsiniz.` : `🚀 Yeni ${remoteVer} sürümü mevcut! Güncellemek için butona dokunun.`, 4500);
           } else {
-            if (modalTitle) modalTitle.textContent = '✅ Tebrikler! LexiQ Güncel';
+            // Sürüm zaten güncel
             if (modalIcon) modalIcon.textContent = '🌟';
 
-            if (isAndroid) {
+            if (isNativeAndroid) {
+              if (modalTitle) modalTitle.textContent = '✅ Tebrikler! LexiQ Güncel';
               if (applyBtn) {
                 applyBtn.style.display = 'block';
                 applyBtn.style.background = 'linear-gradient(135deg, #0284c7, #0369a1)';
@@ -9769,7 +9849,7 @@
               }
               if (forceRefreshBtn) {
                 forceRefreshBtn.style.display = 'block';
-                forceRefreshBtn.textContent = '🔄 Yerel Önbelleği Sıfırla & Yenile';
+                forceRefreshBtn.innerHTML = `<span>🔄</span><span>Yerel Önbelleği Sıfırla & Yenile</span>`;
                 forceRefreshBtn.onclick = () => purgeCacheAndReload(currentVer);
               }
               if (notesBox) {
@@ -9778,15 +9858,45 @@
                     ✅ En Güncel Sürümü (${currentVer}) Kullanıyorsunuz
                   </div>
                   <p style="margin: 0; font-size: 0.85rem; color: var(--text-muted); line-height: 1.5;">
-                    Cihazınızdaki sürüm (${currentVer}) sunucudaki son yayınla eşleşmektedir. Google Play Store'da yeni yayınlanan bir güncellemeniz varsa aşağıdaki butona dokunarak mağaza sayfasından da kontrol edebilirsiniz.
+                    Cihazınızdaki sürüm (${currentVer}) son yayınla eşleşmektedir. Google Play Store'da yeni yayınlanan bir güncellemeniz varsa aşağıdaki butona dokunarak mağaza sayfasından da kontrol edebilirsiniz.
+                  </p>
+                `;
+              }
+            } else if (isIOS) {
+              if (modalTitle) modalTitle.textContent = '✅ Tebrikler! iOS Sürümü Güncel';
+              if (applyBtn) {
+                applyBtn.style.display = 'block';
+                applyBtn.style.background = 'linear-gradient(135deg, #1e293b, #0f172a)';
+                applyBtn.innerHTML = `<span>🐙</span><span>GitHub Deposunu Aç (${currentVer})</span>`;
+                applyBtn.onclick = () => openGitHubPage();
+              }
+              if (forceRefreshBtn) {
+                forceRefreshBtn.style.display = 'block';
+                forceRefreshBtn.innerHTML = `<span>🔄</span><span>Önbelleği Temizle & GitHub'dan Yenile</span>`;
+                forceRefreshBtn.onclick = () => purgeCacheAndReload(currentVer);
+              }
+              if (notesBox) {
+                notesBox.innerHTML = `
+                  <div style="font-weight: 700; color: #10b981; margin-bottom: 6px;">
+                    ✅ En Güncel iOS Sürümünü (${currentVer}) Kullanıyorsunuz
+                  </div>
+                  <p style="margin: 0; font-size: 0.85rem; color: var(--text-muted); line-height: 1.5;">
+                    Cihazınızdaki iOS sürümü (${currentVer}) GitHub üzerindeki son yayınla tam olarak eşleşmektedir. Herhangi bir önbellek uyuşmazlığında aşağıdaki butona dokunarak GitHub önbelleğini temizleyebilir ve sayfayı tazeleyebilirsiniz.
                   </p>
                 `;
               }
             } else {
-              if (applyBtn) applyBtn.style.display = 'none';
+              // Web
+              if (modalTitle) modalTitle.textContent = '✅ Tebrikler! LexiQ Güncel';
+              if (applyBtn) {
+                applyBtn.style.display = 'block';
+                applyBtn.style.background = 'linear-gradient(135deg, #1e293b, #0f172a)';
+                applyBtn.innerHTML = `<span>🐙</span><span>GitHub Deposunu Aç (${currentVer})</span>`;
+                applyBtn.onclick = () => openGitHubPage();
+              }
               if (forceRefreshBtn) {
                 forceRefreshBtn.style.display = 'block';
-                forceRefreshBtn.textContent = '🔄 Önbelleği Temizle & Sayfayı Yenile';
+                forceRefreshBtn.innerHTML = `<span>🔄</span><span>GitHub Önbelleğini Temizle & Yenile</span>`;
                 forceRefreshBtn.onclick = () => purgeCacheAndReload(currentVer);
               }
               if (notesBox) {
@@ -9795,7 +9905,7 @@
                     ✅ En Güncel Sürümü (${currentVer}) Kullanıyorsunuz
                   </div>
                   <p style="margin: 0; font-size: 0.85rem; color: var(--text-muted); line-height: 1.5;">
-                    Tüm özellikler ve ders içerikleri son sürümdedir. Eğer eski bir görünüm veya önbellek sorunu yaşıyorsanız aşağıdaki butona dokunarak önbelleği temizleyip sayfayı tazeleyebilirsiniz.
+                    Tüm özellikler ve ders içerikleri son sürümdedir. GitHub önbelleğini tazelemek için aşağıdaki butonu kullanabilirsiniz.
                   </p>
                 `;
               }
@@ -9840,11 +9950,13 @@
           const remoteVer = (data && data.version) ? data.version : currentVer;
           const remoteCode = (data && data.versionCode) ? parseInt(data.versionCode, 10) : 0;
           if (isRemoteVersionNewer(remoteVer, currentVer, remoteCode, currentCode)) {
-            const isAndroid = !!(window.AndroidTTS || window.location.protocol === 'file:' || /android/i.test(navigator.userAgent));
-            if (isAndroid) {
+            const platform = getAppPlatform();
+            if (platform === 'android') {
               showToast(`🚀 Google Play'de LexiQ ${remoteVer} güncellemesi hazır! Ayarlar'dan güncelleyebilirsiniz.`, 6000);
+            } else if (platform === 'ios') {
+              showToast(`🚀 iOS (GitHub) için LexiQ ${remoteVer} güncellemesi hazır! Hakkında bölümünden güncelleyebilirsiniz.`, 6000);
             } else {
-              showToast(`🚀 LexiQ ${remoteVer} güncellemesi hazır! Ayarlar'dan güncelleyebilirsiniz.`, 5000);
+              showToast(`🚀 GitHub'da LexiQ ${remoteVer} güncellemesi hazır! Ayarlar'dan güncelleyebilirsiniz.`, 5000);
             }
           }
         }
