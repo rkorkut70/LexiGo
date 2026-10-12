@@ -592,10 +592,10 @@ body[data-theme="dark"] .today-bar-track,
 .card-pure-section .flashcard-wrapper,
 .flashcard-wrapper {
   width: 100% !important;
-  max-width: 420px !important;
+  max-width: 430px !important;
   flex: 0 1 auto !important;
-  min-height: 220px !important;
-  max-height: clamp(240px, 42vh, 370px) !important;
+  min-height: 250px !important;
+  max-height: clamp(280px, 48vh, 420px) !important;
   margin: 0 auto !important;
   position: relative;
   cursor: pointer;
@@ -14718,4 +14718,70 @@ html.screen-fit-compact .welcome-action-guest {
   border-radius: 50% !important;
   object-fit: cover !important;
   display: block !important;
+}
+
+/* ============================================================
+   KART ARKA YÜZÜ ÇEVİRİ & CÜMLE TAM SIĞMA GARANTİSİ (SIFIR TAŞMA)
+   ============================================================ */
+.card-back {
+  display: flex !important;
+  flex-direction: column !important;
+  justify-content: space-between !important;
+  overflow: hidden !important;
+}
+
+.card-back .card-top {
+  padding: 8px 14px !important;
+  flex-shrink: 0 !important;
+}
+
+.card-back .card-center {
+  padding: 8px 14px !important;
+  display: flex !important;
+  flex-direction: column !important;
+  justify-content: center !important;
+  align-items: center !important;
+  flex: 1 1 auto !important;
+  min-height: 0 !important;
+  overflow-y: auto !important;
+  scrollbar-width: none !important;
+}
+.card-back .card-center::-webkit-scrollbar {
+  display: none !important;
+}
+
+.card-back .card-meaning {
+  font-size: clamp(1.15rem, 2.8vh, 1.55rem) !important;
+  line-height: 1.25 !important;
+  margin: 0 0 6px 0 !important;
+  word-break: break-word !important;
+  flex-shrink: 0 !important;
+}
+
+.card-back .example-box {
+  width: 100% !important;
+  padding: 8px 12px !important;
+  margin: 2px 0 0 0 !important;
+  border-radius: 12px !important;
+  box-sizing: border-box !important;
+  flex-shrink: 1 !important;
+}
+
+.card-back .example-sentence {
+  font-size: clamp(0.8rem, 1.9vh, 0.92rem) !important;
+  line-height: 1.35 !important;
+  margin: 0 0 4px 0 !important;
+  word-break: break-word !important;
+}
+
+.card-back .example-translation {
+  font-size: clamp(0.74rem, 1.7vh, 0.84rem) !important;
+  line-height: 1.3 !important;
+  margin: 0 !important;
+  word-break: break-word !important;
+}
+
+.card-back .card-bottom {
+  padding: 6px 14px 8px 14px !important;
+  flex-shrink: 0 !important;
 }
