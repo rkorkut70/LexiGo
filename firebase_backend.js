@@ -792,6 +792,13 @@ window.updateUserBranch = async function(branchCode) {
         lastActive: firebase.firestore.FieldValue.serverTimestamp()
       }, { merge: true });
     }
+    return true;
+  } catch (e) {
+    console.warn("Şube güncellenemedi:", e);
+    return false;
+  }
+};
+
 // 4. Şeref Kürsüsü ve Yıl Sonu Şampiyonluk Arşivi
 window.fetchHonorRollArchive = async function(lang) {
   if (!db) return [];
