@@ -1,6 +1,6 @@
 {
   "version": "v1.4.9",
-  "versionCode": 34,
+  "versionCode": 35,
   "releaseDate": "2026-10-12",
   "notes": [
     "iOS ve Android Arayüz & CSS Düzeltmesi: CSS ayrıştırma ve iOS Safari render sorunu giderildi, hoş geldin modalı okul logosu boyutları sınırlandırıldı.",
