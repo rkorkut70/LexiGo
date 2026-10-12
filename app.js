@@ -2457,6 +2457,19 @@
     if (!el) return;
     const av = avatarVal || state.userAvatar || 'avatar_1_1';
     if (isCustomAvatar(av)) {
+      el.style.display = 'inline-flex';
+      el.style.alignItems = 'center';
+      el.style.justifyContent = 'center';
+      el.style.overflow = 'hidden';
+      el.style.borderRadius = '50%';
+      el.style.flexShrink = '0';
+      if (el.classList.contains('settings-btn-icon') || el.id === 'headerUserAvatar') {
+        el.style.width = '24px';
+        el.style.height = '24px';
+      } else if (el.id === 'homeUserAvatar' || el.classList.contains('greeting-avatar')) {
+        el.style.width = '36px';
+        el.style.height = '36px';
+      }
       el.innerHTML = '<img src="' + getAvatarSrc(av) + '" class="avatar-img-fluid" style="width:100%; height:100%; border-radius:50%; object-fit:cover; display:block;" alt="Avatar">';
     } else {
       el.textContent = av;
