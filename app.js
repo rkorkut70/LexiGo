@@ -7,7 +7,7 @@
 (function () {
   'use strict';
 
-  const APP_VERSION = 'v1.5.3';
+  const APP_VERSION = 'v1.5.4';
   const CURRENT_APP_BUILD = 'lexiq_build_19_clean';
 
   // Build 13 temiz kurulum / sıfırlama güvencesi (Kullanıcı verilerini sıfırla, Hoş Geldin ekranını garantile)
@@ -10519,19 +10519,17 @@
               if (forceRefreshBtn) forceRefreshBtn.style.display = 'none';
               showToast(`🚀 Google Play'de yeni ${remoteVer} sürümü yayında! Dokunarak mağazadan güncelleyebilirsiniz.`, 4500);
             } else if (isIOS) {
-              if (modalTitle) modalTitle.textContent = `🎉 GitHub'da Yeni iOS Sürümü: ${remoteVer}!`;
+              if (modalTitle) modalTitle.textContent = `🎉 Yeni iOS Sürümü Mevcut: ${remoteVer}!`;
               if (applyBtn) {
                 applyBtn.style.display = 'block';
                 applyBtn.style.background = 'linear-gradient(135deg, #2563eb, #1d4ed8)';
-                applyBtn.innerHTML = `<span>🚀</span><span>GitHub'dan Hemen Güncelle & Yenile (${remoteVer})</span>`;
+                applyBtn.innerHTML = `<span>🚀</span><span>Şimdi Güncelle & Yenile (${remoteVer})</span>`;
                 applyBtn.onclick = () => purgeCacheAndReload(remoteVer);
               }
               if (forceRefreshBtn) {
-                forceRefreshBtn.style.display = 'block';
-                forceRefreshBtn.innerHTML = `<span>🐙</span><span>GitHub Deposunu Aç</span>`;
-                forceRefreshBtn.onclick = () => openGitHubPage();
+                forceRefreshBtn.style.display = 'none';
               }
-              showToast(`🚀 iOS için GitHub'da yeni ${remoteVer} sürümü hazır! Güncellemek için dokunun.`, 4500);
+              showToast(`🚀 Yeni ${remoteVer} sürümü hazır! Güncellemek için dokunun.`, 4500);
             } else {
               // Web / Masaüstü
               if (modalTitle) modalTitle.textContent = `🎉 GitHub'da Yeni Sürüm: ${remoteVer}!`;
@@ -10590,14 +10588,12 @@
               if (modalTitle) modalTitle.textContent = '✅ Tebrikler! iOS Sürümü Güncel';
               if (applyBtn) {
                 applyBtn.style.display = 'block';
-                applyBtn.style.background = 'linear-gradient(135deg, #1e293b, #0f172a)';
-                applyBtn.innerHTML = `<span>🐙</span><span>GitHub Deposunu Aç (${currentVer})</span>`;
-                applyBtn.onclick = () => openGitHubPage();
+                applyBtn.style.background = 'linear-gradient(135deg, #0f9 , #059669)';
+                applyBtn.innerHTML = `<span>🔄</span><span>Önbelleği Temizle & Yenile (${currentVer})</span>`;
+                applyBtn.onclick = () => purgeCacheAndReload(currentVer);
               }
               if (forceRefreshBtn) {
-                forceRefreshBtn.style.display = 'block';
-                forceRefreshBtn.innerHTML = `<span>🔄</span><span>Önbelleği Temizle & GitHub'dan Yenile</span>`;
-                forceRefreshBtn.onclick = () => purgeCacheAndReload(currentVer);
+                forceRefreshBtn.style.display = 'none';
               }
               if (notesBox) {
                 notesBox.innerHTML = `
@@ -10605,7 +10601,7 @@
                     ✅ En Güncel iOS Sürümünü (${currentVer}) Kullanıyorsunuz
                   </div>
                   <p style="margin: 0; font-size: 0.85rem; color: var(--text-muted); line-height: 1.5;">
-                    Cihazınızdaki iOS sürümü (${currentVer}) GitHub üzerindeki son yayınla tam olarak eşleşmektedir. Herhangi bir önbellek uyuşmazlığında aşağıdaki butona dokunarak GitHub önbelleğini temizleyebilir ve sayfayı tazeleyebilirsiniz.
+                    Cihazınızdaki sürüm (${currentVer}) son yayınla tam olarak eşleşmektedir. Herhangi bir önbellek uyuşmazlığında aşağıdaki butona dokunarak önbelleği temizleyebilirsiniz.
                   </p>
                 `;
               }

@@ -1,13 +1,8 @@
-{
-  "version": "v1.5.1",
-  "versionCode": 37,
-  "releaseDate": "2026-10-12",
-  "notes": [
-    "Sınıf İçi Haftalık Turnuva: Kendi resmi şubendeki sınıf arkadaşlarınla haftalık rekabet.",
-    "Şubeler Arası Düello Ligi: Aynı dildeki 23 resmi şube adil ortalama XP puanıyla kapışıyor.",
-    "Adil Ortalama Puan: Sınıf mevcudu az veya çok olan şubelerin tamamen eşit yarışması sağlandı.",
-    "Şeref Kürsüsü ve Yıl Sonu Şampiyonu: Haftalık dereceler arşivlenerek sene sonu şampiyonu belirleniyor.",
-    "Turnuva Kuralları & Rehber Menüsü: Liderlik tablosuna detaylı bilgilendirme yardım menüsü eklendi.",
-    "Hakkında & Rozetler Modalı İyileştirmeleri: Arka plan geçişleri ve ekran uyumluluğu mükemmelleştirildi."
-  ]
+﻿{
+    "releaseDate":  "2026-10-12",
+    "versionCode":  40,
+    "version":  "v1.5.4",
+    "notes":  [
+                  "v1.5.4 - Stabil güncelleme"
+              ]
 }
