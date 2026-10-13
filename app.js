@@ -7,7 +7,7 @@
 (function () {
   'use strict';
 
-  const APP_VERSION = 'v1.8.5';
+  const APP_VERSION = 'v1.8.6';
   const CURRENT_APP_BUILD = 'lexiq_build_19_clean';
 
   // Build 13 temiz kurulum / sıfırlama güvencesi (Kullanıcı verilerini sıfırla, Hoş Geldin ekranını garantile)
@@ -2490,6 +2490,25 @@ let activeAvatarCategory = 'all';
   function openSettingsModal(defaultTab = 'cards') {
     const modal = dom.settingsModal || document.getElementById('settingsModal');
     if (!modal) return;
+
+    // Header ve sekme çubuğunu profile ya da ayarlara göre özelleştir
+    const tabsNav = document.getElementById('settingsTabsNav');
+    const titleEl = document.getElementById('settingsModalTitle');
+    const subTitleEl = document.getElementById('settingsModalSubtitle');
+    const iconEl = document.getElementById('settingsModalIcon');
+
+    if (defaultTab === 'profile') {
+      if (titleEl) titleEl.textContent = 'Öğrenci Profili';
+      if (subTitleEl) subTitleEl.textContent = 'Başarı karnesi, istatistikler ve hesap bilgileri';
+      if (iconEl) iconEl.textContent = '👤';
+      if (tabsNav) tabsNav.style.display = 'none';
+    } else {
+      if (titleEl) titleEl.textContent = 'Uygulama Ayarları';
+      if (subTitleEl) subTitleEl.textContent = 'Tercihleri, görünümü ve sistemi yönetin';
+      if (iconEl) iconEl.textContent = '⚙️';
+      if (tabsNav) tabsNav.style.display = 'flex';
+      if (defaultTab === 'profile') defaultTab = 'cards';
+    }
 
     // Modalı her şeyden önce hemen görünür yap
     modal.classList.add('active');

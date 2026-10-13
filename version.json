@@ -1,10 +1,10 @@
 {
-  "version": "v1.8.5",
-  "versionCode": 65,
+  "version": "v1.8.6",
+  "versionCode": 66,
   "releaseDate": "2026-10-13",
   "notes": [
-    "🎭 Avatar Seçim Ekranı Kapanma Onarımı: İlk adım ve misafir girişi avatar seçiminde 'Bu Avatarı Seç ve Devam Et' butonu ve X kapatma ikonunun modalı güvenle kapatıp ana akışa devam etmesi sağlandı",
-    "⚙️ Ayarlar & Öğrenci Profili DOM Bütünlüğü: Profil ve ayarlar pencerelerinin bağımsız çalışmasını engelleyen HTML etiket çakışması ve katman engelleri tamamen giderildi",
+    "🎨 Hakkında (About) Ekranı Çift Tema Profesyonelleştirmesi: Hem Açık (Light) hem Koyu (Dark) tema için modern cam efektli, yüksek kontrastlı ve kurumsal 3D kart tasarımı uygulandı; açık temadaki karanlık zemin ve uyumsuzluklar giderildi",
+    "👤 Ayarlar ve Öğrenci Profili Ayrımı: Ayarlar sekme çubuğundaki mükerrer Profil sekmesi kaldırılarak sekmeler yalınlaştırıldı; Öğrenci Profili modalı bağımsız, net bir başarı karnesi görünümüne kavuşturuldu",
     "🛡️ Android Target SDK 36 Google Play Store tam uyumluluğu korundu"
   ]
 }

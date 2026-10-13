@@ -15,7 +15,7 @@
   <meta http-equiv="Expires" content="0">
   <title>LexiQ • Çok Dilli Akıllı Kelime Kartları</title>
   <link rel="icon" type="image/jpeg" href="logo.jpg">
-  <link rel="stylesheet" href="style.css?v=1.8.5">
+  <link rel="stylesheet" href="style.css?v=1.8.6">
 </head>
 <body>
   <div class="app-container">
@@ -1136,7 +1136,7 @@
         <div class="welcome-hero-section">
           <div class="welcome-brand-wrapper">
             <h1 class="welcome-brand-name">Lexi<span class="welcome-brand-q">Q</span></h1>
-            <span class="welcome-version-pill">v1.8.5</span>
+            <span class="welcome-version-pill">v1.8.6</span>
           </div>
           <!-- 3 Temel Başarı Sütunu (3D Pill Rozetleri) -->
           <div class="welcome-pillars-container">
@@ -1850,7 +1850,7 @@
         <div class="about-hero-box">
           <div class="about-brand-row">
             <span class="about-brand">Lexi<span class="brand-highlight">Q</span></span>
-            <span class="about-version-pill" id="aboutAppVersion">v1.8.5</span>
+            <span class="about-version-pill" id="aboutAppVersion">v1.8.6</span>
             <span class="about-platform-badge" id="aboutPlatformBadge" style="display: none; font-size: 0.72rem; font-weight: 700; padding: 3px 9px; border-radius: 12px; background: rgba(59,130,246,0.15); color: #3b82f6; border: 1px solid rgba(59,130,246,0.3);"></span>
           </div>
           <p class="about-tagline">Müfredat Tabanlı Çok Dilli Kelime Arenası</p>
@@ -2334,10 +2334,10 @@
     <div class="modal-card settings-modal-card">
       <div class="modal-header settings-header-compact">
         <div class="settings-title-wrap">
-          <div class="settings-title-badge" aria-hidden="true">⚙️</div>
+          <div class="settings-title-badge" id="settingsModalIcon" aria-hidden="true">⚙️</div>
           <div class="settings-title-texts">
-            <h2 class="modal-title">Uygulama Ayarları</h2>
-            <span class="settings-title-sub">Tercihleri, görünümü ve sistemi yönetin</span>
+            <h2 class="modal-title" id="settingsModalTitle">Uygulama Ayarları</h2>
+            <span class="settings-title-sub" id="settingsModalSubtitle">Tercihleri, görünümü ve sistemi yönetin</span>
           </div>
         </div>
         <button id="closeSettingsModalBtn" class="icon-btn settings-close-btn" aria-label="Kapat" title="Kapat" onclick="if(window.closeSettingsModal) window.closeSettingsModal();">
@@ -2348,9 +2348,10 @@
         </button>
       </div>
 
-      <!-- Ayarlar Sekmeleri (5 Modern 3D Sekme - Adaptive Scroll) -->
+      <!-- Ayarlar Sekmeleri (4 Modern 3D Sekme - Adaptive Scroll) -->
       <div class="settings-tabs-nav" id="settingsTabsNav">
-        <button type="button" class="settings-tab-btn" data-tab="profile" title="Profil ve Öğrenci Bilgileri">
+        <!-- Profil sekmesi üst bardan bağımsız modal olarak sunulduğu için ayarlar menüsünde yer almaz -->
+        <button type="button" class="settings-tab-btn" data-tab="profile" style="display: none !important;" aria-hidden="true" title="Profil">
           <span class="tab-emoji">👤</span>
           <span class="tab-text">Profil</span>
         </button>
@@ -3373,16 +3374,16 @@
       <div class="confirm-icon-wrap" style="font-size: 2.8rem; margin-bottom: 8px;">🎉</div>
       <h3 class="confirm-title" style="font-size: 1.3rem; font-weight: 800; margin: 0 0 6px 0;">LexiQ Güncellendi!</h3>
       <div class="app-update-version-badge" style="display: inline-block; padding: 4px 14px; border-radius: 20px; font-size: 0.84rem; font-weight: 800; margin-bottom: 14px;">
-        Sürüm <span id="appUpdateVersionText">v1.8.5</span>
+        Sürüm <span id="appUpdateVersionText">v1.8.6</span>
       </div>
       <div class="update-notes-box" style="text-align: left; border-radius: 16px; padding: 14px 16px; font-size: 0.88rem; line-height: 1.6; margin-bottom: 18px; max-height: 280px; overflow-y: auto;">
         <div class="update-notes-title" style="font-weight: 800; margin-bottom: 8px; display: flex; align-items: center; gap: 6px;">
           <span>✨</span><span>Bu Sürümdeki Yenilikler</span>
         </div>
         <ul style="margin: 0; padding-left: 20px; display: flex; flex-direction: column; gap: 8px;">
-          <li><strong>🎭 Avatar Seçim Ekranı Kapanma Onarımı:</strong> İlk adım ve misafir girişi avatar seçiminde "Bu Avatarı Seç ve Devam Et" butonunun ve X kapatma ikonunun sorunsuz kapanması ve sonraki adıma geçiş sağlandı.</li>
-          <li><strong>⚙️ Ayarlar & Öğrenci Profili DOM Bütünlüğü:</strong> Profil ve ayarlar pencerelerinin bağımsız çalışmasını engelleyen HTML etiket çakışması ve katman engelleri tamamen giderildi.</li>
-          <li><strong>🏆 3D Sarı Kupa & Stabilite:</strong> Turnuva simgesi ve ekran geçişleri pürüzsüzleştirildi.</li>
+          <li><strong>🎨 Hakkında Ekranı Baştan Tasarlandı:</strong> Hem Açık (Light) hem Koyu (Dark) mod için kurumsal, şık, cam ve 3D efektli profesyonel tasarım uygulandı; açık temadaki koyu zemin ve renk uyumsuzlukları giderildi.</li>
+          <li><strong>👤 Ayarlar ve Öğrenci Profili Tamamen Ayrıldı:</strong> Ayarlar ekranındaki mükerrer Profil sekmesi kaldırılarak sekmeler yalınlaştırıldı; Öğrenci Profili bağımsız, net bir başarı karnesi olarak açılacak şekilde optimize edildi.</li>
+          <li><strong>🚀 Performans & Kararlılık:</strong> Sistem geçişleri ve tema uyumluluğu hızlandırıldı.</li>
         </ul>
       </div>
       <div style="display: flex; flex-direction: column; gap: 8px; width: 100%;">
@@ -3445,11 +3446,11 @@
   <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-storage-compat.js"></script>
-  <script src="firebase_backend.js?v=1.8.5"></script>
+  <script src="firebase_backend.js?v=1.8.6"></script>
 
   <!-- Kelime Verisi ve Uygulama Mantığı (Sadece Standart Vanilla JS) -->
-  <script src="words_data.js?v=1.8.5"></script>
-  <script src="app.js?v=1.8.5"></script>
+  <script src="words_data.js?v=1.8.6"></script>
+  <script src="app.js?v=1.8.6"></script>
 
   </body>
 </html>

@@ -15364,25 +15364,75 @@ html.screen-fit-compact .welcome-action-guest {
 /* ============================================================
    HAKKINDA (ABOUT) TAM EKRAN VE GİZLİLİK POLİTİKASI TASARIMI
    ============================================================ */
+/* ============================================================
+   HAKKINDA (ABOUT) MODALI - ÇİFT TEMA (LIGHT & DARK) ULTRA PROFESYONEL TASARIM
+   ============================================================ */
 #aboutModal.full-screen-modal .about-modal-card {
-  background: var(--bg-body, #0f172a) !important;
   max-width: 100% !important;
   width: 100% !important;
+  height: 100% !important;
+  height: 100dvh !important;
+  height: 100vh !important;
+  display: flex !important;
+  flex-direction: column !important;
+  overflow: hidden !important;
+  border-radius: 0 !important;
+  border: none !important;
 }
 
+/* Açık Tema Zemin & Kart */
+html:not([data-theme="dark"]) #aboutModal.full-screen-modal .about-modal-card,
+[data-theme="light"] #aboutModal.full-screen-modal .about-modal-card {
+  background: linear-gradient(180deg, #f8fafc 0%, #edf2f7 50%, #e2e8f0 100%) !important;
+  color: #0f172a !important;
+}
+
+/* Koyu Tema Zemin & Kart */
+[data-theme="dark"] #aboutModal.full-screen-modal .about-modal-card {
+  background: linear-gradient(180deg, #0b0f19 0%, #111827 50%, #0f172a 100%) !important;
+  color: #f8fafc !important;
+}
+
+/* Header - Açık & Koyu */
 #aboutModal.full-screen-modal .about-modal-header {
   padding-top: calc(env(safe-area-inset-top, 10px) + 8px) !important;
   padding-left: clamp(14px, 4vw, 24px) !important;
   padding-right: clamp(14px, 4vw, 24px) !important;
   padding-bottom: 12px !important;
-  background: var(--bg-surface, #1e293b) !important;
-  border-bottom: 1px solid var(--border-color, rgba(255,255,255,0.08)) !important;
   display: flex !important;
   align-items: center !important;
   justify-content: space-between !important;
   flex-shrink: 0 !important;
+  transition: background-color 0.2s ease, border-color 0.2s ease;
 }
 
+html:not([data-theme="dark"]) #aboutModal.full-screen-modal .about-modal-header,
+[data-theme="light"] #aboutModal.full-screen-modal .about-modal-header {
+  background: rgba(255, 255, 255, 0.95) !important;
+  backdrop-filter: blur(16px) !important;
+  -webkit-backdrop-filter: blur(16px) !important;
+  border-bottom: 1px solid #e2e8f0 !important;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.03) !important;
+}
+
+[data-theme="dark"] #aboutModal.full-screen-modal .about-modal-header {
+  background: rgba(17, 24, 39, 0.92) !important;
+  backdrop-filter: blur(16px) !important;
+  -webkit-backdrop-filter: blur(16px) !important;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08) !important;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3) !important;
+}
+
+html:not([data-theme="dark"]) #aboutModal.full-screen-modal .modal-title,
+[data-theme="light"] #aboutModal.full-screen-modal .modal-title {
+  color: #0f172a !important;
+}
+
+[data-theme="dark"] #aboutModal.full-screen-modal .modal-title {
+  color: #f8fafc !important;
+}
+
+/* Modal Body */
 #aboutModal.full-screen-modal .about-modal-body {
   flex: 1 1 auto !important;
   min-height: 0 !important;
@@ -15399,17 +15449,258 @@ html.screen-fit-compact .welcome-action-guest {
   gap: clamp(14px, 2.2vh, 20px) !important;
 }
 
+/* Brand & Hero Box */
+.about-hero-box {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: clamp(14px, 2.5vh, 22px) 14px;
+  border-radius: 20px;
+  transition: all 0.25s ease;
+}
+
+html:not([data-theme="dark"]) .about-hero-box,
+[data-theme="light"] .about-hero-box {
+  background: rgba(255, 255, 255, 0.7);
+  border: 1px solid rgba(226, 232, 240, 0.8);
+  box-shadow: 0 4px 16px -2px rgba(15, 23, 42, 0.05);
+}
+
+[data-theme="dark"] .about-hero-box {
+  background: rgba(30, 41, 59, 0.45);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.25);
+}
+
+.about-brand-row {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.about-brand {
+  font-size: clamp(1.8rem, 4.5vw, 2.3rem);
+  font-weight: 900;
+  letter-spacing: -0.5px;
+}
+
+html:not([data-theme="dark"]) .about-brand,
+[data-theme="light"] .about-brand {
+  background: linear-gradient(135deg, #1e3a8a 0%, #2563eb 50%, #4f46e5 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+[data-theme="dark"] .about-brand {
+  background: linear-gradient(135deg, #60a5fa 0%, #818cf8 50%, #c084fc 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.about-version-pill {
+  font-size: 0.78rem;
+  font-weight: 800;
+  padding: 4px 12px;
+  border-radius: 9999px;
+  letter-spacing: 0.2px;
+}
+
+html:not([data-theme="dark"]) .about-version-pill,
+[data-theme="light"] .about-version-pill {
+  background: #eff6ff;
+  color: #1d4ed8;
+  border: 1.5px solid #bfdbfe;
+  box-shadow: 0 2px 6px rgba(37, 99, 235, 0.12);
+}
+
+[data-theme="dark"] .about-version-pill {
+  background: rgba(99, 102, 241, 0.18);
+  color: #a5b4fc;
+  border: 1px solid rgba(99, 102, 241, 0.4);
+  box-shadow: 0 0 12px rgba(99, 102, 241, 0.25);
+}
+
+.about-tagline {
+  font-size: 0.88rem;
+  font-weight: 600;
+  margin-top: 6px;
+}
+
+html:not([data-theme="dark"]) .about-tagline,
+[data-theme="light"] .about-tagline {
+  color: #475569;
+}
+
+[data-theme="dark"] .about-tagline {
+  color: #94a3b8;
+}
+
+/* ADÜ YDYO Kurumsal Kartı */
+.about-school-card {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 14px 16px;
+  border-radius: 18px;
+  text-align: left;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+html:not([data-theme="dark"]) .about-school-card,
+[data-theme="light"] .about-school-card {
+  background: #ffffff !important;
+  border: 1.5px solid #e2e8f0 !important;
+  border-left: 5px solid #2563eb !important;
+  box-shadow: 0 4px 16px -2px rgba(15, 23, 42, 0.06), 0 1px 3px rgba(0, 0, 0, 0.04) !important;
+}
+
+[data-theme="dark"] .about-school-card {
+  background: rgba(17, 24, 39, 0.75) !important;
+  backdrop-filter: blur(12px) !important;
+  border: 1px solid rgba(255, 255, 255, 0.08) !important;
+  border-left: 5px solid #3b82f6 !important;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4) !important;
+}
+
+.about-school-logo {
+  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.15) !important;
+}
+
+html:not([data-theme="dark"]) .about-school-title,
+[data-theme="light"] .about-school-title {
+  color: #1d4ed8 !important;
+  font-weight: 800 !important;
+}
+
+[data-theme="dark"] .about-school-title {
+  color: #60a5fa !important;
+  font-weight: 800 !important;
+}
+
+html:not([data-theme="dark"]) .about-school-dept,
+[data-theme="light"] .about-school-dept {
+  color: #0f172a !important;
+  font-weight: 700 !important;
+}
+
+[data-theme="dark"] .about-school-dept {
+  color: #f8fafc !important;
+  font-weight: 700 !important;
+}
+
+html:not([data-theme="dark"]) .about-school-note,
+[data-theme="light"] .about-school-note {
+  color: #64748b !important;
+}
+
+[data-theme="dark"] .about-school-note {
+  color: #94a3b8 !important;
+}
+
+/* Geliştirici & İletişim Kartı */
+.about-dev-card {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 13px 16px;
+  border-radius: 18px;
+  text-align: left;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+html:not([data-theme="dark"]) .about-dev-card,
+[data-theme="light"] .about-dev-card {
+  background: #ffffff !important;
+  border: 1.5px solid #e2e8f0 !important;
+  box-shadow: 0 4px 16px -2px rgba(15, 23, 42, 0.06) !important;
+}
+
+[data-theme="dark"] .about-dev-card {
+  background: rgba(17, 24, 39, 0.75) !important;
+  backdrop-filter: blur(12px) !important;
+  border: 1px solid rgba(255, 255, 255, 0.08) !important;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4) !important;
+}
+
+.about-dev-avatar {
+  width: 44px;
+  height: 44px;
+  min-width: 44px;
+  border-radius: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.4rem;
+}
+
+html:not([data-theme="dark"]) .about-dev-avatar,
+[data-theme="light"] .about-dev-avatar {
+  background: #f1f5f9;
+  border: 1px solid #e2e8f0;
+}
+
+[data-theme="dark"] .about-dev-avatar {
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+html:not([data-theme="dark"]) .about-dev-name,
+[data-theme="light"] .about-dev-name {
+  color: #0f172a !important;
+  font-size: 0.88rem !important;
+}
+
+[data-theme="dark"] .about-dev-name {
+  color: #f8fafc !important;
+  font-size: 0.88rem !important;
+}
+
+html:not([data-theme="dark"]) .about-dev-period,
+[data-theme="light"] .about-dev-period {
+  color: #64748b !important;
+}
+
+[data-theme="dark"] .about-dev-period {
+  color: #94a3b8 !important;
+}
+
+html:not([data-theme="dark"]) .about-mail-link,
+[data-theme="light"] .about-mail-link {
+  color: #2563eb !important;
+  font-weight: 700 !important;
+}
+
+[data-theme="dark"] .about-mail-link {
+  color: #60a5fa !important;
+  font-weight: 700 !important;
+}
+
 /* Gizlilik Politikası Özel Kartı */
 .about-privacy-hub-card {
   display: flex;
   flex-direction: column;
   gap: 12px;
   padding: clamp(14px, 2.4vh, 18px) clamp(14px, 3.5vw, 20px);
-  border-radius: 18px;
-  background: linear-gradient(135deg, rgba(30, 41, 59, 0.75), rgba(15, 23, 42, 0.9));
-  border: 1.5px solid rgba(99, 102, 241, 0.28);
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.25), inset 0 1px 0 rgba(255, 255, 255, 0.06);
+  border-radius: 20px;
   text-align: left;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+html:not([data-theme="dark"]) .about-privacy-hub-card,
+[data-theme="light"] .about-privacy-hub-card {
+  background: linear-gradient(135deg, #ffffff 0%, #f5f3ff 100%) !important;
+  border: 1.5px solid rgba(99, 102, 241, 0.25) !important;
+  box-shadow: 0 6px 20px -3px rgba(99, 102, 241, 0.1), 0 2px 6px rgba(0, 0, 0, 0.03) !important;
+}
+
+[data-theme="dark"] .about-privacy-hub-card {
+  background: linear-gradient(135deg, rgba(30, 41, 59, 0.75), rgba(15, 23, 42, 0.9)) !important;
+  border: 1.5px solid rgba(99, 102, 241, 0.35) !important;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.06) !important;
 }
 
 .about-privacy-hub-top {
@@ -15419,16 +15710,26 @@ html.screen-fit-compact .welcome-action-guest {
 }
 
 .about-privacy-badge-icon {
-  width: 42px;
-  height: 42px;
-  min-width: 42px;
-  border-radius: 12px;
-  background: rgba(99, 102, 241, 0.16);
-  border: 1px solid rgba(99, 102, 241, 0.35);
+  width: 44px;
+  height: 44px;
+  min-width: 44px;
+  border-radius: 14px;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 1.25rem;
+  font-size: 1.3rem;
+}
+
+html:not([data-theme="dark"]) .about-privacy-badge-icon,
+[data-theme="light"] .about-privacy-badge-icon {
+  background: #ede9fe;
+  color: #6366f1;
+  border: 1px solid #ddd6fe;
+}
+
+[data-theme="dark"] .about-privacy-badge-icon {
+  background: rgba(99, 102, 241, 0.18);
+  border: 1px solid rgba(99, 102, 241, 0.4);
 }
 
 .about-privacy-info-col {
@@ -15439,16 +15740,32 @@ html.screen-fit-compact .welcome-action-guest {
 }
 
 .about-privacy-title {
-  font-size: 0.88rem;
+  font-size: 0.92rem;
   font-weight: 800;
-  color: #f1f5f9;
   letter-spacing: -0.2px;
 }
 
+html:not([data-theme="dark"]) .about-privacy-title,
+[data-theme="light"] .about-privacy-title {
+  color: #1e1b4b !important;
+}
+
+[data-theme="dark"] .about-privacy-title {
+  color: #f1f5f9 !important;
+}
+
 .about-privacy-desc {
-  font-size: 0.74rem;
-  color: #94a3b8;
-  line-height: 1.4;
+  font-size: 0.76rem;
+  line-height: 1.45;
+}
+
+html:not([data-theme="dark"]) .about-privacy-desc,
+[data-theme="light"] .about-privacy-desc {
+  color: #475569 !important;
+}
+
+[data-theme="dark"] .about-privacy-desc {
+  color: #94a3b8 !important;
 }
 
 .about-privacy-action-btn {
@@ -15456,30 +15773,112 @@ html.screen-fit-compact .welcome-action-guest {
   align-items: center;
   justify-content: space-between;
   width: 100%;
-  padding: 11px 14px;
-  border-radius: 12px;
-  background: rgba(99, 102, 241, 0.14);
-  border: 1px solid rgba(99, 102, 241, 0.35);
-  color: #a5b4fc;
-  font-size: 0.84rem;
-  font-weight: 700;
+  padding: 12px 16px;
+  border-radius: 14px;
+  font-size: 0.86rem;
+  font-weight: 800;
   cursor: pointer;
-  transition: all 0.2s ease;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
   box-sizing: border-box;
 }
 
+html:not([data-theme="dark"]) .about-privacy-action-btn,
+[data-theme="light"] .about-privacy-action-btn {
+  background: #6366f1 !important;
+  color: #ffffff !important;
+  border: none !important;
+  box-shadow: 0 4px 14px rgba(99, 102, 241, 0.3) !important;
+}
+
+html:not([data-theme="dark"]) .about-privacy-action-btn:hover,
+[data-theme="light"] .about-privacy-action-btn:hover {
+  transform: translateY(-1.5px);
+  box-shadow: 0 6px 18px rgba(99, 102, 241, 0.4) !important;
+}
+
+[data-theme="dark"] .about-privacy-action-btn {
+  background: rgba(99, 102, 241, 0.22) !important;
+  color: #c7d2fe !important;
+  border: 1px solid rgba(99, 102, 241, 0.45) !important;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.25) !important;
+}
+
+[data-theme="dark"] .about-privacy-action-btn:hover {
+  background: rgba(99, 102, 241, 0.32) !important;
+  color: #ffffff !important;
+  border-color: rgba(99, 102, 241, 0.6) !important;
+}
+
 .about-privacy-action-btn:active {
-  background: rgba(99, 102, 241, 0.28);
-  transform: scale(0.99);
+  transform: scale(0.99) translateY(0);
 }
 
 .about-privacy-arrow {
-  font-size: 0.88rem;
+  font-size: 0.92rem;
   transition: transform 0.2s ease;
 }
 
 .about-privacy-action-btn:hover .about-privacy-arrow {
   transform: translateX(4px);
+}
+
+/* Hızlı Eylem Butonları - Açık ve Koyu Tema Uyumu */
+html:not([data-theme="dark"]) #aboutCheckUpdateBtn,
+[data-theme="light"] #aboutCheckUpdateBtn {
+  background: #ecfdf5 !important;
+  color: #047857 !important;
+  border: 1.5px solid #a7f3d0 !important;
+  box-shadow: 0 3px 10px rgba(16, 185, 129, 0.12) !important;
+  font-weight: 800 !important;
+}
+
+[data-theme="dark"] #aboutCheckUpdateBtn {
+  background: rgba(16, 185, 129, 0.16) !important;
+  color: #34d399 !important;
+  border: 1.5px solid rgba(16, 185, 129, 0.35) !important;
+  box-shadow: 0 4px 14px rgba(16, 185, 129, 0.15) !important;
+  font-weight: 800 !important;
+}
+
+#aboutCheckUpdateBtn:hover {
+  transform: translateY(-1.5px);
+}
+
+#aboutCheckUpdateBtn:active {
+  transform: scale(0.99);
+}
+
+#aboutOpenFeedbackBtn {
+  background: linear-gradient(135deg, #4f46e5 0%, #6366f1 100%) !important;
+  color: #ffffff !important;
+  border: none !important;
+  box-shadow: 0 4px 14px rgba(79, 70, 229, 0.35) !important;
+  font-weight: 800 !important;
+}
+
+#aboutOpenFeedbackBtn:hover {
+  transform: translateY(-1.5px);
+  box-shadow: 0 6px 18px rgba(79, 70, 229, 0.45) !important;
+}
+
+#aboutOpenFeedbackBtn:active {
+  transform: scale(0.99);
+}
+
+.about-footer-note {
+  font-size: 0.78rem;
+  line-height: 1.5;
+  text-align: center;
+  padding: 8px 12px;
+}
+
+html:not([data-theme="dark"]) .about-footer-note,
+[data-theme="light"] .about-footer-note {
+  color: #64748b !important;
+}
+
+[data-theme="dark"] .about-footer-note {
+  color: #94a3b8 !important;
 }
 
 /* ============================================================
