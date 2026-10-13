@@ -3619,98 +3619,100 @@ body.arena-game-active header {
 }
 
 /* ============================================================
-   CÜMLE KURMA ADAPTİF FONT & BOŞLUK ÖLÇEKLENDİRME (UZUN CÜMLELER)
+   CÜMLE KURMA ADAPTİF FONT & BOŞLUK ÖLÇEKLENDİRME (UZUN CÜMLELER - YALNIZCA KÜÇÜK MOBİL EKRANLAR)
    ============================================================ */
-/* 1. Orta Uzunluktaki Cümleler (7 - 9 Kelime) */
-.game-card.scramble-compact .scramble-slots-area {
-  gap: 5px;
-  padding: 6px 8px;
-  max-height: 130px;
-}
+@media (max-width: 599px) {
+  /* 1. Orta Uzunluktaki Cümleler (7 - 9 Kelime) */
+  .game-card.scramble-compact .scramble-slots-area {
+    gap: 5px;
+    padding: 6px 8px;
+    max-height: 130px;
+  }
 
-.game-card.scramble-compact .scramble-chips-bank {
-  gap: 6px;
-  padding: 4px 0;
-  max-height: 160px;
-}
+  .game-card.scramble-compact .scramble-chips-bank {
+    gap: 6px;
+    padding: 4px 0;
+    max-height: 160px;
+  }
 
-.game-card.scramble-compact .scramble-slot-item {
-  font-size: 0.80rem !important;
-  padding: 5px 9px !important;
-}
+  .game-card.scramble-compact .scramble-slot-item {
+    font-size: 0.80rem !important;
+    padding: 5px 9px !important;
+  }
 
-.game-card.scramble-compact .scramble-chip {
-  font-size: 0.80rem !important;
-  padding: 6px 10px !important;
-}
+  .game-card.scramble-compact .scramble-chip {
+    font-size: 0.80rem !important;
+    padding: 6px 10px !important;
+  }
 
-.game-card.scramble-compact .scramble-translation-text {
-  font-size: 0.88rem !important;
-}
+  .game-card.scramble-compact .scramble-translation-text {
+    font-size: 0.88rem !important;
+  }
 
-/* 2. Uzun Cümleler (10 - 13 Kelime - Fransızca / Almanca Uzun Cümleler) */
-.game-card.scramble-dense .scramble-slots-area {
-  gap: 4px;
-  padding: 5px 6px;
-  max-height: 125px;
-}
+  /* 2. Uzun Cümleler (10 - 13 Kelime - Fransızca / Almanca Uzun Cümleler) */
+  .game-card.scramble-dense .scramble-slots-area {
+    gap: 4px;
+    padding: 5px 6px;
+    max-height: 125px;
+  }
 
-.game-card.scramble-dense .scramble-chips-bank {
-  gap: 5px;
-  padding: 4px 0;
-  max-height: 150px;
-}
+  .game-card.scramble-dense .scramble-chips-bank {
+    gap: 5px;
+    padding: 4px 0;
+    max-height: 150px;
+  }
 
-.game-card.scramble-dense .scramble-slot-item {
-  font-size: 0.74rem !important;
-  padding: 4px 8px !important;
-  border-width: 1px !important;
-}
+  .game-card.scramble-dense .scramble-slot-item {
+    font-size: 0.74rem !important;
+    padding: 4px 8px !important;
+    border-width: 1px !important;
+  }
 
-.game-card.scramble-dense .scramble-chip {
-  font-size: 0.74rem !important;
-  padding: 5px 9px !important;
-  border-width: 1px !important;
-}
+  .game-card.scramble-dense .scramble-chip {
+    font-size: 0.74rem !important;
+    padding: 5px 9px !important;
+    border-width: 1px !important;
+  }
 
-.game-card.scramble-dense .scramble-translation-text {
-  font-size: 0.82rem !important;
-  line-height: 1.3 !important;
-}
+  .game-card.scramble-dense .scramble-translation-text {
+    font-size: 0.82rem !important;
+    line-height: 1.3 !important;
+  }
 
-.game-card.scramble-dense .scramble-prompt-box {
-  padding: 6px 10px !important;
-  margin-bottom: 4px !important;
-}
+  .game-card.scramble-dense .scramble-prompt-box {
+    padding: 6px 10px !important;
+    margin-bottom: 4px !important;
+  }
 
-/* 3. Çok Uzun Cümleler (14+ Kelime - Ultra Dense) */
-.game-card.scramble-ultra-dense .scramble-slots-area {
-  gap: 3px;
-  padding: 4px 5px;
-  max-height: 115px;
-}
+  /* 3. Çok Uzun Cümleler (14+ Kelime - Ultra Dense) */
+  .game-card.scramble-ultra-dense .scramble-slots-area {
+    gap: 3px;
+    padding: 4px 5px;
+    max-height: 115px;
+  }
 
-.game-card.scramble-ultra-dense .scramble-chips-bank {
-  gap: 4px;
-  padding: 2px 0;
-  max-height: 140px;
-}
+  .game-card.scramble-ultra-dense .scramble-chips-bank {
+    gap: 4px;
+    padding: 2px 0;
+    max-height: 140px;
+  }
 
-.game-card.scramble-ultra-dense .scramble-slot-item {
-  font-size: 0.68rem !important;
-  padding: 3px 6px !important;
-  border-width: 1px !important;
-}
+  .game-card.scramble-ultra-dense .scramble-slot-item {
+    font-size: 0.68rem !important;
+    padding: 3px 6px !important;
+    border-width: 1px !important;
+  }
 
-.game-card.scramble-ultra-dense .scramble-chip {
-  font-size: 0.68rem !important;
-  padding: 4px 7px !important;
-  border-width: 1px !important;
-}
+  .game-card.scramble-ultra-dense .scramble-chip {
+    font-size: 0.68rem !important;
+    padding: 4px 7px !important;
+    border-width: 1px !important;
+  }
 
-.game-card.scramble-ultra-dense .scramble-prompt-box {
-  padding: 4px 8px !important;
-  margin-bottom: 2px !important;
+  .game-card.scramble-ultra-dense .scramble-prompt-box {
+    padding: 4px 8px !important;
+    margin-bottom: 2px !important;
+  }
 }
 
 /* Cümle Kurma Oyun Kartı Esnek Yerleşim Garantisi */
@@ -15081,52 +15083,84 @@ html.screen-fit-compact .welcome-action-guest {
      B) CÜMLE KURMA (SENTENCE SCRAMBLE) TABLET
      ------------------------------------------- */
   #gameScrambleView .game-card {
-    max-width: min(94vw, 920px) !important;
-    gap: 16px !important;
+    max-width: min(94vw, 960px) !important;
+    min-height: clamp(580px, 80vh, 800px) !important;
+    padding: clamp(24px, 3vh, 36px) clamp(24px, 3.5vw, 40px) !important;
+    gap: clamp(16px, 2.4vh, 24px) !important;
+    justify-content: space-between !important;
   }
 
+  #gameScrambleView .scramble-prompt-box,
   .scramble-prompt-box {
-    padding: clamp(16px, 2.5vh, 24px) clamp(20px, 3vw, 28px) !important;
-    border-radius: 22px !important;
-  }
-
-  .scramble-translation-text {
-    font-size: clamp(1.3rem, 2.3vw, 1.7rem) !important; /* CÜMLE ÇEVİRİSİ OKUNAKLI */
-    line-height: 1.55 !important;
-  }
-
-  .scramble-slots-area {
-    min-height: 84px !important;
-    max-height: 220px !important;
-    padding: clamp(16px, 2.2vh, 22px) clamp(18px, 2.5vw, 26px) !important;
-    gap: 14px !important;
+    padding: clamp(18px, 2.6vh, 26px) clamp(22px, 3vw, 32px) !important;
     border-radius: 24px !important;
+    margin-bottom: 8px !important;
   }
 
-  .scramble-slot-item {
-    padding: clamp(12px, 1.8vh, 18px) clamp(18px, 2.4vw, 28px) !important;
-    font-size: clamp(1.25rem, 2.3vw, 1.65rem) !important; /* YUVAYA GİREN KELİME BÜYÜYOR */
+  #gameScrambleView .scramble-translation-text,
+  .scramble-translation-text,
+  .game-card.scramble-compact .scramble-translation-text,
+  .game-card.scramble-dense .scramble-translation-text,
+  .game-card.scramble-ultra-dense .scramble-translation-text {
+    font-size: clamp(1.4rem, 2.4vw, 1.85rem) !important; /* CÜMLE ÇEVİRİSİ OKUNAKLI */
+    line-height: 1.55 !important;
+    font-weight: 700 !important;
+  }
+
+  #gameScrambleView .scramble-slots-area,
+  .scramble-slots-area,
+  .game-card.scramble-compact .scramble-slots-area,
+  .game-card.scramble-dense .scramble-slots-area,
+  .game-card.scramble-ultra-dense .scramble-slots-area {
+    min-height: clamp(90px, 12vh, 140px) !important;
+    max-height: 280px !important;
+    padding: clamp(16px, 2.2vh, 24px) clamp(18px, 2.5vw, 28px) !important;
+    gap: clamp(12px, 1.8vw, 18px) !important;
+    border-radius: 26px !important;
+  }
+
+  #gameScrambleView .scramble-slot-item,
+  .scramble-slot-item,
+  .game-card.scramble-compact .scramble-slot-item,
+  .game-card.scramble-dense .scramble-slot-item,
+  .game-card.scramble-ultra-dense .scramble-slot-item {
+    padding: clamp(12px, 1.8vh, 18px) clamp(20px, 2.4vw, 32px) !important;
+    font-size: clamp(1.3rem, 2.4vw, 1.75rem) !important; /* YUVAYA GİREN KELİME BÜYÜYOR */
+    min-height: 52px !important;
     border-radius: 999px !important;
     line-height: 1.25 !important;
+    font-weight: 800 !important;
   }
 
-  .scramble-chips-bank {
-    gap: 14px !important;
-    padding: 16px 0 !important;
-    max-height: 260px !important;
+  #gameScrambleView .scramble-chips-bank,
+  .scramble-chips-bank,
+  .game-card.scramble-compact .scramble-chips-bank,
+  .game-card.scramble-dense .scramble-chips-bank,
+  .game-card.scramble-ultra-dense .scramble-chips-bank {
+    gap: clamp(12px, 1.8vw, 18px) !important;
+    padding: clamp(16px, 2.2vh, 24px) 0 !important;
+    max-height: 320px !important;
+    flex: 1 1 auto !important;
   }
 
-  .scramble-chip {
-    padding: clamp(12px, 1.8vh, 18px) clamp(18px, 2.4vw, 28px) !important;
-    font-size: clamp(1.25rem, 2.3vw, 1.65rem) !important; /* BANKADAKİ KELİMELER BÜYÜYOR */
+  #gameScrambleView .scramble-chip,
+  .scramble-chip,
+  .game-card.scramble-compact .scramble-chip,
+  .game-card.scramble-dense .scramble-chip,
+  .game-card.scramble-ultra-dense .scramble-chip {
+    padding: clamp(12px, 1.8vh, 18px) clamp(20px, 2.4vw, 32px) !important;
+    font-size: clamp(1.3rem, 2.4vw, 1.75rem) !important; /* BANKADAKİ KELİMELER BÜYÜYOR */
+    min-height: 52px !important;
     border-radius: 999px !important;
     line-height: 1.25 !important;
+    font-weight: 800 !important;
   }
 
+  #gameScrambleView .game-ctrl-btn,
   .game-ctrl-btn {
-    padding: 12px 24px !important;
-    font-size: 1.05rem !important;
-    border-radius: 18px !important;
+    padding: 14px 28px !important;
+    font-size: 1.15rem !important;
+    border-radius: 20px !important;
   }
 
   /* -------------------------------------------
@@ -15221,7 +15255,9 @@ html.screen-fit-compact .welcome-action-guest {
   }
 
   #gameScrambleView .game-card {
-    max-width: min(94vw, 1020px) !important;
+    max-width: min(94vw, 1060px) !important;
+    min-height: clamp(640px, 84vh, 880px) !important;
+    padding: clamp(28px, 3.8vh, 44px) clamp(32px, 4vw, 48px) !important;
   }
 
   .match-tile {
@@ -15230,14 +15266,27 @@ html.screen-fit-compact .welcome-action-guest {
     padding: 20px 32px !important;
   }
 
-  .scramble-translation-text {
-    font-size: clamp(1.45rem, 2.5vw, 1.85rem) !important;
+  #gameScrambleView .scramble-translation-text,
+  .scramble-translation-text,
+  .game-card.scramble-compact .scramble-translation-text,
+  .game-card.scramble-dense .scramble-translation-text,
+  .game-card.scramble-ultra-dense .scramble-translation-text {
+    font-size: clamp(1.55rem, 2.6vw, 2.1rem) !important;
   }
 
+  #gameScrambleView .scramble-chip,
+  #gameScrambleView .scramble-slot-item,
   .scramble-chip,
-  .scramble-slot-item {
-    font-size: clamp(1.4rem, 2.6vw, 1.85rem) !important;
-    padding: 16px 30px !important;
+  .scramble-slot-item,
+  .game-card.scramble-compact .scramble-chip,
+  .game-card.scramble-compact .scramble-slot-item,
+  .game-card.scramble-dense .scramble-chip,
+  .game-card.scramble-dense .scramble-slot-item,
+  .game-card.scramble-ultra-dense .scramble-chip,
+  .game-card.scramble-ultra-dense .scramble-slot-item {
+    font-size: clamp(1.45rem, 2.6vw, 1.95rem) !important;
+    padding: 18px 34px !important;
+    min-height: 58px !important;
   }
 
   .cloze-sentence-text {

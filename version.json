@@ -1,11 +1,11 @@
 {
-  "version": "v1.7.8",
-  "versionCode": 58,
+  "version": "v1.7.9",
+  "versionCode": 59,
   "releaseDate": "2026-10-13",
   "notes": [
-    "✅ Kelime Eşleme: Kartların yüklenmeme sorunu düzeltildi, tüm kelimeler eksiksiz çıkıyor",
-    "✨ Eşleme başlığındaki hedef dil ve Türkçe hap etiketleri tamamen kaldırıldı, sade tasarıma dönüldü",
-    "🧩 Kart dizilimi: Solda hedef dil, sağda Türkçe düzeni pürüzsüz çalışıyor",
+    "📱 Cümle Kurma: Tablet ve büyük ekranlarda kelime butonları, harfler ve yuvalar tam ekran adaptif hale getirildi",
+    "🎯 Küçük ekran sıkıştırma kuralları sadece küçük mobil ekranlara sınırlandırıldı, geniş ekranlarda ferah ve okunaklı boyutlar sağlandı",
+    "✨ Yuvaya yerleşen ve bankadaki kelime çiplerinin fontları tablet boyutuna göre otomatik büyütüldü",
     "🛡️ Android Target SDK 36 Google Play Store tam uyumluluğu korundu"
   ]
 }
