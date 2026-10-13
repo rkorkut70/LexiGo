@@ -900,3 +900,36 @@ window.recordWeeklyChampionArchive = async function(weekId, lang, firstBranch, f
   }
 };
 
+// 6. Fabrika Ayarlarına Dönüş: Kullanıcı Hesabını ve Bulut Verilerini Tamamen Silme
+window.deleteAccountCompletely = async function() {
+  if (!auth) return { success: true };
+  const user = auth.currentUser;
+  if (!user) return { success: true };
+
+  const uid = user.uid;
+
+  // 1. Firestore'daki kullanıcı kaydını sil
+  try {
+    if (db) {
+      await db.collection('users').doc(uid).delete();
+      console.log('Firestore user record deleted:', uid);
+    }
+  } catch (errDb) {
+    console.warn('Firestore doc delete warning:', errDb);
+  }
+
+  // 2. Firebase Auth hesabını sil
+  try {
+    await user.delete();
+    console.log('Firebase Auth account deleted permanently');
+  } catch (errAuth) {
+    console.warn('Firebase Auth delete warning:', errAuth);
+    try {
+      await auth.signOut();
+    } catch (ignored) {}
+  }
+
+  fbUser = null;
+  return { success: true };
+};
+

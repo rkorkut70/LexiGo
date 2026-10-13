@@ -1761,29 +1761,35 @@
   async function resetAllProgress() {
     const confirmed = await showAppConfirm({
       title: 'Fabrika Ayarlarına Dön',
-      message: 'DİKKAT: Tüm öğrenilmiş kelimeler, profil seçimleriniz, XP puanlarınız ve başarı rozetleriniz tamamen silinecektir.\n\nUygulama ilk kurulum haline dönecektir. Emin misiniz?',
+      message: 'DİKKAT: Kayıtlı hesabınız, buluttaki tüm verileriniz, öğrenilmiş kelimeler, XP puanlarınız ve profil seçimleriniz tamamen ve kalıcı olarak silinecektir.\n\nUygulama ilk kurulum haline dönecektir. Emin misiniz?',
       icon: '🚨',
-      okText: 'Tamamen Sıfırla',
+      okText: 'Hesabı ve Verileri Tamamen Sıfırla',
       cancelText: 'Vazgeç',
       isDanger: true
     });
     if (!confirmed) return;
 
+    showToast('Hesap ve tüm veriler siliniyor... Lütfen bekleyin ⏳', 3000);
+
+    try {
+      if (typeof window.deleteAccountCompletely === 'function') {
+        await window.deleteAccountCompletely();
+      } else if (typeof window.logoutUser === 'function') {
+        await window.logoutUser();
+      } else if (window.firebase && window.firebase.auth) {
+        await window.firebase.auth().signOut();
+      }
+    } catch (e) {
+      console.warn('Delete account error on reset:', e);
+    }
+
     localStorage.clear();
     sessionStorage.clear();
     localStorage.setItem('lexiq_reset_done_v30', 'true');
 
-    try {
-      if (typeof window.logoutUser === 'function') {
-        window.logoutUser();
-      } else if (window.firebase && window.firebase.auth) {
-        window.firebase.auth().signOut();
-      }
-    } catch (e) {
-      console.warn('Logout error on reset:', e);
-    }
-
-    window.location.reload();
+    setTimeout(() => {
+      window.location.reload();
+    }, 400);
   }
 
   async function handleUserLogout(isGuestExplicit = false) {
@@ -5170,18 +5176,28 @@ let activeAvatarCategory = 'all';
     if (!hapticEnabled) return;
     if (category === 'card' && state.cardHaptic === false) return;
     if (category === 'game' && state.gameHaptic === false) return;
+
+    // 1. Android Native Köprüsü (En yüksek öncelik & %100 çalışma güvencesi)
+    try {
+      if (window.AndroidTTS && typeof window.AndroidTTS.hapticPattern === 'function') {
+        window.AndroidTTS.hapticPattern(pattern);
+        return;
+      }
+    } catch (e) {}
+
+    // 2. Standart Web Vibrate API Fallback
     if (typeof navigator !== 'undefined' && 'vibrate' in navigator) {
       try {
         if (pattern === 'light') {
-          navigator.vibrate(12); // Kısa & zarif dokunuş
+          navigator.vibrate(18); // Kısa & zarif dokunuş
         } else if (pattern === 'medium') {
-          navigator.vibrate(25); // Kart çevirme
+          navigator.vibrate(30); // Kart çevirme
         } else if (pattern === 'success') {
-          navigator.vibrate([15, 40, 25]); // Çift onay titreşimi
+          navigator.vibrate([20, 50, 30]); // Çift onay titreşimi
         } else if (pattern === 'warning' || pattern === 'error') {
-          navigator.vibrate([30, 50, 40]); // Hata uyarısı
+          navigator.vibrate([40, 60, 50]); // Hata uyarısı
         } else {
-          navigator.vibrate(20);
+          navigator.vibrate(25);
         }
       } catch (e) {
         // Haptic desteklenmeyen cihazlarda sessizce devam et
