@@ -1,10 +1,10 @@
 {
-  "version": "v1.8.12",
-  "versionCode": 72,
-  "releaseDate": "2026-10-13",
+  "version": "v1.8.13",
+  "versionCode": 73,
+  "releaseDate": "2026-10-14",
   "notes": [
-    "👤 Kayıtlı Kullanıcı İsmi Koruma Düzeltmesi: Kayıt olurken belirlenen ismin profil ekranında Öğrenci olarak görünmesi sorunu çözüldü",
-    "🎓 Öğrenci Profili Başlık & Alt Başlık Senkronizasyonu: Profil başlığı ve alt başlığı kullanıcının gerçek ismiyle eşzamanlandı",
-    "🛡️ Firestore İsim Ezilme Koruması: Yerel kullanıcı adının Firestore varsayılanı ile ezilmesi engellendi"
+    "👤 Kayıtlı Kullanıcı İsmi & Dil Koruma: Kullanıcı adı ve dili kayıt/giriş sonrasında tam korunur",
+    "🏫 Kurulumda Şubesiz Devam Etme Seçeneği: Kurulum Adım 3'e şubesiz bağımsız ilerleme desteği eklendi",
+    "💬 Geri Bildirim Ekranı Hizalama & Mobil Uyum: Bildirim türü kutucuklarının taşması düzeltildi, Hakkında sayfasında geri bildirim butonu ortalandı"
   ]
 }
