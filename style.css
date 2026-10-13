@@ -15498,9 +15498,16 @@ html.screen-fit-compact .welcome-action-guest {
   margin: 0 !important;
   background: var(--bg-body, #0f172a) !important;
   z-index: 10600 !important;
-  display: flex !important;
   flex-direction: column !important;
   border-radius: 0 !important;
+}
+
+#obAvatarDropdownMenu.full-screen-modal:not(.active) {
+  display: none !important;
+}
+
+#obAvatarDropdownMenu.full-screen-modal.active {
+  display: flex !important;
 }
 
 #obAvatarDropdownMenu.full-screen-modal .ob-avatar-sheet-card {
@@ -15542,9 +15549,16 @@ html.screen-fit-compact .welcome-action-guest {
   margin: 0 !important;
   background: var(--bg-body, #0f172a) !important;
   z-index: 10600 !important;
-  display: flex !important;
   flex-direction: column !important;
   border-radius: 0 !important;
+}
+
+#avatarPickerModal.full-screen-modal:not(.active) {
+  display: none !important;
+}
+
+#avatarPickerModal.full-screen-modal.active {
+  display: flex !important;
 }
 
 #avatarPickerModal.full-screen-modal .avatar-picker-modal-card {

@@ -7,7 +7,7 @@
 (function () {
   'use strict';
 
-  const APP_VERSION = 'v1.8.4';
+  const APP_VERSION = 'v1.8.5';
   const CURRENT_APP_BUILD = 'lexiq_build_19_clean';
 
   // Build 13 temiz kurulum / sıfırlama güvencesi (Kullanıcı verilerini sıfırla, Hoş Geldin ekranını garantile)
@@ -3388,6 +3388,7 @@ let activeAvatarCategory = 'all';
 
     function openDropdown() {
       if (!menu) return;
+      menu.classList.add('active');
       menu.style.display = 'flex';
       if (triggerBtn) {
         triggerBtn.classList.add('open');
@@ -3399,6 +3400,7 @@ let activeAvatarCategory = 'all';
 
     function closeDropdown() {
       if (!menu) return;
+      menu.classList.remove('active');
       menu.style.display = 'none';
       if (triggerBtn) {
         triggerBtn.classList.remove('open');
@@ -3500,7 +3502,10 @@ let activeAvatarCategory = 'all';
       updateOnboardingAvatarUI(obState.avatar || '🦊');
       renderOnboardingAvatarDropdown(activeObAvatarCat);
       const menu = document.getElementById('obAvatarDropdownMenu');
-      if (menu) menu.style.display = 'none';
+      if (menu) {
+        menu.classList.remove('active');
+        menu.style.display = 'none';
+      }
       const triggerBtn = document.getElementById('obAvatarTriggerBtn');
       if (triggerBtn) {
         triggerBtn.classList.remove('open');

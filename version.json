@@ -1,14 +1,10 @@
 {
-  "version": "v1.8.4",
-  "versionCode": 64,
+  "version": "v1.8.5",
+  "versionCode": 65,
   "releaseDate": "2026-10-13",
   "notes": [
-    "⚙️ Profil ve Ayarlar Ekranı Onarımı: Üst bardaki Öğrenci Profili ve Ayarlar butonlarının doğrudan ve kesintisiz açılması sağlandı, katman (z-index) ve sekme geçiş kontrolleri optimize edildi",
-    "🏆 3D Sarı Şampiyonluk Kupası: Turnuva ve Liderlik butonları, başlıkları ve sekmeleri özel 3D altın sarısı kupa ikonuyla donatıldı",
-    "⚡ Başlatma ve Kararlılık İyileştirmesi: Modal pencerelerinin responsive uyumu ve tam ekran gösterim mekanizmaları güçlendirildi",
-    "🎓 Birleşik Öğrenci Profili: Üst menü profili ile ayarlar profil sekmesi tek ekranda birleştirildi",
-    "📊 Canlı Başarı Karnesi: İstatistik sayaçları, çalışma süreleri ve kitap ünitelerindeki ilerleme doğrudan profil sekmesinde toplandı",
-    "✨ Sade ve Sezgisel Deneyim: Mükerrer profil pencereleri kaldırılarak tek tıkla tam ekran kontrol merkezi oluşturuldu",
+    "🎭 Avatar Seçim Ekranı Kapanma Onarımı: İlk adım ve misafir girişi avatar seçiminde 'Bu Avatarı Seç ve Devam Et' butonu ve X kapatma ikonunun modalı güvenle kapatıp ana akışa devam etmesi sağlandı",
+    "⚙️ Ayarlar & Öğrenci Profili DOM Bütünlüğü: Profil ve ayarlar pencerelerinin bağımsız çalışmasını engelleyen HTML etiket çakışması ve katman engelleri tamamen giderildi",
     "🛡️ Android Target SDK 36 Google Play Store tam uyumluluğu korundu"
   ]
 }
