@@ -7,7 +7,7 @@
 (function () {
   'use strict';
 
-  const APP_VERSION = 'v1.8.6';
+  const APP_VERSION = 'v1.8.7';
   const CURRENT_APP_BUILD = 'lexiq_build_19_clean';
 
   // Build 13 temiz kurulum / sıfırlama güvencesi (Kullanıcı verilerini sıfırla, Hoş Geldin ekranını garantile)
@@ -1999,15 +1999,200 @@
     return '🇬🇧';
   }
 
-  // ==========================================
   // ÖĞRENCİ BİLGİLERİ VE PROFİL MODALI
   // ==========================================
   function openStudentProfileModal() {
-    openSettingsModal('profile');
-  }
+    const modal = document.getElementById('studentProfileModal');
+    if (!modal) {
+      openSettingsModal('profile');
+      return;
+    }
 
-  function closeStudentProfileModal() {
-    closeSettingsModal();
+    // Bilgileri Doldur
+    const heroAvatar = document.getElementById('profHeroAvatar');
+    const heroName = document.getElementById('profHeroName');
+    const trackBadge = document.getElementById('profHeroTrackBadge');
+    const langBadge = document.getElementById('profHeroLangBadge');
+    const accountStatus = document.getElementById('profAccountStatusText');
+    const loginOutBtn = document.getElementById('profLoginOrOutBtn');
+
+    const branchBadge = document.getElementById('profHeroBranchBadge');
+    if (heroAvatar) setAvatarElement(heroAvatar, state.userAvatar);
+    if (heroName) heroName.textContent = state.userName;
+    if (trackBadge) trackBadge.textContent = state.userTrack === '4B' ? '4B (B1 İleri)' : '4A (A2 Temel)';
+    if (branchBadge) {
+      if (state.userBranch) {
+        branchBadge.textContent = `🏫 Şube: ${state.userBranch}`;
+        branchBadge.style.display = 'inline-flex';
+      } else {
+        branchBadge.textContent = '🏫 Şube Seçilmedi';
+        branchBadge.style.display = 'inline-flex';
+      }
+    }
+    if (langBadge) {
+      const meta = LANG_META[state.activeLanguage] || { flag: '🇬🇧', name: 'İngilizce' };
+      langBadge.textContent = `${meta.flag} ${meta.name.split('→')[0].trim()}`;
+    }
+
+    const isFbLoggedIn = typeof fbUser !== 'undefined' && fbUser !== null;
+    const statusDot = document.querySelector('.status-indicator-dot');
+    if (statusDot) {
+      statusDot.style.background = isFbLoggedIn ? '#10b981' : '#f59e0b';
+      statusDot.style.boxShadow = isFbLoggedIn ? '0 0 8px rgba(16, 185, 129, 0.5)' : '0 0 8px rgba(245, 158, 11, 0.5)';
+    }
+
+    if (accountStatus) {
+      accountStatus.textContent = isFbLoggedIn ? `Kayıtlı: ${fbUser.email || state.userEmail}` : 'Misafir Kullanıcı (Bulut kapalı)';
+    }
+
+    const profSecurityCard = document.getElementById('profSecurityCard');
+    if (profSecurityCard) {
+      profSecurityCard.style.display = isFbLoggedIn ? 'flex' : 'none';
+    }
+
+    const profGuestLogoutBtn = document.getElementById('profGuestLogoutBtn');
+    if (loginOutBtn) {
+      if (isFbLoggedIn) {
+        loginOutBtn.textContent = 'Çıkış Yap';
+        loginOutBtn.classList.add('is-logout');
+        if (profGuestLogoutBtn) profGuestLogoutBtn.style.display = 'none';
+        loginOutBtn.onclick = () => {
+          closeStudentProfileModal();
+          handleUserLogout(false);
+        };
+      } else {
+        loginOutBtn.textContent = 'Giriş / Kayıt';
+        loginOutBtn.classList.remove('is-logout');
+        if (profGuestLogoutBtn) {
+          profGuestLogoutBtn.style.display = 'inline-block';
+          profGuestLogoutBtn.onclick = () => {
+            closeStudentProfileModal();
+            handleUserLogout(true);
+          };
+        }
+        loginOutBtn.onclick = () => {
+          closeStudentProfileModal();
+          if (typeof window.openAuthModal === "function") {
+            window.openAuthModal();
+          } else {
+            const am = document.getElementById("authModal");
+            if (am) am.classList.add("active");
+          }
+        };
+      }
+    }
+
+    const visibleBadges = getVisibleBadgesConfigForUser(state.activeLanguage);
+    const visibleUnlockedCount = visibleBadges.filter(b => state.unlockedBadges.includes(b.id)).length;
+
+    // İstatistik Sayaçları
+    const statLearned = document.getElementById('profStatLearned');
+    const statXp = document.getElementById('profStatXp');
+    const statStreak = document.getElementById('profStatStreak');
+    const statBadges = document.getElementById('profStatBadges');
+
+    if (statLearned) statLearned.textContent = getLearnedCount(state);
+    if (statXp) statXp.textContent = state.xp;
+    if (statStreak) statStreak.textContent = `${state.dayStreak || 1} Gün`;
+    if (statBadges) statBadges.textContent = `${visibleUnlockedCount} / ${visibleBadges.length}`;
+
+    // İsim Input
+    const nameInput = document.getElementById('profNameInput');
+    if (nameInput) {
+      nameInput.value = state.userName;
+      nameInput.onkeydown = (e) => {
+        if (e.key === 'Enter') {
+          e.preventDefault();
+          const saveBtn = document.getElementById('profSaveBtn');
+          if (saveBtn) saveBtn.click();
+        }
+      };
+    }
+
+    // Avatar Tıklama: Üstteki avatara tıklandığında kategorili avatar seçim penceresini aç
+    const settingOpenAvatarPickerBtn = document.getElementById('settingOpenAvatarPickerBtn');
+    if (settingOpenAvatarPickerBtn) {
+      settingOpenAvatarPickerBtn.onclick = () => openAvatarPickerModal();
+    }
+    const heroAvatarBtn = document.getElementById('profHeroAvatarBtn');
+    if (heroAvatarBtn) {
+      heroAvatarBtn.onclick = () => {
+        openAvatarPickerModal();
+      };
+    }
+
+    // Detaylı Etkinlik ve Zaman İstatistiklerini Doldur
+    renderStudentActivityStatsUI();
+
+    // İstatistik Yenileme Butonu
+    const refreshStatsBtn = document.getElementById('refreshStatsBtn');
+    if (refreshStatsBtn) {
+      refreshStatsBtn.onclick = async () => {
+        showToast('İstatistikler güncelleniyor... ⏳');
+        if (typeof window.syncUserData === 'function' && window.fbUser) {
+          try {
+            await window.syncUserData(window.fbUser);
+          } catch (e) {
+            console.warn('Sync refresh error:', e);
+          }
+        }
+        renderStudentActivityStatsUI();
+        const visB = getVisibleBadgesConfigForUser(state.activeLanguage);
+        const visU = visB.filter(b => state.unlockedBadges.includes(b.id)).length;
+        if (statLearned) statLearned.textContent = getLearnedCount(state);
+        if (statXp) statXp.textContent = state.xp;
+        if (statStreak) statStreak.textContent = state.maxStreak;
+        if (statBadges) statBadges.textContent = `${visU} / ${visB.length}`;
+        showToast('Bulut verileri ve istatistikler güncellendi! ☁️');
+      };
+    }
+
+    // Kaydedilmemiş değişiklikleri izleme
+    let originalNameValue = (nameInput && nameInput.value.trim()) || '';
+    modal._hasUnsavedChanges = function() {
+      const curName = (nameInput && nameInput.value.trim()) || '';
+      return curName !== originalNameValue;
+    };
+
+    // Rehber Butonu
+    const guideBtn = document.getElementById('profOpenBadgesGuideBtn');
+    if (guideBtn) {
+      guideBtn.onclick = () => {
+        closeStudentProfileModal();
+        openBadgesModal();
+      };
+    }
+
+    // Kaydet Butonu
+    const saveBtn = document.getElementById('profSaveBtn');
+    if (saveBtn) {
+      saveBtn.onclick = () => {
+        const val = (nameInput && nameInput.value.trim()) || '';
+        const validation = validateAppropriateName(val);
+        if (!validation.valid) {
+          showToast(validation.message);
+          playSoundEffect('wrong');
+          if (nameInput) {
+            nameInput.classList.add('ob-input-error');
+            nameInput.focus();
+          }
+          return;
+        }
+        if (nameInput) nameInput.classList.remove('ob-input-error');
+        state.userName = val;
+        localStorage.setItem('lexiq_user_name', state.userName);
+        originalNameValue = state.userName;
+        if (heroName) heroName.textContent = state.userName;
+        localStorage.setItem('lexiq_user_avatar', state.userAvatar);
+        if (typeof updateUserProfileUI === "function") { updateUserProfileUI(); } else if (typeof window.updateUserProfileUI === "function") { window.updateUserProfileUI(); }
+        if (typeof window.updateFirebaseProfile === 'function') {
+          window.updateFirebaseProfile(state.userName, state.userAvatar, state.userTrack, state.userLevel, state.activeLanguage);
+        }
+        showToast('Profil başarıyla kaydedildi! ✓');
+      };
+    }
+
+    modal.classList.add('active');
   }
 
   // ==========================================
@@ -2246,7 +2431,15 @@
   });
 
   function closeStudentProfileModal(force = false) {
-    closeSettingsModal(force);
+    const modal = document.getElementById('studentProfileModal');
+    if (!modal) return;
+    if (!force && typeof modal._hasUnsavedChanges === 'function' && modal._hasUnsavedChanges()) {
+      const confirmed = window.confirm(
+        '⚠️ Kaydedilmemiş değişiklikleriniz var!\n\nYaptığınız değişiklikler "Kaydet" butonuna basmadığınız için kaybolacaktır. Yine de çıkmak istiyor musunuz?'
+      );
+      if (!confirmed) return;
+    }
+    modal.classList.remove('active');
   }
 
     // ==========================================
@@ -2488,44 +2681,9 @@ let activeAvatarCategory = 'all';
   }
 
   function openSettingsModal(defaultTab = 'cards') {
-    const modal = dom.settingsModal || document.getElementById('settingsModal');
-    if (!modal) return;
-
-    // Header ve sekme çubuğunu profile ya da ayarlara göre özelleştir
-    const tabsNav = document.getElementById('settingsTabsNav');
-    const titleEl = document.getElementById('settingsModalTitle');
-    const subTitleEl = document.getElementById('settingsModalSubtitle');
-    const iconEl = document.getElementById('settingsModalIcon');
-
-    if (defaultTab === 'profile') {
-      if (titleEl) titleEl.textContent = 'Öğrenci Profili';
-      if (subTitleEl) subTitleEl.textContent = 'Başarı karnesi, istatistikler ve hesap bilgileri';
-      if (iconEl) iconEl.textContent = '👤';
-      if (tabsNav) tabsNav.style.display = 'none';
-    } else {
-      if (titleEl) titleEl.textContent = 'Uygulama Ayarları';
-      if (subTitleEl) subTitleEl.textContent = 'Tercihleri, görünümü ve sistemi yönetin';
-      if (iconEl) iconEl.textContent = '⚙️';
-      if (tabsNav) tabsNav.style.display = 'flex';
-      if (defaultTab === 'profile') defaultTab = 'cards';
-    }
-
-    // Modalı her şeyden önce hemen görünür yap
-    modal.classList.add('active');
-
-    try {
+    if (dom.settingsModal) {
       switchSettingsTab(defaultTab);
-    } catch (e) {
-      console.warn('switchSettingsTab error:', e);
-    }
-
-    try {
       populateProfileSettingsTab();
-    } catch (e) {
-      console.warn('populateProfileSettingsTab error:', e);
-    }
-
-    try {
       applyCardTheme(state.cardTheme);
       applyCardFont(state.cardFont);
       applyGameFont(state.gameFont);
@@ -2549,27 +2707,27 @@ let activeAvatarCategory = 'all';
       const settingSoundFx = document.getElementById('settingSoundFx');
       if (settingSoundFx) settingSoundFx.checked = soundFxEnabled;
       applySpeechSpeed(state.speechSpeed);
-    } catch (e) {
-      console.warn('applySettings error:', e);
+
+      dom.settingsModal.classList.add('active');
     }
   }
 
   function closeSettingsModal(force = false) {
-    const modal = dom.settingsModal || document.getElementById('settingsModal');
-    if (!modal) return;
-    if (!force && typeof hasUnsavedProfileSettings === 'function' && hasUnsavedProfileSettings()) {
-      const confirmed = confirmDiscardProfileChanges();
-      if (!confirmed) return;
-      if (typeof populateProfileSettingsTab === 'function') {
-        populateProfileSettingsTab();
+    if (dom.settingsModal) {
+      if (!force && typeof hasUnsavedProfileSettings === 'function' && hasUnsavedProfileSettings()) {
+        const confirmed = confirmDiscardProfileChanges();
+        if (!confirmed) return;
+        // Kullanıcı vazgeçtiyse değişiklikleri orijinaline geri al
+        if (typeof populateProfileSettingsTab === 'function') {
+          populateProfileSettingsTab();
+        }
       }
+      dom.settingsModal.classList.remove('active');
     }
-    modal.classList.remove('active');
   }
 
-  window.openSettingsModal = openSettingsModal;
-  window.closeSettingsModal = closeSettingsModal;
-  window.openStudentProfileModal = openStudentProfileModal;
+  // ==========================================
+  
 
   // ==========================================
   // DİL & MÜFREDAT TARİH HESAPLAMA (KURAL 1 & KURAL 4)

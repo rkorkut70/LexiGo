@@ -1,10 +1,12 @@
 {
-  "version": "v1.8.6",
-  "versionCode": 66,
+  "version": "v1.8.7",
+  "versionCode": 67,
   "releaseDate": "2026-10-13",
   "notes": [
-    "🎨 Hakkında (About) Ekranı Çift Tema Profesyonelleştirmesi: Hem Açık (Light) hem Koyu (Dark) tema için modern cam efektli, yüksek kontrastlı ve kurumsal 3D kart tasarımı uygulandı; açık temadaki karanlık zemin ve uyumsuzluklar giderildi",
-    "👤 Ayarlar ve Öğrenci Profili Ayrımı: Ayarlar sekme çubuğundaki mükerrer Profil sekmesi kaldırılarak sekmeler yalınlaştırıldı; Öğrenci Profili modalı bağımsız, net bir başarı karnesi görünümüne kavuşturuldu",
+    "🎓 Bağımsız Öğrenci Profili Geri Getirildi: Üst menü kullanıcı profili simgesine tıklandığında ayarlar yerine tam ekran, zengin Öğrenci Profili açılıyor",
+    "🎭 Avatar Değişimi & Şube Bilgisi: Profil ekranında doğrudan tıklanabilir avatar değişimi, kayıtlı resmi şube rozeti ve isim düzenleme aktif",
+    "🚪 Misafir Çıkış Butonu: Misafir modunda da ana karşılama ekranına dönmeyi sağlayan Çıkış Yap butonu eklendi",
+    "⚙️ Sadeleştirilmiş Ayarlar: Ayarlar ekranı sadece Kart, Arena, Hatırlatıcı ve Sistem sekmelerine odaklandı",
     "🛡️ Android Target SDK 36 Google Play Store tam uyumluluğu korundu"
   ]
 }

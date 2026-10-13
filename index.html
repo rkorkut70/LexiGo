@@ -15,7 +15,7 @@
   <meta http-equiv="Expires" content="0">
   <title>LexiQ • Çok Dilli Akıllı Kelime Kartları</title>
   <link rel="icon" type="image/jpeg" href="logo.jpg">
-  <link rel="stylesheet" href="style.css?v=1.8.6">
+  <link rel="stylesheet" href="style.css?v=1.8.7">
 </head>
 <body>
   <div class="app-container">
@@ -33,7 +33,7 @@
         </button>
 
         <!-- Ayarlar & Profil Butonu (Tıklanınca Ayarları Açar) -->
-        <button id="userProfileBtn" class="pill-btn user-header-btn student-profile-header-btn" title="Öğrenci Bilgileri & Profil" onclick="if(window.openStudentProfileModal) window.openStudentProfileModal(); else if(window.openSettingsModal) window.openSettingsModal('profile');">
+        <button id="userProfileBtn" class="pill-btn user-header-btn student-profile-header-btn" title="Öğrenci Bilgileri & Profil" onclick="if(window.openStudentProfileModal) window.openStudentProfileModal();">
           <span id="headerUserAvatar" class="settings-btn-icon">🦊</span>
           <span id="headerUserName" class="header-btn-text">Öğrenci</span>
         </button>
@@ -1136,7 +1136,7 @@
         <div class="welcome-hero-section">
           <div class="welcome-brand-wrapper">
             <h1 class="welcome-brand-name">Lexi<span class="welcome-brand-q">Q</span></h1>
-            <span class="welcome-version-pill">v1.8.6</span>
+            <span class="welcome-version-pill">v1.8.7</span>
           </div>
           <!-- 3 Temel Başarı Sütunu (3D Pill Rozetleri) -->
           <div class="welcome-pillars-container">
@@ -1850,7 +1850,7 @@
         <div class="about-hero-box">
           <div class="about-brand-row">
             <span class="about-brand">Lexi<span class="brand-highlight">Q</span></span>
-            <span class="about-version-pill" id="aboutAppVersion">v1.8.6</span>
+            <span class="about-version-pill" id="aboutAppVersion">v1.8.7</span>
             <span class="about-platform-badge" id="aboutPlatformBadge" style="display: none; font-size: 0.72rem; font-weight: 700; padding: 3px 9px; border-radius: 12px; background: rgba(59,130,246,0.15); color: #3b82f6; border: 1px solid rgba(59,130,246,0.3);"></span>
           </div>
           <p class="about-tagline">Müfredat Tabanlı Çok Dilli Kelime Arenası</p>
@@ -2325,9 +2325,193 @@
     </div>
   </div>
   <!-- GERİYE DÖNÜK UYUMLULUK YER TUTUCUSU (Profil Ayarlar İçine Taşındı) -->
-  <div id="studentProfileModal" style="display:none;" aria-hidden="true">
-    <button id="closeStudentProfileModalBtn" style="display:none;"></button>
+  <div id="studentProfileModal" class="modal-overlay full-screen-modal">
+    <div class="modal-card student-profile-modal-card">
+      <div class="modal-header student-profile-header">
+        <div class="student-profile-title-wrap">
+          <span class="student-profile-main-icon">🎓</span>
+          <div>
+            <h2 class="modal-title">Öğrenci Profili</h2>
+            <p class="modal-subtitle">Gelişim ve İlerleme Durumu</p>
+          </div>
+        </div>
+        <button id="closeStudentProfileModalBtn" class="icon-btn" aria-label="Kapat" title="Kapat">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+            <line x1="18" y1="6" x2="6" y2="18"></line>
+            <line x1="6" y1="6" x2="18" y2="18"></line>
+          </svg>
+        </button>
+      </div>
+
+      <div class="student-profile-body">
+        <!-- 1. KİMLİK KARTI (SADE, KOMPAKT & ENTEGRE) -->
+        <div class="student-hero-card">
+          <!-- Üst Satır: Avatar, Rozetler ve Sağda Aksiyon Butonları -->
+          <div class="student-hero-top-row">
+            <div class="student-hero-identity">
+              <button type="button" class="student-avatar-badge student-avatar-clickable" id="profHeroAvatarBtn" title="Avatarı Değiştir">
+                <span id="profHeroAvatar">🦊</span>
+                <span class="avatar-edit-icon" title="Değiştir">✏️</span>
+              </button>
+              <div class="student-hero-badges">
+                <span class="student-track-badge" id="profHeroTrackBadge">4A (A2 Temel)</span>
+                <span class="student-track-badge" id="profHeroBranchBadge" style="background: rgba(59, 130, 246, 0.2); color: #3b82f6; border-color: rgba(59, 130, 246, 0.4);">🏫 Şube: -</span>
+                <span class="student-lang-badge" id="profHeroLangBadge">🇬🇧 İngilizce</span>
+              </div>
+            </div>
+            <div class="student-hero-action">
+              <button type="button" id="profLoginOrOutBtn" class="student-login-toggle-btn">Giriş / Kayıt</button>
+              <button type="button" id="profGuestLogoutBtn" class="student-login-toggle-btn is-logout" style="display: none;">Çıkış Yap</button>
+            </div>
+          </div>
+
+          <!-- Genişletilmiş İsim Düzenleme Alanı (Tam Genişlik & Sağa Yanaşık Kaydet) -->
+          <div class="student-name-edit-wrap">
+            <input type="text" id="profNameInput" class="student-name-input" placeholder="Öğrenci Adı" maxlength="20" title="Öğrenci Adı">
+            <button type="button" id="profSaveBtn" class="student-name-save-pill" title="Değişiklikleri Kaydet">
+              <span>Kaydet</span>
+            </button>
+          </div>
+          <span id="profHeroName" style="display: none;">Öğrenci</span>
+
+          <div class="student-hero-status-row">
+            <span class="status-indicator-dot"></span>
+            <span class="student-account-status" id="profAccountStatusText">Misafir Kullanıcı (Bulut kapalı)</span>
+          </div>
+
+          <!-- ŞİFRE DEĞİŞTİRME & HESAP GÜVENLİĞİ (GİRİŞ YAPMIŞ HESAPLAR İÇİN) -->
+          <div class="student-security-card" id="profSecurityCard" style="display: none; margin-top: 12px; background: rgba(255, 255, 255, 0.04); border: 1px solid var(--border-color); border-radius: 14px; padding: 10px 14px; align-items: center; justify-content: space-between;">
+            <div style="display: flex; align-items: center; gap: 8px;">
+              <span style="font-size: 1.15rem;">🔐</span>
+              <div>
+                <strong style="font-size: 0.85rem; color: var(--text-main); display: block;">Hesap Şifresi</strong>
+                <span style="font-size: 0.72rem; color: var(--text-muted);">Şifrenizi güvenle güncelleyin</span>
+              </div>
+            </div>
+            <button type="button" id="profOpenChangePasswordBtn" class="pill-btn" style="padding: 6px 14px; font-size: 0.8rem; font-weight: 700; background: rgba(56, 189, 248, 0.14); color: #38bdf8; border: 1px solid rgba(56, 189, 248, 0.35); cursor: pointer;">
+              Şifre Değiştir
+            </button>
+          </div>
+        </div>
+
+        <!-- 2. İSTATİSTİK SAYACI (4'LÜ SADE KARTLAR) -->
+        <div class="student-stats-grid">
+          <div class="student-stat-card">
+            <span class="stat-icon">📚</span>
+            <div class="stat-val" id="profStatLearned">0</div>
+            <div class="stat-lbl">Öğrenilen</div>
+          </div>
+          <div class="student-stat-card">
+            <span class="stat-icon">⭐</span>
+            <div class="stat-val" id="profStatXp">0</div>
+            <div class="stat-lbl">Toplam XP</div>
+          </div>
+          <div class="student-stat-card">
+            <span class="stat-icon">🔥</span>
+            <div class="stat-val" id="profStatStreak">0</div>
+            <div class="stat-lbl">En İyi Seri</div>
+          </div>
+          <div class="student-stat-card">
+            <span class="stat-icon">🎖️</span>
+            <div class="stat-val" id="profStatBadges">0 / 36</div>
+            <div class="stat-lbl">Rozetler</div>
+          </div>
+        </div>
+
+        <!-- 3. DETAYLI ETKİNLİK VE ZAMAN İSTATİSTİKLERİ -->
+        <div class="student-activity-stats-card">
+          <div class="activity-stats-header">
+            <div class="activity-stats-title-row">
+              <span class="activity-header-icon">⏱️</span>
+              <div>
+                <h4 class="activity-section-title">Çalışma Süreleri</h4>
+                <p class="activity-section-desc">Toplam zaman kullanımı ve oturum bilgileri</p>
+              </div>
+            </div>
+            <button type="button" id="refreshStatsBtn" class="activity-stats-refresh-btn" title="Yenile">🔄</button>
+          </div>
+
+          <div class="activity-time-grid">
+            <div class="activity-time-item">
+              <span class="time-item-icon">🃏</span>
+              <div class="time-item-details">
+                <span class="time-item-label">Kelime Kartları</span>
+                <span class="time-item-val" id="profTimeCards">0 dk</span>
+              </div>
+            </div>
+
+            <div class="activity-time-item">
+              <span class="time-item-icon">🎮</span>
+              <div class="time-item-details">
+                <span class="time-item-label">Oyun & Pratik</span>
+                <span class="time-item-val" id="profTimeGames">0 dk</span>
+              </div>
+            </div>
+
+            <div class="activity-time-item">
+              <span class="time-item-icon">🚀</span>
+              <div class="time-item-details">
+                <span class="time-item-label">İlk Başlama</span>
+                <span class="time-item-val" id="profStartDate">-</span>
+              </div>
+            </div>
+
+            <div class="activity-time-item">
+              <span class="time-item-icon">📝</span>
+              <div class="time-item-details">
+                <span class="time-item-label">Kayıt Tarihi</span>
+                <span class="time-item-val" id="profRegDate">Misafir</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Ünite Tamamlama Süreleri -->
+          <div class="activity-unit-durations-section">
+            <div class="unit-durations-header">
+              <span class="unit-durations-icon">🏆</span>
+              <span class="unit-durations-title">Ünite Tamamlama Süreleri</span>
+            </div>
+            <div class="unit-durations-list" id="profUnitDurationsList">
+              <div class="unit-duration-empty">Henüz tamamlanan ünite bulunmuyor.</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 4. KİTAP ÜNİTELERİNDEKİ İLERLEME VE %75 KURALI KARTI -->
+        <div class="student-unit-progress-card">
+          <div class="unit-progress-card-header">
+            <div class="unit-progress-title-wrap">
+              <span class="up-header-icon">📖</span>
+              <div>
+                <h4 class="up-section-title">Kitap Ünitelerindeki İlerleme</h4>
+                <p class="up-section-desc">Müfredattaki üniteleri açmak için bir önceki üniteyi en az <strong>%75</strong> oranında tamamlamalısın.</p>
+              </div>
+            </div>
+            <span class="up-rule-badge">%75 Kuralı</span>
+          </div>
+
+          <!-- Üniteler Listesi -->
+          <div class="student-unit-progress-list" id="profUnitsProgressList">
+            <!-- JS ile doldurulacak -->
+          </div>
+        </div>
+
+        <!-- 4. XP VE ROZET SİSTEMİ REHBERİ -->
+        <div class="student-how-it-works-banner" id="profOpenBadgesGuideBtn" title="XP ve Rozet Kurallarını Gör">
+          <div class="how-banner-left">
+            <span class="how-icon">📖</span>
+            <div>
+              <div class="how-title">XP ve Rozet Sistemi Nasıl İşler?</div>
+              <div class="how-subtitle">Kelime öğrenme +10 XP • İpucu -5 XP • Kriterler</div>
+            </div>
+          </div>
+          <span class="how-arrow">›</span>
+        </div>
+      </div>
+    </div>
   </div>
+
+  
 
   <!-- AYARLAR MODALI (TAM EKRAN) -->
   <div id="settingsModal" class="modal-overlay full-screen-modal">
@@ -2351,10 +2535,6 @@
       <!-- Ayarlar Sekmeleri (4 Modern 3D Sekme - Adaptive Scroll) -->
       <div class="settings-tabs-nav" id="settingsTabsNav">
         <!-- Profil sekmesi üst bardan bağımsız modal olarak sunulduğu için ayarlar menüsünde yer almaz -->
-        <button type="button" class="settings-tab-btn" data-tab="profile" style="display: none !important;" aria-hidden="true" title="Profil">
-          <span class="tab-emoji">👤</span>
-          <span class="tab-text">Profil</span>
-        </button>
         <button type="button" class="settings-tab-btn active" data-tab="cards" title="Kelime Kartı ve Çalışma Ayarları">
           <span class="tab-emoji">🃏</span>
           <span class="tab-text">Kart</span>
@@ -2375,242 +2555,7 @@
 
       <div class="settings-content">
         <div class="settings-tab-panels">
-          <!-- 0. SEKME: PROFİL & MÜFREDAT -->
-          <div class="settings-tab-panel active" id="tabPanelProfile">
-            <div class="setting-block" id="settingAccountInfoBlock">
-              <span class="setting-block-label">Hesap Durumu</span>
-              <div id="settingAccountStatusBox" class="setting-account-box" style="display: flex; align-items: center; justify-content: space-between; padding: 10px 14px; background: var(--bg-body); border: 1px solid var(--border-color); border-radius: var(--radius-md);">
-                <div style="display: flex; align-items: center; gap: 10px;">
-                  <span id="settingAccountIcon" style="font-size: 1.3rem;">👤</span>
-                  <div>
-                    <div id="settingAccountStatusTitle" style="font-size: 0.92rem; font-weight: 700; color: var(--text-main);">Misafir Kullanıcı</div>
-                    <div id="settingAccountEmailText" style="font-size: 0.8rem; color: var(--text-muted);">Puanlarınızı bulutta saklamak için giriş yapın</div>
-                  </div>
-                </div>
-                <button type="button" id="settingAccountActionBtn" class="btn btn-primary btn-sm" style="padding: 6px 14px; font-size: 0.82rem; border-radius: var(--radius-md); white-space: nowrap;">Giriş Yap</button>
-              </div>
-            </div>
-
-            <div class="setting-block">
-              <span class="setting-block-label">Öğrenci Adı</span>
-              <input type="text" id="settingUserNameInput" class="setting-text-input" placeholder="Adınız..." maxlength="20">
-            </div>
-
-            <div class="setting-block" id="settingAvatarPickerBlock">
-              <div class="setting-block-header">
-                <span class="setting-block-label">Öğrenci Avatarı</span>
-                <span class="setting-badge-pill" style="background: rgba(99, 102, 241, 0.15); color: #818cf8; font-weight: 800;">80 Özel Avatar</span>
-              </div>
-              <div style="display: flex; align-items: center; justify-content: space-between; padding: 12px 14px; background: rgba(10, 12, 19, 0.6); border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 16px;">
-                <div style="display: flex; align-items: center; gap: 14px;">
-                  <div id="settingUserAvatarPreview" style="width: 52px; height: 52px; border-radius: 50%; border: 2.5px solid #6366f1; box-shadow: 0 4px 14px rgba(99, 102, 241, 0.35); overflow: hidden; display: flex; align-items: center; justify-content: center; font-size: 1.8rem; background: var(--bg-surface);">
-                    🦊
-                  </div>
-                  <div>
-                    <div style="font-size: 0.92rem; font-weight: 800; color: var(--text-main);">Karakterini Seç</div>
-                    <div style="font-size: 0.76rem; color: var(--text-muted);">8 tematik kategoride 80 suluboya avatar</div>
-                  </div>
-                </div>
-                <button type="button" class="btn btn-primary btn-sm" id="settingOpenAvatarPickerBtn" style="padding: 8px 14px; font-size: 0.82rem; border-radius: 12px; white-space: nowrap; cursor: pointer;">
-                  🎨 Değiştir
-                </button>
-              </div>
-            </div>
-
-            <div class="setting-block">
-              <span class="setting-block-label">Öğrenilen Dil</span>
-              <select id="settingLangSelect" class="setting-select-box">
-                <option value="EN-TR">🇬🇧 İngilizce → Türkçe</option>
-                <option value="FR-TR">🇫🇷 Fransızca → Türkçe</option>
-                <option value="DE-TR">🇩🇪 Almanca → Türkçe</option>
-              </select>
-            </div>
-
-            <div class="setting-block">
-              <span class="setting-block-label">Resmi Şube</span>
-              <div id="settingBranchDisplayBox" style="display: flex; align-items: center; justify-content: space-between; padding: 10px 14px; background: rgba(59, 130, 246, 0.08); border: 1.5px solid rgba(59, 130, 246, 0.3); border-radius: var(--radius-md);">
-                <div style="display: flex; align-items: center; gap: 8px;">
-                  <span style="font-size: 1.2rem;">🏫</span>
-                  <div>
-                    <div id="settingBranchTitle" style="font-size: 0.92rem; font-weight: 800; color: var(--text-main);">Henüz Seçilmedi</div>
-                    <div id="settingBranchSub" style="font-size: 0.75rem; color: var(--text-muted);">Sınıf İçi Liderlik & Düello Şubesi</div>
-                  </div>
-                </div>
-                <span id="settingBranchLockBadge" style="display: flex; align-items: center; gap: 4px; font-size: 0.74rem; font-weight: 800; padding: 3px 8px; border-radius: 8px; background: rgba(245, 158, 11, 0.15); color: #f59e0b; border: 1px solid rgba(245, 158, 11, 0.3);">
-                  <span>🔒</span> Kilitli
-                </span>
-              </div>
-            </div>
-
-            <div class="setting-block">
-              <span class="setting-block-label">Eğitim Kuru</span>
-              <select id="settingTrackSelect" class="setting-select-box">
-                <option value="4A">Alt Kur (4A - A2 Seviyesi)</option>
-                <option value="4B">Üst Kur (4B - B1 Seviyesi)</option>
-              </select>
-            </div>
-
-            <div class="setting-block">
-              <span class="setting-block-label">Aktif Ünite</span>
-              <select id="settingUnitSelect" class="setting-select-box">
-                <!-- JS ile dinamik doldurulur -->
-              </select>
-            </div>
-
-            <div class="setting-block">
-              <span class="setting-block-label">Günlük Hedef Kotası</span>
-              <select id="settingDailyGoalSelect" class="setting-select-box">
-                <option value="5">5 Kelime / Gün</option>
-                <option value="10">10 Kelime / Gün</option>
-                <option value="15">15 Kelime / Gün (Önerilen)</option>
-                <option value="20">20 Kelime / Gün</option>
-                <option value="30">30 Kelime / Gün</option>
-                <option value="999">Tüm Ünite</option>
-              </select>
-            </div>
-
-            <!-- HESAP GÜVENLİĞİ / ŞİFRE DEĞİŞTİR -->
-            <div class="setting-block" id="settingSecurityBlock" style="display: none;">
-              <div class="setting-block-header">
-                <span class="setting-block-label">🔐 Hesap Güvenliği</span>
-              </div>
-              <button type="button" id="settingOpenChangePasswordBtn" class="pill-btn" style="width: 100%; padding: 10px; font-size: 0.88rem; font-weight: 700; background: rgba(56, 189, 248, 0.12); color: #38bdf8; border: 1px solid rgba(56, 189, 248, 0.3); cursor: pointer;">
-                🔑 Şifremi Değiştir
-              </button>
-            </div>
-
-            <button type="button" id="saveProfileSettingsBtn" class="pill-btn primary-action-btn" style="width: 100%; margin-top: 6px;">
-              <span>💾</span> Profil Değişikliklerini Kaydet
-            </button>
-
-            <!-- 2. BAŞARI KARNESİ (4'LÜ SAYAC KARTLARI) -->
-            <div class="setting-block" style="margin-top: 14px;">
-              <div class="setting-block-header">
-                <span class="setting-block-label">🏆 Başarı Karnem & Seviye</span>
-                <span class="setting-badge-pill" style="background: rgba(16, 185, 129, 0.15); color: #10b981; font-weight: 800;">Canlı İlerleme</span>
-              </div>
-              <div class="student-stats-grid" style="margin-top: 8px;">
-                <div class="student-stat-card">
-                  <span class="stat-icon">📚</span>
-                  <div class="stat-val" id="profStatLearned">0</div>
-                  <div class="stat-lbl">Öğrenilen</div>
-                </div>
-                <div class="student-stat-card">
-                  <span class="stat-icon">⭐</span>
-                  <div class="stat-val" id="profStatXp">0</div>
-                  <div class="stat-lbl">Toplam XP</div>
-                </div>
-                <div class="student-stat-card">
-                  <span class="stat-icon">🔥</span>
-                  <div class="stat-val" id="profStatStreak">0</div>
-                  <div class="stat-lbl">En İyi Seri</div>
-                </div>
-                <div class="student-stat-card">
-                  <span class="stat-icon">🎖️</span>
-                  <div class="stat-val" id="profStatBadges">0 / 36</div>
-                  <div class="stat-lbl">Rozetler</div>
-                </div>
-              </div>
-            </div>
-
-            <!-- 3. DETAYLI ETKİNLİK VE ÇALIŞMA SÜRELERİ -->
-            <div class="setting-block">
-              <div class="activity-stats-header" style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px;">
-                <div class="activity-stats-title-row" style="display: flex; align-items: center; gap: 8px;">
-                  <span class="activity-header-icon" style="font-size: 1.2rem;">⏱️</span>
-                  <div>
-                    <h4 class="activity-section-title" style="margin: 0; font-size: 0.92rem; font-weight: 800; color: var(--text-main);">Çalışma Süreleri</h4>
-                    <p class="activity-section-desc" style="margin: 0; font-size: 0.74rem; color: var(--text-muted);">Toplam zaman kullanımı ve oturum bilgileri</p>
-                  </div>
-                </div>
-                <button type="button" id="refreshStatsBtn" class="activity-stats-refresh-btn" title="İstatistikleri Yenile" style="background: rgba(255,255,255,0.06); border: 1px solid var(--border-color); border-radius: 10px; padding: 6px 10px; cursor: pointer;">🔄</button>
-              </div>
-
-              <div class="activity-time-grid">
-                <div class="activity-time-item">
-                  <span class="time-item-icon">🃏</span>
-                  <div class="time-item-details">
-                    <span class="time-item-label">Kelime Kartları</span>
-                    <span class="time-item-val" id="profTimeCards">0 dk</span>
-                  </div>
-                </div>
-
-                <div class="activity-time-item">
-                  <span class="time-item-icon">🎮</span>
-                  <div class="time-item-details">
-                    <span class="time-item-label">Oyun & Pratik</span>
-                    <span class="time-item-val" id="profTimeGames">0 dk</span>
-                  </div>
-                </div>
-
-                <div class="activity-time-item">
-                  <span class="time-item-icon">🚀</span>
-                  <div class="time-item-details">
-                    <span class="time-item-label">İlk Başlama</span>
-                    <span class="time-item-val" id="profStartDate">-</span>
-                  </div>
-                </div>
-
-                <div class="activity-time-item">
-                  <span class="time-item-icon">📝</span>
-                  <div class="time-item-details">
-                    <span class="time-item-label">Kayıt Tarihi</span>
-                    <span class="time-item-val" id="profRegDate">Misafir</span>
-                  </div>
-                </div>
-              </div>
-
-              <!-- Ünite Tamamlama Süreleri -->
-              <div class="activity-unit-durations-section" style="margin-top: 10px;">
-                <div class="unit-durations-header" style="display: flex; align-items: center; gap: 6px; margin-bottom: 6px;">
-                  <span class="unit-durations-icon">🏆</span>
-                  <span class="unit-durations-title" style="font-size: 0.8rem; font-weight: 700; color: var(--text-main);">Ünite Tamamlama Süreleri</span>
-                </div>
-                <div class="unit-durations-list" id="profUnitDurationsList">
-                  <div class="unit-duration-empty" style="font-size: 0.76rem; color: var(--text-muted);">Henüz tamamlanan ünite bulunmuyor.</div>
-                </div>
-              </div>
-            </div>
-
-            <!-- 4. KİTAP ÜNİTELERİNDEKİ İLERLEME VE %75 KURALI -->
-            <div class="setting-block">
-              <div class="unit-progress-card-header" style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px;">
-                <div class="unit-progress-title-wrap" style="display: flex; align-items: center; gap: 8px;">
-                  <span class="up-header-icon" style="font-size: 1.2rem;">📖</span>
-                  <div>
-                    <h4 class="up-section-title" style="margin: 0; font-size: 0.92rem; font-weight: 800; color: var(--text-main);">Kitap Ünitelerindeki İlerleme</h4>
-                    <p class="up-section-desc" style="margin: 0; font-size: 0.74rem; color: var(--text-muted);">Yeni ünite açmak için bir öncekini en az <strong>%75</strong> tamamlamalısın.</p>
-                  </div>
-                </div>
-                <span class="up-rule-badge" style="font-size: 0.72rem; font-weight: 800; padding: 3px 8px; border-radius: 8px; background: rgba(99, 102, 241, 0.15); color: #818cf8; border: 1px solid rgba(99, 102, 241, 0.3);">%75 Kuralı</span>
-              </div>
-
-              <!-- Üniteler Listesi -->
-              <div class="student-unit-progress-list" id="profUnitsProgressList">
-                <!-- JS ile doldurulacak -->
-              </div>
-            </div>
-
-            <!-- XP VE ROZET SİSTEMİ REHBERİ -->
-            <div class="student-how-it-works-banner" id="profOpenBadgesGuideBtn" title="XP ve Rozet Kurallarını Gör" style="margin-top: 10px; cursor: pointer;">
-              <div class="how-banner-left">
-                <span class="how-icon">📖</span>
-                <div>
-                  <div class="how-title">XP ve Rozet Sistemi Nasıl İşler?</div>
-                  <div class="how-subtitle">Kelime öğrenme +10 XP • İpucu -5 XP • Kriterler</div>
-                </div>
-              </div>
-              <span class="how-arrow">›</span>
-            </div>
-
-            <!-- ÇIKIŞ YAP BUTONU -->
-            <button type="button" id="logoutBtn" class="pill-btn" style="width: 100%; margin-top: 15px; background: rgba(239, 68, 68, 0.1); color: #ef4444; border: 1px solid rgba(239, 68, 68, 0.3);">
-              <span style="margin-right: 8px;">🚪</span> <span id="logoutBtnText">Çıkış Yap</span>
-            </button>
-          </div>
-
-          <!-- 1. SEKME: KART & GÖRÜNÜM -->
-          <div class="settings-tab-panel" id="tabPanelCards">
+          <div class="settings-tab-panel active" id="tabPanelCards">
             <!-- Kağıt Rengi -->
             <div class="setting-block">
               <span class="setting-block-label">Kağıt Rengi</span>
@@ -3374,16 +3319,17 @@
       <div class="confirm-icon-wrap" style="font-size: 2.8rem; margin-bottom: 8px;">🎉</div>
       <h3 class="confirm-title" style="font-size: 1.3rem; font-weight: 800; margin: 0 0 6px 0;">LexiQ Güncellendi!</h3>
       <div class="app-update-version-badge" style="display: inline-block; padding: 4px 14px; border-radius: 20px; font-size: 0.84rem; font-weight: 800; margin-bottom: 14px;">
-        Sürüm <span id="appUpdateVersionText">v1.8.6</span>
+        Sürüm <span id="appUpdateVersionText">v1.8.7</span>
       </div>
       <div class="update-notes-box" style="text-align: left; border-radius: 16px; padding: 14px 16px; font-size: 0.88rem; line-height: 1.6; margin-bottom: 18px; max-height: 280px; overflow-y: auto;">
         <div class="update-notes-title" style="font-weight: 800; margin-bottom: 8px; display: flex; align-items: center; gap: 6px;">
           <span>✨</span><span>Bu Sürümdeki Yenilikler</span>
         </div>
         <ul style="margin: 0; padding-left: 20px; display: flex; flex-direction: column; gap: 8px;">
-          <li><strong>🎨 Hakkında Ekranı Baştan Tasarlandı:</strong> Hem Açık (Light) hem Koyu (Dark) mod için kurumsal, şık, cam ve 3D efektli profesyonel tasarım uygulandı; açık temadaki koyu zemin ve renk uyumsuzlukları giderildi.</li>
-          <li><strong>👤 Ayarlar ve Öğrenci Profili Tamamen Ayrıldı:</strong> Ayarlar ekranındaki mükerrer Profil sekmesi kaldırılarak sekmeler yalınlaştırıldı; Öğrenci Profili bağımsız, net bir başarı karnesi olarak açılacak şekilde optimize edildi.</li>
-          <li><strong>🚀 Performans & Kararlılık:</strong> Sistem geçişleri ve tema uyumluluğu hızlandırıldı.</li>
+          <li><strong>🎓 Bağımsız Öğrenci Profili Geri Getirildi:</strong> Üst menü profil simgesine tıklandığında ayarlar yerine tam ekran, zengin Öğrenci Profili açılıyor.</li>
+          <li><strong>🎭 Avatar Değişimi & Şube Bilgisi:</strong> Profil ekranında tıklanabilir avatar değişimi, kayıtlı şube rozeti ve güvenli isim güncellemesi sağlandı.</li>
+          <li><strong>🚪 Misafir Çıkış Butonu:</strong> Misafir modunda da ana karşılama ekranına dönmeyi sağlayan Çıkış Yap butonu aktifleştirildi.</li>
+          <li><strong>⚙️ Sadeleştirilmiş Ayarlar:</strong> Ayarlar ekranı sadece Kart, Arena, Hatırlatıcı ve Sistem sekmelerine odaklandı.</li>
         </ul>
       </div>
       <div style="display: flex; flex-direction: column; gap: 8px; width: 100%;">
@@ -3446,11 +3392,11 @@
   <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-storage-compat.js"></script>
-  <script src="firebase_backend.js?v=1.8.6"></script>
+  <script src="firebase_backend.js?v=1.8.7"></script>
 
   <!-- Kelime Verisi ve Uygulama Mantığı (Sadece Standart Vanilla JS) -->
-  <script src="words_data.js?v=1.8.6"></script>
-  <script src="app.js?v=1.8.6"></script>
+  <script src="words_data.js?v=1.8.7"></script>
+  <script src="app.js?v=1.8.7"></script>
 
   </body>
 </html>
