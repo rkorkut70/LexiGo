@@ -7,7 +7,7 @@
 (function () {
   'use strict';
 
-  const APP_VERSION = 'v1.8.11';
+  const APP_VERSION = 'v1.8.12';
   const CURRENT_APP_BUILD = 'lexiq_build_19_clean';
 
   // Build 13 temiz kurulum / sıfırlama güvencesi (Kullanıcı verilerini sıfırla, Hoş Geldin ekranını garantile)
@@ -858,6 +858,7 @@
     obTrackOptions: document.querySelectorAll('#obTrackOptions .ob-option-card'),
     obLevelGrid: document.getElementById('obLevelGrid'),
     obStep3BackBtn: document.getElementById('obStep3BackBtn'),
+    obStep3SkipBranchBtn: document.getElementById('obStep3SkipBranchBtn'),
     obStep3NextBtn: document.getElementById('obStep3NextBtn'),
     obTrackInfoBox: document.getElementById('obTrackInfoBox'),
     obUnitSelect: document.getElementById('obUnitSelect'),
@@ -2058,6 +2059,7 @@
     // Bilgileri Doldur
     const heroAvatar = document.getElementById('profHeroAvatar');
     const heroName = document.getElementById('profHeroName');
+    const heroSubtitle = document.getElementById('profHeroSubtitle');
     const trackBadge = document.getElementById('profHeroTrackBadge');
     const langBadge = document.getElementById('profHeroLangBadge');
     const accountStatus = document.getElementById('profAccountStatusText');
@@ -2065,7 +2067,10 @@
 
     const branchBadge = document.getElementById('profHeroBranchBadge');
     if (heroAvatar) setAvatarElement(heroAvatar, state.userAvatar);
-    if (heroName) heroName.textContent = state.userName;
+    if (heroName) heroName.textContent = state.userName || 'Öğrenci';
+    if (heroSubtitle) heroSubtitle.textContent = state.userName || 'Öğrenci';
+    const initNameInput = document.getElementById('profNameInput');
+    if (initNameInput) initNameInput.value = state.userName || 'Öğrenci';
     if (trackBadge) trackBadge.textContent = state.userTrack === '4B' ? '4B (B1 İleri)' : '4A (A2 Temel)';
     if (branchBadge) {
       updateStudentProfileBranchBadge();
@@ -3035,6 +3040,14 @@ let activeAvatarCategory = 'all';
     if (dom.homeUserName) dom.homeUserName.textContent = state.userName;
     const profHeroAvatar = document.getElementById('profHeroAvatar');
     if (profHeroAvatar) setAvatarElement(profHeroAvatar, state.userAvatar);
+    const profHeroSubtitle = document.getElementById('profHeroSubtitle');
+    if (profHeroSubtitle) profHeroSubtitle.textContent = state.userName || 'Öğrenci';
+    const profHeroName = document.getElementById('profHeroName');
+    if (profHeroName) profHeroName.textContent = state.userName || 'Öğrenci';
+    const profNameInput = document.getElementById('profNameInput');
+    if (profNameInput && document.activeElement !== profNameInput) {
+      profNameInput.value = state.userName || 'Öğrenci';
+    }
     if (dom.settingUserNameInput && document.activeElement !== dom.settingUserNameInput) {
       dom.settingUserNameInput.value = state.userName;
     }
@@ -3045,8 +3058,13 @@ let activeAvatarCategory = 'all';
   function applyUserData(userData, options = {}) {
     if (!userData) return;
     if (userData.displayName && userData.displayName !== 'İsimsiz Kahraman') {
-      state.userName = userData.displayName;
-      localStorage.setItem('lexiq_user_name', userData.displayName);
+      const currentValidName = (state.userName && state.userName !== 'Öğrenci') ? state.userName : (localStorage.getItem('lexiq_user_name') && localStorage.getItem('lexiq_user_name') !== 'Öğrenci' ? localStorage.getItem('lexiq_user_name') : null);
+      if (userData.displayName === 'Öğrenci' && currentValidName) {
+        // Kullanıcının belirlediği özel ismi varsayılan 'Öğrenci' ile ezme
+      } else {
+        state.userName = userData.displayName;
+        localStorage.setItem('lexiq_user_name', userData.displayName);
+      }
     }
     if (userData.avatar) {
       state.userAvatar = userData.avatar;
@@ -3796,10 +3814,20 @@ let activeAvatarCategory = 'all';
   };
 
   function updateOnboardingBranchInfo() {
-    const branches = window.SCHOOL_BRANCHES || SCHOOL_BRANCHES;
-    const curB = branches.find(b => b.code === obState.branch) || branches[0];
     const badgeEl = document.getElementById('obBranchTrackBadge');
     const descEl = document.getElementById('obBranchTrackDesc');
+    if (!obState.branch) {
+      if (badgeEl) {
+        badgeEl.textContent = 'Şubesiz (Bireysel)';
+        badgeEl.style.background = '#64748b';
+      }
+      if (descEl) {
+        descEl.textContent = 'Herhangi bir sınıfa bağlı olmadan bireysel olarak ilerliyorsunuz. İstediğiniz zaman profilinizden sınıf seçebilirsiniz.';
+      }
+      return;
+    }
+    const branches = window.SCHOOL_BRANCHES || SCHOOL_BRANCHES;
+    const curB = branches.find(b => b.code === obState.branch) || branches[0];
     if (curB) {
       obState.track = curB.track;
       obState.level = curB.level;
@@ -3830,12 +3858,14 @@ let activeAvatarCategory = 'all';
     
     if (branchSelect) {
       branchSelect.innerHTML = '';
-      if (branches.length === 0) {
-        const opt = document.createElement('option');
-        opt.value = '';
-        opt.textContent = 'Şube bulunamadı';
-        branchSelect.appendChild(opt);
-      } else {
+      
+      // Şubesiz Devam seçeneğini en üste ekle
+      const skipOpt = document.createElement('option');
+      skipOpt.value = '';
+      skipOpt.textContent = '🏫 Şubesiz Devam Et (Bireysel / Okul Dışı)';
+      branchSelect.appendChild(skipOpt);
+
+      if (branches.length > 0) {
         branches.forEach(b => {
           const opt = document.createElement('option');
           opt.value = b.code;
@@ -3843,29 +3873,48 @@ let activeAvatarCategory = 'all';
           branchSelect.appendChild(opt);
         });
 
-        // Eğer mevcut seçili şube bu dilde yoksa ilk şubeyi al
-        if (!obState.branch || !branches.some(b => b.code === obState.branch)) {
+        // Eğer mevcut seçili şube bu dilde varsa onu koru
+        if (obState.branch && branches.some(b => b.code === obState.branch)) {
+          branchSelect.value = obState.branch;
+        } else if (obState.branch === '') {
+          branchSelect.value = '';
+        } else {
+          // Varsayılan ilk resmi şube seçili gelsin
           obState.branch = branches[0].code;
+          branchSelect.value = obState.branch;
         }
-        branchSelect.value = obState.branch;
+      } else {
+        branchSelect.value = '';
       }
 
       branchSelect.onchange = (e) => {
         obState.branch = e.target.value;
+        if (obState.branch) {
+          const curB = branches.find(b => b.code === obState.branch);
+          if (curB) {
+            obState.track = curB.track;
+            obState.level = curB.level;
+            obState.unitNo = calculateCurrentUnitByDate(obState.lang, obState.level);
+          }
+        } else {
+          obState.track = '4A';
+          obState.level = 'A2';
+          obState.unitNo = calculateCurrentUnitByDate(obState.lang, obState.level) || 1;
+        }
+        updateOnboardingBranchInfo();
+      };
+
+      if (obState.branch) {
         const curB = branches.find(b => b.code === obState.branch);
         if (curB) {
           obState.track = curB.track;
           obState.level = curB.level;
           obState.unitNo = calculateCurrentUnitByDate(obState.lang, obState.level);
         }
-        updateOnboardingBranchInfo();
-      };
-
-      const curB = branches.find(b => b.code === obState.branch);
-      if (curB) {
-        obState.track = curB.track;
-        obState.level = curB.level;
-        obState.unitNo = calculateCurrentUnitByDate(obState.lang, obState.level);
+      } else {
+        obState.track = '4A';
+        obState.level = 'A2';
+        obState.unitNo = calculateCurrentUnitByDate(obState.lang, obState.level) || 1;
       }
     }
 
@@ -3933,8 +3982,8 @@ let activeAvatarCategory = 'all';
   }
 
   function completeOnboarding() {
-    state.userName = obState.name || 'Öğrenci';
-    state.userAvatar = obState.avatar || '🦊';
+    state.userName = (obState.name && obState.name.trim()) || localStorage.getItem('lexiq_user_name') || state.userName || 'Öğrenci';
+    state.userAvatar = (obState.avatar && obState.avatar !== '🦊') ? obState.avatar : ((state.userAvatar && state.userAvatar !== '🦊') ? state.userAvatar : (localStorage.getItem('lexiq_user_avatar') || 'avatar_1_1'));
     state.activeLanguage = obState.lang || 'EN-TR';
     state.userTrack = obState.track || '4A';
     state.userLevel = obState.level || getLevelForTrack(state.activeLanguage, state.userTrack);
@@ -3944,7 +3993,7 @@ let activeAvatarCategory = 'all';
     state.dailyGoalExtra = 0;
     state.isOnboarded = true;
 
-    // Seçilen Şubeyi Kaydet ve Kilitle
+    // Seçilen Şubeyi Kaydet ve Kilitle (Şubesiz ise kilit açılır)
     if (obState.branch) {
       state.userBranch = obState.branch;
       state.branchLocked = true;
@@ -3952,6 +4001,14 @@ let activeAvatarCategory = 'all';
       localStorage.setItem('lexiq_branch_locked', 'true');
       if (typeof window.updateUserBranch === 'function') {
         window.updateUserBranch(obState.branch);
+      }
+    } else {
+      state.userBranch = '';
+      state.branchLocked = false;
+      localStorage.removeItem('lexiq_user_branch');
+      localStorage.removeItem('lexiq_branch_locked');
+      if (typeof window.updateUserBranch === 'function') {
+        window.updateUserBranch('');
       }
     }
 
@@ -8734,6 +8791,9 @@ let activeAvatarCategory = 'all';
       }
 
       obState.name = val;
+      state.userName = val;
+      localStorage.setItem('lexiq_user_name', val);
+      updateUserProfileUI();
       goToOnboardingStep(2);
     }
 
@@ -8800,19 +8860,34 @@ let activeAvatarCategory = 'all';
     if (dom.obStep3BackBtn) {
       dom.obStep3BackBtn.addEventListener('click', () => goToOnboardingStep(2));
     }
+    if (dom.obStep3SkipBranchBtn) {
+      dom.obStep3SkipBranchBtn.addEventListener('click', () => {
+        obState.branch = '';
+        obState.track = '4A';
+        obState.level = 'A2';
+        obState.unitNo = calculateCurrentUnitByDate(obState.lang, obState.level) || 1;
+        goToOnboardingStep(4);
+        showToast('Şubesiz devam ediyorsunuz. İstediğiniz zaman profilinizden sınıf seçebilirsiniz. ℹ️', 3500);
+      });
+    }
     if (dom.obStep3NextBtn) {
       dom.obStep3NextBtn.addEventListener('click', () => {
         const branchSelect = document.getElementById('obBranchSelect');
-        if (branchSelect && branchSelect.value) {
-          obState.branch = branchSelect.value;
+        if (branchSelect) {
+          obState.branch = branchSelect.value || '';
         }
-        const branches = window.SCHOOL_BRANCHES || SCHOOL_BRANCHES;
-        const curB = branches.find(b => b.code === obState.branch);
-        if (curB) {
-          obState.track = curB.track;
-          obState.level = curB.level;
+        if (obState.branch) {
+          const branches = window.SCHOOL_BRANCHES || SCHOOL_BRANCHES;
+          const curB = branches.find(b => b.code === obState.branch);
+          if (curB) {
+            obState.track = curB.track;
+            obState.level = curB.level;
+          }
+        } else {
+          obState.track = '4A';
+          obState.level = 'A2';
         }
-        obState.unitNo = calculateCurrentUnitByDate(obState.lang, obState.level);
+        obState.unitNo = calculateCurrentUnitByDate(obState.lang, obState.level) || 1;
         goToOnboardingStep(4);
       });
     }
@@ -9988,6 +10063,13 @@ let activeAvatarCategory = 'all';
             state.timeTracking.registeredAt = now;
             localStorage.setItem('lexiq_registered_at', String(now));
 
+            if (name) {
+              state.userName = name;
+              localStorage.setItem('lexiq_user_name', name);
+              obState.name = name;
+              updateUserProfileUI();
+            }
+
             // Yeni kayıt olan kullanıcı için onboarding henüz tamamlanmadı: Kesinlikle Dil ve Kur seçimine yönlendir
             state.isOnboarded = false;
             localStorage.removeItem('lexiq_user_onboarded');
@@ -10009,30 +10091,31 @@ let activeAvatarCategory = 'all';
             showToast(`Hesabın oluşturuldu, hoş geldin ${name}! 🎉 Şimdi öğrenmek istediğin dili seç.`);
           } else {
             // --- GİRİŞ YAPMA AKIŞI ---
-            const hasCompletedOnboarding = localStorage.getItem('lexiq_user_onboarded') === 'true' && state.userTrack && state.activeLanguage;
-            if (!hasCompletedOnboarding && (window.isOnboardingAuthFlow || (obModal && obModal.classList.contains('active')))) {
-              state.isOnboarded = false;
-              if (obModal) {
-                obModal.style.display = 'flex';
-                obModal.classList.add('active');
-              }
-              if (obStepIndicator) obStepIndicator.style.display = 'flex';
-              goToOnboardingStep(2);
-              showToast(`Hoş geldin, ${state.userName}! Lütfen dilini ve kurunu seç.`);
-            } else {
-              localStorage.setItem('lexiq_user_onboarded', 'true');
-              state.isOnboarded = true;
-              if (obModal) {
-                obModal.classList.remove('active');
-                obModal.style.display = 'none';
-              }
-              if (document.getElementById('leaderboardModal') && document.getElementById('leaderboardModal').classList.contains('active')) {
-                openLeaderboardModal();
-              } else {
-                switchAppMode('home');
-              }
-              showToast(`Hoş geldin, ${state.userName}! 🎉`);
+            localStorage.setItem('lexiq_user_onboarded', 'true');
+            state.isOnboarded = true;
+
+            if (obModal) {
+              obModal.classList.remove('active');
+              obModal.style.display = 'none';
             }
+
+            // Kullanıcının kayıtlı dilini aktif et
+            const targetLang = state.activeLanguage || localStorage.getItem('kelime_active_lang') || 'EN-TR';
+            if (typeof setLanguage === 'function') {
+              setLanguage(targetLang, false);
+            }
+
+            updateUserProfileUI();
+            updateArenaHeaderAndStats();
+            populateProfileSettingsTab();
+            refreshWordsList();
+
+            if (document.getElementById('leaderboardModal') && document.getElementById('leaderboardModal').classList.contains('active')) {
+              openLeaderboardModal();
+            } else {
+              switchAppMode('home');
+            }
+            showToast(`Hoş geldin, ${state.userName}! 🎉 Verilerin buluttan yüklendi.`);
           }
           window.isOnboardingAuthFlow = false;
         } else {

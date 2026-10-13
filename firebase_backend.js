@@ -151,7 +151,9 @@ async function syncUserData(user) {
   const localName = localStorage.getItem('lexiq_user_name');
   const resolvedName = (docData && docData.displayName && docData.displayName !== 'İsimsiz Kahraman' && docData.displayName !== 'Öğrenci')
     ? docData.displayName
-    : (currentUser.displayName || localName || 'Öğrenci');
+    : ((localName && localName !== 'Öğrenci' && localName !== 'İsimsiz Kahraman')
+        ? localName
+        : (currentUser.displayName || 'Öğrenci'));
 
   const resolvedAvatar = (docData && docData.avatar && docData.avatar !== '🦊') ? docData.avatar : (localStorage.getItem('lexiq_user_avatar') || 'avatar_1_1');
   const resolvedEmail = currentUser.email || (docData && docData.email) || localStorage.getItem('lexiq_user_email') || '';
@@ -279,10 +281,20 @@ async function syncUserData(user) {
   localStorage.setItem('lexiq_unit_durations', JSON.stringify(mergedUnitDurations));
   localStorage.setItem('lexiq_day_streak', bestDayStreak.toString());
   localStorage.setItem('lexiq_max_day_streak', bestMaxDayStreak.toString());
-  // Cihaz verisi temizlenmişse (lexiq_user_onboarded yoksa) asla otomatik onboarded yapma
-  const hasOnboarded = !!((docData && docData.onboarded === true) && (localStorage.getItem('lexiq_user_onboarded') === 'true'));
+  // Kayıtlı kullanıcının hesabı varsa (docData) veya lang/track bilgisi varsa onboarded kabul edilir
+  const hasOnboarded = !!((docData && (docData.lang || docData.track || docData.onboarded)) || (localStorage.getItem('lexiq_user_onboarded') === 'true'));
   if (hasOnboarded) {
     localStorage.setItem('lexiq_user_onboarded', 'true');
+    if (window.state) {
+      window.state.isOnboarded = true;
+      if (resolvedLang) window.state.activeLanguage = resolvedLang;
+      if (resolvedTrack) window.state.userTrack = resolvedTrack;
+      if (resolvedLevel) window.state.userLevel = resolvedLevel;
+      if (resolvedBranch) {
+        window.state.userBranch = resolvedBranch;
+        window.state.branchLocked = true;
+      }
+    }
   }
 
   window.cachedFbUserData = syncedProfile;

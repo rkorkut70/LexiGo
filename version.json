@@ -1,12 +1,10 @@
 {
-  "version": "v1.8.11",
-  "versionCode": 71,
+  "version": "v1.8.12",
+  "versionCode": 72,
   "releaseDate": "2026-10-13",
   "notes": [
-    "🎓 Öğrenci Avatarı Varsayılan Yapıldı: Tilki avatarı yerine sevimli öğrenci avatarı varsayılan olarak belirlendi",
-    "🏫 Profilde İsteğe Bağlı Sınıf/Şube Seçimi: Henüz sınıf seçilmediyse profil sayfasından isteğe bağlı sınıf seçimi ve kalıcı kilit bilgilendirmesi eklendi",
-    "✨ Profil Kartı Katmanlı Düzen: Rozetler ve butonlar ferah ve çakışmasız katmanlara ayrıldı",
-    "🚪 Güvenli ve Temiz Sistemden Çıkış: Misafir ve kayıtlı kullanıcı çıkışları pürüzsüzleştirildi",
-    "☀️ Açık Tema (Light Theme) Tam Uyumu: Ayarlar ve Turnuva ekranları açık temada pırıl pırıl açık renklerle tasarlandı"
+    "👤 Kayıtlı Kullanıcı İsmi Koruma Düzeltmesi: Kayıt olurken belirlenen ismin profil ekranında Öğrenci olarak görünmesi sorunu çözüldü",
+    "🎓 Öğrenci Profili Başlık & Alt Başlık Senkronizasyonu: Profil başlığı ve alt başlığı kullanıcının gerçek ismiyle eşzamanlandı",
+    "🛡️ Firestore İsim Ezilme Koruması: Yerel kullanıcı adının Firestore varsayılanı ile ezilmesi engellendi"
   ]
 }
