@@ -15,7 +15,7 @@
   <meta http-equiv="Expires" content="0">
   <title>LexiQ • Çok Dilli Akıllı Kelime Kartları</title>
   <link rel="icon" type="image/jpeg" href="logo.jpg">
-  <link rel="stylesheet" href="style.css?v=1.8.10">
+  <link rel="stylesheet" href="style.css?v=1.8.7">
 </head>
 <body>
   <div class="app-container">
@@ -34,7 +34,7 @@
 
         <!-- Ayarlar & Profil Butonu (Tıklanınca Ayarları Açar) -->
         <button id="userProfileBtn" class="pill-btn user-header-btn student-profile-header-btn" title="Öğrenci Bilgileri & Profil" onclick="if(window.openStudentProfileModal) window.openStudentProfileModal();">
-          <span id="headerUserAvatar" class="settings-btn-icon"><img src="assets/avatars/avatar_1_1.jpg" class="avatar-img-fluid" style="width:100%; height:100%; border-radius:50%; object-fit:cover; display:block;" alt="Avatar"></span>
+          <span id="headerUserAvatar" class="settings-btn-icon">🦊</span>
           <span id="headerUserName" class="header-btn-text">Öğrenci</span>
         </button>
 
@@ -123,7 +123,7 @@
           
           <div class="home-hero-top">
             <div class="home-user-greeting">
-              <span class="greeting-avatar" id="homeUserAvatar"><img src="assets/avatars/avatar_1_1.jpg" class="avatar-img-fluid" style="width:100%; height:100%; border-radius:50%; object-fit:cover; display:block;" alt="Avatar"></span>
+              <span class="greeting-avatar" id="homeUserAvatar">🦊</span>
               <span class="greeting-text">Merhaba, <strong id="homeUserName">Öğrenci</strong>!</span>
             </div>
             <div class="home-unit-badge" id="homeUnitBadge">
@@ -1136,7 +1136,7 @@
         <div class="welcome-hero-section">
           <div class="welcome-brand-wrapper">
             <h1 class="welcome-brand-name">Lexi<span class="welcome-brand-q">Q</span></h1>
-            <span class="welcome-version-pill">v1.8.10</span>
+            <span class="welcome-version-pill">v1.8.7</span>
           </div>
           <!-- 3 Temel Başarı Sütunu (3D Pill Rozetleri) -->
           <div class="welcome-pillars-container">
@@ -1715,7 +1715,7 @@
       <div id="lbCurrentUserBar" style="display: none;">
         <div style="display: flex; align-items: center; gap: 8px;">
           <span id="lbMyRankBadge" style="font-size: 0.85rem; font-weight: 800; color: var(--accent);">#--</span>
-          <span id="lbMyAvatar" style="font-size: 1.2rem; display: inline-flex; align-items: center; justify-content: center; width: 26px; height: 26px; border-radius: 50%; overflow: hidden;"><img src="assets/avatars/avatar_1_1.jpg" class="avatar-img-fluid" style="width:100%; height:100%; border-radius:50%; object-fit:cover; display:block;" alt="Avatar"></span>
+          <span id="lbMyAvatar" style="font-size: 1.2rem;">🦊</span>
           <div>
             <strong id="lbMyName" style="font-size: 0.82rem; color: var(--text-main); display: block;">Sen</strong>
             <span id="lbMyBranchTag" style="font-size: 0.7rem; color: var(--text-muted);">Şube: -</span>
@@ -1804,34 +1804,27 @@
 
   <!-- BİR DEFAYA MAHSUS ŞUBE SEÇME MODALI (Mevcut kullanıcılar için) -->
   <div id="selectBranchModal" class="modal-overlay" style="z-index: 10030; display: none;">
-    <div class="modal-card" style="max-width: 460px; width: 92%; padding: 24px 20px; text-align: center; border-radius: 24px; box-shadow: 0 20px 50px rgba(0,0,0,0.5);">
-      <div style="font-size: 2.6rem; margin-bottom: 8px;">🏫</div>
-      <h2 style="font-size: 1.3rem; font-weight: 900; margin-bottom: 8px; color: var(--text-main);">Sınıf / Şube Belirleme</h2>
-      
-      <!-- Okul Dışı / İsteğe Bağlı Bilgilendirmesi -->
-      <div style="text-align: left; margin-bottom: 14px; padding: 12px 14px; background: rgba(59, 130, 246, 0.1); border: 1px solid rgba(59, 130, 246, 0.25); border-radius: 14px; font-size: 0.82rem; color: var(--text-main); line-height: 1.45;">
-        <div style="font-weight: 800; color: #60a5fa; margin-bottom: 4px; display: flex; align-items: center; gap: 6px;">
-          <span>💡</span> <span>İsteğe Bağlı Seçenek</span>
-        </div>
-        Sınıf/Şube seçimi tamamen sizin isteğinize bağlıdır. Okul dışından katılıyorsanız veya bağımsız çalışıyorsanız herhangi bir sınıf seçmeden serbestçe devam edebilirsiniz.
-      </div>
+    <div class="modal-card" style="max-width: 440px; width: 92%; padding: 22px; text-align: center;">
+      <div style="font-size: 2.4rem; margin-bottom: 8px;">🏫</div>
+      <h2 style="font-size: 1.25rem; font-weight: 900; margin-bottom: 6px; color: var(--text-main);">Resmi Şubeni Seç</h2>
+      <p style="font-size: 0.84rem; color: var(--text-muted); margin-bottom: 16px; line-height: 1.4;">
+        Sınıf arkadaşlarınla liderlik yarışına katılmak ve şubeler arası düelloda sınıfını zafere taşımak için şubeni seç.
+      </p>
 
       <div style="text-align: left; margin-bottom: 14px;">
-        <label for="modalBranchSelect" style="display: block; font-size: 0.78rem; font-weight: 800; color: var(--text-muted); margin-bottom: 6px; text-transform: uppercase; letter-spacing: 0.5px;">Resmi Sınıf / Şubenizi Seçin:</label>
-        <select id="modalBranchSelect" class="setting-select-box" style="width: 100%; padding: 12px 14px; font-size: 0.95rem; font-weight: 700; border-radius: 12px; background: var(--bg-card); border: 2px solid var(--accent); color: var(--text-main); outline: none;">
+        <label style="display: block; font-size: 0.78rem; font-weight: 700; color: var(--text-muted); margin-bottom: 6px; text-transform: uppercase;">Şube Listesi:</label>
+        <select id="modalBranchSelect" class="setting-select-box" style="width: 100%; padding: 12px 14px; font-size: 0.95rem; font-weight: 700; border-radius: 12px; background: var(--bg-card); border: 2px solid var(--accent); color: var(--text-main);">
           <!-- Dinamik doldurulacak -->
         </select>
-        
-        <!-- Kalıcı Kilit Uyarısı -->
-        <div style="display: flex; align-items: flex-start; gap: 8px; margin-top: 10px; padding: 10px 12px; background: rgba(245, 158, 11, 0.12); border: 1px solid rgba(245, 158, 11, 0.35); border-radius: 12px; font-size: 0.78rem; color: #fbbf24; line-height: 1.4;">
-          <span style="font-size: 1.1rem; flex-shrink: 0;">⚠️</span>
-          <span><strong>DİKKAT:</strong> Herhangi bir sınıf seçtiğinizde bu seçim <strong>kalıcı olarak kilitlenir ve daha sonra değiştirilemez!</strong> Lütfen doğru sınıfı seçtiğinizden emin olun.</span>
+        <div style="display: flex; align-items: center; gap: 6px; margin-top: 8px; padding: 8px 10px; background: rgba(245, 158, 11, 0.12); border: 1px solid rgba(245, 158, 11, 0.3); border-radius: 10px; font-size: 0.74rem; color: #f59e0b; line-height: 1.35;">
+          <span>🔒</span>
+          <span><strong>Önemli:</strong> Şube seçimi kalıcıdır ve sonradan ayarlardan değiştirilemez. Lütfen doğru şubeyi seçtiğinden emin ol!</span>
         </div>
       </div>
 
-      <div style="display: flex; gap: 10px; justify-content: flex-end; margin-top: 20px;">
-        <button type="button" id="cancelBranchModalBtn" class="pill-btn secondary-btn" style="padding: 11px 18px; font-size: 0.88rem; font-weight: 700; border-radius: 12px;">İptal / Şubesiz Kal</button>
-        <button type="button" id="confirmBranchModalBtn" class="pill-btn primary-action-btn" style="padding: 11px 22px; font-size: 0.88rem; font-weight: 800; border-radius: 12px; background: linear-gradient(135deg, #3b82f6, #1d4ed8); color: #fff; border: none; cursor: pointer;">🔒 Sınıfımı Seç ve Kilitle</button>
+      <div style="display: flex; gap: 8px; justify-content: flex-end; margin-top: 18px;">
+        <button type="button" id="cancelBranchModalBtn" class="pill-btn secondary-btn" style="padding: 10px 18px; font-size: 0.88rem;">Daha Sonra</button>
+        <button type="button" id="confirmBranchModalBtn" class="pill-btn primary-action-btn" style="padding: 10px 22px; font-size: 0.88rem;">Şubemi Onayla ➔</button>
       </div>
     </div>
   </div>
@@ -1857,7 +1850,7 @@
         <div class="about-hero-box">
           <div class="about-brand-row">
             <span class="about-brand">Lexi<span class="brand-highlight">Q</span></span>
-            <span class="about-version-pill" id="aboutAppVersion">v1.8.10</span>
+            <span class="about-version-pill" id="aboutAppVersion">v1.8.7</span>
             <span class="about-platform-badge" id="aboutPlatformBadge" style="display: none; font-size: 0.72rem; font-weight: 700; padding: 3px 9px; border-radius: 12px; background: rgba(59,130,246,0.15); color: #3b82f6; border: 1px solid rgba(59,130,246,0.3);"></span>
           </div>
           <p class="about-tagline">Müfredat Tabanlı Çok Dilli Kelime Arenası</p>
@@ -3332,7 +3325,7 @@
       <div class="confirm-icon-wrap" style="font-size: 2.8rem; margin-bottom: 8px;">🎉</div>
       <h3 class="confirm-title" style="font-size: 1.3rem; font-weight: 800; margin: 0 0 6px 0;">LexiQ Güncellendi!</h3>
       <div class="app-update-version-badge" style="display: inline-block; padding: 4px 14px; border-radius: 20px; font-size: 0.84rem; font-weight: 800; margin-bottom: 14px;">
-        Sürüm <span id="appUpdateVersionText">v1.8.10</span>
+        Sürüm <span id="appUpdateVersionText">v1.8.7</span>
       </div>
       <div class="update-notes-box" style="text-align: left; border-radius: 16px; padding: 14px 16px; font-size: 0.88rem; line-height: 1.6; margin-bottom: 18px; max-height: 280px; overflow-y: auto;">
         <div class="update-notes-title" style="font-weight: 800; margin-bottom: 8px; display: flex; align-items: center; gap: 6px;">
@@ -3405,11 +3398,11 @@
   <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-storage-compat.js"></script>
-  <script src="firebase_backend.js?v=1.8.10"></script>
+  <script src="firebase_backend.js?v=1.8.7"></script>
 
   <!-- Kelime Verisi ve Uygulama Mantığı (Sadece Standart Vanilla JS) -->
-  <script src="words_data.js?v=1.8.10"></script>
-  <script src="app.js?v=1.8.10"></script>
+  <script src="words_data.js?v=1.8.7"></script>
+  <script src="app.js?v=1.8.7"></script>
 
   </body>
 </html>

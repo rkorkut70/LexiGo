@@ -7567,14 +7567,7 @@ body[data-theme="dark"] .drawer-home-btn,
   color: #ffffff;
 }
 
-#onboardingModal.modal-overlay:not(.active) {
-  display: none !important;
-  opacity: 0 !important;
-  visibility: hidden !important;
-  pointer-events: none !important;
-}
-
-#onboardingModal.modal-overlay.active {
+#onboardingModal.modal-overlay.full-screen-modal {
   backdrop-filter: none !important;
   -webkit-backdrop-filter: none !important;
   background: #0f172a !important;
@@ -7583,9 +7576,6 @@ body[data-theme="dark"] .drawer-home-btn,
   justify-content: center !important;
   padding: env(safe-area-inset-top, 8px) env(safe-area-inset-right, 8px) env(safe-area-inset-bottom, 8px) env(safe-area-inset-left, 8px) !important;
   box-sizing: border-box !important;
-  opacity: 1 !important;
-  visibility: visible !important;
-  pointer-events: auto !important;
 }
 
 /* Onboarding Modal Kartı (3D Kart Gövdesi) */
@@ -9715,39 +9705,32 @@ body[data-theme="dark"] .home-unit-select-btn:hover,
   color: var(--text-muted);
 }
 
-/* Hızlı Eylem Butonları - Dikey Ortalanmış ve Tam Genişlik */
+/* Hızlı Eylem Butonları */
 .about-actions-grid {
-  display: flex !important;
-  flex-direction: column !important;
-  align-items: center !important;
-  justify-content: center !important;
-  gap: 10px !important;
-  width: 100% !important;
-  margin-top: 4px !important;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+  margin-top: 2px;
 }
 
-#aboutCheckUpdateBtn,
-#aboutOpenFeedbackBtn {
-  width: 100% !important;
-  max-width: 440px !important;
-  margin: 0 auto !important;
+#aboutCheckUpdateBtn {
+  grid-column: 1 / -1;
+  width: 100%;
 }
 
 .about-action-btn {
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 8px;
-  padding: 12px 16px;
-  border-radius: 14px;
-  font-size: 0.85rem;
+  gap: 6px;
+  padding: 10px 12px;
+  border-radius: 12px;
+  font-size: 0.78rem;
   font-weight: 700;
   cursor: pointer;
   text-decoration: none;
   transition: all 0.2s ease;
   border: none;
-  width: 100%;
-  box-sizing: border-box;
 }
 
 .about-action-btn.primary {
@@ -9842,83 +9825,77 @@ body[data-theme="dark"] .home-unit-select-btn:hover,
 }
 
 .feedback-type-chips {
-  display: grid !important;
-  grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
-  gap: 10px !important;
-  width: 100% !important;
-  box-sizing: border-box !important;
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 8px;
 }
 
-@media (max-width: 460px) {
+@media (max-width: 340px) {
   .feedback-type-chips {
-    grid-template-columns: 1fr !important;
+    grid-template-columns: 1fr;
   }
 }
 
 .feedback-chip {
-  display: flex !important;
-  align-items: center !important;
-  gap: 12px !important;
-  padding: 10px 14px !important;
-  border-radius: 14px !important;
-  background: var(--bg-surface) !important;
-  border: 1.5px solid var(--border-color) !important;
-  color: var(--text-main) !important;
-  cursor: pointer !important;
-  text-align: left !important;
-  transition: transform 0.15s ease, border-color 0.2s ease, background 0.2s ease, box-shadow 0.2s ease !important;
-  user-select: none !important;
-  width: 100% !important;
-  min-width: 0 !important;
-  box-sizing: border-box !important;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 12px;
+  border-radius: 12px;
+  background: var(--bg-surface);
+  border: 1.5px solid var(--border-color);
+  color: var(--text-main);
+  cursor: pointer;
+  text-align: left;
+  transition: transform 0.15s ease, border-color 0.2s ease, background 0.2s ease, box-shadow 0.2s ease;
+  user-select: none;
 }
 
 .feedback-chip:hover {
-  background: rgba(37, 99, 235, 0.08) !important;
-  border-color: rgba(37, 99, 235, 0.4) !important;
-  transform: translateY(-1px) !important;
+  background: rgba(37, 99, 235, 0.08);
+  border-color: rgba(37, 99, 235, 0.4);
+  transform: translateY(-1px);
 }
 
 .feedback-chip.active {
-  background: rgba(37, 99, 235, 0.14) !important;
-  border-color: var(--accent) !important;
-  box-shadow: 0 3px 12px rgba(37, 99, 235, 0.25) !important;
-  transform: translateY(-1px) !important;
+  background: rgba(37, 99, 235, 0.14);
+  border-color: var(--accent);
+  box-shadow: 0 3px 12px rgba(37, 99, 235, 0.25);
+  transform: translateY(-1px);
 }
 
 .feedback-chip .chip-icon {
-  font-size: 1.4rem !important;
-  line-height: 1 !important;
-  flex-shrink: 0 !important;
+  font-size: 1.35rem;
+  line-height: 1;
+  flex-shrink: 0;
 }
 
 .feedback-chip .chip-text {
-  display: flex !important;
-  flex-direction: column !important;
-  gap: 2px !important;
-  min-width: 0 !important;
-  flex: 1 1 auto !important;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
 }
 
 .feedback-chip .chip-title {
-  font-size: 0.84rem !important;
-  font-weight: 700 !important;
-  color: var(--text-main) !important;
-  white-space: normal !important;
-  word-break: break-word !important;
-  line-height: 1.25 !important;
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: var(--text-main);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .feedback-chip.active .chip-title {
-  color: var(--accent) !important;
+  color: var(--accent);
 }
 
 .feedback-chip .chip-desc {
-  font-size: 0.72rem !important;
-  color: var(--text-muted) !important;
-  white-space: normal !important;
-  word-break: break-word !important;
-  line-height: 1.35 !important;
+  font-size: 0.67rem;
+  color: var(--text-muted);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .feedback-textarea {
@@ -10650,39 +10627,11 @@ body[data-theme="dark"] .home-unit-select-btn:hover,
   transform: scale(0.95);
 }
 
-.student-hero-user-meta {
-  display: flex;
-  flex-direction: column;
-  gap: 2px;
-  min-width: 0;
-}
-
-.student-hero-user-title {
-  font-size: clamp(0.88rem, 2vh, 0.96rem);
-  font-weight: 800;
-  color: var(--text-main);
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
-.student-hero-user-subtitle {
-  font-size: 0.72rem;
-  font-weight: 600;
-  color: var(--text-muted);
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
-.student-hero-badges-row,
 .student-hero-badges {
   display: flex;
   flex-wrap: wrap;
   align-items: center;
-  gap: 8px;
-  width: 100%;
-  margin-top: 4px;
+  gap: 6px;
 }
 
 .student-track-badge, .student-lang-badge {
@@ -11684,20 +11633,10 @@ html[data-flip-speed="slow"] .flashcard {
 /* ============================================================
    UYGULAMA AYARLARI, ÖĞRENCİ PROFİLİ VE GERİ BİLDİRİM TAM EKRAN TASARIMI
    ============================================================ */
-#settingsModal.full-screen-modal:not(.active),
-#studentProfileModal.full-screen-modal:not(.active),
-#feedbackModal.full-screen-modal:not(.active),
-#aboutModal.full-screen-modal:not(.active) {
-  display: none !important;
-  opacity: 0 !important;
-  visibility: hidden !important;
-  pointer-events: none !important;
-}
-
-#settingsModal.full-screen-modal.active,
-#studentProfileModal.full-screen-modal.active,
-#feedbackModal.full-screen-modal.active,
-#aboutModal.full-screen-modal.active {
+#settingsModal.full-screen-modal,
+#studentProfileModal.full-screen-modal,
+#feedbackModal.full-screen-modal,
+#aboutModal.full-screen-modal {
   position: fixed !important;
   inset: 0 !important;
   width: 100vw !important;
@@ -11714,13 +11653,6 @@ html[data-flip-speed="slow"] .flashcard {
   z-index: 10020 !important;
   overflow: hidden !important;
   box-sizing: border-box !important;
-  opacity: 1 !important;
-  visibility: visible !important;
-  pointer-events: auto !important;
-}
-
-#customConfirmModal {
-  z-index: 999999 !important;
 }
 
 #settingsModal.full-screen-modal .settings-modal-card,
@@ -13975,20 +13907,7 @@ html.screen-fit-compact .welcome-action-guest {
   z-index: 200030 !important;
 }
 
-/* 2. Tam Ekran Ana Kart Gövdesi (Full Screen Everywhere) */
-#settingsModal.full-screen-modal {
-  padding: 0 !important;
-  margin: 0 !important;
-  width: 100vw !important;
-  height: 100vh !important;
-  height: 100dvh !important;
-  max-width: 100vw !important;
-  max-height: 100vh !important;
-  max-height: 100dvh !important;
-  border-radius: 0 !important;
-  overflow: hidden !important;
-}
-
+/* 2. 3D Ana Kart Gövdesi (Adaptive Shell) */
 #settingsModal.full-screen-modal .settings-modal-card {
   width: 100% !important;
   height: 100% !important;
@@ -13997,6 +13916,7 @@ html.screen-fit-compact .welcome-action-guest {
   margin: 0 !important;
   border-radius: 0 !important;
   border: none !important;
+  background: linear-gradient(180deg, #131622 0%, #0d0f18 100%) !important;
   box-shadow: none !important;
   display: flex !important;
   flex-direction: column !important;
@@ -14005,16 +13925,24 @@ html.screen-fit-compact .welcome-action-guest {
   box-sizing: border-box !important;
 }
 
-/* Açık ve Koyu Tema Tam Ekran Zemin Renkleri */
-html:not([data-theme="dark"]) #settingsModal.full-screen-modal .settings-modal-card,
-[data-theme="light"] #settingsModal.full-screen-modal .settings-modal-card {
-  background: linear-gradient(180deg, #f8fafc 0%, #edf2f7 50%, #e2e8f0 100%) !important;
-  color: #0f172a !important;
-}
-
-[data-theme="dark"] #settingsModal.full-screen-modal .settings-modal-card {
-  background: linear-gradient(180deg, #0b0f19 0%, #111827 50%, #0f172a 100%) !important;
-  color: #f8fafc !important;
+/* Tablet ve Masaüstü Ekranlarda 3D Floating Kart Görünümü */
+@media (min-width: 640px) and (min-height: 600px) {
+  #settingsModal.full-screen-modal {
+    padding: clamp(16px, 3vh, 32px) !important;
+  }
+  #settingsModal.full-screen-modal .settings-modal-card {
+    max-width: 620px !important;
+    height: auto !important;
+    max-height: min(92vh, 880px) !important;
+    border-radius: 28px !important;
+    border: 1px solid rgba(255, 255, 255, 0.12) !important;
+    box-shadow: 
+      0 24px 60px -12px rgba(0, 0, 0, 0.75),
+      0 0 0 1px rgba(255, 255, 255, 0.06),
+      inset 0 1px 1px rgba(255, 255, 255, 0.25) !important;
+    transform: translateY(0) scale(1) !important;
+    animation: settingsCardPop 0.32s cubic-bezier(0.16, 1, 0.3, 1) !important;
+  }
 }
 
 @keyframes settingsCardPop {
@@ -14218,42 +14146,22 @@ html:not([data-theme="dark"]) #settingsModal.full-screen-modal .settings-modal-c
   overflow-y: auto !important;
   overflow-x: hidden !important;
   -webkit-overflow-scrolling: touch !important;
-  padding: 16px clamp(14px, 4vw, 32px) calc(env(safe-area-inset-bottom, 16px) + 32px) clamp(14px, 4vw, 32px) !important;
+  padding: 14px clamp(12px, 3.5vw, 22px) calc(env(safe-area-inset-bottom, 14px) + 24px) clamp(12px, 3.5vw, 22px) !important;
   display: flex !important;
   flex-direction: column !important;
-  gap: 16px !important;
-  width: 100% !important;
-  max-width: 100% !important;
-  box-sizing: border-box !important;
+  gap: 14px !important;
 }
 
 #settingsModal .settings-tab-panel {
   display: none !important;
   flex-direction: column !important;
-  gap: 14px !important;
+  gap: 12px !important;
   width: 100% !important;
-  max-width: 100% !important;
-  box-sizing: border-box !important;
   animation: settingsFadeIn 0.24s cubic-bezier(0.16, 1, 0.3, 1) !important;
 }
 
 #settingsModal .settings-tab-panel.active {
   display: flex !important;
-}
-
-@media (min-width: 680px) {
-  #settingsModal .settings-tab-panel.active {
-    display: grid !important;
-    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
-    gap: 16px !important;
-    align-content: start !important;
-  }
-  #settingsModal .setting-block.full-width,
-  #settingsModal .data-hub-card,
-  #settingsModal #tabPanelData .setting-block,
-  #settingsModal .setting-block:has(.color-swatch-row) {
-    grid-column: 1 / -1 !important;
-  }
 }
 
 @keyframes settingsFadeIn {
@@ -16317,31 +16225,94 @@ html:not([data-theme="dark"]) .about-footer-note,
   filter: brightness(0.95) !important;
 }
 
-/* ==========================================================================
-   TURNUVA (LİDERLİK) VE AYARLAR EKRANLARI AÇIK TEMA (LIGHT THEME) TAM UYUMU
-   ========================================================================== */
+/* ========================================================
+   v1.8.11 EKLEMELERİ: KATMANLI ÖĞRENCİ PROFİLİ & AÇIK TEMA UYUMU
+   ======================================================== */
 
-/* 1. AYARLAR MODALI AÇIK TEMA STİLLERİ */
-html:not([data-theme="dark"]) #settingsModal.full-screen-modal,
-[data-theme="light"] #settingsModal.full-screen-modal {
-  background: #f1f5f9 !important;
+/* 1. ÖĞRENCİ PROFİLİ KİMLİK KARTI KATMANLI DÜZENİ */
+.student-hero-user-meta {
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 2px !important;
 }
 
-html:not([data-theme="dark"]) #settingsModal.full-screen-modal .settings-modal-card,
-[data-theme="light"] #settingsModal.full-screen-modal .settings-modal-card {
+.student-hero-user-title {
+  font-size: 0.92rem !important;
+  font-weight: 800 !important;
+  color: var(--text-main, #f8fafc) !important;
+  letter-spacing: -0.2px !important;
+}
+
+.student-hero-user-subtitle {
+  font-size: 0.74rem !important;
+  font-weight: 600 !important;
+  color: var(--text-muted, #94a3b8) !important;
+}
+
+.student-hero-badges-row {
+  display: flex !important;
+  flex-wrap: wrap !important;
+  align-items: center !important;
+  gap: 8px !important;
+  width: 100% !important;
+  padding: 8px 0 4px 0 !important;
+  box-sizing: border-box !important;
+}
+
+.student-hero-badges-row .student-track-badge,
+.student-hero-badges-row .student-lang-badge {
+  font-size: 0.76rem !important;
+  font-weight: 700 !important;
+  padding: 5px 12px !important;
+  border-radius: 12px !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 5px !important;
+  transition: all 0.2s ease !important;
+}
+
+#profHeroBranchBadge[style*="cursor: pointer"],
+#profHeroBranchBadge[style*="cursor:pointer"] {
+  box-shadow: 0 2px 8px rgba(59, 130, 246, 0.25) !important;
+  border-color: rgba(59, 130, 246, 0.6) !important;
+}
+
+#profHeroBranchBadge[style*="cursor: pointer"]:active,
+#profHeroBranchBadge[style*="cursor:pointer"]:active {
+  transform: scale(0.96) !important;
+}
+
+/* 2. SİSTEMDEN ÇIKIŞ & ÖZEL ONAY MODALI Z-INDEX */
+#customConfirmModal {
+  z-index: 999999 !important;
+}
+
+#customConfirmModal .confirm-modal-card {
+  z-index: 1000000 !important;
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.6) !important;
+}
+
+/* 3. AYARLAR & TURNUVA AÇIK RENK TEMA (LIGHT THEME) STİLLERİ */
+html:not([data-theme="dark"]) #settingsModal.full-screen-modal,
+[data-theme="light"] #settingsModal.full-screen-modal {
+  background: #f8fafc !important;
+}
+
+html:not([data-theme="dark"]) #settingsModal .settings-modal-card,
+[data-theme="light"] #settingsModal .settings-modal-card {
   background: #f8fafc !important;
   color: #0f172a !important;
 }
 
 html:not([data-theme="dark"]) #settingsModal .settings-header-compact,
 [data-theme="light"] #settingsModal .settings-header-compact {
-  background: linear-gradient(180deg, #ffffff 0%, #f8fafc 100%) !important;
+  background: #ffffff !important;
   border-bottom: 1.5px solid #e2e8f0 !important;
-  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.04) !important;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.03) !important;
 }
 
-html:not([data-theme="dark"]) #settingsModal .settings-title-main,
-[data-theme="light"] #settingsModal .settings-title-main {
+html:not([data-theme="dark"]) #settingsModal .settings-header-title-clean,
+[data-theme="light"] #settingsModal .settings-header-title-clean {
   color: #0f172a !important;
 }
 
@@ -16442,12 +16413,7 @@ html:not([data-theme="dark"]) #settingsModal .data-hub-row-btn,
   border: 1px solid #e2e8f0 !important;
 }
 
-html:not([data-theme="dark"]) #settingsModal .data-hub-row-btn:hover,
-[data-theme="light"] #settingsModal .data-hub-row-btn:hover {
-  background: #f1f5f9 !important;
-}
-
-/* 2. TURNUVA / LİDERLİK TABLOSU AÇIK TEMA STİLLERİ */
+/* 4. TURNUVA / LİDERLİK TABLOSU AÇIK TEMA */
 html:not([data-theme="dark"]) #leaderboardModal.full-screen-modal,
 [data-theme="light"] #leaderboardModal.full-screen-modal,
 html:not([data-theme="dark"]) #tournamentGuideModal.full-screen-modal,
