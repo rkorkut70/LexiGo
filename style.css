@@ -16317,5 +16317,251 @@ html:not([data-theme="dark"]) .about-footer-note,
   filter: brightness(0.95) !important;
 }
 
+/* ==========================================================================
+   TURNUVA (LİDERLİK) VE AYARLAR EKRANLARI AÇIK TEMA (LIGHT THEME) TAM UYUMU
+   ========================================================================== */
+
+/* 1. AYARLAR MODALI AÇIK TEMA STİLLERİ */
+html:not([data-theme="dark"]) #settingsModal.full-screen-modal,
+[data-theme="light"] #settingsModal.full-screen-modal {
+  background: #f1f5f9 !important;
+}
+
+html:not([data-theme="dark"]) #settingsModal.full-screen-modal .settings-modal-card,
+[data-theme="light"] #settingsModal.full-screen-modal .settings-modal-card {
+  background: #f8fafc !important;
+  color: #0f172a !important;
+}
+
+html:not([data-theme="dark"]) #settingsModal .settings-header-compact,
+[data-theme="light"] #settingsModal .settings-header-compact {
+  background: linear-gradient(180deg, #ffffff 0%, #f8fafc 100%) !important;
+  border-bottom: 1.5px solid #e2e8f0 !important;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.04) !important;
+}
+
+html:not([data-theme="dark"]) #settingsModal .settings-title-main,
+[data-theme="light"] #settingsModal .settings-title-main {
+  color: #0f172a !important;
+}
+
+html:not([data-theme="dark"]) #settingsModal .settings-tabs-nav,
+[data-theme="light"] #settingsModal .settings-tabs-nav {
+  background: #f1f5f9 !important;
+  border-bottom: 1.5px solid #e2e8f0 !important;
+}
+
+html:not([data-theme="dark"]) #settingsModal .settings-tab-btn,
+[data-theme="light"] #settingsModal .settings-tab-btn {
+  background: rgba(255, 255, 255, 0.8) !important;
+  color: #475569 !important;
+  border: 1px solid #e2e8f0 !important;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04) !important;
+}
+
+html:not([data-theme="dark"]) #settingsModal .settings-tab-btn.active,
+[data-theme="light"] #settingsModal .settings-tab-btn.active {
+  background: #ffffff !important;
+  color: var(--accent, #2563eb) !important;
+  border-color: #bfdbfe !important;
+  box-shadow: 0 3px 10px rgba(37, 99, 235, 0.12) !important;
+}
+
+html:not([data-theme="dark"]) #settingsModal .setting-block,
+[data-theme="light"] #settingsModal .setting-block {
+  background: #ffffff !important;
+  border: 1.5px solid #e2e8f0 !important;
+  border-left: 4px solid var(--accent, #2563eb) !important;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.04) !important;
+}
+
+html:not([data-theme="dark"]) #settingsModal .setting-block-label,
+[data-theme="light"] #settingsModal .setting-block-label {
+  color: #64748b !important;
+}
+
+html:not([data-theme="dark"]) #settingsModal .setting-compact-row,
+[data-theme="light"] #settingsModal .setting-compact-row {
+  border-bottom: 1px solid #f1f5f9 !important;
+}
+
+html:not([data-theme="dark"]) #settingsModal .setting-row-text,
+[data-theme="light"] #settingsModal .setting-row-text {
+  color: #0f172a !important;
+  font-weight: 700 !important;
+}
+
+html:not([data-theme="dark"]) #settingsModal .setting-row-desc,
+[data-theme="light"] #settingsModal .setting-row-desc {
+  color: #64748b !important;
+}
+
+html:not([data-theme="dark"]) #settingsModal .setting-segment-btn,
+[data-theme="light"] #settingsModal .setting-segment-btn {
+  background: #f1f5f9 !important;
+  color: #475569 !important;
+  border: 1px solid #e2e8f0 !important;
+}
+
+html:not([data-theme="dark"]) #settingsModal .setting-segment-btn.active,
+[data-theme="light"] #settingsModal .setting-segment-btn.active {
+  background: var(--accent, #2563eb) !important;
+  color: #ffffff !important;
+  border-color: var(--accent, #2563eb) !important;
+  box-shadow: 0 3px 10px rgba(37, 99, 235, 0.25) !important;
+}
+
+html:not([data-theme="dark"]) #settingsModal .setting-text-input,
+[data-theme="light"] #settingsModal .setting-text-input {
+  background: #f8fafc !important;
+  color: #0f172a !important;
+  border: 1.5px solid #cbd5e1 !important;
+}
+
+html:not([data-theme="dark"]) #settingsModal .data-hub-card,
+[data-theme="light"] #settingsModal .data-hub-card {
+  background: #ffffff !important;
+  border: 1.5px solid #e2e8f0 !important;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.04) !important;
+}
+
+html:not([data-theme="dark"]) #settingsModal .data-hub-title,
+[data-theme="light"] #settingsModal .data-hub-title {
+  color: #0f172a !important;
+}
+
+html:not([data-theme="dark"]) #settingsModal .data-hub-desc,
+[data-theme="light"] #settingsModal .data-hub-desc {
+  color: #64748b !important;
+}
+
+html:not([data-theme="dark"]) #settingsModal .data-hub-row-btn,
+[data-theme="light"] #settingsModal .data-hub-row-btn {
+  background: #f8fafc !important;
+  color: #1e293b !important;
+  border: 1px solid #e2e8f0 !important;
+}
+
+html:not([data-theme="dark"]) #settingsModal .data-hub-row-btn:hover,
+[data-theme="light"] #settingsModal .data-hub-row-btn:hover {
+  background: #f1f5f9 !important;
+}
+
+/* 2. TURNUVA / LİDERLİK TABLOSU AÇIK TEMA STİLLERİ */
+html:not([data-theme="dark"]) #leaderboardModal.full-screen-modal,
+[data-theme="light"] #leaderboardModal.full-screen-modal,
+html:not([data-theme="dark"]) #tournamentGuideModal.full-screen-modal,
+[data-theme="light"] #tournamentGuideModal.full-screen-modal {
+  background: #f1f5f9 !important;
+}
+
+html:not([data-theme="dark"]) #leaderboardModal.full-screen-modal .leaderboard-modal-card,
+[data-theme="light"] #leaderboardModal.full-screen-modal .leaderboard-modal-card,
+html:not([data-theme="dark"]) #tournamentGuideModal.full-screen-modal .tournament-guide-card,
+[data-theme="light"] #tournamentGuideModal.full-screen-modal .tournament-guide-card {
+  background: #f8fafc !important;
+  color: #0f172a !important;
+}
+
+html:not([data-theme="dark"]) #leaderboardModal.full-screen-modal .leaderboard-modal-header,
+[data-theme="light"] #leaderboardModal.full-screen-modal .leaderboard-modal-header,
+html:not([data-theme="dark"]) #tournamentGuideModal.full-screen-modal .tournament-guide-header,
+[data-theme="light"] #tournamentGuideModal.full-screen-modal .tournament-guide-header {
+  background: #ffffff !important;
+  border-bottom: 1.5px solid #e2e8f0 !important;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.03) !important;
+  color: #0f172a !important;
+}
+
+html:not([data-theme="dark"]) #leaderboardModal .modal-title,
+[data-theme="light"] #leaderboardModal .modal-title,
+html:not([data-theme="dark"]) #tournamentGuideModal .modal-title,
+[data-theme="light"] #tournamentGuideModal .modal-title {
+  color: #0f172a !important;
+}
+
+html:not([data-theme="dark"]) #leaderboardModal.full-screen-modal .leaderboard-tabs-nav,
+[data-theme="light"] #leaderboardModal.full-screen-modal .leaderboard-tabs-nav {
+  background: #f1f5f9 !important;
+  border-bottom: 1.5px solid #e2e8f0 !important;
+}
+
+html:not([data-theme="dark"]) #leaderboardModal.full-screen-modal .lb-tab-btn,
+[data-theme="light"] #leaderboardModal.full-screen-modal .lb-tab-btn {
+  background: rgba(255, 255, 255, 0.8) !important;
+  color: #475569 !important;
+  border: 1px solid #e2e8f0 !important;
+}
+
+html:not([data-theme="dark"]) #leaderboardModal.full-screen-modal .lb-tab-btn.active,
+[data-theme="light"] #leaderboardModal.full-screen-modal .lb-tab-btn.active {
+  background: #ffffff !important;
+  color: var(--accent, #2563eb) !important;
+  border-color: #bfdbfe !important;
+  box-shadow: 0 3px 10px rgba(37, 99, 235, 0.12) !important;
+}
+
+html:not([data-theme="dark"]) .leaderboard-item,
+[data-theme="light"] .leaderboard-item {
+  background: #ffffff !important;
+  border: 1.5px solid #e2e8f0 !important;
+  color: #0f172a !important;
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.03) !important;
+}
+
+html:not([data-theme="dark"]) .leaderboard-item .lb-name,
+[data-theme="light"] .leaderboard-item .lb-name {
+  color: #0f172a !important;
+  font-weight: 700 !important;
+}
+
+html:not([data-theme="dark"]) .leaderboard-item .lb-score,
+[data-theme="light"] .leaderboard-item .lb-score {
+  background: #eff6ff !important;
+  color: #1d4ed8 !important;
+  border: 1px solid #bfdbfe !important;
+}
+
+html:not([data-theme="dark"]) .leaderboard-item.rank-1,
+[data-theme="light"] .leaderboard-item.rank-1 {
+  background: linear-gradient(135deg, #fffbeb 0%, #fef3c7 100%) !important;
+  border-color: #fde68a !important;
+}
+
+html:not([data-theme="dark"]) .leaderboard-item.rank-2,
+[data-theme="light"] .leaderboard-item.rank-2 {
+  background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%) !important;
+  border-color: #cbd5e1 !important;
+}
+
+html:not([data-theme="dark"]) .leaderboard-item.rank-3,
+[data-theme="light"] .leaderboard-item.rank-3 {
+  background: linear-gradient(135deg, #fff7ed 0%, #ffedd5 100%) !important;
+  border-color: #fed7aa !important;
+}
+
+html:not([data-theme="dark"]) #leaderboardModal.full-screen-modal #lbCurrentUserBar,
+[data-theme="light"] #leaderboardModal.full-screen-modal #lbCurrentUserBar {
+  background: #ffffff !important;
+  border-top: 1.5px solid #e2e8f0 !important;
+  box-shadow: 0 -4px 16px rgba(0, 0, 0, 0.05) !important;
+  color: #0f172a !important;
+}
+
+html:not([data-theme="dark"]) .leaderboard-current-user-card,
+[data-theme="light"] .leaderboard-current-user-card {
+  background: #f8fafc !important;
+  border: 1.5px solid #cbd5e1 !important;
+  color: #0f172a !important;
+}
+
+html:not([data-theme="dark"]) .tg-rule-card,
+[data-theme="light"] .tg-rule-card {
+  background: #ffffff !important;
+  border: 1.5px solid #e2e8f0 !important;
+  color: #0f172a !important;
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.03) !important;
+}
+
 
 
