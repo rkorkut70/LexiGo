@@ -7,7 +7,7 @@
 (function () {
   'use strict';
 
-  const APP_VERSION = 'v1.8.0';
+  const APP_VERSION = 'v1.8.1';
   const CURRENT_APP_BUILD = 'lexiq_build_19_clean';
 
   // Build 13 temiz kurulum / sıfırlama güvencesi (Kullanıcı verilerini sıfırla, Hoş Geldin ekranını garantile)
@@ -2001,11 +2001,13 @@
   // ÖĞRENCİ BİLGİLERİ VE PROFİL MODALI
   // ==========================================
   function openStudentProfileModal() {
-    const modal = document.getElementById('studentProfileModal');
-    if (!modal) {
-      openSettingsModal('profile');
-      return;
-    }
+    openSettingsModal('profile');
+    return;
+  }
+
+  function closeStudentProfileModal() {
+    closeSettingsModal();
+  }
 
     // Bilgileri Doldur
     const heroAvatar = document.getElementById('profHeroAvatar');
@@ -3127,6 +3129,47 @@ let activeAvatarCategory = 'all';
     if (!dom.settingUserNameInput) return;
     dom.settingUserNameInput.value = state.userName || 'Öğrenci';
 
+    // Avatar Önizleme
+    const settingAvatarPreview = document.getElementById('settingUserAvatarPreview');
+    if (settingAvatarPreview) setAvatarElement(settingAvatarPreview, state.userAvatar);
+
+    // Hesap Durumu
+    const isFbLoggedIn = typeof fbUser !== 'undefined' && fbUser !== null;
+    const accountTitle = document.getElementById('settingAccountStatusTitle');
+    const accountEmail = document.getElementById('settingAccountEmailText');
+    const accountIcon = document.getElementById('settingAccountIcon');
+    const accountBtn = document.getElementById('settingAccountActionBtn');
+    const securityBlock = document.getElementById('settingSecurityBlock');
+    const logoutBtn = document.getElementById('logoutBtn');
+
+    if (accountTitle) {
+      accountTitle.textContent = isFbLoggedIn ? (fbUser.displayName || state.userName || 'Kayıtlı Öğrenci') : 'Misafir Kullanıcı';
+    }
+    if (accountEmail) {
+      accountEmail.textContent = isFbLoggedIn ? (fbUser.email || state.userEmail || 'Bulut senkronizasyonu aktif') : 'Puanlarınızı bulutta saklamak için giriş yapın';
+    }
+    if (accountIcon) {
+      accountIcon.textContent = isFbLoggedIn ? '✅' : '👤';
+    }
+    if (accountBtn) {
+      if (isFbLoggedIn) {
+        accountBtn.style.display = 'none';
+      } else {
+        accountBtn.style.display = 'inline-block';
+        accountBtn.textContent = 'Giriş / Kayıt';
+        accountBtn.onclick = () => {
+          closeSettingsModal();
+          if (typeof window.openAuthModal === 'function') window.openAuthModal();
+        };
+      }
+    }
+    if (securityBlock) {
+      securityBlock.style.display = isFbLoggedIn ? 'block' : 'none';
+    }
+    if (logoutBtn) {
+      logoutBtn.style.display = isFbLoggedIn ? 'block' : 'none';
+    }
+
     if (dom.settingAvatarBtns) {
       dom.settingAvatarBtns.forEach(btn => {
         btn.classList.toggle('active', btn.getAttribute('data-avatar') === state.userAvatar);
@@ -3155,6 +3198,60 @@ let activeAvatarCategory = 'all';
 
     if (dom.settingDailyGoalSelect) {
       dom.settingDailyGoalSelect.value = String(state.dailyGoal || 15);
+    }
+
+    // CANLI BAŞARI KARNESİ & İSTATİSTİKLERİ DOLDUR
+    const visibleBadges = getVisibleBadgesConfigForUser(state.activeLanguage);
+    const visibleUnlockedCount = visibleBadges.filter(b => state.unlockedBadges.includes(b.id)).length;
+    const statLearned = document.getElementById('profStatLearned');
+    const statXp = document.getElementById('profStatXp');
+    const statStreak = document.getElementById('profStatStreak');
+    const statBadges = document.getElementById('profStatBadges');
+
+    if (statLearned) statLearned.textContent = getLearnedCount(state);
+    if (statXp) statXp.textContent = state.xp;
+    if (statStreak) statStreak.textContent = `${state.dayStreak || 1} Gün`;
+    if (statBadges) statBadges.textContent = `${visibleUnlockedCount} / ${visibleBadges.length}`;
+
+    // Detaylı Etkinlik ve Zaman İstatistikleri
+    if (typeof renderStudentActivityStatsUI === 'function') {
+      renderStudentActivityStatsUI();
+    }
+
+    // Şifre Değiştirme Butonu Olayı
+    const settingOpenChangePasswordBtn = document.getElementById('settingOpenChangePasswordBtn');
+    if (settingOpenChangePasswordBtn) {
+      settingOpenChangePasswordBtn.onclick = () => {
+        closeSettingsModal();
+        if (typeof window.openChangePasswordModal === 'function') {
+          window.openChangePasswordModal();
+        }
+      };
+    }
+
+    // İstatistik Yenileme Butonu Olayı
+    const refreshStatsBtn = document.getElementById('refreshStatsBtn');
+    if (refreshStatsBtn) {
+      refreshStatsBtn.onclick = async () => {
+        showToast('İstatistikler güncelleniyor... ⏳');
+        if (typeof window.syncUserData === 'function' && window.fbUser) {
+          try { await window.syncUserData(window.fbUser); } catch (e) { console.warn(e); }
+        }
+        if (typeof renderStudentActivityStatsUI === 'function') renderStudentActivityStatsUI();
+        if (statLearned) statLearned.textContent = getLearnedCount(state);
+        if (statXp) statXp.textContent = state.xp;
+        if (statStreak) statStreak.textContent = `${state.dayStreak || 1} Gün`;
+        showToast('İstatistikler güncellendi! ☁️');
+      };
+    }
+
+    // Rozet Rehberi Butonu
+    const guideBtn = document.getElementById('profOpenBadgesGuideBtn');
+    if (guideBtn) {
+      guideBtn.onclick = () => {
+        closeSettingsModal();
+        if (typeof openBadgesModal === 'function') openBadgesModal();
+      };
     }
 
     captureProfileSettingsSnapshot();
