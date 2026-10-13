@@ -1,8 +1,9 @@
 {
-  "version": "v1.8.1",
-  "versionCode": 61,
+  "version": "v1.8.2",
+  "versionCode": 62,
   "releaseDate": "2026-10-13",
   "notes": [
+    "⚡ Başlatma ve Kararlılık İyileştirmesi: Profil ve ayarlar ekranlarının entegrasyonu optimize edildi, açılış performansı artırıldı",
     "🎓 Birleşik Öğrenci Profili: Üst menü profili ile ayarlar profil sekmesi tek ekranda birleştirildi",
     "📊 Canlı Başarı Karnesi: İstatistik sayaçları, çalışma süreleri ve kitap ünitelerindeki ilerleme doğrudan profil sekmesinde toplandı",
     "✨ Sade ve Sezgisel Deneyim: Mükerrer profil pencereleri kaldırılarak tek tıkla tam ekran kontrol merkezi oluşturuldu",
