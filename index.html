@@ -15,7 +15,7 @@
   <meta http-equiv="Expires" content="0">
   <title>LexiQ • Çok Dilli Akıllı Kelime Kartları</title>
   <link rel="icon" type="image/jpeg" href="logo.jpg">
-  <link rel="stylesheet" href="style.css?v=1.8.2">
+  <link rel="stylesheet" href="style.css?v=1.8.3">
 </head>
 <body>
   <div class="app-container">
@@ -26,10 +26,10 @@
       </div>
 
       <div class="header-actions">
-        <!-- Sıralama Butonu -->
-        <button id="leaderboardBtn" class="pill-btn user-header-btn leaderboard-header-btn" title="Liderlik Tablosu">
-          <img src="assets/icons/icon_3d_school.png" class="header-3d-icon" alt="Sıralama">
-          <span class="header-btn-text">Sıralama</span>
+        <!-- Turnuva & Liderlik Butonu -->
+        <button id="leaderboardBtn" class="pill-btn user-header-btn leaderboard-header-btn" title="Turnuva & Liderlik Tablosu">
+          <img src="assets/icons/icon_3d_trophy.png" class="header-3d-icon" alt="Turnuva & Liderlik">
+          <span class="header-btn-text">Turnuva</span>
         </button>
 
         <!-- Ayarlar & Profil Butonu (Tıklanınca Ayarları Açar) -->
@@ -1136,7 +1136,7 @@
         <div class="welcome-hero-section">
           <div class="welcome-brand-wrapper">
             <h1 class="welcome-brand-name">Lexi<span class="welcome-brand-q">Q</span></h1>
-            <span class="welcome-version-pill">v1.8.2</span>
+            <span class="welcome-version-pill">v1.8.3</span>
           </div>
           <!-- 3 Temel Başarı Sütunu (3D Pill Rozetleri) -->
           <div class="welcome-pillars-container">
@@ -1589,7 +1589,7 @@
     <div class="modal-card leaderboard-modal-card">
       <div class="modal-header leaderboard-modal-header">
         <div style="display: flex; align-items: center; gap: 8px;">
-          <span style="font-size: 1.35rem;">🏆</span>
+          <img src="assets/icons/icon_3d_trophy.png" style="width: 28px; height: 28px; object-fit: contain; filter: drop-shadow(0 2px 6px rgba(245, 158, 11, 0.45));" alt="Turnuva & Liderlik">
           <h2 class="modal-title" style="margin: 0; font-size: 1.15rem;">Turnuva & Liderler</h2>
         </div>
         <div style="display: flex; align-items: center; gap: 6px;">
@@ -1608,7 +1608,7 @@
       <!-- Sekmeler (Okul / Sınıfım / Şube Ligi / Şeref Kürsüsü) -->
       <div class="leaderboard-tabs-nav" id="leaderboardTabsNav">
         <button type="button" class="lb-tab-btn active" data-tab="global">
-          <img src="assets/icons/icon_3d_school.png" class="tab-3d-icon" alt="Okul"> Okul
+          <img src="assets/icons/icon_3d_trophy.png" class="tab-3d-icon" alt="Okul Liderliği"> Okul
         </button>
         <button type="button" class="lb-tab-btn" data-tab="class">
           <img src="assets/icons/icon_3d_home.png" class="tab-3d-icon" alt="Sınıfım"> Sınıfım
@@ -1731,7 +1731,7 @@
     <div class="modal-card tournament-guide-modal-card">
       <div class="modal-header tournament-guide-header">
         <div style="display: flex; align-items: center; gap: 8px;">
-          <span style="font-size: 1.4rem;">📖</span>
+          <img src="assets/icons/icon_3d_trophy.png" style="width: 26px; height: 26px; object-fit: contain; filter: drop-shadow(0 2px 6px rgba(245, 158, 11, 0.45));" alt="Turnuva">
           <h2 class="modal-title" style="font-size: 1.15rem; font-weight: 900; margin: 0; color: var(--text-main);">Turnuva Kuralları & Rehber</h2>
         </div>
         <button type="button" id="closeTournamentGuideBtn" class="icon-btn" aria-label="Kapat" style="width: 34px; height: 34px; border-radius: 10px;">
@@ -1850,7 +1850,7 @@
         <div class="about-hero-box">
           <div class="about-brand-row">
             <span class="about-brand">Lexi<span class="brand-highlight">Q</span></span>
-            <span class="about-version-pill" id="aboutAppVersion">v1.8.2</span>
+            <span class="about-version-pill" id="aboutAppVersion">v1.8.3</span>
             <span class="about-platform-badge" id="aboutPlatformBadge" style="display: none; font-size: 0.72rem; font-weight: 700; padding: 3px 9px; border-radius: 12px; background: rgba(59,130,246,0.15); color: #3b82f6; border: 1px solid rgba(59,130,246,0.3);"></span>
           </div>
           <p class="about-tagline">Müfredat Tabanlı Çok Dilli Kelime Arenası</p>
@@ -3372,13 +3372,14 @@
       <div class="confirm-icon-wrap" style="font-size: 2.8rem; margin-bottom: 8px;">🎉</div>
       <h3 class="confirm-title" style="font-size: 1.3rem; font-weight: 800; margin: 0 0 6px 0;">LexiQ Güncellendi!</h3>
       <div class="app-update-version-badge" style="display: inline-block; padding: 4px 14px; border-radius: 20px; font-size: 0.84rem; font-weight: 800; margin-bottom: 14px;">
-        Sürüm <span id="appUpdateVersionText">v1.8.2</span>
+        Sürüm <span id="appUpdateVersionText">v1.8.3</span>
       </div>
       <div class="update-notes-box" style="text-align: left; border-radius: 16px; padding: 14px 16px; font-size: 0.88rem; line-height: 1.6; margin-bottom: 18px; max-height: 280px; overflow-y: auto;">
         <div class="update-notes-title" style="font-weight: 800; margin-bottom: 8px; display: flex; align-items: center; gap: 6px;">
           <span>✨</span><span>Bu Sürümdeki Yenilikler</span>
         </div>
         <ul style="margin: 0; padding-left: 20px; display: flex; flex-direction: column; gap: 8px;">
+          <li><strong>🏆 Parlak Sarı 3D Kupa İkonu:</strong> Üst bar, turnuva ekranı ve okul liderlik sekmelerine özel 3D altın sarısı şampiyonluk kupası eklendi.</li>
           <li><strong>⚡ Başlatma ve Kararlılık İyileştirmesi:</strong> Profil ve ayarlar ekranlarının entegrasyonu optimize edildi, açılış performansı artırıldı.</li>
           <li><strong>🏫 Sınıf İçi Liderlik Tablosu:</strong> Kendi resmi hazırlık şubendeki sınıf arkadaşlarınla haftalık liderlik yarışına katıl!</li>
           <li><strong>⚔️ Şubeler Arası Düello Ligi:</strong> Aynı dildeki hazırlık şubeleri haftalık ortalama XP ile kıyasıya rekabette.</li>
@@ -3444,11 +3445,11 @@
   <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-storage-compat.js"></script>
-  <script src="firebase_backend.js?v=1.8.2"></script>
+  <script src="firebase_backend.js?v=1.8.3"></script>
 
   <!-- Kelime Verisi ve Uygulama Mantığı (Sadece Standart Vanilla JS) -->
-  <script src="words_data.js?v=1.8.2"></script>
-  <script src="app.js?v=1.8.2"></script>
+  <script src="words_data.js?v=1.8.3"></script>
+  <script src="app.js?v=1.8.3"></script>
 
   </body>
 </html>
