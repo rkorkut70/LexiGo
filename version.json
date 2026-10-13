@@ -1,10 +1,11 @@
 {
-  "version": "v1.8.13",
-  "versionCode": 73,
+  "version": "v1.8.14",
+  "versionCode": 74,
   "releaseDate": "2026-10-14",
   "notes": [
-    "👤 Kayıtlı Kullanıcı İsmi & Dil Koruma: Kullanıcı adı ve dili kayıt/giriş sonrasında tam korunur",
-    "🏫 Kurulumda Şubesiz Devam Etme Seçeneği: Kurulum Adım 3'e şubesiz bağımsız ilerleme desteği eklendi",
-    "💬 Geri Bildirim Ekranı Hizalama & Mobil Uyum: Bildirim türü kutucuklarının taşması düzeltildi, Hakkında sayfasında geri bildirim butonu ortalandı"
+    "📳 Donanımsal Titreşimli Geri Bildirim: Android VIBRATE izni ve native Vibrator köprüsü eklendi, haptik titreşim aktif edildi",
+    "🔄 Fabrika Ayarlarına Dönüş Kapsamı Genişletildi: Buluttaki Firebase hesabı ve kullanıcı verileri kökten silinir",
+    "🎮 Zenginleştirilmiş Oyun Önerileri: Anti-farming sisteminde Dinle ve Yaz, Harf Karıştırma dahil tüm 8 oyun dinamik önerilir",
+    "✨ Ayarlar Temizliği: Akıllı dinamik simge başlığından Duolingo etiketi kaldırıldı"
   ]
 }
