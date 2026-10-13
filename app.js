@@ -7,10 +7,10 @@
 (function () {
   'use strict';
 
-  const APP_VERSION = 'v1.8.8';
-  const CURRENT_APP_BUILD = 'lexiq_build_19_clean';
+  const APP_VERSION = 'v1.8.9';
+  const CURRENT_APP_BUILD = 'lexiq_build_69_clean';
 
-  // Build 13 temiz kurulum / sıfırlama güvencesi (Kullanıcı verilerini sıfırla, Hoş Geldin ekranını garantile)
+  // Build 69 temiz kurulum / sıfırlama güvencesi (Kullanıcı verilerini sıfırla, Hoş Geldin ekranını garantile)
   if (!localStorage.getItem(CURRENT_APP_BUILD)) {
     try {
       localStorage.clear();
@@ -959,9 +959,12 @@
     }
 
     // İlk kullanım kurulum sihirbazı (Onboarding) kontrolü
-    if (!state.isOnboarded) {
+    const isUserActuallyOnboarded = localStorage.getItem('lexiq_user_onboarded') === 'true';
+    if (!isUserActuallyOnboarded) {
+      state.isOnboarded = false;
       startOnboardingFlow();
     } else {
+      state.isOnboarded = true;
       localStorage.setItem('lexiq_user_onboarded', 'true');
       if (dom.onboardingModal) {
         dom.onboardingModal.classList.remove('active');
@@ -2075,6 +2078,11 @@
       statusDot.style.boxShadow = isFbLoggedIn ? '0 0 8px rgba(16, 185, 129, 0.5)' : '0 0 8px rgba(245, 158, 11, 0.5)';
     }
 
+    const heroSubtitle = document.getElementById('profHeroSubtitle');
+    if (heroSubtitle) {
+      heroSubtitle.textContent = isFbLoggedIn ? (state.userEmail || 'Bulut Senkronize ✅') : 'Misafir Modu';
+    }
+
     if (accountStatus) {
       accountStatus.textContent = isFbLoggedIn ? `Kayıtlı: ${fbUser.email || state.userEmail}` : 'Misafir Kullanıcı (Bulut kapalı)';
     }
@@ -3132,10 +3140,9 @@ let activeAvatarCategory = 'all';
     const obModal = document.getElementById('onboardingModal');
     const isObActive = obModal && (obModal.classList.contains('active') || (obModal.style.display && obModal.style.display !== 'none'));
 
-    // Sadece kayıt olunmuyorsa ve aktif onboarding sürecinde olunmadığında onboarded kabul et
-    if (!isRegistration && !isObActive && (localStorage.getItem('lexiq_user_onboarded') === 'true' || (userData.track && userData.lang))) {
+    // Sadece kayıt olunmuyorsa, aktif onboarding sürecinde olunmadığında VE yerel onboarding bayrağı varsa onboarded kabul et
+    if (!isRegistration && !isObActive && localStorage.getItem('lexiq_user_onboarded') === 'true') {
       state.isOnboarded = true;
-      localStorage.setItem('lexiq_user_onboarded', 'true');
       if (obModal) {
         obModal.classList.remove('active');
         obModal.style.display = 'none';
@@ -3699,10 +3706,12 @@ let activeAvatarCategory = 'all';
     if (dom.arenaView) dom.arenaView.style.display = 'none';
     if (dom.floatingNavDock) dom.floatingNavDock.style.display = 'none';
 
+    state.isOnboarded = false;
     goToOnboardingStep(0);
-    if (dom.onboardingModal) {
-      dom.onboardingModal.style.display = 'flex';
-      dom.onboardingModal.classList.add('active');
+    const obModal = dom.onboardingModal || document.getElementById('onboardingModal');
+    if (obModal) {
+      obModal.style.setProperty('display', 'flex', 'important');
+      obModal.classList.add('active');
     }
   }
 
@@ -6223,6 +6232,11 @@ let activeAvatarCategory = 'all';
   }
 
   function switchAppMode(mode) {
+    // Onboarding henüz tamamlanmamışsa arka plan işlemlerinin ana sayfayı açmasını engelle
+    if (!state.isOnboarded && localStorage.getItem('lexiq_user_onboarded') !== 'true') {
+      console.warn('Onboarding tamamlanmadığı için switchAppMode durduruldu.');
+      return;
+    }
     state.activeMode = mode;
 
     // Alt navigasyon ve yüzen menü aktif durumunu güncelle
@@ -9896,8 +9910,8 @@ let activeAvatarCategory = 'all';
         localStorage.removeItem('kelime_unlocked_badges');
         localStorage.removeItem('kelime_game_stats');
 
-        state.isOnboarded = true;
-        localStorage.setItem('lexiq_user_onboarded', 'true');
+        state.isOnboarded = false;
+        localStorage.removeItem('lexiq_user_onboarded');
 
         updateUserProfileUI();
         updateArenaHeaderAndStats();

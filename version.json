@@ -1,12 +1,11 @@
 {
-  "version": "v1.8.8",
-  "versionCode": 68,
+  "version": "v1.8.9",
+  "versionCode": 69,
   "releaseDate": "2026-10-13",
   "notes": [
-    "🎓 Varsayılan Avatar Yenilendi: Tilki kafası yerine tüm karşılama, profil ve liderlik alanlarında öğrenci avatarı varsayılan yapıldı",
-    "🏫 Profilde İsteğe Bağlı Sınıf/Şube Seçimi: Sınıf seçmemiş öğrenciler ve okul dışı katılımcılar için profilde tıklanabilir rozet ve bilgilendirici seçim modalı eklendi",
-    "🔒 Kalıcı Şube Kilidi Güvencesi: Sınıf seçimi yapıldığında kalıcı olarak kilitleneceği ve eşitlik gereği sonradan değiştirilemeyeceği uyarısı eklendi",
-    "📱 Tam Ekran Ayarlar Sekmeleri: Ayarlar modalındaki tüm sekmeler cihaz genişliğini %100 kapsayacak şekilde optimize edildi",
-    "💬 Gelişmiş Geri Bildirim & Hakkında Arayüzü: Bildirim türü seçim alanı taşma sorunu giderildi, hakkında aksiyon butonları dikeyde tam ortalandı"
+    "📐 Öğrenci Profili Kimlik Kartı Düzeni: Avatar, başlık ve Giriş/Kayıt butonu üst satıra, tüm rozetler (Kur, Şube, Dil) tam genişlikte ferah alt satıra ayrılarak butonların üst üste binmesi kesin olarak engellendi",
+    "🚀 Onboarding & İlk Açılış Güvencesi: Android'de uygulama verileri temizlendiğinde doğrudan ana sayfaya düşme sorunu çözüldü; onboarding modalı ve Hoş Geldin karşılama adımları katı korumalarla güvenceye alındı",
+    "🛡️ Firebase Senkronizasyon Koruması: Yerel veri temizlendiğinde Firestore varsayılan track/lang alanlarının kullanıcıyı otomatik onboarded sayıp karşılama ekranını kapatması engellendi",
+    "⚙️ WebView Sıfırlama İyileştirmesi: Android WebView meta versiyon kodu Build 69 ile güncellenerek temiz açılış senkronizasyonu sağlandı"
   ]
 }

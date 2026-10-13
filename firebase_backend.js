@@ -279,8 +279,8 @@ async function syncUserData(user) {
   localStorage.setItem('lexiq_unit_durations', JSON.stringify(mergedUnitDurations));
   localStorage.setItem('lexiq_day_streak', bestDayStreak.toString());
   localStorage.setItem('lexiq_max_day_streak', bestMaxDayStreak.toString());
-  if (resolvedLastStudyDate) localStorage.setItem('lexiq_last_study_date', resolvedLastStudyDate);
-  const hasOnboarded = !!((docData && docData.track && docData.lang) || localStorage.getItem('lexiq_user_onboarded') === 'true');
+  // Cihaz verisi temizlenmişse (lexiq_user_onboarded yoksa) asla otomatik onboarded yapma
+  const hasOnboarded = !!((docData && docData.onboarded === true) && (localStorage.getItem('lexiq_user_onboarded') === 'true'));
   if (hasOnboarded) {
     localStorage.setItem('lexiq_user_onboarded', 'true');
   }

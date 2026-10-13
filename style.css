@@ -10640,11 +10640,39 @@ body[data-theme="dark"] .home-unit-select-btn:hover,
   transform: scale(0.95);
 }
 
+.student-hero-user-meta {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+
+.student-hero-user-title {
+  font-size: clamp(0.88rem, 2vh, 0.96rem);
+  font-weight: 800;
+  color: var(--text-main);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.student-hero-user-subtitle {
+  font-size: 0.72rem;
+  font-weight: 600;
+  color: var(--text-muted);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.student-hero-badges-row,
 .student-hero-badges {
   display: flex;
   flex-wrap: wrap;
   align-items: center;
-  gap: 6px;
+  gap: 8px;
+  width: 100%;
+  margin-top: 4px;
 }
 
 .student-track-badge, .student-lang-badge {
