@@ -7,7 +7,7 @@
 (function () {
   'use strict';
 
-  const APP_VERSION = 'v1.8.7';
+  const APP_VERSION = 'v1.8.8';
   const CURRENT_APP_BUILD = 'lexiq_build_19_clean';
 
   // Build 13 temiz kurulum / sıfırlama güvencesi (Kullanıcı verilerini sıfırla, Hoş Geldin ekranını garantile)
@@ -99,7 +99,14 @@
     
     // Kullanıcı Profil & İlk Kurulum (Onboarding) Durumu
     userName: localStorage.getItem('lexiq_user_name') || 'Öğrenci',
-    userAvatar: localStorage.getItem('lexiq_user_avatar') || 'avatar_1_1',
+    userAvatar: (() => {
+      const av = localStorage.getItem('lexiq_user_avatar');
+      if (!av || av === '🦊') {
+        localStorage.setItem('lexiq_user_avatar', 'avatar_1_1');
+        return 'avatar_1_1';
+      }
+      return av;
+    })(),
     userEmail: localStorage.getItem('lexiq_user_email') || '',
     userTrack: localStorage.getItem('lexiq_user_track') || '4A',
     userLevel: localStorage.getItem('lexiq_user_level') || 'A2',
@@ -2016,19 +2023,46 @@
     const accountStatus = document.getElementById('profAccountStatusText');
     const loginOutBtn = document.getElementById('profLoginOrOutBtn');
 
+  function updateStudentProfileBranchBadge() {
     const branchBadge = document.getElementById('profHeroBranchBadge');
+    if (!branchBadge) return;
+    if (state.userBranch && state.userBranch !== '-' && state.userBranch !== 'Şube Seçilmedi') {
+      branchBadge.innerHTML = `🏫 Şube: ${state.userBranch} <span style="font-size:0.75rem; opacity:0.85; margin-left:3px;">🔒</span>`;
+      branchBadge.title = 'Sınıf/Şube seçiminiz kilitlidir (Değiştirilemez)';
+      branchBadge.style.cursor = 'pointer';
+      branchBadge.style.border = '1px solid rgba(59, 130, 246, 0.4)';
+      branchBadge.style.background = 'rgba(59, 130, 246, 0.2)';
+      branchBadge.style.color = '#3b82f6';
+      branchBadge.onclick = (e) => {
+        if (e) e.stopPropagation();
+        showToast(`🔒 Sınıfınız (${state.userBranch}) kalıcı olarak kilitlidir. Turnuva ve sınıf sıralaması eşitliği için sonradan değiştirilemez.`, 3500);
+      };
+    } else {
+      branchBadge.innerHTML = `🏫 Sınıf Seç (İsteğe Bağlı) <span style="font-size:0.85rem; margin-left:3px; color:#38bdf8;">➕</span>`;
+      branchBadge.title = 'Sınıf / Şubenizi belirlemek için dokunun (İsteğe bağlı)';
+      branchBadge.style.cursor = 'pointer';
+      branchBadge.style.border = '1.5px dashed #38bdf8';
+      branchBadge.style.background = 'rgba(56, 189, 248, 0.15)';
+      branchBadge.style.color = '#38bdf8';
+      branchBadge.style.fontWeight = '800';
+      branchBadge.style.boxShadow = '0 2px 10px rgba(56, 189, 248, 0.25)';
+      branchBadge.onclick = (e) => {
+        if (e) e.stopPropagation();
+        if (typeof openSelectBranchModal === 'function') {
+          openSelectBranchModal();
+        } else if (typeof window.openSelectBranchModal === 'function') {
+          window.openSelectBranchModal();
+        }
+      };
+    }
+    branchBadge.style.display = 'inline-flex';
+    branchBadge.style.alignItems = 'center';
+  }
+
     if (heroAvatar) setAvatarElement(heroAvatar, state.userAvatar);
     if (heroName) heroName.textContent = state.userName;
     if (trackBadge) trackBadge.textContent = state.userTrack === '4B' ? '4B (B1 İleri)' : '4A (A2 Temel)';
-    if (branchBadge) {
-      if (state.userBranch) {
-        branchBadge.textContent = `🏫 Şube: ${state.userBranch}`;
-        branchBadge.style.display = 'inline-flex';
-      } else {
-        branchBadge.textContent = '🏫 Şube Seçilmedi';
-        branchBadge.style.display = 'inline-flex';
-      }
-    }
+    updateStudentProfileBranchBadge();
     if (langBadge) {
       const meta = LANG_META[state.activeLanguage] || { flag: '🇬🇧', name: 'İngilizce' };
       langBadge.textContent = `${meta.flag} ${meta.name.split('→')[0].trim()}`;
@@ -2997,6 +3031,7 @@ let activeAvatarCategory = 'all';
     if (dom.settingUserNameInput && document.activeElement !== dom.settingUserNameInput) {
       dom.settingUserNameInput.value = state.userName;
     }
+    updateStudentProfileBranchBadge();
     updateSettingAccountStatusUI();
   }
 
@@ -3458,7 +3493,7 @@ let activeAvatarCategory = 'all';
   const obState = {
     step: 1,
     name: '',
-    avatar: '🦊',
+    avatar: 'avatar_1_1',
     lang: 'EN-TR',
     branch: 'İHS 101',
     track: '4B',
@@ -3676,7 +3711,7 @@ let activeAvatarCategory = 'all';
 
     // İçerikleri görünür yapmadan ÖNCE hazırla (Böylece ekranda çift boyama / blink olmaz)
     if (stepNum === 1) {
-      updateOnboardingAvatarUI(obState.avatar || '🦊');
+      updateOnboardingAvatarUI(obState.avatar || 'avatar_1_1');
       renderOnboardingAvatarDropdown(activeObAvatarCat);
       const menu = document.getElementById('obAvatarDropdownMenu');
       if (menu) {
@@ -3892,7 +3927,7 @@ let activeAvatarCategory = 'all';
 
   function completeOnboarding() {
     state.userName = obState.name || 'Öğrenci';
-    state.userAvatar = obState.avatar || '🦊';
+    state.userAvatar = obState.avatar || 'avatar_1_1';
     state.activeLanguage = obState.lang || 'EN-TR';
     state.userTrack = obState.track || '4A';
     state.userLevel = obState.level || getLevelForTrack(state.activeLanguage, state.userTrack);
@@ -3959,7 +3994,7 @@ let activeAvatarCategory = 'all';
         startStreakPledge(obState.streakPledgeDays);
       }, 600);
     }
-    showToast(`Hoş geldin, ${state.userName}! ${state.userAvatar} Öğrenme yolculuğun başlıyor.`);
+    showToast(`Hoş geldin, ${state.userName}! ${isCustomAvatar(state.userAvatar) ? '🎓' : state.userAvatar} Öğrenme yolculuğun başlıyor.`);
     if (!localStorage.getItem('lexiq_tour_completed')) {
       setTimeout(() => {
         if (typeof startFeatureTour === 'function') startFeatureTour(false);
@@ -9264,7 +9299,7 @@ let activeAvatarCategory = 'all';
               listContainer.innerHTML += `
                 <div class="leaderboard-item ${rankClass}" style="${highlightStyle}">
                   <div class="lb-rank">${rank}</div>
-                  <div class="lb-avatar">${getAvatarMarkup(user.avatar || '🦊', 'width:38px; height:38px;')}</div>
+                  <div class="lb-avatar">${getAvatarMarkup(user.avatar || 'avatar_1_1', 'width:38px; height:38px;')}</div>
                   <div class="lb-info">
                     <div style="display:flex; align-items:center; gap:6px;">
                       <div class="lb-name">${user.displayName || 'Öğrenci'}</div>
@@ -9505,7 +9540,7 @@ let activeAvatarCategory = 'all';
                 listContainer.innerHTML += `
                   <div class="leaderboard-item rank-${rank}" style="${isMe ? 'background: rgba(37, 99, 235, 0.1); border-left: 4px solid var(--accent);' : ''}">
                     <div class="lb-rank">${rank}</div>
-                    <div class="lb-avatar">${getAvatarMarkup(user.avatar || '🦊', 'width:38px; height:38px;')}</div>
+                    <div class="lb-avatar">${getAvatarMarkup(user.avatar || 'avatar_1_1', 'width:38px; height:38px;')}</div>
                     <div class="lb-info">
                       <div style="display:flex; align-items:center; gap:6px; flex-wrap:wrap;">
                         <div class="lb-name">${user.displayName || 'Öğrenci'}</div>
@@ -9561,18 +9596,28 @@ let activeAvatarCategory = 'all';
       if (!modal || !select) return;
 
       const targetLang = state.activeLanguage || 'EN-TR';
-      const branches = (window.SCHOOL_BRANCHES || []).filter(b => b.lang === targetLang);
+      const allBranches = window.SCHOOL_BRANCHES || SCHOOL_BRANCHES || [];
+      let branches = allBranches.filter(b => b.lang === targetLang);
+      if (branches.length === 0) branches = allBranches;
+
       select.innerHTML = '';
+      const promptOpt = document.createElement('option');
+      promptOpt.value = '';
+      promptOpt.textContent = '-- Lütfen Sınıf / Şubenizi Seçin --';
+      select.appendChild(promptOpt);
+
       branches.forEach(b => {
         const opt = document.createElement('option');
         opt.value = b.code;
-        opt.textContent = `${b.code} - ${b.name} (${b.trackName})`;
+        opt.textContent = `${b.code} (${b.trackName || ''} • ${b.level || ''})`;
+        if (state.userBranch === b.code) opt.selected = true;
         select.appendChild(opt);
       });
 
       modal.style.display = 'flex';
       modal.classList.add('active');
     }
+    window.openSelectBranchModal = openSelectBranchModal;
 
     function closeSelectBranchModal() {
       const modal = document.getElementById('selectBranchModal');
@@ -9581,6 +9626,14 @@ let activeAvatarCategory = 'all';
         modal.classList.remove('active');
       }
     }
+    window.closeSelectBranchModal = closeSelectBranchModal;
+
+    const branchModalBackdrop = document.getElementById('selectBranchModal');
+    if (branchModalBackdrop) {
+      branchModalBackdrop.addEventListener('click', (e) => {
+        if (e.target === branchModalBackdrop) closeSelectBranchModal();
+      });
+    }
 
     // Şube Seçimini Onayla
     const confirmBranchBtn = document.getElementById('confirmBranchModalBtn');
@@ -9588,7 +9641,15 @@ let activeAvatarCategory = 'all';
       confirmBranchBtn.addEventListener('click', async () => {
         const select = document.getElementById('modalBranchSelect');
         const chosenCode = select ? select.value : '';
-        if (!chosenCode) return;
+        if (!chosenCode) {
+          showToast('⚠️ Lütfen geçerli bir sınıf/şube seçin veya İptal butonuna basın.', 3000);
+          return;
+        }
+
+        const confirmText = `⚠️ DİKKAT: "${chosenCode}" sınıfını seçmek üzeresiniz.\n\nSınıf/Şube seçimi isteğe bağlıdır ancak bir kez onayladığınızda KALICI OLARAK KİLİTLENİR ve sonradan DEĞİŞTİRİLEMEZ.\n\n"${chosenCode}" şubesini onaylayıp kilitlemek istiyor musunuz?`;
+        if (!window.confirm(confirmText)) {
+          return;
+        }
 
         state.userBranch = chosenCode;
         state.branchLocked = true;
@@ -9607,11 +9668,22 @@ let activeAvatarCategory = 'all';
           localStorage.setItem('lexiq_user_level', foundB.level);
         }
 
+        if (typeof window.updateFirebaseProfile === 'function') {
+          window.updateFirebaseProfile(state.userName, state.userAvatar, state.userTrack, state.userLevel, state.activeLanguage);
+        }
+
         updateUserProfileUI();
-        populateProfileSettingsTab();
+        if (typeof updateStudentProfileBranchBadge === 'function') {
+          updateStudentProfileBranchBadge();
+        }
+        if (typeof populateProfileSettingsTab === 'function') {
+          populateProfileSettingsTab();
+        }
         closeSelectBranchModal();
-        showToast(`Şuben ${chosenCode} olarak kilitlendi! Başarılar! 🏆`);
-        renderClassLeaderboard();
+        showToast(`🎉 Sınıfınız "${chosenCode}" olarak başarıyla kilitlendi!`, 4000);
+        if (typeof renderClassLeaderboard === 'function') {
+          renderClassLeaderboard();
+        }
       });
     }
 
@@ -9800,7 +9872,7 @@ let activeAvatarCategory = 'all';
         e.preventDefault();
         state.userName = 'Öğrenci';
         state.userEmail = '';
-        state.userAvatar = '🦊';
+        state.userAvatar = 'avatar_1_1';
         state.xp = 0;
         state.streak = 0;
         state.maxStreak = 0;
@@ -9813,7 +9885,7 @@ let activeAvatarCategory = 'all';
         state.dailyGoalExtra = 0;
 
         localStorage.setItem('lexiq_user_name', 'Öğrenci');
-        localStorage.setItem('lexiq_user_avatar', '🦊');
+        localStorage.setItem('lexiq_user_avatar', 'avatar_1_1');
         localStorage.removeItem('lexiq_user_email');
         localStorage.setItem('kelime_xp', '0');
         localStorage.removeItem('kelime_learned_map');
@@ -9838,7 +9910,7 @@ let activeAvatarCategory = 'all';
         refreshWordsList();
 
         obState.name = '';
-        obState.avatar = '🦊';
+        obState.avatar = 'avatar_1_1';
         if (dom.obNameInput) {
           dom.obNameInput.value = '';
           dom.obNameInput.classList.remove('ob-input-error');
@@ -10132,7 +10204,7 @@ let activeAvatarCategory = 'all';
     window.onUserLogout = function() {
       state.userName = 'Öğrenci';
       state.userEmail = '';
-      state.userAvatar = '🦊';
+      state.userAvatar = 'avatar_1_1';
       state.userTrack = '4A';
       state.userLevel = 'A2';
       state.isOnboarded = false;
@@ -10152,7 +10224,7 @@ let activeAvatarCategory = 'all';
       // LocalStorage verilerini temizle
       localStorage.removeItem('lexiq_user_email');
       localStorage.setItem('lexiq_user_name', 'Öğrenci');
-      localStorage.setItem('lexiq_user_avatar', '🦊');
+      localStorage.setItem('lexiq_user_avatar', 'avatar_1_1');
       localStorage.setItem('lexiq_user_track', '4A');
       localStorage.setItem('lexiq_user_level', 'A2');
       localStorage.removeItem('lexiq_user_onboarded');

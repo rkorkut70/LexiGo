@@ -1,12 +1,12 @@
 {
-  "version": "v1.8.7",
-  "versionCode": 67,
+  "version": "v1.8.8",
+  "versionCode": 68,
   "releaseDate": "2026-10-13",
   "notes": [
-    "🎓 Bağımsız Öğrenci Profili Geri Getirildi: Üst menü kullanıcı profili simgesine tıklandığında ayarlar yerine tam ekran, zengin Öğrenci Profili açılıyor",
-    "🎭 Avatar Değişimi & Şube Bilgisi: Profil ekranında doğrudan tıklanabilir avatar değişimi, kayıtlı resmi şube rozeti ve isim düzenleme aktif",
-    "🚪 Misafir Çıkış Butonu: Misafir modunda da ana karşılama ekranına dönmeyi sağlayan Çıkış Yap butonu eklendi",
-    "⚙️ Sadeleştirilmiş Ayarlar: Ayarlar ekranı sadece Kart, Arena, Hatırlatıcı ve Sistem sekmelerine odaklandı",
-    "🛡️ Android Target SDK 36 Google Play Store tam uyumluluğu korundu"
+    "🎓 Varsayılan Avatar Yenilendi: Tilki kafası yerine tüm karşılama, profil ve liderlik alanlarında öğrenci avatarı varsayılan yapıldı",
+    "🏫 Profilde İsteğe Bağlı Sınıf/Şube Seçimi: Sınıf seçmemiş öğrenciler ve okul dışı katılımcılar için profilde tıklanabilir rozet ve bilgilendirici seçim modalı eklendi",
+    "🔒 Kalıcı Şube Kilidi Güvencesi: Sınıf seçimi yapıldığında kalıcı olarak kilitleneceği ve eşitlik gereği sonradan değiştirilemeyeceği uyarısı eklendi",
+    "📱 Tam Ekran Ayarlar Sekmeleri: Ayarlar modalındaki tüm sekmeler cihaz genişliğini %100 kapsayacak şekilde optimize edildi",
+    "💬 Gelişmiş Geri Bildirim & Hakkında Arayüzü: Bildirim türü seçim alanı taşma sorunu giderildi, hakkında aksiyon butonları dikeyde tam ortalandı"
   ]
 }
