@@ -9707,15 +9707,20 @@ body[data-theme="dark"] .home-unit-select-btn:hover,
 
 /* Hızlı Eylem Butonları */
 .about-actions-grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 8px;
-  margin-top: 2px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-top: 4px;
+  width: 100%;
 }
 
-#aboutCheckUpdateBtn {
-  grid-column: 1 / -1;
+#aboutCheckUpdateBtn,
+#aboutOpenFeedbackBtn {
   width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
 }
 
 .about-action-btn {
@@ -15849,6 +15854,13 @@ html:not([data-theme="dark"]) #aboutCheckUpdateBtn,
 }
 
 #aboutOpenFeedbackBtn {
+  width: 100% !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  text-align: center !important;
+  margin: 0 auto !important;
+  box-sizing: border-box !important;
   background: linear-gradient(135deg, #4f46e5 0%, #6366f1 100%) !important;
   color: #ffffff !important;
   border: none !important;
