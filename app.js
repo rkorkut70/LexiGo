@@ -6020,19 +6020,49 @@ let activeAvatarCategory = 'all';
       }
     }
 
-    // Akıllı Sonraki Oyun Önerileri
-    let sug1 = 'quiz';
-    let sug2 = 'tetris';
-    if (gameName === 'quiz') { sug1 = 'match'; sug2 = 'cloze'; }
-    else if (gameName === 'cloze') { sug1 = 'quiz'; sug2 = 'match'; }
-    else if (gameName === 'tetris') { sug1 = 'quiz'; sug2 = 'match'; }
-    else if (gameName === 'listen') { sug1 = 'quiz'; sug2 = 'match'; }
-    else if (gameName === 'truefalse') { sug1 = 'quiz'; sug2 = 'tetris'; }
-    else if (gameName === 'scramble') { sug1 = 'quiz'; sug2 = 'match'; }
-    else if (gameName === 'anagram') { sug1 = 'quiz'; sug2 = 'match'; }
+    // Akıllı ve Dinamik Sonraki Oyun Önerileri (Tüm 8 oyun modunu kapsar & Anti-Farming %100 XP öncelikli)
+    const pool = (typeof getLearnedWordsPool === 'function') ? getLearnedWordsPool() : [];
+    const allGameKeys = ['quiz', 'match', 'cloze', 'anagram', 'listen', 'tetris', 'truefalse', 'scramble'];
+    
+    // Açık olan ve mevcut oyun dışındaki tüm aday oyunlar
+    let candidateGames = allGameKeys.filter(g => {
+      if (g === gameName) return false;
+      const minReq = (GAME_CONFIG[g] && GAME_CONFIG[g].minWords) || 3;
+      return pool.length >= minReq;
+    });
 
-    const cfg1 = GAME_CONFIG[sug1] || { name: '4 Şıklı Test', icon: '🎯' };
-    const cfg2 = GAME_CONFIG[sug2] || { name: 'Harf Tetrisi', icon: '🕹️' };
+    if (candidateGames.length < 2) {
+      candidateGames = allGameKeys.filter(g => g !== gameName);
+    }
+
+    // Anti-farming ağırlıklandırması: Bugün hiç oynanmamış (0 tur - %100 XP) oyunlara en yüksek öncelik
+    const unplayedToday = candidateGames.filter(g => getDailyGameRoundCount(g) === 0);
+    const playedOnce = candidateGames.filter(g => getDailyGameRoundCount(g) === 1);
+    const playedMore = candidateGames.filter(g => getDailyGameRoundCount(g) >= 2);
+
+    const shuffleArray = (arr) => {
+      const copy = [...arr];
+      for (let i = copy.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [copy[i], copy[j]] = [copy[j], copy[i]];
+      }
+      return copy;
+    };
+
+    const sortedCandidates = [
+      ...shuffleArray(unplayedToday),
+      ...shuffleArray(playedOnce),
+      ...shuffleArray(playedMore)
+    ];
+
+    let sug1 = sortedCandidates[0] || 'anagram';
+    let sug2 = sortedCandidates[1] || 'listen';
+    if (sug2 === sug1 && sortedCandidates.length > 2) {
+      sug2 = sortedCandidates[2];
+    }
+
+    const cfg1 = GAME_CONFIG[sug1] || { name: 'Harf Karıştırma', icon: '🧩' };
+    const cfg2 = GAME_CONFIG[sug2] || { name: 'Dinle ve Yaz', icon: '🎧' };
 
     const suggestBtn1 = document.getElementById('roundModalSuggestBtn1');
     const suggestText1 = document.getElementById('roundSuggestText1');
