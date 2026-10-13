@@ -7,22 +7,11 @@
 (function () {
   'use strict';
 
-  const APP_VERSION = 'v1.8.9';
+  const APP_VERSION = 'v1.8.10';
   const CURRENT_APP_BUILD = 'lexiq_build_69_clean';
 
-  // Build 69 temiz kurulum / sıfırlama güvencesi (Kullanıcı verilerini sıfırla, Hoş Geldin ekranını garantile)
-  if (!localStorage.getItem(CURRENT_APP_BUILD)) {
-    try {
-      localStorage.clear();
-      sessionStorage.clear();
-      localStorage.setItem(CURRENT_APP_BUILD, 'true');
-      if (window.firebase && window.firebase.auth) {
-        window.firebase.auth().signOut().catch(() => {});
-      }
-    } catch (e) {
-      console.warn('Build clean reset error:', e);
-    }
-  }
+  // Uygulama yapısı ve oturum güvenliği
+  localStorage.setItem(CURRENT_APP_BUILD, 'true');
 
   // Manuel test için URL reset parametresi kontrolü (?reset=1)
   if (window.location.search.includes('reset')) {
@@ -1805,19 +1794,33 @@
 
       localStorage.clear();
       sessionStorage.clear();
-      localStorage.setItem('lexiq_reset_done_v30', 'true');
 
       try {
         if (typeof window.logoutUser === 'function') {
           window.logoutUser();
         } else if (window.firebase && window.firebase.auth) {
-          window.firebase.auth().signOut();
+          window.firebase.auth().signOut().catch(() => {});
         }
       } catch (e) {
         console.warn('Logout error on guest reset:', e);
       }
 
-      window.location.reload();
+      state.userName = 'Öğrenci';
+      state.userAvatar = 'avatar_1_1';
+      state.userEmail = '';
+      state.userTrack = '4A';
+      state.userLevel = 'A2';
+      state.userBranch = '';
+      state.branchLocked = false;
+      state.xp = 0;
+      state.streak = 0;
+      state.isOnboarded = false;
+      localStorage.removeItem('lexiq_user_onboarded');
+
+      closeStudentProfileModal();
+      closeSettingsModal();
+      startOnboardingFlow();
+      showToast('Oturum kapatıldı, karşılama ekranına dönüldü.');
       return;
     }
 
@@ -1836,15 +1839,19 @@
       if (typeof window.logoutUser === 'function') {
         window.logoutUser();
       } else if (window.firebase && window.firebase.auth) {
-        window.firebase.auth().signOut();
+        window.firebase.auth().signOut().catch(() => {});
       }
     } catch (e) {
       console.warn('Logout error:', e);
     }
+    window.fbUser = null;
+    closeStudentProfileModal();
+    closeSettingsModal();
     if (typeof window.onUserLogout === 'function') {
       window.onUserLogout();
     }
-    showToast('Başarıyla çıkış yapıldı.');
+    updateUserProfileUI();
+    showToast('Hesabınızdan başarıyla çıkış yapıldı.');
   }
 
   function switchSettingsTab(tabName) {
@@ -6232,11 +6239,6 @@ let activeAvatarCategory = 'all';
   }
 
   function switchAppMode(mode) {
-    // Onboarding henüz tamamlanmamışsa arka plan işlemlerinin ana sayfayı açmasını engelle
-    if (!state.isOnboarded && localStorage.getItem('lexiq_user_onboarded') !== 'true') {
-      console.warn('Onboarding tamamlanmadığı için switchAppMode durduruldu.');
-      return;
-    }
     state.activeMode = mode;
 
     // Alt navigasyon ve yüzen menü aktif durumunu güncelle

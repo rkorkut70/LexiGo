@@ -1,11 +1,10 @@
 {
-  "version": "v1.8.9",
-  "versionCode": 69,
+  "version": "v1.8.10",
+  "versionCode": 70,
   "releaseDate": "2026-10-13",
   "notes": [
-    "📐 Öğrenci Profili Kimlik Kartı Düzeni: Avatar, başlık ve Giriş/Kayıt butonu üst satıra, tüm rozetler (Kur, Şube, Dil) tam genişlikte ferah alt satıra ayrılarak butonların üst üste binmesi kesin olarak engellendi",
-    "🚀 Onboarding & İlk Açılış Güvencesi: Android'de uygulama verileri temizlendiğinde doğrudan ana sayfaya düşme sorunu çözüldü; onboarding modalı ve Hoş Geldin karşılama adımları katı korumalarla güvenceye alındı",
-    "🛡️ Firebase Senkronizasyon Koruması: Yerel veri temizlendiğinde Firestore varsayılan track/lang alanlarının kullanıcıyı otomatik onboarded sayıp karşılama ekranını kapatması engellendi",
-    "⚙️ WebView Sıfırlama İyileştirmesi: Android WebView meta versiyon kodu Build 69 ile güncellenerek temiz açılış senkronizasyonu sağlandı"
+    "🚀 Ekran Görünürlüğü ve Tam Ekran Modal Düzeltmesi: onboardingModal ve tam ekran ayarlar/hakkında modallarının pasifken (:not(.active)) ekranı kaplaması engellendi; kartlar ve ana sayfa görünürlüğü garanti altına alındı",
+    "🚪 Profil ve Sistem Çıkışı İyileştirmesi: Profil ekranındaki Çıkış Yap butonu onayı ve oturum kapatma akışı pürüzsüzleştirildi; customConfirmModal en ön katmana (z-index: 999999) alındı",
+    "🛡️ Veri Bütünlüğü Koruması: Güncelleme esnasında kullanıcının yerel oturumunun silinmesi önlendi"
   ]
 }

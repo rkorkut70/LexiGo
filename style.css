@@ -7567,7 +7567,14 @@ body[data-theme="dark"] .drawer-home-btn,
   color: #ffffff;
 }
 
-#onboardingModal.modal-overlay.full-screen-modal {
+#onboardingModal.modal-overlay:not(.active) {
+  display: none !important;
+  opacity: 0 !important;
+  visibility: hidden !important;
+  pointer-events: none !important;
+}
+
+#onboardingModal.modal-overlay.active {
   backdrop-filter: none !important;
   -webkit-backdrop-filter: none !important;
   background: #0f172a !important;
@@ -7576,6 +7583,9 @@ body[data-theme="dark"] .drawer-home-btn,
   justify-content: center !important;
   padding: env(safe-area-inset-top, 8px) env(safe-area-inset-right, 8px) env(safe-area-inset-bottom, 8px) env(safe-area-inset-left, 8px) !important;
   box-sizing: border-box !important;
+  opacity: 1 !important;
+  visibility: visible !important;
+  pointer-events: auto !important;
 }
 
 /* Onboarding Modal Kartı (3D Kart Gövdesi) */
@@ -11674,10 +11684,20 @@ html[data-flip-speed="slow"] .flashcard {
 /* ============================================================
    UYGULAMA AYARLARI, ÖĞRENCİ PROFİLİ VE GERİ BİLDİRİM TAM EKRAN TASARIMI
    ============================================================ */
-#settingsModal.full-screen-modal,
-#studentProfileModal.full-screen-modal,
-#feedbackModal.full-screen-modal,
-#aboutModal.full-screen-modal {
+#settingsModal.full-screen-modal:not(.active),
+#studentProfileModal.full-screen-modal:not(.active),
+#feedbackModal.full-screen-modal:not(.active),
+#aboutModal.full-screen-modal:not(.active) {
+  display: none !important;
+  opacity: 0 !important;
+  visibility: hidden !important;
+  pointer-events: none !important;
+}
+
+#settingsModal.full-screen-modal.active,
+#studentProfileModal.full-screen-modal.active,
+#feedbackModal.full-screen-modal.active,
+#aboutModal.full-screen-modal.active {
   position: fixed !important;
   inset: 0 !important;
   width: 100vw !important;
@@ -11694,6 +11714,13 @@ html[data-flip-speed="slow"] .flashcard {
   z-index: 10020 !important;
   overflow: hidden !important;
   box-sizing: border-box !important;
+  opacity: 1 !important;
+  visibility: visible !important;
+  pointer-events: auto !important;
+}
+
+#customConfirmModal {
+  z-index: 999999 !important;
 }
 
 #settingsModal.full-screen-modal .settings-modal-card,
