@@ -13874,28 +13874,37 @@ html.screen-fit-compact .welcome-action-guest {
 
 /* 1. Modal Overlay & Dış Çerçeve */
 #settingsModal.full-screen-modal {
+  position: fixed !important;
+  inset: 0 !important;
+  width: 100vw !important;
+  height: 100% !important;
+  height: 100dvh !important;
+  height: 100vh !important;
   display: flex !important;
   align-items: center !important;
   justify-content: center !important;
   padding: 0 !important;
-  background: rgba(7, 9, 15, 0.78) !important;
+  background: rgba(7, 9, 15, 0.88) !important;
   backdrop-filter: blur(14px) !important;
   -webkit-backdrop-filter: blur(14px) !important;
   transition: opacity 0.28s cubic-bezier(0.16, 1, 0.3, 1), visibility 0.28s !important;
-  z-index: 10050 !important;
+  z-index: 200030 !important;
   overflow: hidden !important;
 }
 
 #settingsModal.full-screen-modal:not(.active) {
+  display: none !important;
   opacity: 0 !important;
   visibility: hidden !important;
   pointer-events: none !important;
 }
 
 #settingsModal.full-screen-modal.active {
+  display: flex !important;
   opacity: 1 !important;
   visibility: visible !important;
   pointer-events: auto !important;
+  z-index: 200030 !important;
 }
 
 /* 2. 3D Ana Kart Gövdesi (Adaptive Shell) */

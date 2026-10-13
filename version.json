@@ -1,10 +1,11 @@
 {
-  "version": "v1.8.3",
-  "versionCode": 63,
+  "version": "v1.8.4",
+  "versionCode": 64,
   "releaseDate": "2026-10-13",
   "notes": [
+    "⚙️ Profil ve Ayarlar Ekranı Onarımı: Üst bardaki Öğrenci Profili ve Ayarlar butonlarının doğrudan ve kesintisiz açılması sağlandı, katman (z-index) ve sekme geçiş kontrolleri optimize edildi",
     "🏆 3D Sarı Şampiyonluk Kupası: Turnuva ve Liderlik butonları, başlıkları ve sekmeleri özel 3D altın sarısı kupa ikonuyla donatıldı",
-    "⚡ Başlatma ve Kararlılık İyileştirmesi: Profil ve ayarlar ekranlarının entegrasyonu optimize edildi, açılış performansı artırıldı",
+    "⚡ Başlatma ve Kararlılık İyileştirmesi: Modal pencerelerinin responsive uyumu ve tam ekran gösterim mekanizmaları güçlendirildi",
     "🎓 Birleşik Öğrenci Profili: Üst menü profili ile ayarlar profil sekmesi tek ekranda birleştirildi",
     "📊 Canlı Başarı Karnesi: İstatistik sayaçları, çalışma süreleri ve kitap ünitelerindeki ilerleme doğrudan profil sekmesinde toplandı",
     "✨ Sade ve Sezgisel Deneyim: Mükerrer profil pencereleri kaldırılarak tek tıkla tam ekran kontrol merkezi oluşturuldu",

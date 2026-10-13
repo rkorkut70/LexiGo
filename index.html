@@ -15,7 +15,7 @@
   <meta http-equiv="Expires" content="0">
   <title>LexiQ • Çok Dilli Akıllı Kelime Kartları</title>
   <link rel="icon" type="image/jpeg" href="logo.jpg">
-  <link rel="stylesheet" href="style.css?v=1.8.3">
+  <link rel="stylesheet" href="style.css?v=1.8.4">
 </head>
 <body>
   <div class="app-container">
@@ -33,7 +33,7 @@
         </button>
 
         <!-- Ayarlar & Profil Butonu (Tıklanınca Ayarları Açar) -->
-        <button id="userProfileBtn" class="pill-btn user-header-btn student-profile-header-btn" title="Öğrenci Bilgileri & Profil">
+        <button id="userProfileBtn" class="pill-btn user-header-btn student-profile-header-btn" title="Öğrenci Bilgileri & Profil" onclick="if(window.openStudentProfileModal) window.openStudentProfileModal(); else if(window.openSettingsModal) window.openSettingsModal('profile');">
           <span id="headerUserAvatar" class="settings-btn-icon">🦊</span>
           <span id="headerUserName" class="header-btn-text">Öğrenci</span>
         </button>
@@ -50,8 +50,8 @@
           <span id="headerXpText">0</span> <span class="xp-suffix">XP</span>
         </button>
 
-        <!-- Eski Ayrı Ayarlar Butonu (Header'da yer açmak için gizli, yukarıdaki Ayarlar butonu kullanılıyor) -->
-        <button id="settingsBtn" class="icon-btn settings-header-icon-btn" aria-label="Ayarlar" title="Uygulama Ayarları">
+        <!-- Ayarlar Butonu -->
+        <button id="settingsBtn" class="icon-btn settings-header-icon-btn" aria-label="Ayarlar" title="Uygulama Ayarları" onclick="if(window.openSettingsModal) window.openSettingsModal('cards');">
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
             <circle cx="12" cy="12" r="3"></circle>
             <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
@@ -1136,7 +1136,7 @@
         <div class="welcome-hero-section">
           <div class="welcome-brand-wrapper">
             <h1 class="welcome-brand-name">Lexi<span class="welcome-brand-q">Q</span></h1>
-            <span class="welcome-version-pill">v1.8.3</span>
+            <span class="welcome-version-pill">v1.8.4</span>
           </div>
           <!-- 3 Temel Başarı Sütunu (3D Pill Rozetleri) -->
           <div class="welcome-pillars-container">
@@ -1850,7 +1850,7 @@
         <div class="about-hero-box">
           <div class="about-brand-row">
             <span class="about-brand">Lexi<span class="brand-highlight">Q</span></span>
-            <span class="about-version-pill" id="aboutAppVersion">v1.8.3</span>
+            <span class="about-version-pill" id="aboutAppVersion">v1.8.4</span>
             <span class="about-platform-badge" id="aboutPlatformBadge" style="display: none; font-size: 0.72rem; font-weight: 700; padding: 3px 9px; border-radius: 12px; background: rgba(59,130,246,0.15); color: #3b82f6; border: 1px solid rgba(59,130,246,0.3);"></span>
           </div>
           <p class="about-tagline">Müfredat Tabanlı Çok Dilli Kelime Arenası</p>
@@ -2339,7 +2339,7 @@
             <span class="settings-title-sub">Tercihleri, görünümü ve sistemi yönetin</span>
           </div>
         </div>
-        <button id="closeSettingsModalBtn" class="icon-btn settings-close-btn" aria-label="Kapat" title="Kapat">
+        <button id="closeSettingsModalBtn" class="icon-btn settings-close-btn" aria-label="Kapat" title="Kapat" onclick="if(window.closeSettingsModal) window.closeSettingsModal();">
           <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
             <line x1="18" y1="6" x2="6" y2="18"></line>
             <line x1="6" y1="6" x2="18" y2="18"></line>
@@ -3372,17 +3372,16 @@
       <div class="confirm-icon-wrap" style="font-size: 2.8rem; margin-bottom: 8px;">🎉</div>
       <h3 class="confirm-title" style="font-size: 1.3rem; font-weight: 800; margin: 0 0 6px 0;">LexiQ Güncellendi!</h3>
       <div class="app-update-version-badge" style="display: inline-block; padding: 4px 14px; border-radius: 20px; font-size: 0.84rem; font-weight: 800; margin-bottom: 14px;">
-        Sürüm <span id="appUpdateVersionText">v1.8.3</span>
+        Sürüm <span id="appUpdateVersionText">v1.8.4</span>
       </div>
       <div class="update-notes-box" style="text-align: left; border-radius: 16px; padding: 14px 16px; font-size: 0.88rem; line-height: 1.6; margin-bottom: 18px; max-height: 280px; overflow-y: auto;">
         <div class="update-notes-title" style="font-weight: 800; margin-bottom: 8px; display: flex; align-items: center; gap: 6px;">
           <span>✨</span><span>Bu Sürümdeki Yenilikler</span>
         </div>
         <ul style="margin: 0; padding-left: 20px; display: flex; flex-direction: column; gap: 8px;">
-          <li><strong>🏆 Parlak Sarı 3D Kupa İkonu:</strong> Üst bar, turnuva ekranı ve okul liderlik sekmelerine özel 3D altın sarısı şampiyonluk kupası eklendi.</li>
-          <li><strong>⚡ Başlatma ve Kararlılık İyileştirmesi:</strong> Profil ve ayarlar ekranlarının entegrasyonu optimize edildi, açılış performansı artırıldı.</li>
-          <li><strong>🏫 Sınıf İçi Liderlik Tablosu:</strong> Kendi resmi hazırlık şubendeki sınıf arkadaşlarınla haftalık liderlik yarışına katıl!</li>
-          <li><strong>⚔️ Şubeler Arası Düello Ligi:</strong> Aynı dildeki hazırlık şubeleri haftalık ortalama XP ile kıyasıya rekabette.</li>
+          <li><strong>⚙️ Profil ve Ayarlar Ekranı Onarımı:</strong> Üst bardaki Öğrenci Profili ve Ayarlar butonlarının doğrudan ve kesintisiz açılması sağlandı, katman (z-index) ve sekme geçiş kontrolleri optimize edildi.</li>
+          <li><strong>🏆 Parlak Sarı 3D Kupa İkonu:</strong> Üst bar, turnuva ekranı ve okul liderlik sekmelerine özel 3D altın sarısı şampiyonluk kupası entegre edildi.</li>
+          <li><strong>⚡ Performans & Kararlılık:</strong> Modal pencerelerinin responsive uyumu ve tam ekran gösterim mekanizmaları güçlendirildi.</li>
         </ul>
       </div>
       <div style="display: flex; flex-direction: column; gap: 8px; width: 100%;">
@@ -3445,11 +3444,11 @@
   <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-storage-compat.js"></script>
-  <script src="firebase_backend.js?v=1.8.3"></script>
+  <script src="firebase_backend.js?v=1.8.4"></script>
 
   <!-- Kelime Verisi ve Uygulama Mantığı (Sadece Standart Vanilla JS) -->
-  <script src="words_data.js?v=1.8.3"></script>
-  <script src="app.js?v=1.8.3"></script>
+  <script src="words_data.js?v=1.8.4"></script>
+  <script src="app.js?v=1.8.4"></script>
 
   </body>
 </html>

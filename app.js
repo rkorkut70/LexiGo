@@ -7,7 +7,7 @@
 (function () {
   'use strict';
 
-  const APP_VERSION = 'v1.8.3';
+  const APP_VERSION = 'v1.8.4';
   const CURRENT_APP_BUILD = 'lexiq_build_19_clean';
 
   // Build 13 temiz kurulum / sıfırlama güvencesi (Kullanıcı verilerini sıfırla, Hoş Geldin ekranını garantile)
@@ -1838,7 +1838,9 @@
   }
 
   function switchSettingsTab(tabName) {
-    const isCurrentlyOnProfile = dom.settingsTabPanels && Array.from(dom.settingsTabPanels).some(p => p.id === 'tabPanelProfile' && p.classList.contains('active'));
+    const modalEl = dom.settingsModal || document.getElementById('settingsModal');
+    const modalActive = modalEl && modalEl.classList.contains('active');
+    const isCurrentlyOnProfile = modalActive && dom.settingsTabPanels && Array.from(dom.settingsTabPanels).some(p => p.id === 'tabPanelProfile' && p.classList.contains('active'));
     if (isCurrentlyOnProfile && tabName !== 'profile' && typeof hasUnsavedProfileSettings === 'function' && hasUnsavedProfileSettings()) {
       const confirmed = confirmDiscardProfileChanges();
       if (!confirmed) return;
@@ -2486,9 +2488,25 @@ let activeAvatarCategory = 'all';
   }
 
   function openSettingsModal(defaultTab = 'cards') {
-    if (dom.settingsModal) {
+    const modal = dom.settingsModal || document.getElementById('settingsModal');
+    if (!modal) return;
+
+    // Modalı her şeyden önce hemen görünür yap
+    modal.classList.add('active');
+
+    try {
       switchSettingsTab(defaultTab);
+    } catch (e) {
+      console.warn('switchSettingsTab error:', e);
+    }
+
+    try {
       populateProfileSettingsTab();
+    } catch (e) {
+      console.warn('populateProfileSettingsTab error:', e);
+    }
+
+    try {
       applyCardTheme(state.cardTheme);
       applyCardFont(state.cardFont);
       applyGameFont(state.gameFont);
@@ -2512,24 +2530,27 @@ let activeAvatarCategory = 'all';
       const settingSoundFx = document.getElementById('settingSoundFx');
       if (settingSoundFx) settingSoundFx.checked = soundFxEnabled;
       applySpeechSpeed(state.speechSpeed);
-
-      dom.settingsModal.classList.add('active');
+    } catch (e) {
+      console.warn('applySettings error:', e);
     }
   }
 
   function closeSettingsModal(force = false) {
-    if (dom.settingsModal) {
-      if (!force && typeof hasUnsavedProfileSettings === 'function' && hasUnsavedProfileSettings()) {
-        const confirmed = confirmDiscardProfileChanges();
-        if (!confirmed) return;
-        // Kullanıcı vazgeçtiyse değişiklikleri orijinaline geri al
-        if (typeof populateProfileSettingsTab === 'function') {
-          populateProfileSettingsTab();
-        }
+    const modal = dom.settingsModal || document.getElementById('settingsModal');
+    if (!modal) return;
+    if (!force && typeof hasUnsavedProfileSettings === 'function' && hasUnsavedProfileSettings()) {
+      const confirmed = confirmDiscardProfileChanges();
+      if (!confirmed) return;
+      if (typeof populateProfileSettingsTab === 'function') {
+        populateProfileSettingsTab();
       }
-      dom.settingsModal.classList.remove('active');
     }
+    modal.classList.remove('active');
   }
+
+  window.openSettingsModal = openSettingsModal;
+  window.closeSettingsModal = closeSettingsModal;
+  window.openStudentProfileModal = openStudentProfileModal;
 
   // ==========================================
   // DİL & MÜFREDAT TARİH HESAPLAMA (KURAL 1 & KURAL 4)
