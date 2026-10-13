@@ -7,7 +7,7 @@
 (function () {
   'use strict';
 
-  const APP_VERSION = 'v1.7.9';
+  const APP_VERSION = 'v1.8.0';
   const CURRENT_APP_BUILD = 'lexiq_build_19_clean';
 
   // Build 13 temiz kurulum / sıfırlama güvencesi (Kullanıcı verilerini sıfırla, Hoş Geldin ekranını garantile)
@@ -99,7 +99,7 @@
     
     // Kullanıcı Profil & İlk Kurulum (Onboarding) Durumu
     userName: localStorage.getItem('lexiq_user_name') || 'Öğrenci',
-    userAvatar: localStorage.getItem('lexiq_user_avatar') || '🦊',
+    userAvatar: localStorage.getItem('lexiq_user_avatar') || 'avatar_1_1',
     userEmail: localStorage.getItem('lexiq_user_email') || '',
     userTrack: localStorage.getItem('lexiq_user_track') || '4A',
     userLevel: localStorage.getItem('lexiq_user_level') || 'A2',
@@ -2464,17 +2464,23 @@
       el.style.borderRadius = '50%';
       el.style.flexShrink = '0';
       if (el.classList.contains('settings-btn-icon') || el.id === 'headerUserAvatar') {
-        el.style.width = '24px';
-        el.style.height = '24px';
+        el.style.width = '26px';
+        el.style.height = '26px';
       } else if (el.id === 'homeUserAvatar' || el.classList.contains('greeting-avatar')) {
-        el.style.width = '36px';
-        el.style.height = '36px';
+        el.style.width = '38px';
+        el.style.height = '38px';
       } else if (el.id === 'profHeroAvatar' || el.classList.contains('student-avatar-badge')) {
-        el.style.width = '52px';
-        el.style.height = '52px';
+        el.style.width = '56px';
+        el.style.height = '56px';
       } else if (el.id === 'settingUserAvatarPreview') {
-        el.style.width = '52px';
-        el.style.height = '52px';
+        el.style.width = '56px';
+        el.style.height = '56px';
+      } else if (el.id === 'obAvatarPreview') {
+        el.style.width = '100%';
+        el.style.height = '100%';
+      } else if (el.id === 'obAvatarSelectedIndicator') {
+        el.style.width = '30px';
+        el.style.height = '30px';
       }
       el.innerHTML = '<img src="' + getAvatarSrc(av) + '" class="avatar-img-fluid" style="width:100%; height:100%; border-radius:50%; object-fit:cover; display:block;" alt="Avatar">';
     } else {
@@ -2497,17 +2503,8 @@
       icon: '✨'
     },
     {
-      id: 'mascots',
-      name: 'Bilge Maskotlar',
-      icon: '🦊',
-      avatars: [
-        'avatar_8_1', 'avatar_8_2', 'avatar_8_3', 'avatar_8_4', 'avatar_8_5',
-        'avatar_8_6', 'avatar_8_7', 'avatar_8_8', 'avatar_8_9', 'avatar_8_10'
-      ]
-    },
-    {
       id: 'academic',
-      name: 'Kampüs & Akademi',
+      name: 'Öğrenciler & Kampüs',
       icon: '🎓',
       avatars: [
         'avatar_1_1', 'avatar_1_2', 'avatar_1_3', 'avatar_1_4', 'avatar_1_5',
@@ -2530,6 +2527,15 @@
       avatars: [
         'avatar_3_1', 'avatar_3_2', 'avatar_3_3', 'avatar_3_4', 'avatar_3_5',
         'avatar_3_6', 'avatar_3_7', 'avatar_3_8', 'avatar_3_9', 'avatar_3_10'
+      ]
+    },
+    {
+      id: 'mascots',
+      name: 'Bilge Maskotlar',
+      icon: '🦊',
+      avatars: [
+        'avatar_8_1', 'avatar_8_2', 'avatar_8_3', 'avatar_8_4', 'avatar_8_5',
+        'avatar_8_6', 'avatar_8_7', 'avatar_8_8', 'avatar_8_9', 'avatar_8_10'
       ]
     },
     {
@@ -2561,7 +2567,7 @@
     },
     {
       id: 'dorm',
-      name: 'Yurt & Sınavlar',
+      name: 'Yurt & Sosyal',
       icon: '☕',
       avatars: [
         'avatar_7_1', 'avatar_7_2', 'avatar_7_3', 'avatar_7_4', 'avatar_7_5',
@@ -3385,9 +3391,32 @@ let activeAvatarCategory = 'all';
 
   function renderOnboardingAvatarDropdown(catId = null) {
     if (catId) activeObAvatarCat = catId;
+    const pillsContainer = document.getElementById('obAvatarCatPills');
     const grid = document.getElementById('obAvatarGrid');
     if (!grid) return;
 
+    // 1. Kategori haplarını AVATAR_CATEGORIES üzerinden dinamik oluştur ve tıklandığında filtrele
+    if (pillsContainer) {
+      pillsContainer.innerHTML = '';
+      if (typeof AVATAR_CATEGORIES !== 'undefined') {
+        AVATAR_CATEGORIES.forEach(cat => {
+          const pill = document.createElement('button');
+          pill.type = 'button';
+          pill.className = 'ob-avatar-cat-pill ' + (activeObAvatarCat === cat.id ? 'active' : '');
+          pill.setAttribute('data-cat', cat.id);
+          pill.innerHTML = `<span>${cat.icon}</span> <span>${cat.name}</span>`;
+          pill.onclick = (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            activeObAvatarCat = cat.id;
+            renderOnboardingAvatarDropdown(cat.id);
+          };
+          pillsContainer.appendChild(pill);
+        });
+      }
+    }
+
+    // 2. Kategoriye ait avatarları listele
     grid.innerHTML = '';
     let list = [];
     if (activeObAvatarCat === 'all') {
@@ -3399,7 +3428,7 @@ let activeAvatarCategory = 'all';
       }
       list = Array.from(set);
       if (list.length === 0) {
-        list = ['🦊', '🦁', '🐺', '🐼', '🐨', '🐯', '🐱', '🐶', '🦉', '🦄', '🐻', '🐰', '🐸', '🐵', '🦅', '🐧', '🐙', '🐬', '🦋', '🚀', '👽', '🤖', '👾', '💎', '👑', '🎯', '🔥', '✨', '⚡', '🏆', '😎', '🤠', '🥳', '🧐', '🦸', '🥷', '🧙', '🍕'];
+        list = ['avatar_1_1', 'avatar_1_2', 'avatar_1_3', 'avatar_1_4', 'avatar_1_5'];
       }
     } else {
       const found = typeof AVATAR_CATEGORIES !== 'undefined' ? AVATAR_CATEGORIES.find(c => c.id === activeObAvatarCat) : null;
@@ -3413,20 +3442,17 @@ let activeAvatarCategory = 'all';
       btn.className = 'avatar-chip ' + (currentSelected === av ? 'active' : '');
       btn.setAttribute('data-avatar', av);
       if (isCustomAvatar(av)) {
-        btn.innerHTML = '<img src="' + getAvatarSrc(av) + '" style="width:100%; height:100%; border-radius:10px; object-fit:cover; display:block;" alt="Avatar">';
+        btn.innerHTML = '<img src="' + getAvatarSrc(av) + '" class="avatar-chip-img" style="width:100%; height:100%; border-radius:12px; object-fit:cover; display:block;" alt="Avatar">';
       } else {
         btn.textContent = av;
       }
-      btn.onclick = () => {
+      btn.onclick = (e) => {
+        e.preventDefault();
+        e.stopPropagation();
         obState.avatar = av;
         updateOnboardingAvatarUI(av);
       };
       grid.appendChild(btn);
-    });
-
-    const pills = document.querySelectorAll('#obAvatarCatPills .ob-avatar-cat-pill');
-    pills.forEach(pill => {
-      pill.classList.toggle('active', pill.getAttribute('data-cat') === activeObAvatarCat);
     });
   }
 
@@ -3437,7 +3463,6 @@ let activeAvatarCategory = 'all';
     const arrow = document.getElementById('obAvatarArrow');
     const confirmBtn = document.getElementById('obAvatarConfirmBtn');
     const closeXBtn = document.getElementById('obAvatarSheetCloseXBtn');
-    const catPills = document.querySelectorAll('#obAvatarCatPills .ob-avatar-cat-pill');
 
     function openDropdown() {
       if (!menu) return;
@@ -3447,7 +3472,7 @@ let activeAvatarCategory = 'all';
         triggerBtn.setAttribute('aria-expanded', 'true');
       }
       if (arrow) arrow.textContent = '▲';
-      renderOnboardingAvatarDropdown(activeObAvatarCat);
+      renderOnboardingAvatarDropdown(activeObAvatarCat || 'all');
     }
 
     function closeDropdown() {
@@ -3494,18 +3519,9 @@ let activeAvatarCategory = 'all';
         e.stopPropagation();
         closeDropdown();
         playSoundEffect('correct');
-        showToast(`Avatar seçildi: ${obState.avatar || '🦊'} ✓`);
+        showToast('Avatar seçildi! ✓');
       };
     }
-
-    catPills.forEach(pill => {
-      pill.onclick = (e) => {
-        e.preventDefault();
-        e.stopPropagation();
-        const cat = pill.getAttribute('data-cat') || 'all';
-        renderOnboardingAvatarDropdown(cat);
-      };
-    });
 
     if (menu) {
       menu.onclick = (e) => {
@@ -3520,7 +3536,7 @@ let activeAvatarCategory = 'all';
     window.startOnboardingFlow = startOnboardingFlow;
     obState.step = 0;
     obState.name = (state.userName && state.userName !== 'Öğrenci') ? state.userName : '';
-    obState.avatar = state.userAvatar || '🦊';
+    obState.avatar = state.userAvatar || 'avatar_1_1';
     obState.lang = state.activeLanguage || 'EN-TR';
     obState.track = state.userTrack || '4A';
     obState.level = state.userLevel || getLevelForTrack(obState.lang, obState.track);

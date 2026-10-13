@@ -1,11 +1,12 @@
 {
-  "version": "v1.7.9",
-  "versionCode": 59,
+  "version": "v1.8.0",
+  "versionCode": 60,
   "releaseDate": "2026-10-13",
   "notes": [
-    "📱 Cümle Kurma: Tablet ve büyük ekranlarda kelime butonları, harfler ve yuvalar tam ekran adaptif hale getirildi",
-    "🎯 Küçük ekran sıkıştırma kuralları sadece küçük mobil ekranlara sınırlandırıldı, geniş ekranlarda ferah ve okunaklı boyutlar sağlandı",
-    "✨ Yuvaya yerleşen ve bankadaki kelime çiplerinin fontları tablet boyutuna göre otomatik büyütüldü",
+    "🎓 İlk Kurulum & Giriş: Varsayılan profil avatarı sevimli öğrenci avatarına güncellendi",
+    "📱 Tam Ekran Avatar Seçimi: Giriş adımında ve öğrenci profilinde avatar değiştirme ekranları ferah tam ekran modala dönüştürüldü",
+    "🎯 Kategori Filtreleme Onarımı: Avatar grupları (Öğrenciler, Maskotlar, Kütüphane, Seyyah, Emojiler vb.) dinamik olarak aktif hale getirildi",
+    "✨ Evrensel Avatar Uyumu: Tüm avatarların alanlarına sıfır taşma ile tam oturması ve daire/kare oranlarının korunması sağlandı",
     "🛡️ Android Target SDK 36 Google Play Store tam uyumluluğu korundu"
   ]
 }
