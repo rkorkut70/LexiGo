@@ -7,7 +7,7 @@
 (function () {
   'use strict';
 
-  const APP_VERSION = 'v1.8.21';
+  const APP_VERSION = 'v1.8.22';
   const CURRENT_APP_BUILD = 'lexiq_build_19_clean';
 
   // Build 13 temiz kurulum / sıfırlama güvencesi (Kullanıcı verilerini sıfırla, Hoş Geldin ekranını garantile)
@@ -9048,6 +9048,36 @@ let activeAvatarCategory = 'all';
     isLocked: false
   };
 
+  /**
+   * Dinle ve Yaz için hedef dilde dinamik çeldirici (ekstra) harfler üretir.
+   */
+  function getListenDistractorLetters(targetLetters, lang, count) {
+    const langFrequencies = {
+      'EN-TR': ['E', 'A', 'R', 'I', 'O', 'T', 'S', 'N', 'L', 'C', 'U', 'D', 'P', 'M', 'H', 'G', 'B', 'Y', 'F', 'W', 'K', 'V'],
+      'DE-TR': ['E', 'N', 'I', 'R', 'S', 'A', 'T', 'D', 'H', 'U', 'L', 'C', 'G', 'M', 'O', 'B', 'W', 'F', 'K', 'Z', 'P', 'V', 'Ä', 'Ö', 'Ü'],
+      'FR-TR': ['E', 'A', 'I', 'S', 'N', 'R', 'T', 'O', 'L', 'U', 'D', 'C', 'M', 'P', 'G', 'B', 'V', 'H', 'F', 'Y', 'É', 'È', 'Ç', 'À']
+    };
+
+    const freqList = langFrequencies[lang] || langFrequencies['EN-TR'];
+    const targetSet = new Set(targetLetters);
+
+    // Öncelik: Hedef kelimede bulunmayan sık kullanılan harfler
+    const notInWord = freqList.filter(char => !targetSet.has(char));
+    const shuffledNotInWord = [...notInWord].sort(() => Math.random() - 0.5);
+
+    const chosen = [];
+    for (let i = 0; i < count; i++) {
+      if (shuffledNotInWord.length > 0) {
+        chosen.push(shuffledNotInWord.pop());
+      } else {
+        const randomChar = freqList[Math.floor(Math.random() * freqList.length)];
+        chosen.push(randomChar);
+      }
+    }
+
+    return chosen.map(c => lang === 'EN-TR' ? toEnglishUpper(c) : c.toUpperCase());
+  }
+
   function startListenRound() {
     state.roundUsedHint = false;
     listenState.isLocked = false;
@@ -9083,9 +9113,24 @@ let activeAvatarCategory = 'all';
     listenState.solutionLetters = [...letters];
     listenState.userSlots = new Array(letters.length).fill(null);
 
-    const shuffled = letters.map((char, idx) => ({ id: idx, letter: char, used: false }))
-                            .sort(() => Math.random() - 0.5);
-    if (shuffled.map(s => s.letter).join('') === letters.join('') && letters.length > 2) {
+    // Dinamik çeldirici (ekstra) harf sayısı:
+    // <= 4 harf: +2 harf
+    // 5 - 7 harf: +3 harf
+    // 8+ harf: +4 harf
+    let extraCount = 2;
+    if (letters.length >= 8) {
+      extraCount = 4;
+    } else if (letters.length >= 5) {
+      extraCount = 3;
+    }
+
+    const distractorLetters = getListenDistractorLetters(letters, candidate.dil, extraCount);
+
+    const baseItems = letters.map((char, idx) => ({ id: idx, letter: char, used: false, isDistractor: false }));
+    const distractorItems = distractorLetters.map((char, idx) => ({ id: letters.length + idx, letter: char, used: false, isDistractor: true }));
+
+    const shuffled = [...baseItems, ...distractorItems].sort(() => Math.random() - 0.5);
+    if (shuffled.slice(0, letters.length).map(s => s.letter).join('') === letters.join('') && letters.length > 2) {
       shuffled.reverse();
     }
     listenState.bankItems = shuffled;
@@ -9183,7 +9228,10 @@ let activeAvatarCategory = 'all';
     if (emptyIdx === -1) return;
 
     const neededChar = listenState.solutionLetters[emptyIdx];
-    const availableItem = listenState.bankItems.find(i => !i.used && i.letter === neededChar);
+    let availableItem = listenState.bankItems.find(i => !i.used && i.letter === neededChar && !i.isDistractor);
+    if (!availableItem) {
+      availableItem = listenState.bankItems.find(i => !i.used && i.letter === neededChar);
+    }
     if (!availableItem) return;
 
     availableItem.used = true;
