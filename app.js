@@ -6759,6 +6759,9 @@ let activeAvatarCategory = 'all';
       clearTimeout(scrambleNextTimeout);
       scrambleNextTimeout = null;
     }
+    if (typeof scrambleState !== 'undefined') scrambleState.isLocked = false;
+    if (typeof anagramState !== 'undefined') anagramState.isLocked = false;
+    if (typeof listenState !== 'undefined') listenState.isLocked = false;
     exitFullscreenIfSupported();
   }
 
@@ -7165,11 +7168,13 @@ let activeAvatarCategory = 'all';
     targetWord: null,
     solutionLetters: [],
     bankItems: [],
-    userSlots: []
+    userSlots: [],
+    isLocked: false
   };
 
   function startAnagramRound() {
     state.roundUsedHint = false;
+    anagramState.isLocked = false;
     const pool = getLearnedWordsPool();
     if (pool.length < 3) return;
 
@@ -7231,6 +7236,7 @@ let activeAvatarCategory = 'all';
   }
 
   function handleAnagramTileClick(tileId) {
+    if (anagramState.isLocked) return;
     const item = anagramState.bankItems.find(i => i.id === tileId);
     if (!item || item.used) return;
 
@@ -7247,6 +7253,7 @@ let activeAvatarCategory = 'all';
   }
 
   function handleAnagramSlotClick(slotIdx) {
+    if (anagramState.isLocked) return;
     const slot = anagramState.userSlots[slotIdx];
     if (!slot) return;
 
@@ -7262,6 +7269,7 @@ let activeAvatarCategory = 'all';
   }
 
   function anagramBackspace() {
+    if (anagramState.isLocked) return;
     for (let i = anagramState.userSlots.length - 1; i >= 0; i--) {
       if (anagramState.userSlots[i] !== null) {
         handleAnagramSlotClick(i);
@@ -7271,18 +7279,32 @@ let activeAvatarCategory = 'all';
   }
 
   function anagramReset() {
+    if (anagramState.isLocked) return;
     anagramState.bankItems.forEach(i => i.used = false);
     anagramState.userSlots.fill(null);
     renderAnagramUI();
   }
 
   function checkAnagramAnswer() {
+    if (anagramState.isLocked) return;
     const userWord = anagramState.userSlots.map(s => s.letter).join('');
     const target = anagramState.solutionLetters.join('');
     const slots = dom.anagramSlots.querySelectorAll('.letter-slot');
 
     if (userWord === target) {
-      slots.forEach(s => s.classList.add('correct'));
+      anagramState.isLocked = true;
+      slots.forEach(s => {
+        s.classList.add('correct');
+        s.style.pointerEvents = 'none';
+      });
+      if (dom.anagramBank) {
+        dom.anagramBank.querySelectorAll('.letter-tile').forEach(t => {
+          t.disabled = true;
+          t.style.pointerEvents = 'none';
+        });
+      }
+      if (dom.anagramHintBtn) dom.anagramHintBtn.disabled = true;
+
       speakWord(anagramState.targetWord.kelime, anagramState.targetWord.dil, dom.anagramAudioBtn);
       const earned = recordGameWin('anagram', 10);
       const isRoundDone = onWordSolvedInRound('anagram', anagramState.targetWord.id, earned);
@@ -7297,6 +7319,7 @@ let activeAvatarCategory = 'all';
         }
       }, isRoundDone ? 600 : 2400);
     } else {
+      anagramState.isLocked = true;
       slots.forEach(s => s.classList.add('shake'));
       recordMistakeInGame(anagramState.targetWord);
       resetStreak();
@@ -7307,6 +7330,7 @@ let activeAvatarCategory = 'all';
 
       setTimeout(() => {
         slots.forEach(s => s.classList.remove('shake'));
+        anagramState.isLocked = false;
         anagramReset();
       }, 600);
     }
@@ -7314,6 +7338,7 @@ let activeAvatarCategory = 'all';
 
   function giveAnagramHint() {
     useHintWithPenalty(5);
+    if (anagramState.isLocked) return;
     const nextEmptyIdx = anagramState.userSlots.indexOf(null);
     if (nextEmptyIdx === -1) return;
     const neededChar = anagramState.solutionLetters[nextEmptyIdx];
@@ -8171,11 +8196,13 @@ let activeAvatarCategory = 'all';
     targetWord: null,
     solutionLetters: [],
     bankItems: [],
-    userSlots: []
+    userSlots: [],
+    isLocked: false
   };
 
   function startListenRound() {
     state.roundUsedHint = false;
+    listenState.isLocked = false;
     const pool = getLearnedWordsPool();
     if (pool.length < 3) return;
 
@@ -8238,6 +8265,7 @@ let activeAvatarCategory = 'all';
   }
 
   function handleListenTileClick(tileId) {
+    if (listenState.isLocked) return;
     const item = listenState.bankItems.find(i => i.id === tileId);
     if (!item || item.used) return;
 
@@ -8254,6 +8282,7 @@ let activeAvatarCategory = 'all';
   }
 
   function handleListenSlotClick(slotIdx) {
+    if (listenState.isLocked) return;
     const slot = listenState.userSlots[slotIdx];
     if (!slot) return;
 
@@ -8268,6 +8297,7 @@ let activeAvatarCategory = 'all';
   }
 
   function listenBackspace() {
+    if (listenState.isLocked) return;
     for (let i = listenState.userSlots.length - 1; i >= 0; i--) {
       if (listenState.userSlots[i] !== null) {
         handleListenSlotClick(i);
@@ -8277,6 +8307,7 @@ let activeAvatarCategory = 'all';
   }
 
   function listenReset() {
+    if (listenState.isLocked) return;
     listenState.bankItems.forEach(i => i.used = false);
     listenState.userSlots.fill(null);
     renderListenUI();
@@ -8303,12 +8334,25 @@ let activeAvatarCategory = 'all';
   }
 
   function checkListenAnswer() {
+    if (listenState.isLocked) return;
     const userWord = listenState.userSlots.map(s => s.letter).join('');
     const target = listenState.solutionLetters.join('');
     const slots = dom.listenSlots.querySelectorAll('.letter-slot');
 
     if (userWord === target) {
-      slots.forEach(s => s.classList.add('correct'));
+      listenState.isLocked = true;
+      slots.forEach(s => {
+        s.classList.add('correct');
+        s.style.pointerEvents = 'none';
+      });
+      if (dom.listenBank) {
+        dom.listenBank.querySelectorAll('.letter-tile').forEach(t => {
+          t.disabled = true;
+          t.style.pointerEvents = 'none';
+        });
+      }
+      if (dom.listenHintBtn) dom.listenHintBtn.disabled = true;
+
       speakWord(listenState.targetWord.kelime, listenState.targetWord.dil, dom.listenPlayAudioBtn);
       const earned = recordGameWin('listen', 15);
       const isRoundDone = onWordSolvedInRound('listen', listenState.targetWord.id, earned);
@@ -8323,6 +8367,7 @@ let activeAvatarCategory = 'all';
         }
       }, isRoundDone ? 700 : 2600);
     } else {
+      listenState.isLocked = true;
       slots.forEach(s => s.classList.add('shake'));
       recordMistakeInGame(listenState.targetWord);
       resetStreak();
@@ -8334,6 +8379,7 @@ let activeAvatarCategory = 'all';
 
       setTimeout(() => {
         slots.forEach(s => s.classList.remove('shake'));
+        listenState.isLocked = false;
         listenReset();
       }, 600);
     }
@@ -8453,11 +8499,13 @@ let activeAvatarCategory = 'all';
     targetWord: null,
     originalWords: [],
     userSlots: [],
-    bankItems: []
+    bankItems: [],
+    isLocked: false
   };
 
   function startScrambleRound() {
     state.roundUsedHint = false;
+    scrambleState.isLocked = false;
     const pool = getLearnedWordsPool();
     if (pool.length < 3) return;
 
@@ -8535,6 +8583,7 @@ let activeAvatarCategory = 'all';
   }
 
   function handleScrambleChipClick(chipId) {
+    if (scrambleState.isLocked) return;
     const item = scrambleState.bankItems.find(i => i.id === chipId);
     if (!item || item.used) return;
 
@@ -8551,6 +8600,7 @@ let activeAvatarCategory = 'all';
   }
 
   function handleScrambleSlotClick(slotIdx) {
+    if (scrambleState.isLocked) return;
     const slot = scrambleState.userSlots[slotIdx];
     if (!slot) return;
 
@@ -8565,6 +8615,7 @@ let activeAvatarCategory = 'all';
   }
 
   function scrambleBackspace() {
+    if (scrambleState.isLocked) return;
     for (let i = scrambleState.userSlots.length - 1; i >= 0; i--) {
       if (scrambleState.userSlots[i] !== null) {
         handleScrambleSlotClick(i);
@@ -8574,6 +8625,7 @@ let activeAvatarCategory = 'all';
   }
 
   function scrambleReset() {
+    if (scrambleState.isLocked) return;
     scrambleState.bankItems.forEach(i => i.used = false);
     scrambleState.userSlots.fill(null);
     renderScrambleUI();
@@ -8581,7 +8633,7 @@ let activeAvatarCategory = 'all';
 
   function giveScrambleHint() {
     useHintWithPenalty(5);
-    if (!scrambleState.targetWord) return;
+    if (!scrambleState.targetWord || scrambleState.isLocked) return;
     const emptyIdx = scrambleState.userSlots.indexOf(null);
     if (emptyIdx === -1) return;
 
@@ -8600,12 +8652,25 @@ let activeAvatarCategory = 'all';
   }
 
   function checkScrambleAnswer() {
+    if (scrambleState.isLocked) return;
     const userSentence = scrambleState.userSlots.map(s => s.word).join(' ');
     const targetSentence = scrambleState.originalWords.join(' ');
     const slots = dom.scrambleSlots.querySelectorAll('.scramble-slot-item');
 
     if (userSentence.toLowerCase() === targetSentence.toLowerCase()) {
-      slots.forEach(s => s.classList.add('correct'));
+      scrambleState.isLocked = true;
+      slots.forEach(s => {
+        s.classList.add('correct');
+        s.style.pointerEvents = 'none';
+      });
+      if (dom.scrambleBank) {
+        dom.scrambleBank.querySelectorAll('.scramble-chip').forEach(c => {
+          c.disabled = true;
+          c.style.pointerEvents = 'none';
+        });
+      }
+      if (dom.scrambleHintBtn) dom.scrambleHintBtn.disabled = true;
+
       speakWord(targetSentence, scrambleState.targetWord.dil, dom.scrambleAudioBtn);
       const earned = recordGameWin('scramble', 25);
       const isRoundDone = onWordSolvedInRound('scramble', scrambleState.targetWord.id, earned);
@@ -8625,6 +8690,7 @@ let activeAvatarCategory = 'all';
         }
       }, reviewDelay);
     } else {
+      scrambleState.isLocked = true;
       slots.forEach(s => s.classList.add('shake'));
       recordMistakeInGame(scrambleState.targetWord);
       resetStreak();
@@ -8635,6 +8701,7 @@ let activeAvatarCategory = 'all';
 
       setTimeout(() => {
         slots.forEach(s => s.classList.remove('shake'));
+        scrambleState.isLocked = false;
         scrambleReset();
       }, 600);
     }
