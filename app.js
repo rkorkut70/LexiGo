@@ -966,6 +966,15 @@
     }
 
     // İlk kullanım kurulum sihirbazı (Onboarding) kontrolü
+    const rememberedEmail = localStorage.getItem('lexiq_remember_email') || localStorage.getItem('lexiq_user_email');
+    const isRememberMe = localStorage.getItem('lexiq_remember_me') !== 'false';
+    const hasKnownUser = !!(rememberedEmail && (localStorage.getItem('lexiq_user_name') && localStorage.getItem('lexiq_user_name') !== 'Öğrenci'));
+
+    if (hasKnownUser && isRememberMe) {
+      state.isOnboarded = true;
+      localStorage.setItem('lexiq_user_onboarded', 'true');
+    }
+
     if (!state.isOnboarded) {
       startOnboardingFlow();
     } else {
@@ -10112,13 +10121,36 @@ let activeAvatarCategory = 'all';
       if (authModal) {
         authModal.classList.add('active');
         if (typeof closeLeaderboardModal === 'function') closeLeaderboardModal();
+
+        const rememberMeEl = document.getElementById('authRememberMe');
+        const savedEmail = localStorage.getItem('lexiq_remember_email') || localStorage.getItem('lexiq_user_email') || '';
+        const isRemembered = localStorage.getItem('lexiq_remember_me') !== 'false';
+        if (rememberMeEl) {
+          rememberMeEl.checked = isRemembered;
+        }
+        if (authEmail && savedEmail) {
+          authEmail.value = savedEmail;
+        }
+        if (savedEmail && authPassword && isLoginMode) {
+          setTimeout(() => {
+            try { authPassword.focus(); } catch (e) {}
+          }, 150);
+        } else if (authEmail && !savedEmail) {
+          setTimeout(() => {
+            try { authEmail.focus(); } catch (e) {}
+          }, 150);
+        }
       }
     }
 
     function closeAuthModal() {
       if (authModal) authModal.classList.remove('active');
       if (authError) authError.style.display = 'none';
-      if (authForm) authForm.reset();
+      if (authPassword) authPassword.value = '';
+      const rememberMeEl = document.getElementById('authRememberMe');
+      if (!rememberMeEl || !rememberMeEl.checked) {
+        if (authEmail) authEmail.value = '';
+      }
       window.isOnboardingAuthFlow = false;
     }
 
@@ -10130,6 +10162,8 @@ let activeAvatarCategory = 'all';
       isLoginMode = loginMode;
       if (authError) authError.style.display = 'none';
       const authNameGroup = document.getElementById('authNameGroup');
+      const forgotWrap = document.getElementById('authForgotPasswordWrap');
+      const rememberText = document.getElementById('authRememberText');
       if (loginMode) {
         if (authTabLogin) authTabLogin.classList.add('active');
         if (authTabRegister) authTabRegister.classList.remove('active');
@@ -10139,8 +10173,8 @@ let activeAvatarCategory = 'all';
         }
         if (authNameGroup) authNameGroup.style.display = 'none';
         if (authSubmitBtn) authSubmitBtn.textContent = 'Giriş Yap';
-        const forgotWrap = document.getElementById('authForgotPasswordWrap');
-        if (forgotWrap) forgotWrap.style.display = 'flex';
+        if (forgotWrap) forgotWrap.style.display = 'block';
+        if (rememberText) rememberText.textContent = 'Beni Hatırla';
         const title = document.getElementById('authModalTitle');
         const desc = document.getElementById('authModalDesc');
         if (title) title.textContent = 'Tekrar Hoş Geldiniz';
@@ -10157,8 +10191,8 @@ let activeAvatarCategory = 'all';
         }
         if (authNameGroup) authNameGroup.style.display = 'block';
         if (authSubmitBtn) authSubmitBtn.textContent = 'Kayıt Ol';
-        const forgotWrap = document.getElementById('authForgotPasswordWrap');
         if (forgotWrap) forgotWrap.style.display = 'none';
+        if (rememberText) rememberText.textContent = 'Bilgilerimi Kaydet';
         const title = document.getElementById('authModalTitle');
         const desc = document.getElementById('authModalDesc');
         if (title) title.textContent = 'Hesap Oluştur';
@@ -10331,16 +10365,19 @@ let activeAvatarCategory = 'all';
           }
         }
 
+        const rememberMeEl = document.getElementById('authRememberMe');
+        const rememberMe = rememberMeEl ? rememberMeEl.checked : true;
+
         let res;
         if (isLoginMode) {
           if (typeof window.loginWithEmail === 'function') {
-            res = await window.loginWithEmail(email, password);
+            res = await window.loginWithEmail(email, password, rememberMe);
           } else {
             res = { success: false, error: 'Giriş servisi hazır değil.' };
           }
         } else {
           if (typeof window.registerWithEmail === 'function') {
-            res = await window.registerWithEmail(email, password, name, state.userAvatar);
+            res = await window.registerWithEmail(email, password, name, state.userAvatar, rememberMe);
           } else {
             res = { success: false, error: 'Kayıt servisi hazır değil.' };
           }
@@ -10352,6 +10389,13 @@ let activeAvatarCategory = 'all';
         }
 
         if (res && res.success) {
+          if (rememberMe) {
+            localStorage.setItem('lexiq_remember_me', 'true');
+            localStorage.setItem('lexiq_remember_email', email);
+          } else {
+            localStorage.setItem('lexiq_remember_me', 'false');
+            localStorage.removeItem('lexiq_remember_email');
+          }
           closeAuthModal();
           const obModal = document.getElementById('onboardingModal') || (dom && dom.onboardingModal);
           
@@ -10611,6 +10655,7 @@ let activeAvatarCategory = 'all';
 
       // LocalStorage verilerini temizle
       localStorage.removeItem('lexiq_user_email');
+      localStorage.setItem('lexiq_remember_me', 'false');
       localStorage.setItem('lexiq_user_name', 'Öğrenci');
       localStorage.setItem('lexiq_user_avatar', '🦊');
       localStorage.setItem('lexiq_user_track', '4A');

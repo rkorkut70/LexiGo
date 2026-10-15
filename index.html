@@ -1560,23 +1560,29 @@
         <button type="button" id="authTabRegister" class="auth-tab-btn">Kayıt Ol</button>
       </div>
       
-      <form id="authForm" class="auth-form-container">
+      <form id="authForm" class="auth-form-container" autocomplete="on">
         <div class="auth-input-group" id="authNameGroup">
-          <input type="text" id="authName" placeholder="Adınız Soyadınız (Sıralama için)" class="auth-input" style="display:none;" />
+          <input type="text" id="authName" name="name" autocomplete="name" placeholder="Adınız Soyadınız (Sıralama için)" class="auth-input" style="display:none;" />
         </div>
         
         <div class="auth-input-group">
-          <input type="email" id="authEmail" placeholder="E-posta Adresiniz" class="auth-input" required />
+          <input type="email" id="authEmail" name="email" autocomplete="username email" placeholder="E-posta Adresiniz" class="auth-input" required />
         </div>
         
         <div class="auth-input-group">
-          <input type="password" id="authPassword" placeholder="Şifreniz (En az 6 karakter)" class="auth-input" required />
+          <input type="password" id="authPassword" name="password" autocomplete="current-password" placeholder="Şifreniz (En az 6 karakter)" class="auth-input" required />
         </div>
         
-        <div style="display:flex; justify-content: flex-end; margin-top: -6px; margin-bottom: 6px;" id="authForgotPasswordWrap">
-          <button type="button" id="authForgotPasswordBtn" style="background: none; border: none; color: #38bdf8; font-size: 0.82rem; font-weight: 700; cursor: pointer; padding: 4px;">
-            Şifremi Unuttum?
-          </button>
+        <div class="auth-options-row" id="authOptionsRow">
+          <label class="auth-remember-label" id="authRememberLabel" for="authRememberMe">
+            <input type="checkbox" id="authRememberMe" class="auth-remember-checkbox" checked />
+            <span id="authRememberText">Beni Hatırla</span>
+          </label>
+          <div id="authForgotPasswordWrap">
+            <button type="button" id="authForgotPasswordBtn" style="background: none; border: none; color: #38bdf8; font-size: 0.82rem; font-weight: 700; cursor: pointer; padding: 4px;">
+              Şifremi Unuttum?
+            </button>
+          </div>
         </div>
         
         <div id="authError" class="auth-error-msg" style="display:none;"></div>

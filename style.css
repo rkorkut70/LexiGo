@@ -10370,6 +10370,40 @@ body[data-theme="dark"] .home-unit-select-btn:hover,
   letter-spacing: 0.5px;
 }
 
+.auth-options-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: -4px;
+  margin-bottom: 2px;
+  gap: 8px;
+}
+
+.auth-remember-label {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  font-size: 0.84rem;
+  font-weight: 600;
+  color: #94a3b8;
+  user-select: none;
+  transition: color 0.15s ease;
+}
+
+.auth-remember-label:hover {
+  color: #f8fafc;
+}
+
+.auth-remember-checkbox {
+  width: 17px;
+  height: 17px;
+  accent-color: #6366f1;
+  cursor: pointer;
+  border-radius: 4px;
+  margin: 0;
+}
+
 .auth-error-msg {
   background: rgba(239, 68, 68, 0.1);
   color: #ef4444;

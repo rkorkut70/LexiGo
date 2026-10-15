@@ -15,6 +15,11 @@ try {
   if (typeof firebase !== 'undefined') {
     app = firebase.initializeApp(firebaseConfig);
     auth = firebase.auth();
+    if (auth && firebase.auth && firebase.auth.Auth && firebase.auth.Auth.Persistence) {
+      auth.setPersistence(firebase.auth.Auth.Persistence.LOCAL).catch(e => {
+        console.warn("Firebase Auth setPersistence error:", e);
+      });
+    }
     db = firebase.firestore();
     if (typeof firebase.storage === 'function') {
       storage = firebase.storage();
@@ -111,6 +116,26 @@ if (auth) {
       window.fbUser = user;
       isInitialAuthCheck = false;
       console.log("Kullanıcı giriş yaptı:", user.uid, user.email);
+
+      // Oturumu ve Beni Hatırla durumunu kalıcı tut
+      if (user.email) {
+        localStorage.setItem('lexiq_user_email', user.email);
+        if (localStorage.getItem('lexiq_remember_me') !== 'false') {
+          localStorage.setItem('lexiq_remember_email', user.email);
+          localStorage.setItem('lexiq_remember_me', 'true');
+        }
+      }
+      localStorage.setItem('lexiq_user_onboarded', 'true');
+      if (window.state) {
+        window.state.isOnboarded = true;
+      }
+      // Onboarding modalı açıksa ve yeni kayıt akışında değilse kapat
+      const obModal = document.getElementById('onboardingModal');
+      if (obModal && !window.isOnboardingAuthFlow) {
+        obModal.classList.remove('active');
+        obModal.style.display = 'none';
+      }
+
       syncUserData(user);
     } else {
       const wasLoggedIn = !!window.fbUser;
@@ -342,11 +367,15 @@ async function syncUserData(user) {
 window.syncUserData = syncUserData;
 
 // E-posta ile Kayıt Ol
-window.registerWithEmail = async function(email, password, name, avatar) {
+window.registerWithEmail = async function(email, password, name, avatar, rememberMe = true) {
   if (!auth) {
     return { success: false, error: "Firebase kimlik doğrulama servisi başlatılamadı." };
   }
   try {
+    if (firebase.auth && firebase.auth.Auth && firebase.auth.Auth.Persistence) {
+      const persistence = (rememberMe !== false) ? firebase.auth.Auth.Persistence.LOCAL : firebase.auth.Auth.Persistence.SESSION;
+      await auth.setPersistence(persistence).catch(e => console.warn("Persistence error:", e));
+    }
     const trimmedName = (name || '').trim() || 'Öğrenci';
     const chosenAvatar = (avatar && avatar !== '🦊') ? avatar : ((window.state && window.state.userAvatar && window.state.userAvatar !== '🦊') ? window.state.userAvatar : (localStorage.getItem('lexiq_user_avatar') || 'avatar_1_1'));
     const chosenTrack = (window.state && window.state.userTrack) || localStorage.getItem('lexiq_user_track') || '4A';
@@ -361,6 +390,13 @@ window.registerWithEmail = async function(email, password, name, avatar) {
     localStorage.setItem('lexiq_user_track', chosenTrack);
     localStorage.setItem('lexiq_user_level', chosenLevel);
     localStorage.setItem('kelime_active_lang', chosenLang);
+    if (rememberMe !== false) {
+      localStorage.setItem('lexiq_remember_me', 'true');
+      localStorage.setItem('lexiq_remember_email', email);
+    } else {
+      localStorage.setItem('lexiq_remember_me', 'false');
+      localStorage.removeItem('lexiq_remember_email');
+    }
 
     if (window.state) {
       window.state.userName = trimmedName;
@@ -441,14 +477,26 @@ window.registerWithEmail = async function(email, password, name, avatar) {
 };
 
 // E-posta ile Giriş Yap
-window.loginWithEmail = async function(email, password) {
+window.loginWithEmail = async function(email, password, rememberMe = true) {
   if (!auth) {
     return { success: false, error: "Firebase kimlik doğrulama servisi başlatılamadı." };
   }
   try {
+    if (firebase.auth && firebase.auth.Auth && firebase.auth.Auth.Persistence) {
+      const persistence = (rememberMe !== false) ? firebase.auth.Auth.Persistence.LOCAL : firebase.auth.Auth.Persistence.SESSION;
+      await auth.setPersistence(persistence).catch(e => console.warn("Persistence error:", e));
+    }
     const userCredential = await auth.signInWithEmailAndPassword(email, password);
     const user = userCredential.user;
     window.fbUser = user;
+
+    if (rememberMe !== false) {
+      localStorage.setItem('lexiq_remember_me', 'true');
+      localStorage.setItem('lexiq_remember_email', email);
+    } else {
+      localStorage.setItem('lexiq_remember_me', 'false');
+      localStorage.removeItem('lexiq_remember_email');
+    }
 
     await syncUserData(user);
 
@@ -468,6 +516,8 @@ window.logoutUser = async function() {
     window.fbUser = null;
     window.cachedFbUserData = null;
     localStorage.removeItem('lexiq_user_email');
+    localStorage.setItem('lexiq_remember_me', 'false');
+    localStorage.removeItem('lexiq_user_onboarded');
     if (typeof window.onUserLogout === 'function') {
       window.onUserLogout();
     }
