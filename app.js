@@ -87,6 +87,8 @@
     activeGame: null,
     roundUsedHint: false,
     cleanWins: parseInt(localStorage.getItem('kelime_clean_wins'), 10) || 0,
+    hasNightWin: localStorage.getItem('lexiq_night_win') === '1',
+    hasEarlyWin: localStorage.getItem('lexiq_early_win') === '1',
     gameStats: JSON.parse(localStorage.getItem('kelime_game_stats') || '{}'),
     streakPledge: (function() {
       try {
@@ -344,6 +346,20 @@
     const subtitle = bonus > 0 ? `Saf Zihin Bonusu (+${bonus} XP)${multTag}` : (multTag || '');
     showCelebrationBanner(winTitle, subtitle, `+${earned + bonus} XP`, winIcon);
 
+    const curH = new Date().getHours();
+    const curM = new Date().getMinutes();
+    if (curH >= 0 && curH < 5) {
+      if (!state.hasNightWin) {
+        state.hasNightWin = true;
+        localStorage.setItem('lexiq_night_win', '1');
+      }
+    } else if (curH >= 6 && (curH < 8 || (curH === 8 && curM <= 30))) {
+      if (!state.hasEarlyWin) {
+        state.hasEarlyWin = true;
+        localStorage.setItem('lexiq_early_win', '1');
+      }
+    }
+
     updateLiveXpDisplays(false);
     checkBadgeUnlocks();
     if (typeof window.syncProgressToFirebase === 'function') {
@@ -354,17 +370,22 @@
 
   // Başarım Rozetleri Konfigürasyonu (Renkli & Prestijli Rozetler)
     const BADGES_CONFIG = [
-    // --- 1. XP SEVİYE LİGLERİ (10 ROZET) ---
-    { id: 'bronze_explorer', name: 'Çırak Kaşif', icon: '🥉', desc: '100 XP seviyesine ulaş', type: 'bronze', category: 'xp', check: (s) => s.xp >= 100 },
-    { id: 'silver_hunter', name: 'Gümüş Avcı', icon: '🥈', desc: '500 XP seviyesine ulaş', type: 'silver', category: 'xp', check: (s) => s.xp >= 500 },
-    { id: 'gold_master', name: 'Altın Usta', icon: '🥇', desc: '1.500 XP seviyesine ulaş', type: 'gold', category: 'xp', check: (s) => s.xp >= 1500 },
-    { id: 'diamond_wizard', name: 'Elmas Dilbaz', icon: '💎', desc: '3.500 XP seviyesine ulaş', type: 'diamond', category: 'xp', check: (s) => s.xp >= 3500 },
-    { id: 'legend_champion', name: 'Efsane Şampiyon', icon: '👑', desc: '7.500 XP seviyesine ulaş', type: 'legend', category: 'xp', check: (s) => s.xp >= 7500 },
-    { id: 'titanium_master', name: 'Titanyum Efendi', icon: '🛡️', desc: '15.000 XP seviyesine ulaş', type: 'titanium', category: 'xp', check: (s) => s.xp >= 15000 },
-    { id: 'cosmic_sage', name: 'Kozmik Bilge', icon: '🌌', desc: '30.000 XP seviyesine ulaş', type: 'cosmic', category: 'xp', check: (s) => s.xp >= 30000 },
-    { id: 'star_conqueror', name: 'Yıldız Fatihi', icon: '⚡', desc: '50.000 XP seviyesine ulaş', type: 'legend', category: 'xp', check: (s) => s.xp >= 50000 },
-    { id: 'immortal_linguist', name: 'Ölümsüz Dilbilimci', icon: '🔮', desc: '75.000 XP seviyesine ulaş', type: 'cosmic', category: 'xp', check: (s) => s.xp >= 75000 },
-    { id: 'galactic_polyglot', name: 'Galaktik Poliglot', icon: '🪐', desc: '100.000 XP seviyesine ulaş', type: 'legend', category: 'xp', check: (s) => s.xp >= 100000 },
+    // --- 1. XP SEVİYE LİGLERİ (15 ROZET) ---
+    { id: 'bronze_explorer', name: 'Çırak Kaşif', icon: '🥉', desc: '100 XP seviyesine ulaş', type: 'bronze', category: 'xp', check: (s) => (s.xp || 0) >= 100 },
+    { id: 'silver_hunter', name: 'Gümüş Avcı', icon: '🥈', desc: '500 XP seviyesine ulaş', type: 'silver', category: 'xp', check: (s) => (s.xp || 0) >= 500 },
+    { id: 'gold_master', name: 'Altın Usta', icon: '🥇', desc: '1.500 XP seviyesine ulaş', type: 'gold', category: 'xp', check: (s) => (s.xp || 0) >= 1500 },
+    { id: 'diamond_wizard', name: 'Elmas Dilbaz', icon: '💎', desc: '3.500 XP seviyesine ulaş', type: 'diamond', category: 'xp', check: (s) => (s.xp || 0) >= 3500 },
+    { id: 'legend_champion', name: 'Efsane Şampiyon', icon: '👑', desc: '7.500 XP seviyesine ulaş', type: 'legend', category: 'xp', check: (s) => (s.xp || 0) >= 7500 },
+    { id: 'titanium_master', name: 'Titanyum Efendi', icon: '🛡️', desc: '15.000 XP seviyesine ulaş', type: 'titanium', category: 'xp', check: (s) => (s.xp || 0) >= 15000 },
+    { id: 'cosmic_sage', name: 'Kozmik Bilge', icon: '🌌', desc: '30.000 XP seviyesine ulaş', type: 'cosmic', category: 'xp', check: (s) => (s.xp || 0) >= 30000 },
+    { id: 'star_conqueror', name: 'Yıldız Fatihi', icon: '⚡', desc: '50.000 XP seviyesine ulaş', type: 'legend', category: 'xp', check: (s) => (s.xp || 0) >= 50000 },
+    { id: 'immortal_linguist', name: 'Ölümsüz Dilbilimci', icon: '🔮', desc: '75.000 XP seviyesine ulaş', type: 'cosmic', category: 'xp', check: (s) => (s.xp || 0) >= 75000 },
+    { id: 'galactic_polyglot', name: 'Galaktik Poliglot', icon: '🪐', desc: '100.000 XP seviyesine ulaş', type: 'legend', category: 'xp', check: (s) => (s.xp || 0) >= 100000 },
+    { id: 'cosmic_sovereign', name: 'Kozmik Hükümdar', icon: '☄️', desc: '150.000 XP seviyesine ulaş', type: 'titanium', category: 'xp', check: (s) => (s.xp || 0) >= 150000 },
+    { id: 'infinity_guardian', name: 'Sonsuzluk Muhafızı', icon: '💠', desc: '200.000 XP seviyesine ulaş', type: 'diamond', category: 'xp', check: (s) => (s.xp || 0) >= 200000 },
+    { id: 'mythic_lord', name: 'Mitik Dil Lordu', icon: '⚜️', desc: '250.000 XP seviyesine ulaş', type: 'legend', category: 'xp', check: (s) => (s.xp || 0) >= 250000 },
+    { id: 'universal_genius', name: 'Evrensel Deha', icon: '🌌', desc: '300.000 XP seviyesine ulaş', type: 'cosmic', category: 'xp', check: (s) => (s.xp || 0) >= 300000 },
+    { id: 'supreme_legend', name: 'LexiQ Efsanesi', icon: '🔱', desc: '350.000 XP seviyesine ulaş', type: 'legend', category: 'xp', check: (s) => (s.xp || 0) >= 350000 },
 
     // --- 2. KELİME DAĞARCIĞI (8 ROZET) ---
     { id: 'vocab_seed', name: 'İlk Tohum', icon: '🌱', desc: '10 kelimeyi başarıyla öğren', type: 'bronze', category: 'vocab', check: (s) => getLearnedCount(s) >= 10 },
@@ -376,27 +397,76 @@
     { id: 'vocab_revolution', name: 'Dil Devrimi', icon: '🌍', desc: '2.500 kelimeyi başarıyla öğren', type: 'cosmic', category: 'vocab', check: (s) => getLearnedCount(s) >= 2500 },
     { id: 'vocab_encyclopedia', name: 'Büyük Ansiklopedi', icon: '👑', desc: '4.500 kelimeyi başarıyla öğren', type: 'legend', category: 'vocab', check: (s) => getLearnedCount(s) >= 4500 },
 
-    // --- 3. OYUN & ARENA UZMANLIĞI (8 ROZET) ---
+    // --- 3. OYUN & ARENA UZMANLIĞI (27 ROZET - AŞAMALI & PRESTİJLİ) ---
+    // A. Bireysel Oyun Kademeleri (15, 50, 100+ Galibiyet)
+    // 1. Eşleştirme (Match)
     { id: 'game_match_master', name: 'Hafıza Kartalı', icon: '🃏', desc: '15 kez Eşleştirme oyununu tamamla', type: 'gold', category: 'game', check: (s) => (s.gameStats?.match || 0) >= 15 },
-    { id: 'game_tf_master', name: 'Keskin Göz', icon: '🎯', desc: '15 kez Doğru/Yanlış oyununu kazan', type: 'silver', category: 'game', check: (s) => (s.gameStats?.truefalse || 0) >= 15 },
-    { id: 'game_scramble_master', name: 'Kelime Mimarı', icon: '🧩', desc: '15 kez Cümle Kurma tamamla', type: 'diamond', category: 'game', check: (s) => (s.gameStats?.scramble || 0) >= 15 },
-    { id: 'game_listen_master', name: 'Altın Kulak', icon: '🎧', desc: '15 kez Dinle & Yaz oyununu tamamla', type: 'gold', category: 'game', check: (s) => (s.gameStats?.listen || 0) >= 15 },
-    { id: 'game_tetris_master', name: 'Tetris Ustası', icon: '🕹️', desc: '15 kez Harf Tetrisi oyununu tamamla', type: 'titanium', category: 'game', check: (s) => (s.gameStats?.tetris || 0) >= 15 },
-    { id: 'game_anagram_master', name: 'Anagram Dâhisi', icon: '🔤', desc: '15 kez Harf Karıştırma çöz', type: 'silver', category: 'game', check: (s) => (s.gameStats?.anagram || 0) >= 15 },
-    { id: 'game_cloze_master', name: 'Metin Dedektifi', icon: '📝', desc: '15 kez Boşluk Doldurma çöz', type: 'diamond', category: 'game', check: (s) => (s.gameStats?.cloze || 0) >= 15 },
-    { id: 'game_quiz_master', name: 'Test Profesörü', icon: '🎓', desc: '30 kez 4 Şıklı Testi doğru yanıtla', type: 'legend', category: 'game', check: (s) => (s.gameStats?.quiz || 0) >= 30 },
+    { id: 'game_match_overlord', name: 'Kartal Bakışı', icon: '🦅', desc: '50 kez Eşleştirme oyununu tamamla', type: 'titanium', category: 'game', check: (s) => (s.gameStats?.match || 0) >= 50 },
 
-    // --- 4. SERİ & ODAKLANMA (10 ROZET) ---
-    { id: 'streak_fire', name: 'Ateşli Seri', icon: '🔥', desc: 'Arenada ardı ardına 5 doğru yap', type: 'streak', category: 'streak', check: (s) => s.streak >= 5 || s.maxStreak >= 5 },
-    { id: 'streak_inferno', name: 'Şimşek Fırtınası', icon: '⚡', desc: 'Arenada ardı ardına 10 doğru yap', type: 'streak', category: 'streak', check: (s) => s.streak >= 10 || s.maxStreak >= 10 },
-    { id: 'streak_unstoppable', name: 'Durdurulamaz', icon: '☄️', desc: 'Arenada ardı ardına 20 doğru yap', type: 'streak', category: 'streak', check: (s) => s.streak >= 20 || s.maxStreak >= 20 },
+    // 2. Doğru / Yanlış (True/False)
+    { id: 'game_tf_master', name: 'Keskin Göz', icon: '🎯', desc: '15 kez Doğru/Yanlış oyununu kazan', type: 'silver', category: 'game', check: (s) => (s.gameStats?.truefalse || 0) >= 15 },
+    { id: 'game_tf_infallible', name: 'Hatasız Yargıç', icon: '⚖️', desc: '50 kez Doğru/Yanlış oyununu kazan', type: 'diamond', category: 'game', check: (s) => (s.gameStats?.truefalse || 0) >= 50 },
+
+    // 3. Cümle Kurma (Scramble)
+    { id: 'game_scramble_master', name: 'Kelime Mimarı', icon: '🧩', desc: '15 kez Cümle Kurma tamamla', type: 'diamond', category: 'game', check: (s) => (s.gameStats?.scramble || 0) >= 15 },
+    { id: 'game_scramble_architect', name: 'Sözdizim Mimarı', icon: '🏛️', desc: '50 kez Cümle Kurma tamamla', type: 'titanium', category: 'game', check: (s) => (s.gameStats?.scramble || 0) >= 50 },
+    { id: 'game_scramble_grandmaster', name: 'Söz Ustabaşısı', icon: '🌟', desc: '100 kez Cümle Kurma tamamla', type: 'legend', category: 'game', check: (s) => (s.gameStats?.scramble || 0) >= 100 },
+
+    // 4. Dinle & Yaz (Listen)
+    { id: 'game_listen_master', name: 'Altın Kulak', icon: '🎧', desc: '15 kez Dinle & Yaz oyununu tamamla', type: 'gold', category: 'game', check: (s) => (s.gameStats?.listen || 0) >= 15 },
+    { id: 'game_listen_maestro', name: 'Ses Virtüözü', icon: '🎼', desc: '50 kez Dinle & Yaz oyununu tamamla', type: 'diamond', category: 'game', check: (s) => (s.gameStats?.listen || 0) >= 50 },
+    { id: 'game_listen_phantom', name: 'Yarasa Sezgisi', icon: '🦇', desc: '100 kez Dinle & Yaz oyununu tamamla', type: 'cosmic', category: 'game', check: (s) => (s.gameStats?.listen || 0) >= 100 },
+
+    // 5. Harf Tetrisi (Tetris)
+    { id: 'game_tetris_master', name: 'Tetris Ustası', icon: '🕹️', desc: '15 kez Harf Tetrisi oyununu tamamla', type: 'titanium', category: 'game', check: (s) => (s.gameStats?.tetris || 0) >= 15 },
+    { id: 'game_tetris_grandmaster', name: 'Tetris Grandmaster', icon: '🚀', desc: '50 kez Harf Tetrisi oyununu tamamla', type: 'cosmic', category: 'game', check: (s) => (s.gameStats?.tetris || 0) >= 50 },
+    { id: 'game_tetris_sovereign', name: 'Blok Hükümdarı', icon: '👑', desc: '100 kez Harf Tetrisi oyununu tamamla', type: 'legend', category: 'game', check: (s) => (s.gameStats?.tetris || 0) >= 100 },
+
+    // 6. Harf Karıştırma (Anagram)
+    { id: 'game_anagram_master', name: 'Anagram Dâhisi', icon: '🔤', desc: '15 kez Harf Karıştırma çöz', type: 'silver', category: 'game', check: (s) => (s.gameStats?.anagram || 0) >= 15 },
+    { id: 'game_anagram_virtuoso', name: 'Anagram Büyücüsü', icon: '🌀', desc: '50 kez Harf Karıştırma çöz', type: 'diamond', category: 'game', check: (s) => (s.gameStats?.anagram || 0) >= 50 },
+
+    // 7. Boşluk Doldurma (Cloze)
+    { id: 'game_cloze_master', name: 'Metin Dedektifi', icon: '📝', desc: '15 kez Boşluk Doldurma çöz', type: 'diamond', category: 'game', check: (s) => (s.gameStats?.cloze || 0) >= 15 },
+    { id: 'game_cloze_sherlock', name: 'Kayıp Söz Avcısı', icon: '🔍', desc: '50 kez Boşluk Doldurma çöz', type: 'titanium', category: 'game', check: (s) => (s.gameStats?.cloze || 0) >= 50 },
+
+    // 8. 4 Şıklı Test (Quiz)
+    { id: 'game_quiz_master', name: 'Test Profesörü', icon: '🎓', desc: '30 kez 4 Şıklı Testi doğru yanıtla', type: 'gold', category: 'game', check: (s) => (s.gameStats?.quiz || 0) >= 30 },
+    { id: 'game_quiz_oracle', name: 'Bilgi Kahini', icon: '🔮', desc: '100 kez 4 Şıklı Testi doğru yanıtla', type: 'cosmic', category: 'game', check: (s) => (s.gameStats?.quiz || 0) >= 100 },
+    { id: 'game_quiz_encyclopedist', name: 'Yenilmez Bilgin', icon: '📜', desc: '250 kez 4 Şıklı Testi doğru yanıtla', type: 'legend', category: 'game', check: (s) => (s.gameStats?.quiz || 0) >= 250 },
+
+    // B. Çok Yönlü Arena Üstatlığı (8 Modun Tamamı)
+    { id: 'all_rounder_master', name: 'Sekizli Üstat', icon: '🎴', desc: '8 arena modunun her birinde en az 25 zafer kazan', type: 'cosmic', category: 'game', check: (s) => ['match', 'truefalse', 'scramble', 'listen', 'tetris', 'anagram', 'cloze', 'quiz'].every(k => (s.gameStats?.[k] || 0) >= 25) },
+    { id: 'all_rounder_grandmaster', name: 'Mutlak Şampiyon', icon: '🌌', desc: '8 arena modunun her birinde en az 50 zafer kazan', type: 'titanium', category: 'game', check: (s) => ['match', 'truefalse', 'scramble', 'listen', 'tetris', 'anagram', 'cloze', 'quiz'].every(k => (s.gameStats?.[k] || 0) >= 50) },
+    { id: 'all_rounder_sovereign', name: 'Arena Tanrısı', icon: '🔱', desc: '8 arena modunun her birinde en az 100 zafer kazan', type: 'legend', category: 'game', check: (s) => ['match', 'truefalse', 'scramble', 'listen', 'tetris', 'anagram', 'cloze', 'quiz'].every(k => (s.gameStats?.[k] || 0) >= 100) },
+
+    // C. Kümülatif Arena Zaferleri (Toplam Oyunlar)
+    { id: 'arena_total_100', name: 'Arena Kıdemlisi', icon: '🎖️', desc: 'Arenada toplam 100 oyun tamamla', type: 'gold', category: 'game', check: (s) => Object.values(s.gameStats || {}).reduce((a, b) => a + (typeof b === 'number' ? b : 0), 0) >= 100 },
+    { id: 'arena_total_300', name: 'Arena Fatihi', icon: '⚔️', desc: 'Arenada toplam 300 oyun tamamla', type: 'titanium', category: 'game', check: (s) => Object.values(s.gameStats || {}).reduce((a, b) => a + (typeof b === 'number' ? b : 0), 0) >= 300 },
+    { id: 'arena_total_600', name: 'Arena Titanı', icon: '🛡️', desc: 'Arenada toplam 600 oyun tamamla', type: 'cosmic', category: 'game', check: (s) => Object.values(s.gameStats || {}).reduce((a, b) => a + (typeof b === 'number' ? b : 0), 0) >= 600 },
+    { id: 'arena_total_1000', name: 'Arenanın Ölümsüzü', icon: '👑', desc: 'Arenada toplam 1.000 oyun tamamla', type: 'legend', category: 'game', check: (s) => Object.values(s.gameStats || {}).reduce((a, b) => a + (typeof b === 'number' ? b : 0), 0) >= 1000 },
+
+    // --- 4. SERİ & ODAKLANMA (20 ROZET) ---
+    { id: 'streak_fire', name: 'Ateşli Seri', icon: '🔥', desc: 'Arenada ardı ardına 5 doğru yap', type: 'streak', category: 'streak', check: (s) => (s.streak || 0) >= 5 || (s.maxStreak || 0) >= 5 },
+    { id: 'streak_inferno', name: 'Şimşek Fırtınası', icon: '⚡', desc: 'Arenada ardı ardına 10 doğru yap', type: 'streak', category: 'streak', check: (s) => (s.streak || 0) >= 10 || (s.maxStreak || 0) >= 10 },
+    { id: 'streak_unstoppable', name: 'Durdurulamaz', icon: '☄️', desc: 'Arenada ardı ardına 20 doğru yap', type: 'streak', category: 'streak', check: (s) => (s.streak || 0) >= 20 || (s.maxStreak || 0) >= 20 },
+    { id: 'streak_lightning_50', name: 'Şimşek Zinciri', icon: '⚡', desc: 'Arenada ardı ardına 50 doğru yap', type: 'streak', category: 'streak', check: (s) => (s.streak || 0) >= 50 || (s.maxStreak || 0) >= 50 },
     { id: 'daily_streak_3', name: '3 Günlük İstikrar', icon: '🌱', desc: '3 gün aralıksız kelime çalış', type: 'bronze', category: 'streak', check: (s) => (s.dayStreak || 0) >= 3 || (s.maxDayStreak || 0) >= 3 },
     { id: 'daily_streak_7', name: 'Haftalık Şampiyon', icon: '🌟', desc: '7 gün aralıksız kelime çalış', type: 'gold', category: 'streak', check: (s) => (s.dayStreak || 0) >= 7 || (s.maxDayStreak || 0) >= 7 },
     { id: 'daily_streak_14', name: '2 Haftalık Azim', icon: '👑', desc: '14 gün aralıksız kelime çalış', type: 'diamond', category: 'streak', check: (s) => (s.dayStreak || 0) >= 14 || (s.maxDayStreak || 0) >= 14 },
     { id: 'daily_streak_30', name: 'Aylık Efsane', icon: '🏆', desc: '30 gün aralıksız kelime çalış', type: 'legend', category: 'streak', check: (s) => (s.dayStreak || 0) >= 30 || (s.maxDayStreak || 0) >= 30 },
+    { id: 'daily_streak_50', name: 'Çelik İrade', icon: '🛡️', desc: '50 gün aralıksız kelime çalış', type: 'titanium', category: 'streak', check: (s) => (s.dayStreak || 0) >= 50 || (s.maxDayStreak || 0) >= 50 },
+    { id: 'daily_streak_100', name: 'Yüzüncü Gün Azmi', icon: '💯', desc: '100 gün aralıksız kelime çalış', type: 'cosmic', category: 'streak', check: (s) => (s.dayStreak || 0) >= 100 || (s.maxDayStreak || 0) >= 100 },
+    { id: 'daily_streak_150', name: 'Dönem Şampiyonu', icon: '🏆', desc: '150 gün aralıksız kelime çalış', type: 'legend', category: 'streak', check: (s) => (s.dayStreak || 0) >= 150 || (s.maxDayStreak || 0) >= 150 },
     { id: 'pure_mind', name: 'Saf Zihin', icon: '🧘', desc: 'Hiç ipucu kullanmadan 10 arena oyunu kazan', type: 'diamond', category: 'streak', check: (s) => (s.cleanWins || 0) >= 10 },
-    { id: 'vocab_monster', name: 'Kelime Canavarı', icon: '📚', desc: 'Arenada 20 kelimeyi başarıyla çöz', type: 'gold', category: 'streak', check: (s) => s.arenaWordsSolved >= 20 },
-    { id: 'arena_gladiator', name: 'Arena Gladyatörü', icon: '⚔️', desc: 'Arenada 100 kelimeyi başarıyla çöz', type: 'titanium', category: 'streak', check: (s) => s.arenaWordsSolved >= 100 },
+    { id: 'zen_master_50', name: 'Kusursuz Zihin', icon: '🧘', desc: 'Hiç ipucu kullanmadan 50 arena oyunu kazan', type: 'diamond', category: 'streak', check: (s) => (s.cleanWins || 0) >= 50 },
+    { id: 'zen_master_100', name: 'Mutlak Odaklanma', icon: '🕊️', desc: 'Hiç ipucu kullanmadan 100 arena oyunu kazan', type: 'cosmic', category: 'streak', check: (s) => (s.cleanWins || 0) >= 100 },
+    { id: 'vocab_monster', name: 'Kelime Canavarı', icon: '📚', desc: 'Arenada 20 kelimeyi başarıyla çöz', type: 'gold', category: 'streak', check: (s) => (s.arenaWordsSolved || 0) >= 20 },
+    { id: 'arena_gladiator', name: 'Arena Gladyatörü', icon: '⚔️', desc: 'Arenada 100 kelimeyi başarıyla çöz', type: 'titanium', category: 'streak', check: (s) => (s.arenaWordsSolved || 0) >= 100 },
+    { id: 'colosseum_conqueror', name: 'Kolezyum Fatihi', icon: '🏛️', desc: 'Arenada 500 kelimeyi başarıyla çöz', type: 'titanium', category: 'streak', check: (s) => (s.arenaWordsSolved || 0) >= 500 },
+    { id: 'legendary_gladiator', name: 'Efsanevi Gladyatör', icon: '⚔️', desc: 'Arenada 1.000 kelimeyi başarıyla çöz', type: 'legend', category: 'streak', check: (s) => (s.arenaWordsSolved || 0) >= 1000 },
+    { id: 'night_owl', name: 'Gece Kuşu', icon: '🦉', desc: 'Gece yarısı (00:00 - 05:00) bir oyun kazan', type: 'diamond', category: 'streak', check: (s) => !!s.hasNightWin },
+    { id: 'early_bird', name: 'Erken Kalkan', icon: '🌅', desc: 'Sabah erken (06:00 - 08:30) bir oyun kazan', type: 'gold', category: 'streak', check: (s) => !!s.hasEarlyWin },
 
     // --- 5. DİL & MÜFREDAT KURLARI (A1, A2, B1, B1+ SEVİYELERİ: ACEMİ, ÇIRAK, KALFA, USTA, ÜSTAT) ---
     // İngilizce (EN-TR) Kurları
@@ -450,8 +520,9 @@
     { id: 'badge_fr_a2_usta', name: 'Fransızca A2 Usta', icon: '🏰', desc: 'Fransızca A2 kurunda 450 kelime öğren', type: 'diamond', category: 'lang', check: (s) => getLearnedCountFor(s, 'FR-TR', 'A2') >= 450 },
     { id: 'badge_fr_a2_ustat', name: 'Fransızca A2 Üstat', icon: '👑', desc: 'Fransızca A2 kurunda 750 kelime öğren', type: 'legend', category: 'lang', check: (s) => getLearnedCountFor(s, 'FR-TR', 'A2') >= 750 },
 
-    // Çok Dilli Gezgin Rozeti
-    { id: 'lang_polyglot', name: 'Çok Dilli Gezgin', icon: '🌍', desc: 'En az iki farklı dilde 30\'ar kelime öğren', type: 'cosmic', category: 'lang', check: (s) => isMultiLingual(s, 30) }
+    // Çok Dilli Gezgin & Poliglot Rozetleri
+    { id: 'lang_polyglot', name: 'Çok Dilli Gezgin', icon: '🌍', desc: 'En az iki farklı dilde 30\'ar kelime öğren', type: 'cosmic', category: 'lang', check: (s) => isMultiLingual(s, 30) },
+    { id: 'polyglot_spark', name: 'Poliglot Kıvılcımı', icon: '🌍', desc: 'En az iki farklı dilde 50\'şer kelime öğren', type: 'legend', category: 'lang', check: (s) => isMultiLingual(s, 50) }
   ];
 
   window.BADGES_CONFIG = BADGES_CONFIG;
@@ -461,7 +532,7 @@
     const lang = langCode || state.activeLanguage || 'EN-TR';
     return BADGES_CONFIG.filter(badge => {
       if (badge.category !== 'lang') return true;
-      if (badge.id === 'lang_polyglot') return true;
+      if (badge.id === 'lang_polyglot' || badge.id === 'polyglot_spark') return true;
       if (lang === 'EN-TR') return badge.id.startsWith('badge_en_');
       if (lang === 'DE-TR') return badge.id.startsWith('badge_de_');
       if (lang === 'FR-TR') return badge.id.startsWith('badge_fr_');
@@ -1750,6 +1821,8 @@
     state.unlockedBadges = [];
     state.gameStats = {};
     state.cleanWins = 0;
+    state.hasNightWin = false;
+    state.hasEarlyWin = false;
     state.dailyGoalExtra = 0;
     if (state.sessionLearnedIds) state.sessionLearnedIds.clear();
 
@@ -1760,6 +1833,8 @@
     localStorage.removeItem('kelime_unlocked_badges');
     localStorage.removeItem('kelime_game_stats');
     localStorage.removeItem('kelime_clean_wins');
+    localStorage.removeItem('lexiq_night_win');
+    localStorage.removeItem('lexiq_early_win');
     localStorage.removeItem('kelime_daily_goal_extra');
 
     if (typeof window.syncProgressToFirebase === 'function') {
@@ -6935,6 +7010,20 @@ let activeAvatarCategory = 'all';
     localStorage.setItem('kelime_xp', state.xp);
     localStorage.setItem('kelime_arena_solved', state.arenaWordsSolved);
 
+    const curH = new Date().getHours();
+    const curM = new Date().getMinutes();
+    if (curH >= 0 && curH < 5) {
+      if (!state.hasNightWin) {
+        state.hasNightWin = true;
+        localStorage.setItem('lexiq_night_win', '1');
+      }
+    } else if (curH >= 6 && (curH < 8 || (curH === 8 && curM <= 30))) {
+      if (!state.hasEarlyWin) {
+        state.hasEarlyWin = true;
+        localStorage.setItem('lexiq_early_win', '1');
+      }
+    }
+
     updateArenaHeaderAndStats();
     checkBadgeUnlocks();
     if (typeof window.syncProgressToFirebase === 'function') {
@@ -6949,6 +7038,20 @@ let activeAvatarCategory = 'all';
   }
 
   function checkBadgeUnlocks() {
+    const curH = new Date().getHours();
+    const curM = new Date().getMinutes();
+    if (curH >= 0 && curH < 5) {
+      if (!state.hasNightWin && ((state.cleanWins || 0) > 0 || (state.arenaWordsSolved || 0) > 0)) {
+        state.hasNightWin = true;
+        localStorage.setItem('lexiq_night_win', '1');
+      }
+    } else if (curH >= 6 && (curH < 8 || (curH === 8 && curM <= 30))) {
+      if (!state.hasEarlyWin && ((state.cleanWins || 0) > 0 || (state.arenaWordsSolved || 0) > 0)) {
+        state.hasEarlyWin = true;
+        localStorage.setItem('lexiq_early_win', '1');
+      }
+    }
+
     for (const badge of BADGES_CONFIG) {
       if (!state.unlockedBadges.includes(badge.id) && badge.check(state)) {
         state.unlockedBadges.push(badge.id);
@@ -6991,25 +7094,52 @@ let activeAvatarCategory = 'all';
       if (match) target = parseInt(match[1].replace(/\./g, ''), 10);
       unit = 'kelime';
     } else if (badge.category === 'game') {
-      const gMatch = badge.id.match(/^game_([a-z]+)_master/);
-      const gKey = gMatch ? gMatch[1] : null;
-      current = (s.gameStats && gKey && s.gameStats[gKey]) ? s.gameStats[gKey] : 0;
-      const match = badge.desc.match(/([0-9]+)\s*(?:kez|Şıklı)/);
-      if (match) target = parseInt(match[1], 10);
-      unit = 'tur';
+      if (badge.id.startsWith('all_rounder_')) {
+        const reqCount = badge.id === 'all_rounder_sovereign' ? 100 : (badge.id === 'all_rounder_grandmaster' ? 50 : 25);
+        const gameKeys = ['match', 'truefalse', 'scramble', 'listen', 'tetris', 'anagram', 'cloze', 'quiz'];
+        current = gameKeys.filter(k => (s.gameStats && (s.gameStats[k] || 0) >= reqCount)).length;
+        target = 8;
+        unit = 'mod';
+      } else if (badge.id.startsWith('arena_total_')) {
+        current = Object.values(s.gameStats || {}).reduce((a, b) => a + (typeof b === 'number' ? b : 0), 0);
+        const match = badge.desc.match(/([0-9.]+)\s*oyun/);
+        target = match ? parseInt(match[1].replace(/\./g, ''), 10) : 100;
+        unit = 'oyun';
+      } else {
+        let gKey = null;
+        if (badge.id.startsWith('game_match_')) gKey = 'match';
+        else if (badge.id.startsWith('game_tf_')) gKey = 'truefalse';
+        else if (badge.id.startsWith('game_scramble_')) gKey = 'scramble';
+        else if (badge.id.startsWith('game_listen_')) gKey = 'listen';
+        else if (badge.id.startsWith('game_tetris_')) gKey = 'tetris';
+        else if (badge.id.startsWith('game_anagram_')) gKey = 'anagram';
+        else if (badge.id.startsWith('game_cloze_')) gKey = 'cloze';
+        else if (badge.id.startsWith('game_quiz_')) gKey = 'quiz';
+
+        current = (s.gameStats && gKey && s.gameStats[gKey]) ? s.gameStats[gKey] : 0;
+        const match = badge.desc.match(/([0-9]+)\s*(?:kez|Şıklı)/);
+        if (match) target = parseInt(match[1], 10);
+        unit = 'tur';
+      }
     } else if (badge.category === 'streak') {
-      if (badge.id === 'pure_mind') {
+      if (badge.id === 'pure_mind' || badge.id === 'zen_master_50' || badge.id === 'zen_master_100') {
         current = s.cleanWins || 0;
-        target = 10;
+        const match = badge.desc.match(/([0-9]+)\s*arena oyunu/);
+        target = match ? parseInt(match[1], 10) : (badge.id === 'zen_master_100' ? 100 : (badge.id === 'zen_master_50' ? 50 : 10));
         unit = 'zafer';
-      } else if (badge.id === 'vocab_monster') {
+      } else if (badge.id === 'vocab_monster' || badge.id === 'arena_gladiator' || badge.id === 'colosseum_conqueror' || badge.id === 'legendary_gladiator') {
         current = s.arenaWordsSolved || 0;
-        target = 20;
+        const match = badge.desc.match(/([0-9.]+)\s*kelime/);
+        target = match ? parseInt(match[1].replace(/\./g, ''), 10) : 100;
         unit = 'kelime';
-      } else if (badge.id === 'arena_gladiator') {
-        current = s.arenaWordsSolved || 0;
-        target = 100;
-        unit = 'kelime';
+      } else if (badge.id === 'night_owl') {
+        current = s.hasNightWin ? 1 : 0;
+        target = 1;
+        unit = 'zafer';
+      } else if (badge.id === 'early_bird') {
+        current = s.hasEarlyWin ? 1 : 0;
+        target = 1;
+        unit = 'zafer';
       } else if (badge.id.startsWith('daily_streak_')) {
         current = Math.max(s.dayStreak || 0, s.maxDayStreak || 0);
         const match = badge.desc.match(/([0-9]+)\s*gün/i);
@@ -7022,11 +7152,12 @@ let activeAvatarCategory = 'all';
         unit = 'seri';
       }
     } else if (badge.category === 'lang') {
-      if (badge.id === 'lang_polyglot') {
-        const cEn = Math.min(30, getLearnedCountFor(s, 'EN-TR'));
-        const cDe = Math.min(30, getLearnedCountFor(s, 'DE-TR'));
-        const cFr = Math.min(30, getLearnedCountFor(s, 'FR-TR'));
-        const langsMet = (cEn >= 30 ? 1 : 0) + (cDe >= 30 ? 1 : 0) + (cFr >= 30 ? 1 : 0);
+      if (badge.id === 'lang_polyglot' || badge.id === 'polyglot_spark') {
+        const threshold = badge.id === 'polyglot_spark' ? 50 : 30;
+        const cEn = Math.min(threshold, getLearnedCountFor(s, 'EN-TR'));
+        const cDe = Math.min(threshold, getLearnedCountFor(s, 'DE-TR'));
+        const cFr = Math.min(threshold, getLearnedCountFor(s, 'FR-TR'));
+        const langsMet = (cEn >= threshold ? 1 : 0) + (cDe >= threshold ? 1 : 0) + (cFr >= threshold ? 1 : 0);
         current = langsMet;
         target = 2;
         unit = 'dil';
@@ -10310,6 +10441,10 @@ let activeAvatarCategory = 'all';
         localStorage.removeItem('kelime_max_streak');
         localStorage.removeItem('kelime_arena_solved');
         localStorage.removeItem('kelime_clean_wins');
+        localStorage.removeItem('lexiq_night_win');
+        localStorage.removeItem('lexiq_early_win');
+        state.hasNightWin = false;
+        state.hasEarlyWin = false;
         localStorage.removeItem('kelime_unlocked_badges');
         localStorage.removeItem('kelime_game_stats');
 
@@ -10670,6 +10805,10 @@ let activeAvatarCategory = 'all';
       localStorage.removeItem('kelime_max_streak');
       localStorage.removeItem('kelime_arena_solved');
       localStorage.removeItem('kelime_clean_wins');
+      localStorage.removeItem('lexiq_night_win');
+      localStorage.removeItem('lexiq_early_win');
+      state.hasNightWin = false;
+      state.hasEarlyWin = false;
       localStorage.removeItem('kelime_unlocked_badges');
       localStorage.removeItem('kelime_game_stats');
 
