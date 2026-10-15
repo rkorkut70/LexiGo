@@ -15,7 +15,7 @@
   <meta http-equiv="Expires" content="0">
   <title>LexiQ • Çok Dilli Akıllı Kelime Kartları</title>
   <link rel="icon" type="image/jpeg" href="logo.jpg">
-  <link rel="stylesheet" href="style.css?v=1.8.17">
+  <link rel="stylesheet" href="style.css?v=1.8.18">
 </head>
 <body>
   <div class="app-container">
@@ -1115,10 +1115,13 @@
               </div>
             </div>
 
-            <!-- Alt Aksiyon Butonları (Pas Geç / Tekrar Dene) -->
+            <!-- Alt Aksiyon Butonları (Pas Geç / Tekrar Dene / Google Sesli Asistan) -->
             <div class="speak-bottom-actions">
               <button id="speakSkipBtn" class="pill-btn speak-skip-btn" type="button">
                 ⏭️ Bu Kelimeyi Geç
+              </button>
+              <button id="speakVoiceIntentBtn" class="pill-btn speak-intent-btn" type="button" style="display: none;" title="Google Sesli Giriş Penceresini Aç">
+                🎙️ Google ile Söyle
               </button>
             </div>
           </div>
@@ -1212,7 +1215,7 @@
         <div class="welcome-hero-section">
           <div class="welcome-brand-wrapper">
             <h1 class="welcome-brand-name">Lexi<span class="welcome-brand-q">Q</span></h1>
-            <span class="welcome-version-pill">v1.8.17</span>
+            <span class="welcome-version-pill">v1.8.18</span>
           </div>
           <!-- 3 Temel Başarı Sütunu (3D Pill Rozetleri) -->
           <div class="welcome-pillars-container">
@@ -1934,7 +1937,7 @@
         <div class="about-hero-box">
           <div class="about-brand-row">
             <span class="about-brand">Lexi<span class="brand-highlight">Q</span></span>
-            <span class="about-version-pill" id="aboutAppVersion">v1.8.17</span>
+            <span class="about-version-pill" id="aboutAppVersion">v1.8.18</span>
             <span class="about-platform-badge" id="aboutPlatformBadge" style="display: none; font-size: 0.72rem; font-weight: 700; padding: 3px 9px; border-radius: 12px; background: rgba(59,130,246,0.15); color: #3b82f6; border: 1px solid rgba(59,130,246,0.3);"></span>
           </div>
           <p class="about-tagline">Müfredat Tabanlı Çok Dilli Kelime Arenası</p>
@@ -3455,17 +3458,17 @@
       <div class="confirm-icon-wrap" style="font-size: 2.8rem; margin-bottom: 8px;">🎉</div>
       <h3 class="confirm-title" style="font-size: 1.3rem; font-weight: 800; margin: 0 0 6px 0;">LexiQ Güncellendi!</h3>
       <div class="app-update-version-badge" style="display: inline-block; padding: 4px 14px; border-radius: 20px; font-size: 0.84rem; font-weight: 800; margin-bottom: 14px;">
-        Sürüm <span id="appUpdateVersionText">v1.8.17</span>
+        Sürüm <span id="appUpdateVersionText">v1.8.18</span>
       </div>
       <div class="update-notes-box" style="text-align: left; border-radius: 16px; padding: 14px 16px; font-size: 0.88rem; line-height: 1.6; margin-bottom: 18px; max-height: 280px; overflow-y: auto;">
         <div class="update-notes-title" style="font-weight: 800; margin-bottom: 8px; display: flex; align-items: center; gap: 6px;">
           <span>✨</span><span>Bu Sürümdeki Yenilikler</span>
         </div>
         <ul style="margin: 0; padding-left: 20px; display: flex; flex-direction: column; gap: 8px;">
-          <li><strong>🎙️ Yeni Arena Modu: Söyle & Kazan:</strong> Hedef kelimeleri mikrofona söyleyerek telaffuzunu anında analiz ettir, yapay zeka benzerlik puanı ve +15 XP kazan!</li>
-          <li><strong>🗣️ Telaffuz Rozetleri & Çift Motor Altyapısı:</strong> Android native konuşma tanıma servisi ve Web Speech API köprüsüyle hem mobilde hem webde kusursuz telaffuz pratiği.</li>
-          <li><strong>🏆 115 Başarı Rozeti & Prestij Ligleri:</strong> Telaffuz Ustası, Hitabet Büyücüsü ve Kusursuz Aksan başarıları eklendi.</li>
-          <li><strong>📊 Gelişmiş Canlı Geri Bildirim:</strong> Gerçek zamanlı telaffuz eşleşme çubuğu ve akıllı ses düzeyi kılavuzu entegre edildi.</li>
+          <li><strong>🎙️ Android Konuşma Motoru Kararlılığı:</strong> Android cihazlarda mikrofonun tek seferden sonra kilitlenmesi sorunu giderildi; SpeechRecognizer oturumu kararlı hale getirildi.</li>
+          <li><strong>⚡ Canlı Harf Dökümü & Ses Titreşimi:</strong> Konuşurken anlık harf dökümü ve mikrofon dalgalanma efekti eklendi.</li>
+          <li><strong>🗣️ Alternatif Google Sesli Giriş Modu:</strong> OEM/cihaz bağımsız kusursuz telaffuz deneyimi için yedek sesli giriş butonu eklendi.</li>
+          <li><strong>🏆 Telaffuz Rozetleri & Prestij Ligleri:</strong> Telaffuz Ustası, Hitabet Büyücüsü ve Kusursuz Aksan başarıları.</li>
         </ul>
       </div>
       <div style="display: flex; flex-direction: column; gap: 8px; width: 100%;">
@@ -3528,11 +3531,11 @@
   <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-storage-compat.js"></script>
-  <script src="firebase_backend.js?v=1.8.17"></script>
+  <script src="firebase_backend.js?v=1.8.18"></script>
 
   <!-- Kelime Verisi ve Uygulama Mantığı (Sadece Standart Vanilla JS) -->
-  <script src="words_data.js?v=1.8.17"></script>
-  <script src="app.js?v=1.8.17"></script>
+  <script src="words_data.js?v=1.8.18"></script>
+  <script src="app.js?v=1.8.18"></script>
 
   </body>
 </html>

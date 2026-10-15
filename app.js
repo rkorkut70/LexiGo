@@ -7,7 +7,7 @@
 (function () {
   'use strict';
 
-  const APP_VERSION = 'v1.8.17';
+  const APP_VERSION = 'v1.8.18';
   const CURRENT_APP_BUILD = 'lexiq_build_19_clean';
 
   // Build 13 temiz kurulum / sıfırlama güvencesi (Kullanıcı verilerini sıfırla, Hoş Geldin ekranını garantile)
@@ -824,6 +824,7 @@
     speakAccuracyBarFill: document.getElementById('speakAccuracyBarFill'),
     speakScorePct: document.getElementById('speakScorePct'),
     speakScoreLabel: document.getElementById('speakScoreLabel'),
+    speakVoiceIntentBtn: document.getElementById('speakVoiceIntentBtn'),
 
     // Modallar
     langModal: document.getElementById('langModal'),
@@ -8130,8 +8131,12 @@ let activeAvatarCategory = 'all';
     }
     setSpeakMicListeningUI(false);
 
-    if (window.AndroidSTT && typeof window.AndroidSTT.stopListening === 'function') {
-      try { window.AndroidSTT.stopListening(); } catch (e) {}
+    if (window.AndroidSTT) {
+      if (typeof window.AndroidSTT.cancelListening === 'function') {
+        try { window.AndroidSTT.cancelListening(); } catch (e) {}
+      } else if (typeof window.AndroidSTT.stopListening === 'function') {
+        try { window.AndroidSTT.stopListening(); } catch (e) {}
+      }
     }
     if (speakState.webRecognition) {
       try { speakState.webRecognition.stop(); } catch (e) {}
@@ -8164,7 +8169,7 @@ let activeAvatarCategory = 'all';
         stopListeningForSpeak();
         showToast('⏳ Zaman aşımı. Tekrar denemek için mikrofona dokunun.');
       }
-    }, 7000);
+    }, 8000);
 
     // 1. Android Native Bridge
     if (window.AndroidSTT && typeof window.AndroidSTT.startListening === 'function') {
@@ -8230,24 +8235,72 @@ let activeAvatarCategory = 'all';
   }
 
   // Android Native STT Callbacks (Window Global)
+  window.onAndroidSpeechReady = function() {
+    speakState.isListening = true;
+    if (dom.speakMicStatusText) {
+      dom.speakMicStatusText.textContent = 'Dinliyor... Kelimeyi söyleyin 🎙️';
+      dom.speakMicStatusText.style.color = '#ef4444';
+    }
+  };
+
   window.onAndroidSpeechStart = function() {
-    setSpeakMicListeningUI(true);
+    speakState.isListening = true;
+    if (dom.speakMicStatusText) {
+      dom.speakMicStatusText.textContent = 'Ses algılanıyor... 🗣️';
+      dom.speakMicStatusText.style.color = '#10b981';
+    }
   };
+
+  window.onAndroidSpeechRms = function(rmsdB) {
+    if (dom.speakMicPulseRing && typeof rmsdB === 'number') {
+      const scale = 1.0 + Math.min(0.5, rmsdB / 22.0);
+      dom.speakMicPulseRing.style.transform = `scale(${scale})`;
+    }
+  };
+
+  window.onAndroidSpeechPartial = function(partialText) {
+    if (dom.speakTranscriptText && partialText) {
+      dom.speakTranscriptText.innerHTML = `Duyulan: <em>"${partialText.replace(/</g, '&lt;').replace(/>/g, '&gt;')}..."</em>`;
+      if (dom.speakFeedbackBox) dom.speakFeedbackBox.style.display = 'block';
+    }
+  };
+
   window.onAndroidSpeechEnd = function() {
-    setSpeakMicListeningUI(false);
+    // Ses kesildi, sonuç işleniyor
+    if (dom.speakMicStatusText) {
+      dom.speakMicStatusText.textContent = 'Analiz ediliyor... ⏳';
+      dom.speakMicStatusText.style.color = '#f59e0b';
+    }
+    if (dom.speakMicPulseRing) {
+      dom.speakMicPulseRing.classList.remove('active');
+      dom.speakMicPulseRing.style.transform = 'scale(1)';
+    }
   };
+
   window.onAndroidSpeechResult = function(transcript, confidence) {
     stopListeningForSpeak();
     evaluateSpokenWord(transcript, confidence);
   };
+
   window.onAndroidSpeechError = function(errorCode, errorMessage) {
     stopListeningForSpeak();
+    speakState.isListening = false;
+    speakState.isEvaluating = false;
+
+    console.warn('Android STT Error code:', errorCode, errorMessage);
     if (errorCode === 9) {
-      showToast('⚠️ Mikrofon izni gerekli. Lütfen uygulama ayarlarından izin verin.');
-    } else if (errorCode === 7) {
-      showToast('Ses anlaşılamadı. Lütfen net ve mikrofona yakın konuşun.');
+      showToast('⚠️ Mikrofon izni gerekli. Lütfen ayarlardan izin verin.');
+    } else if (errorCode === 7 || errorCode === 6) {
+      showToast('Ses net algılanamadı. Lütfen mikrofona yakın ve tane tane konuşun.');
+    } else if (errorCode === 8) {
+      showToast('Mikrofon servisi hazırlandı. Lütfen tekrar dokunun.');
+      if (window.AndroidSTT && typeof window.AndroidSTT.cancelListening === 'function') {
+        window.AndroidSTT.cancelListening();
+      }
+    } else if (errorCode === 1 || errorCode === 2) {
+      showToast('⚠️ İnternet bağlantısı sorunu. Lütfen ağınızı kontrol edin.');
     } else {
-      console.warn('Android STT Error:', errorCode, errorMessage);
+      showToast(`Ses algılanamadı (${errorCode}). Tekrar deneyin.`);
     }
   };
 
@@ -8423,6 +8476,10 @@ let activeAvatarCategory = 'all';
     }
     if (dom.speakHintBtn) dom.speakHintBtn.disabled = false;
     if (dom.speakSkipBtn) dom.speakSkipBtn.disabled = false;
+    if (dom.speakVoiceIntentBtn) {
+      const hasVoiceIntent = !!(window.AndroidSTT && typeof window.AndroidSTT.startVoiceIntent === 'function');
+      dom.speakVoiceIntentBtn.style.display = hasVoiceIntent ? 'inline-flex' : 'none';
+    }
   }
 
   function giveSpeakHint() {
@@ -12424,6 +12481,14 @@ let activeAvatarCategory = 'all';
     }
     if (dom.speakSkipBtn) {
       dom.speakSkipBtn.addEventListener('click', skipSpeakWord);
+    }
+    if (dom.speakVoiceIntentBtn) {
+      dom.speakVoiceIntentBtn.addEventListener('click', () => {
+        if (speakState.targetWord && window.AndroidSTT && typeof window.AndroidSTT.startVoiceIntent === 'function') {
+          const sttLang = getSTTLangCode(speakState.targetWord.dil);
+          window.AndroidSTT.startVoiceIntent(sttLang);
+        }
+      });
     }
 
     // ==========================================
