@@ -7,7 +7,7 @@
 (function () {
   'use strict';
 
-  const APP_VERSION = 'v1.8.20';
+  const APP_VERSION = 'v1.8.21';
   const CURRENT_APP_BUILD = 'lexiq_build_19_clean';
 
   // Build 13 temiz kurulum / sıfırlama güvencesi (Kullanıcı verilerini sıfırla, Hoş Geldin ekranını garantile)
@@ -57,6 +57,8 @@
     readExampleAudio: localStorage.getItem('kelime_read_example_audio') === 'true',
     slideshowActive: false,
     slideshowTimer: null,
+    cardAutoAccent: localStorage.getItem('lexiq_card_auto_accent') || 'US', // 'US' | 'UK'
+    arenaDefaultAccent: localStorage.getItem('lexiq_arena_default_accent') || 'US', // 'US' | 'UK'
     activeEnAccent: localStorage.getItem('kelime_en_accent') || 'US', // 'US' | 'UK'
     dailyGoal: parseInt(localStorage.getItem('kelime_daily_goal'), 10) || 15,
     dailyGoalExtra: 0,
@@ -734,12 +736,18 @@
     matchHintBtn: document.getElementById('matchHintBtn'),
     matchFoundCount: document.getElementById('matchFoundCount'),
     matchGrid: document.getElementById('matchGrid'),
+    matchAccentGroup: document.getElementById('matchAccentGroup'),
+    matchUsBtn: document.getElementById('matchUsBtn'),
+    matchUkBtn: document.getElementById('matchUkBtn'),
 
     // 2. Doğru mu Yanlış mı? (True / False)
     gameTrueFalseView: document.getElementById('gameTrueFalseView'),
     tfHintBtn: document.getElementById('tfHintBtn'),
     tfHintDetail: document.getElementById('tfHintDetail'),
     tfAudioBtn: document.getElementById('tfAudioBtn'),
+    tfAccentGroup: document.getElementById('tfAccentGroup'),
+    tfUsBtn: document.getElementById('tfUsBtn'),
+    tfUkBtn: document.getElementById('tfUkBtn'),
     tfTimer: document.getElementById('tfTimer'),
     tfTargetWord: document.getElementById('tfTargetWord'),
     tfDisplayedMeaning: document.getElementById('tfDisplayedMeaning'),
@@ -750,6 +758,9 @@
     gameTetrisView: document.getElementById('gameTetrisView'),
     tetrisHintBtn: document.getElementById('tetrisHintBtn'),
     tetrisAudioBtn: document.getElementById('tetrisAudioBtn'),
+    tetrisAccentGroup: document.getElementById('tetrisAccentGroup'),
+    tetrisUsBtn: document.getElementById('tetrisUsBtn'),
+    tetrisUkBtn: document.getElementById('tetrisUkBtn'),
     tetrisTimer: document.getElementById('tetrisTimer'),
     tetrisFullscreenBtn: document.getElementById('tetrisFullscreenBtn'),
     tetrisExitBtn: document.getElementById('tetrisExitBtn'),
@@ -764,6 +775,9 @@
     gameAnagramView: document.getElementById('gameAnagramView'),
     anagramHintBtn: document.getElementById('anagramHintBtn'),
     anagramAudioBtn: document.getElementById('anagramAudioBtn'),
+    anagramAccentGroup: document.getElementById('anagramAccentGroup'),
+    anagramUsBtn: document.getElementById('anagramUsBtn'),
+    anagramUkBtn: document.getElementById('anagramUkBtn'),
     anagramMeaningText: document.getElementById('anagramMeaningText'),
     anagramHintText: document.getElementById('anagramHintText'),
     anagramSlots: document.getElementById('anagramSlots'),
@@ -775,6 +789,13 @@
     gameListenView: document.getElementById('gameListenView'),
     listenHintBtn: document.getElementById('listenHintBtn'),
     listenPlayAudioBtn: document.getElementById('listenPlayAudioBtn'),
+    listenHeaderAudioBtn: document.getElementById('listenHeaderAudioBtn'),
+    listenHeaderAccentGroup: document.getElementById('listenHeaderAccentGroup'),
+    listenHeaderUsBtn: document.getElementById('listenHeaderUsBtn'),
+    listenHeaderUkBtn: document.getElementById('listenHeaderUkBtn'),
+    listenAccentPlayRow: document.getElementById('listenAccentPlayRow'),
+    listenPlayUsBtn: document.getElementById('listenPlayUsBtn'),
+    listenPlayUkBtn: document.getElementById('listenPlayUkBtn'),
     listenHintText: document.getElementById('listenHintText'),
     listenSlots: document.getElementById('listenSlots'),
     listenBank: document.getElementById('listenBank'),
@@ -785,6 +806,9 @@
     gameQuizView: document.getElementById('gameQuizView'),
     quizHintBtn: document.getElementById('quizHintBtn'),
     quizAudioBtn: document.getElementById('quizAudioBtn'),
+    quizAccentGroup: document.getElementById('quizAccentGroup'),
+    quizUsBtn: document.getElementById('quizUsBtn'),
+    quizUkBtn: document.getElementById('quizUkBtn'),
     quizTargetWord: document.getElementById('quizTargetWord'),
     quizOptionsGrid: document.getElementById('quizOptionsGrid'),
 
@@ -792,6 +816,9 @@
     gameScrambleView: document.getElementById('gameScrambleView'),
     scrambleHintBtn: document.getElementById('scrambleHintBtn'),
     scrambleAudioBtn: document.getElementById('scrambleAudioBtn'),
+    scrambleAccentGroup: document.getElementById('scrambleAccentGroup'),
+    scrambleUsBtn: document.getElementById('scrambleUsBtn'),
+    scrambleUkBtn: document.getElementById('scrambleUkBtn'),
     scrambleTranslationText: document.getElementById('scrambleTranslationText'),
     scrambleSlots: document.getElementById('scrambleSlots'),
     scrambleBank: document.getElementById('scrambleBank'),
@@ -806,6 +833,10 @@
     clozeToggleTranslationBtn: document.getElementById('clozeToggleTranslationBtn'),
     settingClozeAutoTranslate: document.getElementById('settingClozeAutoTranslate'),
     clozeOptionsGrid: document.getElementById('clozeOptionsGrid'),
+    clozeAccentGroup: document.getElementById('clozeAccentGroup'),
+    clozeUsBtn: document.getElementById('clozeUsBtn'),
+    clozeUkBtn: document.getElementById('clozeUkBtn'),
+    clozeAudioBtn: document.getElementById('clozeAudioBtn'),
 
     // 9. Söyle & Kazan (Speak / Pronunciation)
     gameSpeakView: document.getElementById('gameSpeakView'),
@@ -815,6 +846,9 @@
     speakTargetMeaning: document.getElementById('speakTargetMeaning'),
     speakTargetLangBadge: document.getElementById('speakTargetLangBadge'),
     speakListenNativeBtn: document.getElementById('speakListenNativeBtn'),
+    speakDualListenRow: document.getElementById('speakDualListenRow'),
+    speakListenUsBtn: document.getElementById('speakListenUsBtn'),
+    speakListenUkBtn: document.getElementById('speakListenUkBtn'),
     speakMicBtn: document.getElementById('speakMicBtn'),
     speakMicIcon: document.getElementById('speakMicIcon'),
     speakMicPulseRing: document.getElementById('speakMicPulseRing'),
@@ -832,6 +866,16 @@
     settingEnAccentBlock: document.getElementById('settingEnAccentBlock'),
     settingAccentUsBtn: document.getElementById('settingAccentUsBtn'),
     settingAccentUkBtn: document.getElementById('settingAccentUkBtn'),
+
+    // Aksan Ayarları Sekmesi
+    tabBtnAccent: document.getElementById('tabBtnAccent'),
+    tabPanelAccent: document.getElementById('tabPanelAccent'),
+    cardAutoAccentSegmentGroup: document.getElementById('cardAutoAccentSegmentGroup'),
+    cardAutoAccentUsBtn: document.getElementById('cardAutoAccentUsBtn'),
+    cardAutoAccentUkBtn: document.getElementById('cardAutoAccentUkBtn'),
+    arenaDefaultAccentSegmentGroup: document.getElementById('arenaDefaultAccentSegmentGroup'),
+    arenaDefaultAccentUsBtn: document.getElementById('arenaDefaultAccentUsBtn'),
+    arenaDefaultAccentUkBtn: document.getElementById('arenaDefaultAccentUkBtn'),
 
     // Modallar
     langModal: document.getElementById('langModal'),
@@ -2011,6 +2055,7 @@
     const panelMap = {
       profile: 'tabPanelProfile',
       cards: 'tabPanelCards',
+      accent: 'tabPanelAccent',
       arena: 'tabPanelArena',
       reminder: 'tabPanelReminder',
       data: 'tabPanelData',
@@ -2885,6 +2930,16 @@ let activeAvatarCategory = 'all';
         const isUk = (state.activeEnAccent === 'UK');
         dom.settingAccentUkBtn.classList.toggle('active', isUk);
         dom.settingAccentUsBtn.classList.toggle('active', !isUk);
+      }
+      if (dom.cardAutoAccentUsBtn && dom.cardAutoAccentUkBtn) {
+        const isUk = (state.cardAutoAccent === 'UK');
+        dom.cardAutoAccentUkBtn.classList.toggle('active', isUk);
+        dom.cardAutoAccentUsBtn.classList.toggle('active', !isUk);
+      }
+      if (dom.arenaDefaultAccentUsBtn && dom.arenaDefaultAccentUkBtn) {
+        const isUk = (state.arenaDefaultAccent === 'UK');
+        dom.arenaDefaultAccentUkBtn.classList.toggle('active', isUk);
+        dom.arenaDefaultAccentUsBtn.classList.toggle('active', !isUk);
       }
 
       dom.settingsModal.classList.add('active');
@@ -4753,7 +4808,7 @@ let activeAvatarCategory = 'all';
     }
 
     if (state.autoplayAudio && !state.reverseMode && state.words.length > 0) {
-      setTimeout(() => speakCurrentWord(), 280);
+      setTimeout(() => speakCurrentWord(state.cardAutoAccent || state.activeEnAccent || 'US'), 280);
     }
   }
 
@@ -4802,7 +4857,7 @@ let activeAvatarCategory = 'all';
       triggerCardAnimation('prev');
       renderCard();
       if (state.autoplayAudio && !state.reverseMode) {
-        setTimeout(() => speakCurrentWord(), 280);
+        setTimeout(() => speakCurrentWord(state.cardAutoAccent || state.activeEnAccent || 'US'), 280);
       }
     }
   }
@@ -4815,7 +4870,7 @@ let activeAvatarCategory = 'all';
       triggerCardAnimation('next');
       renderCard();
       if (state.autoplayAudio && !state.reverseMode) {
-        setTimeout(() => speakCurrentWord(), 280);
+        setTimeout(() => speakCurrentWord(state.cardAutoAccent || state.activeEnAccent || 'US'), 280);
       }
     }
   }
@@ -5033,6 +5088,29 @@ let activeAvatarCategory = 'all';
     }
   }
 
+  function setCardAutoAccent(accent) {
+    const valid = (accent === 'UK') ? 'UK' : 'US';
+    state.cardAutoAccent = valid;
+    localStorage.setItem('lexiq_card_auto_accent', valid);
+    if (dom.cardAutoAccentUsBtn && dom.cardAutoAccentUkBtn) {
+      dom.cardAutoAccentUsBtn.classList.toggle('active', valid === 'US');
+      dom.cardAutoAccentUkBtn.classList.toggle('active', valid === 'UK');
+    }
+    showToast(valid === 'UK' ? '🇬🇧 Kartta otomatik seslendirme: İngiliz (GB)' : '🇺🇸 Kartta otomatik seslendirme: Amerikan (US)');
+  }
+
+  function setArenaDefaultAccent(accent) {
+    const valid = (accent === 'UK') ? 'UK' : 'US';
+    state.arenaDefaultAccent = valid;
+    localStorage.setItem('lexiq_arena_default_accent', valid);
+    if (dom.arenaDefaultAccentUsBtn && dom.arenaDefaultAccentUkBtn) {
+      dom.arenaDefaultAccentUsBtn.classList.toggle('active', valid === 'US');
+      dom.arenaDefaultAccentUkBtn.classList.toggle('active', valid === 'UK');
+    }
+    setEnAccent(valid, true, false);
+    showToast(valid === 'UK' ? '🇬🇧 Arenada öntanımlı aksan: İngiliz (GB)' : '🇺🇸 Arenada öntanımlı aksan: Amerikan (US)');
+  }
+
   function setEnAccent(accent, updateSettings = true, speakSample = false) {
     const validAccent = (accent === 'UK') ? 'UK' : 'US';
     state.activeEnAccent = validAccent;
@@ -5049,16 +5127,32 @@ let activeAvatarCategory = 'all';
       }
     }
 
-    // 2. Söyle & Kazan arena butonlarını güncelle
-    if (dom.speakAccentUkBtn && dom.speakAccentUsBtn) {
-      if (validAccent === 'UK') {
-        dom.speakAccentUkBtn.classList.add('active');
-        dom.speakAccentUsBtn.classList.remove('active');
-      } else {
-        dom.speakAccentUsBtn.classList.add('active');
-        dom.speakAccentUkBtn.classList.remove('active');
+    // 2. Tüm arena oyunları aksan butonlarını senkronize et
+    const accentBtnPairs = [
+      [dom.matchUsBtn, dom.matchUkBtn],
+      [dom.tfUsBtn, dom.tfUkBtn],
+      [dom.tetrisUsBtn, dom.tetrisUkBtn],
+      [dom.anagramUsBtn, dom.anagramUkBtn],
+      [dom.listenHeaderUsBtn, dom.listenHeaderUkBtn],
+      [dom.listenPlayUsBtn, dom.listenPlayUkBtn],
+      [dom.quizUsBtn, dom.quizUkBtn],
+      [dom.scrambleUsBtn, dom.scrambleUkBtn],
+      [dom.clozeUsBtn, dom.clozeUkBtn],
+      [dom.speakAccentUsBtn, dom.speakAccentUkBtn],
+      [dom.speakListenUsBtn, dom.speakListenUkBtn]
+    ];
+
+    accentBtnPairs.forEach(([usBtn, ukBtn]) => {
+      if (usBtn && ukBtn) {
+        if (validAccent === 'UK') {
+          ukBtn.classList.add('active');
+          usBtn.classList.remove('active');
+        } else {
+          usBtn.classList.add('active');
+          ukBtn.classList.remove('active');
+        }
       }
-    }
+    });
 
     // 3. Söyle & Kazan etiket ve dinle butonu metnini güncelle
     if (dom.speakTargetLangBadge && speakState && speakState.targetWord && speakState.targetWord.dil === 'EN-TR') {
@@ -7440,6 +7534,15 @@ let activeAvatarCategory = 'all';
     anagramState.targetWord = candidate;
     markWordPracticedInGame(candidate.id);
 
+    if (candidate.dil === 'EN-TR') {
+      if (dom.anagramAccentGroup) dom.anagramAccentGroup.style.display = 'inline-flex';
+      if (dom.anagramAudioBtn) dom.anagramAudioBtn.style.display = 'none';
+      setEnAccent(state.arenaDefaultAccent || state.activeEnAccent || 'US', false, false);
+    } else {
+      if (dom.anagramAccentGroup) dom.anagramAccentGroup.style.display = 'none';
+      if (dom.anagramAudioBtn) dom.anagramAudioBtn.style.display = 'inline-flex';
+    }
+
     const cleanForAnagram = candidate.kelime.replace(/\(.*?\)/g, '').trim();
     const rawWord = cleanForAnagram.replace(/[^a-zA-ZçğıöşüÇĞİÖŞÜàâäéèêëîïôöùûüÿçÀÂÄÉÈÊËÎÏÔÖÙÛÜŸÇ]/g, '');
     const letters = rawWord.split('').map(c => candidate.dil === 'EN-TR' ? toEnglishUpper(c) : c.toUpperCase());
@@ -7672,6 +7775,15 @@ let activeAvatarCategory = 'all';
     }
     tetrisState.targetWord = candidate;
     markWordPracticedInGame(candidate.id);
+
+    if (candidate.dil === 'EN-TR') {
+      if (dom.tetrisAccentGroup) dom.tetrisAccentGroup.style.display = 'inline-flex';
+      if (dom.tetrisAudioBtn) dom.tetrisAudioBtn.style.display = 'none';
+      setEnAccent(state.arenaDefaultAccent || state.activeEnAccent || 'US', false, false);
+    } else {
+      if (dom.tetrisAccentGroup) dom.tetrisAccentGroup.style.display = 'none';
+      if (dom.tetrisAudioBtn) dom.tetrisAudioBtn.style.display = 'inline-flex';
+    }
 
     // Unicode harf desteği (Fransızca, Almanca, Türkçe vs. tam korumalı)
     const rawWord = candidate.kelime.replace(/[^\p{L}]/gu, '');
@@ -7922,6 +8034,13 @@ let activeAvatarCategory = 'all';
 
     clozeState.targetWord = target;
     markWordPracticedInGame(target.id);
+
+    if (target.dil === 'EN-TR') {
+      if (dom.clozeAccentGroup) dom.clozeAccentGroup.style.display = 'inline-flex';
+      setEnAccent(state.arenaDefaultAccent || state.activeEnAccent || 'US', false, false);
+    } else {
+      if (dom.clozeAccentGroup) dom.clozeAccentGroup.style.display = 'none';
+    }
 
     // Clean word for matching and options (e.g. separable verbs "zu|ordnen" -> "zuordnen")
     const cleanWordForDisplay = target.kelime.replace(/\|/g, '').trim();
@@ -8528,13 +8647,17 @@ let activeAvatarCategory = 'all';
       const isUk = (state.activeEnAccent === 'UK');
       if (dom.speakTargetLangBadge) dom.speakTargetLangBadge.textContent = isUk ? '🇬🇧 İngilizce (GB)' : '🇺🇸 İngilizce (US)';
       if (dom.speakAccentSelector) dom.speakAccentSelector.style.display = 'inline-flex';
+      if (dom.speakDualListenRow) dom.speakDualListenRow.style.display = 'flex';
+      if (dom.speakListenNativeBtn) dom.speakListenNativeBtn.style.display = 'none';
       if (dom.speakListenBtnText) dom.speakListenBtnText.textContent = isUk ? 'Doğru Okunuşu Dinle (GB)' : 'Doğru Okunuşu Dinle (US)';
-      setEnAccent(state.activeEnAccent || 'US', false, false);
+      setEnAccent(state.arenaDefaultAccent || state.activeEnAccent || 'US', false, false);
     } else {
       if (dom.speakTargetLangBadge) {
         dom.speakTargetLangBadge.textContent = candidate.dil === 'DE-TR' ? '🇩🇪 Almanca' : '🇫🇷 Fransızca';
       }
       if (dom.speakAccentSelector) dom.speakAccentSelector.style.display = 'none';
+      if (dom.speakDualListenRow) dom.speakDualListenRow.style.display = 'none';
+      if (dom.speakListenNativeBtn) dom.speakListenNativeBtn.style.display = 'inline-flex';
       if (dom.speakListenBtnText) dom.speakListenBtnText.textContent = 'Doğru Okunuşu Dinle';
     }
 
@@ -8601,6 +8724,10 @@ let activeAvatarCategory = 'all';
 
   function startMatchRound() {
     state.roundUsedHint = false;
+    if (dom.matchAccentGroup) {
+      dom.matchAccentGroup.style.display = (state.activeLanguage === 'EN-TR') ? 'inline-flex' : 'none';
+      setEnAccent(state.arenaDefaultAccent || state.activeEnAccent || 'US', false, false);
+    }
     const rawPool = getLearnedWordsPool();
     // Havuzu hem yabancı kelimesi hem de Türkçe anlamı dolu olan kelimelerle güvenli filtrele (boş kart riskini tamamen önler)
     const pool = rawPool.filter(w => w && w.kelime && w.kelime.trim() && getWordMeaning(w).trim());
@@ -8800,6 +8927,15 @@ let activeAvatarCategory = 'all';
     tfState.isAnswering = false;
     tfState.timeLeft = 20;
 
+    if (target.dil === 'EN-TR') {
+      if (dom.tfAccentGroup) dom.tfAccentGroup.style.display = 'inline-flex';
+      if (dom.tfAudioBtn) dom.tfAudioBtn.style.display = 'none';
+      setEnAccent(state.arenaDefaultAccent || state.activeEnAccent || 'US', false, false);
+    } else {
+      if (dom.tfAccentGroup) dom.tfAccentGroup.style.display = 'none';
+      if (dom.tfAudioBtn) dom.tfAudioBtn.style.display = 'inline-flex';
+    }
+
     if (dom.tfTimer) dom.tfTimer.textContent = tfState.timeLeft;
     if (dom.tfHintDetail) dom.tfHintDetail.style.display = 'none';
     if (dom.tfHintBtn) dom.tfHintBtn.disabled = false;
@@ -8928,6 +9064,19 @@ let activeAvatarCategory = 'all';
     listenState.targetWord = candidate;
     markWordPracticedInGame(candidate.id);
 
+    if (candidate.dil === 'EN-TR') {
+      if (dom.listenHeaderAccentGroup) dom.listenHeaderAccentGroup.style.display = 'inline-flex';
+      if (dom.listenHeaderAudioBtn) dom.listenHeaderAudioBtn.style.display = 'none';
+      if (dom.listenAccentPlayRow) dom.listenAccentPlayRow.style.display = 'flex';
+      if (dom.listenPlayAudioBtn) dom.listenPlayAudioBtn.style.display = 'none';
+      setEnAccent(state.arenaDefaultAccent || state.activeEnAccent || 'US', false, false);
+    } else {
+      if (dom.listenHeaderAccentGroup) dom.listenHeaderAccentGroup.style.display = 'none';
+      if (dom.listenHeaderAudioBtn) dom.listenHeaderAudioBtn.style.display = 'inline-flex';
+      if (dom.listenAccentPlayRow) dom.listenAccentPlayRow.style.display = 'none';
+      if (dom.listenPlayAudioBtn) dom.listenPlayAudioBtn.style.display = 'inline-flex';
+    }
+
     const rawWord = candidate.kelime.replace(/[^\p{L}]/gu, '');
     const letters = rawWord.split('').map(c => candidate.dil === 'EN-TR' ? toEnglishUpper(c) : c.toUpperCase());
 
@@ -8950,7 +9099,9 @@ let activeAvatarCategory = 'all';
 
     setTimeout(() => {
       if (state.activeMode === 'arena' && state.activeGame === 'listen') {
-        speakWord(candidate.kelime, candidate.dil, dom.listenPlayAudioBtn);
+        const listenAccent = (candidate.dil === 'EN-TR') ? (state.arenaDefaultAccent || state.activeEnAccent || 'US') : null;
+        const targetBtn = (candidate.dil === 'EN-TR') ? ((listenAccent === 'UK') ? dom.listenPlayUkBtn : dom.listenPlayUsBtn) : dom.listenPlayAudioBtn;
+        speakWord(candidate.kelime, candidate.dil, targetBtn, listenAccent);
       }
     }, 350);
   }
@@ -9122,6 +9273,15 @@ let activeAvatarCategory = 'all';
     markWordPracticedInGame(candidate.id);
     quizState.isAnswering = false;
 
+    if (candidate.dil === 'EN-TR') {
+      if (dom.quizAccentGroup) dom.quizAccentGroup.style.display = 'inline-flex';
+      if (dom.quizAudioBtn) dom.quizAudioBtn.style.display = 'none';
+      setEnAccent(state.arenaDefaultAccent || state.activeEnAccent || 'US', false, false);
+    } else {
+      if (dom.quizAccentGroup) dom.quizAccentGroup.style.display = 'none';
+      if (dom.quizAudioBtn) dom.quizAudioBtn.style.display = 'inline-flex';
+    }
+
     if (dom.quizTargetWord) dom.quizTargetWord.textContent = candidate.kelime;
 
     const targetMeaning = getWordMeaning(candidate);
@@ -9238,6 +9398,15 @@ let activeAvatarCategory = 'all';
 
     scrambleState.targetWord = target;
     markWordPracticedInGame(target.id);
+
+    if (target.dil === 'EN-TR') {
+      if (dom.scrambleAccentGroup) dom.scrambleAccentGroup.style.display = 'inline-flex';
+      if (dom.scrambleAudioBtn) dom.scrambleAudioBtn.style.display = 'none';
+      setEnAccent(state.arenaDefaultAccent || state.activeEnAccent || 'US', false, false);
+    } else {
+      if (dom.scrambleAccentGroup) dom.scrambleAccentGroup.style.display = 'none';
+      if (dom.scrambleAudioBtn) dom.scrambleAudioBtn.style.display = 'inline-flex';
+    }
 
     const sentence = getWordSentence(target) || `This word means ${getWordMeaning(target) || 'it'}.`;
     const words = sentence.trim().split(/\s+/);
@@ -9603,7 +9772,19 @@ let activeAvatarCategory = 'all';
       });
     }
 
-    // İngilizce Aksan Tercihi (US / GB) Butonları
+    // İngilizce Aksan Tercihi (US / GB) Butonları (Ayarlar Aksan Sekmesi)
+    if (dom.cardAutoAccentUsBtn) {
+      dom.cardAutoAccentUsBtn.addEventListener('click', () => setCardAutoAccent('US'));
+    }
+    if (dom.cardAutoAccentUkBtn) {
+      dom.cardAutoAccentUkBtn.addEventListener('click', () => setCardAutoAccent('UK'));
+    }
+    if (dom.arenaDefaultAccentUsBtn) {
+      dom.arenaDefaultAccentUsBtn.addEventListener('click', () => setArenaDefaultAccent('US'));
+    }
+    if (dom.arenaDefaultAccentUkBtn) {
+      dom.arenaDefaultAccentUkBtn.addEventListener('click', () => setArenaDefaultAccent('UK'));
+    }
     if (dom.settingAccentUsBtn) {
       dom.settingAccentUsBtn.addEventListener('click', () => {
         setEnAccent('US', true, false);
@@ -12461,7 +12642,21 @@ let activeAvatarCategory = 'all';
       dom.arenaGoToCardsBtn.addEventListener('click', () => switchAppMode('flashcards'));
     }
 
-    // 1. Kart Eşleştirme (Match) kart tıklamaları dinamik olarak kart oluşturulurken bağlanır
+    // 1. Kart Eşleştirme (Match)
+    if (dom.matchUsBtn) {
+      dom.matchUsBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        setEnAccent('US', true, false);
+        showToast('🇺🇸 Amerikan aksanı (US) seçildi');
+      });
+    }
+    if (dom.matchUkBtn) {
+      dom.matchUkBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        setEnAccent('UK', true, false);
+        showToast('🇬🇧 İngiliz aksanı (GB) seçildi');
+      });
+    }
 
     // 2. Doğru mu Yanlış mı? (True or False)
     if (dom.tfTrueBtn) {
@@ -12477,6 +12672,18 @@ let activeAvatarCategory = 'all';
         }
       });
     }
+    if (dom.tfUsBtn) {
+      dom.tfUsBtn.addEventListener('click', () => {
+        setEnAccent('US', true, false);
+        if (tfState.targetWord) speakWord(tfState.targetWord.kelime, 'EN-TR', dom.tfUsBtn, 'US');
+      });
+    }
+    if (dom.tfUkBtn) {
+      dom.tfUkBtn.addEventListener('click', () => {
+        setEnAccent('UK', true, false);
+        if (tfState.targetWord) speakWord(tfState.targetWord.kelime, 'EN-TR', dom.tfUkBtn, 'UK');
+      });
+    }
 
     // 3. Tetris Kontrolleri
     if (dom.tetrisAudioBtn) {
@@ -12484,6 +12691,18 @@ let activeAvatarCategory = 'all';
         if (tetrisState.targetWord) {
           speakWord(tetrisState.targetWord.kelime, tetrisState.targetWord.dil, dom.tetrisAudioBtn);
         }
+      });
+    }
+    if (dom.tetrisUsBtn) {
+      dom.tetrisUsBtn.addEventListener('click', () => {
+        setEnAccent('US', true, false);
+        if (tetrisState.targetWord) speakWord(tetrisState.targetWord.kelime, 'EN-TR', dom.tetrisUsBtn, 'US');
+      });
+    }
+    if (dom.tetrisUkBtn) {
+      dom.tetrisUkBtn.addEventListener('click', () => {
+        setEnAccent('UK', true, false);
+        if (tetrisState.targetWord) speakWord(tetrisState.targetWord.kelime, 'EN-TR', dom.tetrisUkBtn, 'UK');
       });
     }
     if (dom.tetrisFullscreenBtn) {
@@ -12505,6 +12724,18 @@ let activeAvatarCategory = 'all';
         }
       });
     }
+    if (dom.anagramUsBtn) {
+      dom.anagramUsBtn.addEventListener('click', () => {
+        setEnAccent('US', true, false);
+        if (anagramState.targetWord) speakWord(anagramState.targetWord.kelime, 'EN-TR', dom.anagramUsBtn, 'US');
+      });
+    }
+    if (dom.anagramUkBtn) {
+      dom.anagramUkBtn.addEventListener('click', () => {
+        setEnAccent('UK', true, false);
+        if (anagramState.targetWord) speakWord(anagramState.targetWord.kelime, 'EN-TR', dom.anagramUkBtn, 'UK');
+      });
+    }
     if (dom.anagramBackspaceBtn) {
       dom.anagramBackspaceBtn.addEventListener('click', anagramBackspace);
     }
@@ -12521,11 +12752,35 @@ let activeAvatarCategory = 'all';
         }
       });
     }
+    if (dom.listenHeaderUsBtn) {
+      dom.listenHeaderUsBtn.addEventListener('click', () => {
+        setEnAccent('US', true, false);
+        if (listenState.targetWord) speakWord(listenState.targetWord.kelime, 'EN-TR', dom.listenHeaderUsBtn, 'US');
+      });
+    }
+    if (dom.listenHeaderUkBtn) {
+      dom.listenHeaderUkBtn.addEventListener('click', () => {
+        setEnAccent('UK', true, false);
+        if (listenState.targetWord) speakWord(listenState.targetWord.kelime, 'EN-TR', dom.listenHeaderUkBtn, 'UK');
+      });
+    }
     if (dom.listenPlayAudioBtn) {
       dom.listenPlayAudioBtn.addEventListener('click', () => {
         if (listenState.targetWord) {
           speakWord(listenState.targetWord.kelime, listenState.targetWord.dil, dom.listenPlayAudioBtn);
         }
+      });
+    }
+    if (dom.listenPlayUsBtn) {
+      dom.listenPlayUsBtn.addEventListener('click', () => {
+        setEnAccent('US', true, false);
+        if (listenState.targetWord) speakWord(listenState.targetWord.kelime, 'EN-TR', dom.listenPlayUsBtn, 'US');
+      });
+    }
+    if (dom.listenPlayUkBtn) {
+      dom.listenPlayUkBtn.addEventListener('click', () => {
+        setEnAccent('UK', true, false);
+        if (listenState.targetWord) speakWord(listenState.targetWord.kelime, 'EN-TR', dom.listenPlayUkBtn, 'UK');
       });
     }
     if (dom.listenBackspaceBtn) {
@@ -12543,6 +12798,18 @@ let activeAvatarCategory = 'all';
         }
       });
     }
+    if (dom.quizUsBtn) {
+      dom.quizUsBtn.addEventListener('click', () => {
+        setEnAccent('US', true, false);
+        if (quizState.targetWord) speakWord(quizState.targetWord.kelime, 'EN-TR', dom.quizUsBtn, 'US');
+      });
+    }
+    if (dom.quizUkBtn) {
+      dom.quizUkBtn.addEventListener('click', () => {
+        setEnAccent('UK', true, false);
+        if (quizState.targetWord) speakWord(quizState.targetWord.kelime, 'EN-TR', dom.quizUkBtn, 'UK');
+      });
+    }
 
     // 7. Cümle Kurma Kontrolleri
     if (dom.scrambleAudioBtn) {
@@ -12552,11 +12819,47 @@ let activeAvatarCategory = 'all';
         }
       });
     }
+    if (dom.scrambleUsBtn) {
+      dom.scrambleUsBtn.addEventListener('click', () => {
+        setEnAccent('US', true, false);
+        if (scrambleState.originalWords && scrambleState.originalWords.length > 0) {
+          speakWord(scrambleState.originalWords.join(' '), 'EN-TR', dom.scrambleUsBtn, 'US');
+        }
+      });
+    }
+    if (dom.scrambleUkBtn) {
+      dom.scrambleUkBtn.addEventListener('click', () => {
+        setEnAccent('UK', true, false);
+        if (scrambleState.originalWords && scrambleState.originalWords.length > 0) {
+          speakWord(scrambleState.originalWords.join(' '), 'EN-TR', dom.scrambleUkBtn, 'UK');
+        }
+      });
+    }
     if (dom.scrambleBackspaceBtn) {
       dom.scrambleBackspaceBtn.addEventListener('click', scrambleBackspace);
     }
     if (dom.scrambleResetBtn) {
       dom.scrambleResetBtn.addEventListener('click', scrambleReset);
+    }
+
+    // 8. Boşluk Doldurma (Cloze) Aksan Kontrolleri
+    if (dom.clozeUsBtn) {
+      dom.clozeUsBtn.addEventListener('click', () => {
+        setEnAccent('US', true, false);
+        if (clozeState.targetWord) {
+          const sentence = getWordSentence(clozeState.targetWord) || clozeState.targetWord.kelime;
+          speakWord(sentence, 'EN-TR', dom.clozeUsBtn, 'US');
+        }
+      });
+    }
+    if (dom.clozeUkBtn) {
+      dom.clozeUkBtn.addEventListener('click', () => {
+        setEnAccent('UK', true, false);
+        if (clozeState.targetWord) {
+          const sentence = getWordSentence(clozeState.targetWord) || clozeState.targetWord.kelime;
+          speakWord(sentence, 'EN-TR', dom.clozeUkBtn, 'UK');
+        }
+      });
     }
 
     // 9. Söyle & Kazan Kontrolleri
@@ -12568,6 +12871,18 @@ let activeAvatarCategory = 'all';
         if (speakState.targetWord) {
           speakWord(speakState.targetWord.kelime, speakState.targetWord.dil, dom.speakListenNativeBtn, state.activeEnAccent);
         }
+      });
+    }
+    if (dom.speakListenUsBtn) {
+      dom.speakListenUsBtn.addEventListener('click', () => {
+        setEnAccent('US', true, false);
+        if (speakState.targetWord) speakWord(speakState.targetWord.kelime, 'EN-TR', dom.speakListenUsBtn, 'US');
+      });
+    }
+    if (dom.speakListenUkBtn) {
+      dom.speakListenUkBtn.addEventListener('click', () => {
+        setEnAccent('UK', true, false);
+        if (speakState.targetWord) speakWord(speakState.targetWord.kelime, 'EN-TR', dom.speakListenUkBtn, 'UK');
       });
     }
     if (dom.speakAccentUsBtn) {
