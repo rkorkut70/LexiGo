@@ -16629,9 +16629,12 @@ html:not([data-theme="dark"]) .tg-rule-card,
   background: rgba(239, 68, 68, 0.08);
   border: 1.5px solid rgba(239, 68, 68, 0.28);
   border-radius: 20px;
-  padding: 14px 14px 16px;
+  padding: 12px 10px 14px;
   box-shadow: 0 4px 16px rgba(239, 68, 68, 0.08);
   margin-top: 4px;
+  width: 100%;
+  box-sizing: border-box;
+  overflow: hidden;
 }
 
 [data-theme="light"] .round-mistakes-container {
@@ -16798,26 +16801,40 @@ html:not([data-theme="dark"]) .tg-rule-card,
   transform: scale(0.98);
 }
 
+.round-completed-modal-card {
+  padding: 22px 16px !important;
+  width: 100%;
+  box-sizing: border-box;
+  max-width: 440px;
+  overflow: hidden;
+}
+
 .mistake-games-grid {
   display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 7px;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 6px;
+  width: 100%;
+  box-sizing: border-box;
 }
 
 .mistake-game-btn {
   display: flex;
   align-items: center;
-  gap: 8px;
-  padding: 9px 11px;
+  gap: 6px;
+  padding: 8px 8px;
+  min-width: 0;
+  width: 100%;
+  box-sizing: border-box;
   border-radius: 12px;
   background: rgba(255, 255, 255, 0.05);
   border: 1.5px solid rgba(255, 255, 255, 0.1);
   color: var(--text-main, #f8fafc);
-  font-size: 0.82rem;
+  font-size: 0.78rem;
   font-weight: 700;
   cursor: pointer;
   text-align: left;
   transition: transform 0.15s ease, background 0.15s ease, border-color 0.15s ease;
+  overflow: hidden;
 }
 
 [data-theme="light"] .mistake-game-btn {
@@ -16839,14 +16856,42 @@ html:not([data-theme="dark"]) .tg-rule-card,
 }
 
 .mistake-game-icon {
-  font-size: 1.15rem;
+  font-size: 1.05rem;
   flex-shrink: 0;
+  line-height: 1;
 }
 
 .mistake-game-label {
+  display: block;
+  min-width: 0;
+  flex: 1;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+  font-size: 0.76rem;
+  line-height: 1.25;
+}
+
+@media (max-width: 380px) {
+  .round-completed-modal-card {
+    padding: 18px 12px !important;
+  }
+  .round-mistakes-container {
+    padding: 10px 8px 12px !important;
+  }
+  .mistake-games-grid {
+    gap: 5px;
+  }
+  .mistake-game-btn {
+    padding: 7px 6px;
+    gap: 5px;
+  }
+  .mistake-game-label {
+    font-size: 0.72rem;
+  }
+  .mistake-game-icon {
+    font-size: 0.95rem;
+  }
 }
 
 /* ==========================================

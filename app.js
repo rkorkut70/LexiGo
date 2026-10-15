@@ -7,7 +7,7 @@
 (function () {
   'use strict';
 
-  const APP_VERSION = 'v1.8.19';
+  const APP_VERSION = 'v1.8.20';
   const CURRENT_APP_BUILD = 'lexiq_build_19_clean';
 
   // Build 13 temiz kurulum / sıfırlama güvencesi (Kullanıcı verilerini sıfırla, Hoş Geldin ekranını garantile)
@@ -6271,11 +6271,12 @@ let activeAvatarCategory = 'all';
             { key: 'listen', name: 'Dinle ve Yaz', icon: '🎧' },
             { key: 'tetris', name: 'Harf Tetrisi', icon: '🕹️' },
             { key: 'truefalse', name: 'Doğru / Yanlış', icon: '⚡' },
-            { key: 'scramble', name: 'Cümle Kurma', icon: '🔀' }
+            { key: 'scramble', name: 'Cümle Kurma', icon: '🔀' },
+            { key: 'speak', name: 'Söyle & Kazan', icon: '🎙️' }
           ];
 
           dom.roundMistakesGameGrid.innerHTML = arenaGames.map(g => `
-            <button type="button" class="mistake-game-btn" data-game="${g.key}">
+            <button type="button" class="mistake-game-btn" data-game="${g.key}" title="${g.name}">
               <span class="mistake-game-icon">${g.icon}</span>
               <span class="mistake-game-label">${g.name}</span>
             </button>
