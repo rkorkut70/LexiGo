@@ -15,7 +15,7 @@
   <meta http-equiv="Expires" content="0">
   <title>LexiQ • Çok Dilli Akıllı Kelime Kartları</title>
   <link rel="icon" type="image/jpeg" href="logo.jpg">
-  <link rel="stylesheet" href="style.css?v=1.8.16">
+  <link rel="stylesheet" href="style.css?v=1.8.17">
 </head>
 <body>
   <div class="app-container">
@@ -643,6 +643,21 @@
             </div>
             <span class="game-hub-play-btn" id="playBtn_cloze">Oyna ▶</span>
           </div>
+
+          <!-- 9. Söyle & Kazan (min 3) -->
+          <div class="game-hub-card" data-game="speak">
+            <div class="game-hub-icon-wrap theme-violet" style="background: linear-gradient(135deg, rgba(139, 92, 246, 0.25), rgba(168, 85, 247, 0.15)); border: 1px solid rgba(168, 85, 247, 0.35);">
+              <span class="game-hub-emoji-icon" style="font-size: 2.2rem; filter: drop-shadow(0 2px 8px rgba(139, 92, 246, 0.5));">🎙️</span>
+            </div>
+            <div class="game-hub-info">
+              <div class="game-hub-title-row">
+                <span class="game-hub-title">Söyle & Kazan</span>
+                <span class="game-req-badge" id="reqBadge_speak">🔒 En az 3 kelime</span>
+              </div>
+              <p class="game-hub-desc">Kelimeyi doğru telaffuz et, sesinle puanları topla.</p>
+            </div>
+            <span class="game-hub-play-btn" id="playBtn_speak">Oyna ▶</span>
+          </div>
         </div>
       </div>
 
@@ -1047,6 +1062,67 @@
             </div>
           </div>
         </div>
+
+        <!-- 9. SÖYLE VE KAZAN (PRONUNCIATION ARENA) -->
+        <div id="gameSpeakView" class="game-active-area" style="display: none;">
+          <div class="game-card speak-game-card">
+            <div class="game-card-header">
+              <div class="game-header-left">
+                <button id="speakHintBtn" class="game-hint-btn" type="button" title="Yavaşlatılmış Telaffuz Dinle (-5 XP)">
+                  <img src="assets/icons/icon_3d_hint.png" class="btn-3d-icon" alt="İpucu"> Yavaş Dinle <span class="hint-cost-badge">-5 XP</span>
+                </button>
+              </div>
+              <div class="game-header-center"></div>
+              <div class="game-card-header-actions">
+                <span class="xp-bubble">+15 XP</span>
+              </div>
+            </div>
+
+            <!-- Hedef Kelime & Türkçe Anlam Alanı -->
+            <div class="speak-target-display">
+              <div class="speak-target-badge" id="speakTargetLangBadge">🇬🇧 İngilizce</div>
+              <h2 class="speak-target-word" id="speakTargetWord">Adventure</h2>
+              <p class="speak-target-meaning" id="speakTargetMeaning">Macera</p>
+              
+              <!-- Doğru Telaffuzu Dinle Butonu -->
+              <button id="speakListenNativeBtn" class="speak-listen-native-btn" type="button" title="Doğru Telaffuzu Dinle">
+                <span class="speak-speaker-icon">🔊</span>
+                <span>Doğru Okunuşu Dinle</span>
+              </button>
+            </div>
+
+            <!-- Canlı Ses Algılama & Mikrofon Alanı -->
+            <div class="speak-mic-container">
+              <div class="speak-mic-pulse-ring" id="speakMicPulseRing"></div>
+              <button id="speakMicBtn" class="speak-mic-big-btn" type="button" aria-label="Mikrofonu Aç ve Konuş">
+                <span class="speak-mic-icon" id="speakMicIcon">🎙️</span>
+              </button>
+              <div class="speak-mic-status-text" id="speakMicStatusText">Mikrofona dokun ve söyle</div>
+            </div>
+
+            <!-- Algılanan Metin & Benzerlik Skoru -->
+            <div class="speak-feedback-box" id="speakFeedbackBox" style="display: none;">
+              <div class="speak-feedback-transcript-row">
+                <span class="speak-transcript-label">Duyulan:</span>
+                <span class="speak-transcript-text" id="speakTranscriptText">"..."</span>
+              </div>
+              <div class="speak-accuracy-bar-track">
+                <div class="speak-accuracy-bar-fill" id="speakAccuracyBarFill" style="width: 0%;"></div>
+              </div>
+              <div class="speak-accuracy-score-row">
+                <span class="speak-score-pct" id="speakScorePct">%0</span>
+                <span class="speak-score-label" id="speakScoreLabel">Değerlendiriliyor...</span>
+              </div>
+            </div>
+
+            <!-- Alt Aksiyon Butonları (Pas Geç / Tekrar Dene) -->
+            <div class="speak-bottom-actions">
+              <button id="speakSkipBtn" class="pill-btn speak-skip-btn" type="button">
+                ⏭️ Bu Kelimeyi Geç
+              </button>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
 
@@ -1136,7 +1212,7 @@
         <div class="welcome-hero-section">
           <div class="welcome-brand-wrapper">
             <h1 class="welcome-brand-name">Lexi<span class="welcome-brand-q">Q</span></h1>
-            <span class="welcome-version-pill">v1.8.16</span>
+            <span class="welcome-version-pill">v1.8.17</span>
           </div>
           <!-- 3 Temel Başarı Sütunu (3D Pill Rozetleri) -->
           <div class="welcome-pillars-container">
@@ -1858,7 +1934,7 @@
         <div class="about-hero-box">
           <div class="about-brand-row">
             <span class="about-brand">Lexi<span class="brand-highlight">Q</span></span>
-            <span class="about-version-pill" id="aboutAppVersion">v1.8.16</span>
+            <span class="about-version-pill" id="aboutAppVersion">v1.8.17</span>
             <span class="about-platform-badge" id="aboutPlatformBadge" style="display: none; font-size: 0.72rem; font-weight: 700; padding: 3px 9px; border-radius: 12px; background: rgba(59,130,246,0.15); color: #3b82f6; border: 1px solid rgba(59,130,246,0.3);"></span>
           </div>
           <p class="about-tagline">Müfredat Tabanlı Çok Dilli Kelime Arenası</p>
@@ -3379,17 +3455,17 @@
       <div class="confirm-icon-wrap" style="font-size: 2.8rem; margin-bottom: 8px;">🎉</div>
       <h3 class="confirm-title" style="font-size: 1.3rem; font-weight: 800; margin: 0 0 6px 0;">LexiQ Güncellendi!</h3>
       <div class="app-update-version-badge" style="display: inline-block; padding: 4px 14px; border-radius: 20px; font-size: 0.84rem; font-weight: 800; margin-bottom: 14px;">
-        Sürüm <span id="appUpdateVersionText">v1.8.16</span>
+        Sürüm <span id="appUpdateVersionText">v1.8.17</span>
       </div>
       <div class="update-notes-box" style="text-align: left; border-radius: 16px; padding: 14px 16px; font-size: 0.88rem; line-height: 1.6; margin-bottom: 18px; max-height: 280px; overflow-y: auto;">
         <div class="update-notes-title" style="font-weight: 800; margin-bottom: 8px; display: flex; align-items: center; gap: 6px;">
           <span>✨</span><span>Bu Sürümdeki Yenilikler</span>
         </div>
         <ul style="margin: 0; padding-left: 20px; display: flex; flex-direction: column; gap: 8px;">
-          <li><strong>🏆 112 Başarı Rozeti & Prestij Ligleri:</strong> 150.000 - 350.000 XP seviyeleri, 50-150 günlük seriler ve 1.000 arena oyununu kapsayan ultra prestij rozetleri eklendi.</li>
-          <li><strong>🎮 Kademeli Arena Oyun Uzmanlığı:</strong> 8 oyun modunun her biri için 15, 50 ve 100+ zafer kademeleri ve "Sekizli Üstat / Arena Tanrısı" çoklu mod üstatlıkları getirildi.</li>
-          <li><strong>🦉 Özel Vakit Rozetleri:</strong> Gece Kuşu (00:00-05:00) ve Erken Kalkan (06:00-08:30) başarıları aktif edildi.</li>
-          <li><strong>📊 Gelişmiş İlerleme Çubukları:</strong> Tüm rozetlerde gerçek zamanlı ilerleme yüzdesi ve birim bazlı hedef sayaçları iyileştirildi.</li>
+          <li><strong>🎙️ Yeni Arena Modu: Söyle & Kazan:</strong> Hedef kelimeleri mikrofona söyleyerek telaffuzunu anında analiz ettir, yapay zeka benzerlik puanı ve +15 XP kazan!</li>
+          <li><strong>🗣️ Telaffuz Rozetleri & Çift Motor Altyapısı:</strong> Android native konuşma tanıma servisi ve Web Speech API köprüsüyle hem mobilde hem webde kusursuz telaffuz pratiği.</li>
+          <li><strong>🏆 115 Başarı Rozeti & Prestij Ligleri:</strong> Telaffuz Ustası, Hitabet Büyücüsü ve Kusursuz Aksan başarıları eklendi.</li>
+          <li><strong>📊 Gelişmiş Canlı Geri Bildirim:</strong> Gerçek zamanlı telaffuz eşleşme çubuğu ve akıllı ses düzeyi kılavuzu entegre edildi.</li>
         </ul>
       </div>
       <div style="display: flex; flex-direction: column; gap: 8px; width: 100%;">
@@ -3452,11 +3528,11 @@
   <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-storage-compat.js"></script>
-  <script src="firebase_backend.js?v=1.8.16"></script>
+  <script src="firebase_backend.js?v=1.8.17"></script>
 
   <!-- Kelime Verisi ve Uygulama Mantığı (Sadece Standart Vanilla JS) -->
-  <script src="words_data.js?v=1.8.16"></script>
-  <script src="app.js?v=1.8.16"></script>
+  <script src="words_data.js?v=1.8.17"></script>
+  <script src="app.js?v=1.8.17"></script>
 
   </body>
 </html>

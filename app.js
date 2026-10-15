@@ -7,7 +7,7 @@
 (function () {
   'use strict';
 
-  const APP_VERSION = 'v1.8.16';
+  const APP_VERSION = 'v1.8.17';
   const CURRENT_APP_BUILD = 'lexiq_build_19_clean';
 
   // Build 13 temiz kurulum / sıfırlama güvencesi (Kullanıcı verilerini sıfırla, Hoş Geldin ekranını garantile)
@@ -435,6 +435,11 @@
     { id: 'game_quiz_oracle', name: 'Bilgi Kahini', icon: '🔮', desc: '100 kez 4 Şıklı Testi doğru yanıtla', type: 'cosmic', category: 'game', check: (s) => (s.gameStats?.quiz || 0) >= 100 },
     { id: 'game_quiz_encyclopedist', name: 'Yenilmez Bilgin', icon: '📜', desc: '250 kez 4 Şıklı Testi doğru yanıtla', type: 'legend', category: 'game', check: (s) => (s.gameStats?.quiz || 0) >= 250 },
 
+    // 9. Söyle & Kazan (Speak / Pronunciation)
+    { id: 'game_speak_master', name: 'Telaffuz Ustası', icon: '🎙️', desc: '15 kez Söyle & Kazan oyununu tamamla', type: 'gold', category: 'game', check: (s) => (s.gameStats?.speak || 0) >= 15 },
+    { id: 'game_speak_virtuoso', name: 'Hitabet Büyücüsü', icon: '🗣️', desc: '50 kez Söyle & Kazan oyununu tamamla', type: 'cosmic', category: 'game', check: (s) => (s.gameStats?.speak || 0) >= 50 },
+    { id: 'game_speak_legend', name: 'Kusursuz Aksan', icon: '👑', desc: '100 kez Söyle & Kazan oyununu tamamla', type: 'legend', category: 'game', check: (s) => (s.gameStats?.speak || 0) >= 100 },
+
     // B. Çok Yönlü Arena Üstatlığı (8 Modun Tamamı)
     { id: 'all_rounder_master', name: 'Sekizli Üstat', icon: '🎴', desc: '8 arena modunun her birinde en az 25 zafer kazan', type: 'cosmic', category: 'game', check: (s) => ['match', 'truefalse', 'scramble', 'listen', 'tetris', 'anagram', 'cloze', 'quiz'].every(k => (s.gameStats?.[k] || 0) >= 25) },
     { id: 'all_rounder_grandmaster', name: 'Mutlak Şampiyon', icon: '🌌', desc: '8 arena modunun her birinde en az 50 zafer kazan', type: 'titanium', category: 'game', check: (s) => ['match', 'truefalse', 'scramble', 'listen', 'tetris', 'anagram', 'cloze', 'quiz'].every(k => (s.gameStats?.[k] || 0) >= 50) },
@@ -801,6 +806,24 @@
     clozeToggleTranslationBtn: document.getElementById('clozeToggleTranslationBtn'),
     settingClozeAutoTranslate: document.getElementById('settingClozeAutoTranslate'),
     clozeOptionsGrid: document.getElementById('clozeOptionsGrid'),
+
+    // 9. Söyle & Kazan (Speak / Pronunciation)
+    gameSpeakView: document.getElementById('gameSpeakView'),
+    speakHintBtn: document.getElementById('speakHintBtn'),
+    speakSkipBtn: document.getElementById('speakSkipBtn'),
+    speakTargetWord: document.getElementById('speakTargetWord'),
+    speakTargetMeaning: document.getElementById('speakTargetMeaning'),
+    speakTargetLangBadge: document.getElementById('speakTargetLangBadge'),
+    speakListenNativeBtn: document.getElementById('speakListenNativeBtn'),
+    speakMicBtn: document.getElementById('speakMicBtn'),
+    speakMicIcon: document.getElementById('speakMicIcon'),
+    speakMicPulseRing: document.getElementById('speakMicPulseRing'),
+    speakMicStatusText: document.getElementById('speakMicStatusText'),
+    speakFeedbackBox: document.getElementById('speakFeedbackBox'),
+    speakTranscriptText: document.getElementById('speakTranscriptText'),
+    speakAccuracyBarFill: document.getElementById('speakAccuracyBarFill'),
+    speakScorePct: document.getElementById('speakScorePct'),
+    speakScoreLabel: document.getElementById('speakScoreLabel'),
 
     // Modallar
     langModal: document.getElementById('langModal'),
@@ -6699,6 +6722,20 @@ let activeAvatarCategory = 'all';
         'Harflere tıklayarak boş yuvalara doğru sırada yerleştir.',
         'Hatalı koyduğun harfin üzerine tıklayarak geri alabilirsin.'
       ]
+    },
+    speak: {
+      name: 'Söyle & Kazan',
+      icon: '🎙️',
+      minWords: 3,
+      tag: 'Telaffuz',
+      desc: 'Hedef yabancı kelimeyi mikrofona doğru telaffuz ederek konuşma ve telaffuz becerini geliştir.',
+      reward: '+15 XP',
+      steps: [
+        'Ekranda hedef yabancı kelime ve Türkçe anlamı gösterilir.',
+        'İstersen hoparlör simgesine dokunarak kelimenin doğru telaffuzunu dinle.',
+        'Büyük mikrofon butonuna bas ve hedef kelimeyi net bir şekilde seslendir!',
+        'Yapay zeka benzerlik algoritması telaffuzunu analiz eder ve anında puanlar.'
+      ]
     }
   };
 
@@ -6710,7 +6747,8 @@ let activeAvatarCategory = 'all';
     listen: '🎧 Dinle ve Yaz',
     quiz: '🎯 4 Şıklı Test',
     scramble: '📝 Cümle Kurma',
-    cloze: '⚡ Boşluk Doldurma'
+    cloze: '⚡ Boşluk Doldurma',
+    speak: '🎙️ Söyle & Kazan'
   };
 
   let howToPlayCurrentGame = null;
@@ -6840,6 +6878,7 @@ let activeAvatarCategory = 'all';
   function stopAllGames() {
     stopTetrisGame();
     stopTrueFalseGame();
+    stopSpeakGame();
     if (scrambleNextTimeout) {
       clearTimeout(scrambleNextTimeout);
       scrambleNextTimeout = null;
@@ -6940,6 +6979,7 @@ let activeAvatarCategory = 'all';
     if (dom.gameQuizView) dom.gameQuizView.style.display = 'none';
     if (dom.gameScrambleView) dom.gameScrambleView.style.display = 'none';
     if (dom.gameClozeView) dom.gameClozeView.style.display = 'none';
+    if (dom.gameSpeakView) dom.gameSpeakView.style.display = 'none';
 
     // Seçilen oyunu başlat
     if (gameName === 'match') {
@@ -6966,6 +7006,9 @@ let activeAvatarCategory = 'all';
     } else if (gameName === 'cloze') {
       if (dom.gameClozeView) dom.gameClozeView.style.display = 'flex';
       startClozeRound();
+    } else if (gameName === 'speak') {
+      if (dom.gameSpeakView) dom.gameSpeakView.style.display = 'flex';
+      startSpeakRound();
     }
   }
 
@@ -7115,6 +7158,7 @@ let activeAvatarCategory = 'all';
         else if (badge.id.startsWith('game_anagram_')) gKey = 'anagram';
         else if (badge.id.startsWith('game_cloze_')) gKey = 'cloze';
         else if (badge.id.startsWith('game_quiz_')) gKey = 'quiz';
+        else if (badge.id.startsWith('game_speak_')) gKey = 'speak';
 
         current = (s.gameStats && gKey && s.gameStats[gKey]) ? s.gameStats[gKey] : 0;
         const match = badge.desc.match(/([0-9]+)\s*(?:kez|Şıklı)/);
@@ -8015,6 +8059,399 @@ let activeAvatarCategory = 'all';
         }
       }, 3400);
     }
+  }
+
+  // ==========================================
+  // 9. SÖYLE & KAZAN (PRONUNCIATION ARENA)
+  // ==========================================
+  const speakState = {
+    targetWord: null,
+    isListening: false,
+    isEvaluating: false,
+    isRoundCompleted: false,
+    webRecognition: null,
+    listeningTimeout: null,
+    hintGiven: false
+  };
+
+  function getSTTLangCode(dil) {
+    if (dil === 'EN-TR') {
+      return (state.activeEnAccent === 'UK') ? 'en-GB' : 'en-US';
+    } else if (dil === 'DE-TR') {
+      return 'de-DE';
+    } else if (dil === 'FR-TR') {
+      return 'fr-FR';
+    }
+    return 'en-US';
+  }
+
+  function isSpeechRecognitionAvailable() {
+    if (window.AndroidSTT && typeof window.AndroidSTT.startListening === 'function') {
+      return true;
+    }
+    return !!(window.SpeechRecognition || window.webkitSpeechRecognition);
+  }
+
+  function setSpeakMicListeningUI(isListening) {
+    speakState.isListening = isListening;
+    if (!dom.speakMicBtn) return;
+
+    if (isListening) {
+      dom.speakMicBtn.classList.add('listening');
+      if (dom.speakMicPulseRing) dom.speakMicPulseRing.classList.add('active');
+      if (dom.speakMicIcon) dom.speakMicIcon.textContent = '⏹️';
+      if (dom.speakMicStatusText) {
+        dom.speakMicStatusText.textContent = 'Dinliyor... Kelimeyi seslendirin 🎙️';
+        dom.speakMicStatusText.style.color = '#ef4444';
+      }
+    } else {
+      dom.speakMicBtn.classList.remove('listening');
+      if (dom.speakMicPulseRing) dom.speakMicPulseRing.classList.remove('active');
+      if (dom.speakMicIcon) dom.speakMicIcon.textContent = '🎙️';
+      if (dom.speakMicStatusText && !speakState.isEvaluating) {
+        dom.speakMicStatusText.textContent = 'Konuşmak için mikrofona dokun';
+        dom.speakMicStatusText.style.color = 'var(--text-muted)';
+      }
+    }
+  }
+
+  function stopSpeakGame() {
+    stopListeningForSpeak();
+    speakState.isEvaluating = false;
+    speakState.isRoundCompleted = false;
+    speakState.targetWord = null;
+  }
+
+  function stopListeningForSpeak() {
+    speakState.isListening = false;
+    if (speakState.listeningTimeout) {
+      clearTimeout(speakState.listeningTimeout);
+      speakState.listeningTimeout = null;
+    }
+    setSpeakMicListeningUI(false);
+
+    if (window.AndroidSTT && typeof window.AndroidSTT.stopListening === 'function') {
+      try { window.AndroidSTT.stopListening(); } catch (e) {}
+    }
+    if (speakState.webRecognition) {
+      try { speakState.webRecognition.stop(); } catch (e) {}
+    }
+  }
+
+  function toggleSpeakListening() {
+    if (speakState.isEvaluating || speakState.isRoundCompleted) return;
+    if (speakState.isListening) {
+      stopListeningForSpeak();
+    } else {
+      startListeningForSpeak();
+    }
+  }
+
+  function startListeningForSpeak() {
+    if (!speakState.targetWord || speakState.isEvaluating || speakState.isRoundCompleted) return;
+
+    if (!isSpeechRecognitionAvailable()) {
+      showToast('⚠️ Bu cihazda veya tarayıcıda ses tanıma desteklenmiyor. LexiQ Android uygulamasını veya Google Chrome kullanabilirsiniz.');
+      return;
+    }
+
+    const sttLang = getSTTLangCode(speakState.targetWord.dil);
+    setSpeakMicListeningUI(true);
+
+    if (speakState.listeningTimeout) clearTimeout(speakState.listeningTimeout);
+    speakState.listeningTimeout = setTimeout(() => {
+      if (speakState.isListening && !speakState.isEvaluating) {
+        stopListeningForSpeak();
+        showToast('⏳ Zaman aşımı. Tekrar denemek için mikrofona dokunun.');
+      }
+    }, 7000);
+
+    // 1. Android Native Bridge
+    if (window.AndroidSTT && typeof window.AndroidSTT.startListening === 'function') {
+      try {
+        window.AndroidSTT.startListening(sttLang);
+        return;
+      } catch (err) {
+        console.warn('AndroidSTT startListening error, falling back:', err);
+      }
+    }
+
+    // 2. Web Speech API (Chrome / Safari / Edge / iOS WebKit)
+    const SpeechRec = window.SpeechRecognition || window.webkitSpeechRecognition;
+    if (SpeechRec) {
+      try {
+        if (!speakState.webRecognition) {
+          speakState.webRecognition = new SpeechRec();
+        }
+        speakState.webRecognition.lang = sttLang;
+        speakState.webRecognition.continuous = false;
+        speakState.webRecognition.interimResults = false;
+        speakState.webRecognition.maxAlternatives = 3;
+
+        speakState.webRecognition.onstart = () => {
+          setSpeakMicListeningUI(true);
+        };
+
+        speakState.webRecognition.onresult = (event) => {
+          stopListeningForSpeak();
+          if (event.results && event.results.length > 0) {
+            const transcript = event.results[0][0].transcript;
+            const confidence = event.results[0][0].confidence || 0.9;
+            evaluateSpokenWord(transcript, confidence);
+          }
+        };
+
+        speakState.webRecognition.onerror = (event) => {
+          stopListeningForSpeak();
+          if (event.error === 'not-allowed') {
+            showToast('⚠️ Mikrofon izni verilmedi. Lütfen tarayıcı ayarlarından mikrofona izin verin.');
+          } else if (event.error === 'no-speech') {
+            showToast('Ses algılanamadı. Lütfen daha net ve mikrofona yakın konuşun.');
+          } else {
+            console.warn('SpeechRecognition error:', event.error);
+          }
+        };
+
+        speakState.webRecognition.onend = () => {
+          setSpeakMicListeningUI(false);
+        };
+
+        speakState.webRecognition.start();
+      } catch (e) {
+        console.warn('Web Speech start error:', e);
+        try {
+          speakState.webRecognition.stop();
+          setTimeout(() => {
+            try { speakState.webRecognition.start(); } catch (err) {}
+          }, 200);
+        } catch (err2) {}
+      }
+    }
+  }
+
+  // Android Native STT Callbacks (Window Global)
+  window.onAndroidSpeechStart = function() {
+    setSpeakMicListeningUI(true);
+  };
+  window.onAndroidSpeechEnd = function() {
+    setSpeakMicListeningUI(false);
+  };
+  window.onAndroidSpeechResult = function(transcript, confidence) {
+    stopListeningForSpeak();
+    evaluateSpokenWord(transcript, confidence);
+  };
+  window.onAndroidSpeechError = function(errorCode, errorMessage) {
+    stopListeningForSpeak();
+    if (errorCode === 9) {
+      showToast('⚠️ Mikrofon izni gerekli. Lütfen uygulama ayarlarından izin verin.');
+    } else if (errorCode === 7) {
+      showToast('Ses anlaşılamadı. Lütfen net ve mikrofona yakın konuşun.');
+    } else {
+      console.warn('Android STT Error:', errorCode, errorMessage);
+    }
+  };
+
+  function calculateLevenshteinSimilarity(s1, s2) {
+    if (!s1 || !s2) return 0;
+    const normalize = (str) => {
+      return String(str)
+        .toLowerCase()
+        .replace(/[\.,\/#!$%\^&\*;:{}=\-_`~()?'"“”‘’]/g, '')
+        .replace(/\s+/g, ' ')
+        .trim();
+    };
+
+    const a = normalize(s1);
+    const b = normalize(s2);
+
+    if (a === b) return 1.0;
+    if (a.length === 0 || b.length === 0) return 0.0;
+
+    const wordsA = a.split(' ');
+    const wordsB = b.split(' ');
+    if (wordsA.includes(b) || wordsB.includes(a)) {
+      return 0.95;
+    }
+
+    const matrix = [];
+    for (let i = 0; i <= b.length; i++) {
+      matrix[i] = [i];
+    }
+    for (let j = 0; j <= a.length; j++) {
+      matrix[0][j] = j;
+    }
+
+    for (let i = 1; i <= b.length; i++) {
+      for (let j = 1; j <= a.length; j++) {
+        if (b.charAt(i - 1) === a.charAt(j - 1)) {
+          matrix[i][j] = matrix[i - 1][j - 1];
+        } else {
+          matrix[i][j] = Math.min(
+            matrix[i - 1][j - 1] + 1,
+            matrix[i][j - 1] + 1,
+            matrix[i - 1][j] + 1
+          );
+        }
+      }
+    }
+
+    const distance = matrix[b.length][a.length];
+    const maxLen = Math.max(a.length, b.length);
+    return Math.max(0, 1 - (distance / maxLen));
+  }
+
+  function evaluateSpokenWord(spokenText, confidence) {
+    if (!speakState.targetWord || speakState.isEvaluating || speakState.isRoundCompleted) return;
+
+    const targetWord = speakState.targetWord;
+    const cleanTarget = (targetWord.kelime || '').replace(/\|/g, '').trim();
+
+    const similarity = calculateLevenshteinSimilarity(spokenText, cleanTarget);
+    const scorePct = Math.round(similarity * 100);
+
+    if (dom.speakTranscriptText) {
+      dom.speakTranscriptText.innerHTML = `Duyulan: <strong>"${spokenText.replace(/</g, '&lt;').replace(/>/g, '&gt;')}"</strong>`;
+    }
+    if (dom.speakScorePct) {
+      dom.speakScorePct.textContent = `%${scorePct}`;
+    }
+    if (dom.speakAccuracyBarFill) {
+      dom.speakAccuracyBarFill.style.width = `${Math.min(100, Math.max(5, scorePct))}%`;
+    }
+    if (dom.speakFeedbackBox) {
+      dom.speakFeedbackBox.style.display = 'block';
+      dom.speakFeedbackBox.classList.remove('hidden', 'success', 'warning', 'error');
+    }
+
+    if (scorePct >= 75) {
+      speakState.isEvaluating = true;
+      speakState.isRoundCompleted = true;
+      stopListeningForSpeak();
+
+      if (dom.speakFeedbackBox) dom.speakFeedbackBox.classList.add('success');
+      if (dom.speakScoreLabel) {
+        dom.speakScoreLabel.textContent = 'Harika Telaffuz! 🎯';
+        dom.speakScoreLabel.style.color = '#10b981';
+      }
+      if (dom.speakMicStatusText) {
+        dom.speakMicStatusText.textContent = '✅ Mükemmel telaffuz!';
+        dom.speakMicStatusText.style.color = '#10b981';
+      }
+
+      if (typeof playSoundEffect === 'function') playSoundEffect('correct');
+
+      const earned = recordGameWin('speak', 15);
+      const isRoundDone = onWordSolvedInRound('speak', targetWord.id, earned);
+
+      setTimeout(() => {
+        if (state.activeMode === 'arena' && state.activeGame === 'speak') {
+          if (isRoundDone) {
+            showGameRoundCompletedModal('speak');
+          } else {
+            startSpeakRound();
+          }
+        }
+      }, isRoundDone ? 700 : 2200);
+
+    } else if (scorePct >= 50) {
+      if (dom.speakFeedbackBox) dom.speakFeedbackBox.classList.add('warning');
+      if (dom.speakScoreLabel) {
+        dom.speakScoreLabel.textContent = 'Çok Yaklaştın! Tekrar dene... ⚡';
+        dom.speakScoreLabel.style.color = '#f59e0b';
+      }
+      if (dom.speakMicStatusText) {
+        dom.speakMicStatusText.textContent = '🎙️ Bir kez daha söyle...';
+        dom.speakMicStatusText.style.color = '#f59e0b';
+      }
+      if (typeof playSoundEffect === 'function') playSoundEffect('hint');
+
+    } else {
+      if (dom.speakFeedbackBox) dom.speakFeedbackBox.classList.add('error');
+      if (dom.speakScoreLabel) {
+        dom.speakScoreLabel.textContent = 'Dinleyip tekrar dene 🎧';
+        dom.speakScoreLabel.style.color = '#ef4444';
+      }
+      if (dom.speakMicStatusText) {
+        dom.speakMicStatusText.textContent = 'Hoparlöre basıp dinle, sonra konuş';
+        dom.speakMicStatusText.style.color = 'var(--text-muted)';
+      }
+      if (typeof playSoundEffect === 'function') playSoundEffect('wrong');
+    }
+  }
+
+  function startSpeakRound() {
+    state.roundUsedHint = false;
+    speakState.isEvaluating = false;
+    speakState.isRoundCompleted = false;
+    speakState.hintGiven = false;
+    stopListeningForSpeak();
+
+    const rawPool = getLearnedWordsPool();
+    const currentLang = state.activeLanguage || 'EN-TR';
+    const pool = rawPool.filter(w => isValidForeignWord(w, currentLang));
+    if (pool.length < 3) return;
+
+    let candidate = getNextMistakeRetryCandidate();
+    if (!candidate) {
+      candidate = pool[Math.floor(Math.random() * pool.length)];
+      if (pool.length > 1 && speakState.targetWord && candidate.id === speakState.targetWord.id) {
+        candidate = pool.find(w => w.id !== speakState.targetWord.id) || candidate;
+      }
+    }
+    speakState.targetWord = candidate;
+    markWordPracticedInGame(candidate.id);
+
+    const cleanWord = (candidate.kelime || '').replace(/\|/g, '').trim();
+    if (dom.speakTargetWord) dom.speakTargetWord.textContent = cleanWord;
+    if (dom.speakTargetMeaning) dom.speakTargetMeaning.textContent = getWordMeaning(candidate) || '';
+    if (dom.speakTargetLangBadge) {
+      dom.speakTargetLangBadge.textContent = candidate.dil === 'DE-TR' ? '🇩🇪 Almanca' : (candidate.dil === 'FR-TR' ? '🇫🇷 Fransızca' : '🇬🇧 İngilizce');
+    }
+
+    if (dom.speakFeedbackBox) {
+      dom.speakFeedbackBox.style.display = 'none';
+      dom.speakFeedbackBox.classList.add('hidden');
+      dom.speakFeedbackBox.classList.remove('success', 'warning', 'error');
+    }
+    if (dom.speakAccuracyBarFill) dom.speakAccuracyBarFill.style.width = '0%';
+    if (dom.speakScorePct) dom.speakScorePct.textContent = '%0';
+    if (dom.speakScoreLabel) dom.speakScoreLabel.textContent = 'Telaffuz Skoru';
+    if (dom.speakTranscriptText) dom.speakTranscriptText.innerHTML = 'Duyulan: <em>(Henüz konuşulmadı)</em>';
+    if (dom.speakMicStatusText) {
+      dom.speakMicStatusText.textContent = 'Konuşmak için mikrofona dokun';
+      dom.speakMicStatusText.style.color = 'var(--text-muted)';
+    }
+    if (dom.speakHintBtn) dom.speakHintBtn.disabled = false;
+    if (dom.speakSkipBtn) dom.speakSkipBtn.disabled = false;
+  }
+
+  function giveSpeakHint() {
+    if (!speakState.targetWord || speakState.isEvaluating || speakState.isRoundCompleted) return;
+    useHintWithPenalty(5);
+    speakState.hintGiven = true;
+    speakWord(speakState.targetWord.kelime, speakState.targetWord.dil, dom.speakHintBtn);
+    showToast('💡 İpucu: Telaffuz seslendirildi, dikkatlice dinle!');
+    if (dom.speakHintBtn) dom.speakHintBtn.disabled = true;
+  }
+
+  function skipSpeakWord() {
+    if (!speakState.targetWord || speakState.isEvaluating || speakState.isRoundCompleted) return;
+    stopListeningForSpeak();
+    const target = speakState.targetWord;
+    recordMistakeInGame(target);
+    resetStreak();
+    deductWrongAnswerPenalty(1);
+
+    const displayWord = (target.kelime || '').replace(/\|/g, '').trim();
+    const encMsg = getRandomEncouragementMessage();
+    showEncouragementBanner(encMsg, `Doğru telaffuz: "${displayWord}"`, 'Atlandı... 1 XP gitti', getRandomEncouragementIcon());
+
+    speakState.isEvaluating = true;
+    setTimeout(() => {
+      if (state.activeMode === 'arena' && state.activeGame === 'speak') {
+        startSpeakRound();
+      }
+    }, 2000);
   }
 
   // ==========================================
@@ -11869,6 +12306,7 @@ let activeAvatarCategory = 'all';
     if (dom.quizHintBtn) dom.quizHintBtn.addEventListener('click', giveQuizHint);
     if (dom.scrambleHintBtn) dom.scrambleHintBtn.addEventListener('click', giveScrambleHint);
     if (dom.clozeHintBtn) dom.clozeHintBtn.addEventListener('click', giveClozeHint);
+    if (dom.speakHintBtn) dom.speakHintBtn.addEventListener('click', giveSpeakHint);
 
     // Arena Yetersiz Kelime -> Kartlara Dön Butonu
     if (dom.arenaGoToCardsBtn) {
@@ -11971,6 +12409,21 @@ let activeAvatarCategory = 'all';
     }
     if (dom.scrambleResetBtn) {
       dom.scrambleResetBtn.addEventListener('click', scrambleReset);
+    }
+
+    // 9. Söyle & Kazan Kontrolleri
+    if (dom.speakMicBtn) {
+      dom.speakMicBtn.addEventListener('click', toggleSpeakListening);
+    }
+    if (dom.speakListenNativeBtn) {
+      dom.speakListenNativeBtn.addEventListener('click', () => {
+        if (speakState.targetWord) {
+          speakWord(speakState.targetWord.kelime, speakState.targetWord.dil, dom.speakListenNativeBtn);
+        }
+      });
+    }
+    if (dom.speakSkipBtn) {
+      dom.speakSkipBtn.addEventListener('click', skipSpeakWord);
     }
 
     // ==========================================
