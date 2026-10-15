@@ -16573,3 +16573,244 @@ html:not([data-theme="dark"]) .tg-rule-card,
 
 
 
+
+
+/* ==========================================================================
+   OYUN TURU HATA RAPORLAMA VE TELAFİ MODÜLÜ (MISTAKE REPORT & RETRY OPTIONS)
+   ========================================================================== */
+#gameRoundCompletedModal .modal-card {
+  max-height: 90vh !important;
+  overflow-y: auto !important;
+  -webkit-overflow-scrolling: touch;
+}
+
+#gameRoundCompletedModal .round-summary-stats {
+  display: grid !important;
+  grid-template-columns: repeat(4, 1fr) !important;
+  gap: 6px !important;
+  padding: 10px 6px !important;
+}
+
+.round-mistakes-container {
+  background: rgba(239, 68, 68, 0.08);
+  border: 1.5px solid rgba(239, 68, 68, 0.28);
+  border-radius: 20px;
+  padding: 14px 14px 16px;
+  box-shadow: 0 4px 16px rgba(239, 68, 68, 0.08);
+  margin-top: 4px;
+}
+
+[data-theme="light"] .round-mistakes-container {
+  background: #fff1f2;
+  border-color: #fecdd3;
+  box-shadow: 0 4px 16px rgba(225, 29, 72, 0.06);
+}
+
+.round-mistakes-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 10px;
+  padding-bottom: 8px;
+  border-bottom: 1px dashed rgba(239, 68, 68, 0.25);
+}
+
+.round-mistakes-list {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+  max-height: 155px;
+  overflow-y: auto;
+  padding-right: 4px;
+  margin-bottom: 14px;
+  -webkit-overflow-scrolling: touch;
+}
+
+.round-mistakes-list::-webkit-scrollbar {
+  width: 5px;
+}
+.round-mistakes-list::-webkit-scrollbar-track {
+  background: transparent;
+}
+.round-mistakes-list::-webkit-scrollbar-thumb {
+  background: rgba(239, 68, 68, 0.3);
+  border-radius: 10px;
+}
+
+.mistake-word-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 12px;
+  padding: 8px 12px;
+  gap: 10px;
+  transition: transform 0.15s ease, background 0.15s ease;
+}
+
+[data-theme="light"] .mistake-word-item {
+  background: #ffffff;
+  border-color: #fee2e2;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.04);
+}
+
+.mistake-word-item:hover {
+  transform: translateY(-1px);
+}
+
+.mistake-word-left {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
+}
+
+.mistake-word-text {
+  font-weight: 800;
+  font-size: 0.94rem;
+  color: var(--text-main, #f8fafc);
+  letter-spacing: -0.01em;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+[data-theme="light"] .mistake-word-text {
+  color: #0f172a;
+}
+
+.mistake-word-audio-btn {
+  background: rgba(59, 130, 246, 0.15);
+  border: 1px solid rgba(59, 130, 246, 0.3);
+  color: #60a5fa;
+  border-radius: 50%;
+  width: 28px;
+  height: 28px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  font-size: 0.8rem;
+  flex-shrink: 0;
+  transition: transform 0.15s ease, background 0.15s ease;
+}
+
+.mistake-word-audio-btn:hover {
+  transform: scale(1.12);
+  background: rgba(59, 130, 246, 0.3);
+}
+
+.mistake-word-meaning {
+  font-size: 0.84rem;
+  font-weight: 600;
+  color: var(--text-muted, #94a3b8);
+  text-align: right;
+  flex-shrink: 0;
+}
+
+[data-theme="light"] .mistake-word-meaning {
+  color: #475569;
+}
+
+.mistake-option-title {
+  font-size: 0.84rem;
+  font-weight: 800;
+  color: var(--text-main, #f8fafc);
+  margin-bottom: 8px;
+  display: flex;
+  align-items: center;
+  gap: 7px;
+}
+
+[data-theme="light"] .mistake-option-title {
+  color: #1e293b;
+}
+
+.option-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #38bdf8, #2563eb);
+  color: #fff;
+  font-size: 0.72rem;
+  font-weight: 800;
+  box-shadow: 0 2px 6px rgba(37, 99, 235, 0.3);
+  flex-shrink: 0;
+}
+
+.mistake-to-cards-btn {
+  width: 100%;
+  padding: 12px 14px;
+  font-size: 0.88rem;
+  font-weight: 800;
+  background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%) !important;
+  color: #ffffff !important;
+  border: none !important;
+  border-radius: 14px !important;
+  box-shadow: 0 4px 14px rgba(217, 119, 6, 0.35) !important;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.mistake-to-cards-btn:active {
+  transform: scale(0.98);
+}
+
+.mistake-games-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 7px;
+}
+
+.mistake-game-btn {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 9px 11px;
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1.5px solid rgba(255, 255, 255, 0.1);
+  color: var(--text-main, #f8fafc);
+  font-size: 0.82rem;
+  font-weight: 700;
+  cursor: pointer;
+  text-align: left;
+  transition: transform 0.15s ease, background 0.15s ease, border-color 0.15s ease;
+}
+
+[data-theme="light"] .mistake-game-btn {
+  background: #ffffff;
+  border-color: #cbd5e1;
+  color: #0f172a;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+}
+
+.mistake-game-btn:hover {
+  transform: translateY(-1.5px);
+  background: rgba(59, 130, 246, 0.15);
+  border-color: #3b82f6;
+}
+
+[data-theme="light"] .mistake-game-btn:hover {
+  background: #eff6ff;
+  border-color: #3b82f6;
+}
+
+.mistake-game-icon {
+  font-size: 1.15rem;
+  flex-shrink: 0;
+}
+
+.mistake-game-label {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}

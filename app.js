@@ -823,6 +823,12 @@
     roundModalDuration: document.getElementById('roundModalDuration'),
     roundModalWordCount: document.getElementById('roundModalWordCount'),
     roundModalEarnedXp: document.getElementById('roundModalEarnedXp'),
+    roundModalMistakeCount: document.getElementById('roundModalMistakeCount'),
+    roundMistakesReportBox: document.getElementById('roundMistakesReportBox'),
+    roundMistakesCount: document.getElementById('roundMistakesCount'),
+    roundMistakesList: document.getElementById('roundMistakesList'),
+    roundMistakesToCardsBtn: document.getElementById('roundMistakesToCardsBtn'),
+    roundMistakesGameGrid: document.getElementById('roundMistakesGameGrid'),
     roundModalPedagogyBox: document.getElementById('roundModalPedagogyBox'),
     roundModalPedagogyText: document.getElementById('roundModalPedagogyText'),
     roundModalSuggestBtn1: document.getElementById('roundModalSuggestBtn1'),
@@ -4789,6 +4795,7 @@ let activeAvatarCategory = 'all';
   /**
    * Kelimeyi veya cümleyi seçilen dilde veya aksanda (US / UK) Web Speech API ile net seslendirir.
    */
+  window.speakWord = speakWord;
   function speakWord(text, dil, buttonEl = null, forcedAccent = null) {
     if (!text) return;
     let targetLangCode;
@@ -5916,6 +5923,32 @@ let activeAvatarCategory = 'all';
     } catch (e) {}
   }
 
+  function getWordById(id) {
+    if (id === undefined || id === null) return null;
+    const all = getWordsData();
+    return all.find(w => String(w.id) === String(id)) || null;
+  }
+
+  function recordMistakeInGame(wordObj) {
+    if (!wordObj || !wordObj.id) return;
+    if (!activeGameSession) return;
+    if (!activeGameSession.mistakeWordIds) {
+      activeGameSession.mistakeWordIds = new Set();
+      activeGameSession.mistakeWords = [];
+    }
+    if (!activeGameSession.mistakeWordIds.has(wordObj.id)) {
+      activeGameSession.mistakeWordIds.add(wordObj.id);
+      activeGameSession.mistakeWords.push(wordObj);
+    }
+  }
+
+  function getNextMistakeRetryCandidate() {
+    if (state.arenaMistakeRetryQueue && state.arenaMistakeRetryQueue.length > 0) {
+      return state.arenaMistakeRetryQueue.shift();
+    }
+    return null;
+  }
+
   function initGameSession(gameName) {
     const completedRounds = getDailyGameRoundCount(gameName);
     const todayLearned = getTodayLearnedWordsList();
@@ -5929,7 +5962,9 @@ let activeAvatarCategory = 'all';
       startTime: Date.now(),
       earnedXp: 0,
       todayWordsTarget: todayTarget,
-      isCompleted: false
+      isCompleted: false,
+      mistakeWordIds: new Set(),
+      mistakeWords: []
     };
 
     updateActiveGameRoundUI();
@@ -6004,9 +6039,90 @@ let activeAvatarCategory = 'all';
     const todaySolvedCount = todayLearned.filter(w => solvedSet.has(w.id)).length;
     const isTodayPoolExhausted = todayLearned.length >= 3 && todaySolvedCount >= todayLearned.length;
 
+    const mistakeWords = (activeGameSession && activeGameSession.mistakeWords) ? activeGameSession.mistakeWords : [];
+    const mistakeCount = mistakeWords.length;
+
     if (dom.roundModalDuration) dom.roundModalDuration.textContent = `${durationSec}s`;
     if (dom.roundModalWordCount) dom.roundModalWordCount.textContent = `${activeGameSession.solvedCount} / ${activeGameSession.targetCount}`;
     if (dom.roundModalEarnedXp) dom.roundModalEarnedXp.textContent = `+${activeGameSession.earnedXp} XP`;
+    if (dom.roundModalMistakeCount) {
+      dom.roundModalMistakeCount.textContent = mistakeCount;
+      dom.roundModalMistakeCount.style.color = mistakeCount === 0 ? 'var(--success, #10b981)' : '#ef4444';
+    }
+
+    // HATA RAPORLAMA VE İKİ SEÇENEK YÖNETİMİ
+    if (dom.roundMistakesReportBox) {
+      if (mistakeCount > 0) {
+        dom.roundMistakesReportBox.style.display = 'block';
+        if (dom.roundMistakesCount) dom.roundMistakesCount.textContent = mistakeCount;
+
+        if (dom.roundMistakesList) {
+          dom.roundMistakesList.innerHTML = mistakeWords.map(w => {
+            const meaning = getWordMeaning(w);
+            const safeWord = (w.kelime || '').replace(/'/g, "\\'");
+            return `
+              <div class="mistake-word-item">
+                <div class="mistake-word-left">
+                  <span class="mistake-word-text">${w.kelime}</span>
+                  <button type="button" class="mistake-word-audio-btn" title="Telaffuz" onclick="event.stopPropagation(); if (typeof window.speakWord === 'function') window.speakWord('${safeWord}', '${w.dil}');">🔊</button>
+                </div>
+                <div class="mistake-word-meaning">${meaning}</div>
+              </div>
+            `;
+          }).join('');
+        }
+
+        // SEÇENEK 1: Kelimeleri öğrenilecek kelimelere geri ekle ve kartlara git
+        if (dom.roundMistakesToCardsBtn) {
+          dom.roundMistakesToCardsBtn.onclick = () => {
+            mistakeWords.forEach(w => {
+              delete state.learnedMap[w.id];
+              if (state.sessionLearnedIds) state.sessionLearnedIds.delete(w.id);
+            });
+            localStorage.setItem('kelime_learned_map', JSON.stringify(state.learnedMap));
+            if (typeof window.syncProgressToFirebase === 'function') window.syncProgressToFirebase();
+            closeGameRoundCompletedModal();
+            stopAllGames();
+            switchAppMode('flashcards');
+            showToast(`📚 ${mistakeWords.length} kelime tekrar öğrenilecek kelimelere eklendi! Kartlar açılıyor...`);
+          };
+        }
+
+        // SEÇENEK 2: Bu kelimeleri aşağıdaki oyunlarda tekrar dene
+        if (dom.roundMistakesGameGrid) {
+          const arenaGames = [
+            { key: 'quiz', name: '4 Şıklı Test', icon: '🎯' },
+            { key: 'match', name: 'Kelime Eşleme', icon: '🃏' },
+            { key: 'cloze', name: 'Boşluk Doldurma', icon: '🔤' },
+            { key: 'anagram', name: 'Harf Karıştırma', icon: '🧩' },
+            { key: 'listen', name: 'Dinle ve Yaz', icon: '🎧' },
+            { key: 'tetris', name: 'Harf Tetrisi', icon: '🕹️' },
+            { key: 'truefalse', name: 'Doğru / Yanlış', icon: '⚡' },
+            { key: 'scramble', name: 'Cümle Kurma', icon: '🔀' }
+          ];
+
+          dom.roundMistakesGameGrid.innerHTML = arenaGames.map(g => `
+            <button type="button" class="mistake-game-btn" data-game="${g.key}">
+              <span class="mistake-game-icon">${g.icon}</span>
+              <span class="mistake-game-label">${g.name}</span>
+            </button>
+          `).join('');
+
+          dom.roundMistakesGameGrid.querySelectorAll('.mistake-game-btn').forEach(btn => {
+            btn.onclick = () => {
+              const targetGame = btn.getAttribute('data-game');
+              state.arenaMistakeRetryQueue = [...mistakeWords];
+              state.arenaMistakeRetryPool = [...mistakeWords];
+              closeGameRoundCompletedModal();
+              showToast(`🎮 Hata yapılan ${mistakeWords.length} kelime "${GAME_CONFIG[targetGame]?.name || targetGame}" oyununa yüklendi!`);
+              launchGame(targetGame);
+            };
+          });
+        }
+      } else {
+        dom.roundMistakesReportBox.style.display = 'none';
+      }
+    }
 
     const cfg = GAME_CONFIG[gameName] || { name: 'Alıştırma' };
 
@@ -6136,6 +6252,13 @@ let activeAvatarCategory = 'all';
     const targetLevel = state.userLevel || getLevelForTrack(state.activeLanguage, state.userTrack);
     const allWords = getWordsData().filter(w => w.dil === state.activeLanguage && (!targetLevel || w.seviye === targetLevel));
     const allLearned = allWords.filter(w => state.learnedMap[w.id] && state.learnedMap[w.id].learned === true);
+
+    // Hata yapılan kelimeler varsa havuzun en başına öncelikli yerleştir
+    if (state.arenaMistakeRetryPool && state.arenaMistakeRetryPool.length > 0) {
+      const mistakeIds = new Set(state.arenaMistakeRetryPool.map(w => w.id));
+      const rest = allLearned.filter(w => !mistakeIds.has(w.id));
+      return [...state.arenaMistakeRetryPool, ...rest];
+    }
 
     if (state.arenaUseAllLearnedWordsPool || allLearned.length <= 3) {
       return allLearned;
@@ -7050,9 +7173,12 @@ let activeAvatarCategory = 'all';
     const pool = getLearnedWordsPool();
     if (pool.length < 3) return;
 
-    let candidate = pool[Math.floor(Math.random() * pool.length)];
-    if (pool.length > 1 && state.currentAnagramWord && candidate.id === state.currentAnagramWord.id) {
-      candidate = pool.find(w => w.id !== state.currentAnagramWord.id) || candidate;
+    let candidate = getNextMistakeRetryCandidate();
+    if (!candidate) {
+      candidate = pool[Math.floor(Math.random() * pool.length)];
+      if (pool.length > 1 && state.currentAnagramWord && candidate.id === state.currentAnagramWord.id) {
+        candidate = pool.find(w => w.id !== state.currentAnagramWord.id) || candidate;
+      }
     }
     state.currentAnagramWord = candidate;
     anagramState.targetWord = candidate;
@@ -7172,6 +7298,7 @@ let activeAvatarCategory = 'all';
       }, isRoundDone ? 600 : 2400);
     } else {
       slots.forEach(s => s.classList.add('shake'));
+      recordMistakeInGame(anagramState.targetWord);
       resetStreak();
       deductWrongAnswerPenalty(1);
       const encMsg = getRandomEncouragementMessage();
@@ -7258,10 +7385,12 @@ let activeAvatarCategory = 'all';
     if (pool.length < 3) return;
 
     // Tek kelimelik ve harf uzunluğu en az 3 olan kelimeleri öncelikle seç
-    const singleWords = pool.filter(w => !w.kelime.includes(' ') && w.kelime.length >= 3);
-    const candidates = singleWords.length > 0 ? singleWords : pool;
-
-    let candidate = candidates[Math.floor(Math.random() * candidates.length)];
+    let candidate = getNextMistakeRetryCandidate();
+    if (!candidate) {
+      const singleWords = pool.filter(w => !w.kelime.includes(' ') && w.kelime.length >= 3);
+      const candidates = singleWords.length > 0 ? singleWords : pool;
+      candidate = candidates[Math.floor(Math.random() * candidates.length)];
+    }
     if (candidates.length > 1 && tetrisState.targetWord && candidate.id === tetrisState.targetWord.id) {
       candidate = candidates.find(w => w.id !== tetrisState.targetWord.id) || candidate;
     }
@@ -7302,6 +7431,7 @@ let activeAvatarCategory = 'all';
 
       if (tetrisState.timeLeft <= 0) {
         stopTetrisGame();
+        recordMistakeInGame(tetrisState.targetWord);
         resetStreak();
         deductWrongAnswerPenalty(1);
         const encMsg = getRandomEncouragementMessage();
@@ -7422,6 +7552,7 @@ let activeAvatarCategory = 'all';
       } else {
         // YANLIŞ / FAZLA HARF
         block.classList.add('wrong');
+        recordMistakeInGame(tetrisState.targetWord);
         tetrisState.timeLeft = Math.max(1, tetrisState.timeLeft - 2);
         dom.tetrisTimer.textContent = tetrisState.timeLeft;
         resetStreak();
@@ -7498,9 +7629,20 @@ let activeAvatarCategory = 'all';
     const pool = rawPool.filter(w => isValidForeignWord(w, currentLang));
     if (pool.length < 3) return;
 
-    const poolWithSentence = pool.filter(w => getWordSentence(w) && getWordSentence(w).length > 5);
-    const chosenPool = poolWithSentence.length > 0 ? poolWithSentence : pool;
-    const target = chosenPool[Math.floor(Math.random() * chosenPool.length)];
+    let target = null;
+    if (state.arenaMistakeRetryQueue && state.arenaMistakeRetryQueue.length > 0) {
+      const sIdx = state.arenaMistakeRetryQueue.findIndex(w => getWordSentence(w) && getWordSentence(w).length > 5);
+      if (sIdx !== -1) {
+        target = state.arenaMistakeRetryQueue.splice(sIdx, 1)[0];
+      } else {
+        target = state.arenaMistakeRetryQueue.shift();
+      }
+    }
+    if (!target) {
+      const poolWithSentence = pool.filter(w => getWordSentence(w) && getWordSentence(w).length > 5);
+      const chosenPool = poolWithSentence.length > 0 ? poolWithSentence : pool;
+      target = chosenPool[Math.floor(Math.random() * chosenPool.length)];
+    }
 
     clozeState.targetWord = target;
     markWordPracticedInGame(target.id);
@@ -7685,6 +7827,7 @@ let activeAvatarCategory = 'all';
       }, isRoundDone ? 700 : 2800);
     } else {
       buttonEl.classList.add('wrong');
+      recordMistakeInGame(targetWord);
       allBtns.forEach(b => {
         if (b.textContent.trim().toLowerCase() === cleanTarget) {
           b.classList.add('correct');
@@ -7739,9 +7882,19 @@ let activeAvatarCategory = 'all';
     const pairCount = Math.min(4, pool.length);
     matchState.totalPairs = pairCount;
 
-    // Günün öğrenilen kelimelerini öncelikli olarak seç (havuzun önündeki kelimeler)
-    const candidateSlice = pool.slice(0, Math.max(pairCount, Math.min(pairCount * 2, pool.length)));
-    const selectedWords = candidateSlice.sort(() => Math.random() - 0.5).slice(0, pairCount);
+    // Hata yapılan kelimeler varsa öncelikli olarak seç
+    let selectedWords = [];
+    if (state.arenaMistakeRetryPool && state.arenaMistakeRetryPool.length > 0) {
+      const mistakeSlice = state.arenaMistakeRetryPool.filter(w => w && w.kelime && getWordMeaning(w)).slice(0, pairCount);
+      selectedWords.push(...mistakeSlice);
+      state.arenaMistakeRetryPool = [];
+    }
+    if (selectedWords.length < pairCount) {
+      const remainingNeeded = pairCount - selectedWords.length;
+      const candidateSlice = pool.slice(0, Math.max(pairCount, Math.min(pairCount * 2, pool.length)));
+      const rest = candidateSlice.filter(w => !selectedWords.some(sw => sw.id === w.id)).sort(() => Math.random() - 0.5).slice(0, remainingNeeded);
+      selectedWords.push(...rest);
+    }
 
     // Kullanıcı kuralı: Solda hedef dil kelimeleri, sağda Türkçe kelimeler
     const targetCards = selectedWords.map(w => {
@@ -7850,6 +8003,14 @@ let activeAvatarCategory = 'all';
       } else {
         c1.el.classList.add('shake-wrong');
         c2.el.classList.add('shake-wrong');
+        if (c1 && c1.item && c1.item.pairId) {
+          const w1 = getWordById(c1.item.pairId);
+          if (w1) recordMistakeInGame(w1);
+        }
+        if (c2 && c2.item && c2.item.pairId) {
+          const w2 = getWordById(c2.item.pairId);
+          if (w2) recordMistakeInGame(w2);
+        }
         resetStreak();
         deductWrongAnswerPenalty(1);
         const encMsg = getRandomEncouragementMessage();
@@ -7892,7 +8053,10 @@ let activeAvatarCategory = 'all';
     const pool = getLearnedWordsPool();
     if (pool.length < 3) return;
 
-    const target = pool[Math.floor(Math.random() * pool.length)];
+    let target = getNextMistakeRetryCandidate();
+    if (!target) {
+      target = pool[Math.floor(Math.random() * pool.length)];
+    }
     tfState.targetWord = target;
     markWordPracticedInGame(target.id);
     tfState.active = true;
@@ -7985,6 +8149,7 @@ let activeAvatarCategory = 'all';
         }
       }, isRoundDone ? 600 : 2200);
     } else {
+      recordMistakeInGame(tfState.targetWord);
       resetStreak();
       deductWrongAnswerPenalty(1);
       const encMsg = getRandomEncouragementMessage();
@@ -8014,9 +8179,12 @@ let activeAvatarCategory = 'all';
     const pool = getLearnedWordsPool();
     if (pool.length < 3) return;
 
-    let candidate = pool[Math.floor(Math.random() * pool.length)];
-    if (pool.length > 1 && listenState.targetWord && candidate.id === listenState.targetWord.id) {
-      candidate = pool.find(w => w.id !== listenState.targetWord.id) || candidate;
+    let candidate = getNextMistakeRetryCandidate();
+    if (!candidate) {
+      candidate = pool[Math.floor(Math.random() * pool.length)];
+      if (pool.length > 1 && listenState.targetWord && candidate.id === listenState.targetWord.id) {
+        candidate = pool.find(w => w.id !== listenState.targetWord.id) || candidate;
+      }
     }
     listenState.targetWord = candidate;
     markWordPracticedInGame(candidate.id);
@@ -8156,6 +8324,7 @@ let activeAvatarCategory = 'all';
       }, isRoundDone ? 700 : 2600);
     } else {
       slots.forEach(s => s.classList.add('shake'));
+      recordMistakeInGame(listenState.targetWord);
       resetStreak();
       deductWrongAnswerPenalty(1);
       const encMsg = getRandomEncouragementMessage();
@@ -8184,9 +8353,12 @@ let activeAvatarCategory = 'all';
     const pool = getLearnedWordsPool();
     if (pool.length < 3) return;
 
-    let candidate = pool[Math.floor(Math.random() * pool.length)];
-    if (pool.length > 1 && quizState.targetWord && candidate.id === quizState.targetWord.id) {
-      candidate = pool.find(w => w.id !== quizState.targetWord.id) || candidate;
+    let candidate = getNextMistakeRetryCandidate();
+    if (!candidate) {
+      candidate = pool[Math.floor(Math.random() * pool.length)];
+      if (pool.length > 1 && quizState.targetWord && candidate.id === quizState.targetWord.id) {
+        candidate = pool.find(w => w.id !== quizState.targetWord.id) || candidate;
+      }
     }
     quizState.targetWord = candidate;
     markWordPracticedInGame(candidate.id);
@@ -8257,6 +8429,7 @@ let activeAvatarCategory = 'all';
       }, isRoundDone ? 600 : 2200);
     } else {
       buttonEl.classList.add('wrong');
+      recordMistakeInGame(quizState.targetWord);
       allBtns.forEach(b => {
         if (b.textContent === correctMeaning) b.classList.add('correct');
       });
@@ -8288,9 +8461,20 @@ let activeAvatarCategory = 'all';
     const pool = getLearnedWordsPool();
     if (pool.length < 3) return;
 
-    const poolWithSentence = pool.filter(w => getWordSentence(w) && getWordSentence(w).trim().split(/\s+/).length >= 3);
-    const candidatePool = poolWithSentence.length > 0 ? poolWithSentence : pool;
-    const target = candidatePool[Math.floor(Math.random() * candidatePool.length)];
+    let target = null;
+    if (state.arenaMistakeRetryQueue && state.arenaMistakeRetryQueue.length > 0) {
+      const sIdx = state.arenaMistakeRetryQueue.findIndex(w => getWordSentence(w) && getWordSentence(w).trim().split(/\s+/).length >= 3);
+      if (sIdx !== -1) {
+        target = state.arenaMistakeRetryQueue.splice(sIdx, 1)[0];
+      } else {
+        target = state.arenaMistakeRetryQueue.shift();
+      }
+    }
+    if (!target) {
+      const poolWithSentence = pool.filter(w => getWordSentence(w) && getWordSentence(w).trim().split(/\s+/).length >= 3);
+      const candidatePool = poolWithSentence.length > 0 ? poolWithSentence : pool;
+      target = candidatePool[Math.floor(Math.random() * candidatePool.length)];
+    }
 
     scrambleState.targetWord = target;
     markWordPracticedInGame(target.id);
@@ -8442,6 +8626,7 @@ let activeAvatarCategory = 'all';
       }, reviewDelay);
     } else {
       slots.forEach(s => s.classList.add('shake'));
+      recordMistakeInGame(scrambleState.targetWord);
       resetStreak();
       deductWrongAnswerPenalty(1);
       const encMsg = getRandomEncouragementMessage();
@@ -11260,14 +11445,21 @@ let activeAvatarCategory = 'all';
     }
 
     // Kelime Arenası Listesine Geri Dön (Geri Butonu, Bitir Butonu ve Kapat ✕ Butonu)
+    function handleGameExitWithSummary() {
+      if (activeGameSession && (activeGameSession.solvedCount > 0 || (activeGameSession.mistakeWords && activeGameSession.mistakeWords.length > 0))) {
+        showGameRoundCompletedModal(state.activeGame);
+      } else {
+        showGamesMenu();
+      }
+    }
     if (dom.backToGamesMenuBtn) {
-      dom.backToGamesMenuBtn.addEventListener('click', showGamesMenu);
+      dom.backToGamesMenuBtn.addEventListener('click', handleGameExitWithSummary);
     }
     if (dom.activeGameEndBtn) {
-      dom.activeGameEndBtn.addEventListener('click', showGamesMenu);
+      dom.activeGameEndBtn.addEventListener('click', handleGameExitWithSummary);
     }
     if (dom.closeActiveGameBtn) {
-      dom.closeActiveGameBtn.addEventListener('click', showGamesMenu);
+      dom.closeActiveGameBtn.addEventListener('click', handleGameExitWithSummary);
     }
 
     // Oyun kartı içindeki inline Bitir butonları (delegated)

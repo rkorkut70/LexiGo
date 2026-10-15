@@ -3270,19 +3270,65 @@
       <h3 class="confirm-title" id="roundModalTitle" style="font-size: 1.3rem; font-weight: 800; margin: 0 0 6px 0;">Tur Tamamlandı!</h3>
       <div id="roundModalSubtitle" style="font-size: 0.92rem; font-weight: 600; margin-bottom: 14px;">10 kelime başarıyla tamamlandı</div>
       
-      <!-- Mini İstatistikler Kutusu -->
+      <!-- Mini İstatistikler Kutusu (4 Sütun: Süre, Çözülen, Hata, XP) -->
       <div class="round-summary-stats" style="margin-bottom: 16px;">
         <div style="text-align: center;">
           <div class="stat-label">SÜRE</div>
           <div id="roundModalDuration" style="font-size: 1.05rem; font-weight: 800; margin-top: 2px;">42s</div>
         </div>
         <div style="text-align: center; border-left: 1px solid var(--border-color); border-right: 1px solid var(--border-color);">
-          <div class="stat-label">KELİME</div>
+          <div class="stat-label">ÇÖZÜLEN</div>
           <div id="roundModalWordCount" style="font-size: 1.05rem; font-weight: 800; margin-top: 2px;">10 / 10</div>
+        </div>
+        <div style="text-align: center; border-right: 1px solid var(--border-color);">
+          <div class="stat-label">HATA</div>
+          <div id="roundModalMistakeCount" style="font-size: 1.05rem; font-weight: 800; margin-top: 2px; color: var(--success, #10b981);">0</div>
         </div>
         <div style="text-align: center;">
           <div class="stat-label">KAZANILAN</div>
           <div id="roundModalEarnedXp" style="font-size: 1.05rem; font-weight: 800; margin-top: 2px;">+50 XP</div>
+        </div>
+      </div>
+
+      <!-- Hata Raporlama ve Seçenekler Alanı (Hata yapıldığında açılır) -->
+      <div id="roundMistakesReportBox" class="round-mistakes-container" style="display: none; margin-bottom: 18px; text-align: left;">
+        <div class="round-mistakes-header">
+          <div style="display: flex; align-items: center; gap: 7px;">
+            <span style="font-size: 1.15rem;">⚠️</span>
+            <span style="font-weight: 800; font-size: 0.95rem; color: #ef4444;">Yanlış Yapılan Kelimeler (<span id="roundMistakesCount">0</span>)</span>
+          </div>
+          <span style="font-size: 0.74rem; font-weight: 700; color: var(--text-dim); text-transform: uppercase;">Eksik Raporu</span>
+        </div>
+        
+        <!-- Hatalı Kelimeler Listesi (Scrollable) -->
+        <div id="roundMistakesList" class="round-mistakes-list">
+          <!-- Dinamik Kartlar -->
+        </div>
+
+        <!-- İKİ SEÇENEK SUNUMU -->
+        <div class="round-mistakes-actions-section">
+          <!-- SEÇENEK 1: KARTLARA GERİ EKLE -->
+          <div class="mistake-option-block">
+            <div class="mistake-option-title">
+              <span class="option-badge">1</span>
+              <span>Kelimeleri Kartlara Geri Ekle</span>
+            </div>
+            <button type="button" id="roundMistakesToCardsBtn" class="pill-btn mistake-to-cards-btn">
+              <span>📚</span>
+              <span>Kelimeleri Öğrenilecekler Havuzuna Ekle & Kartlara Git</span>
+            </button>
+          </div>
+
+          <!-- SEÇENEK 2: AŞAĞIDAKİ OYUNLARDA TEKRAR DENE -->
+          <div class="mistake-option-block" style="margin-top: 14px;">
+            <div class="mistake-option-title">
+              <span class="option-badge">2</span>
+              <span>Bu Kelimeleri Aşağıdaki Oyunlarda Tekrar Dene:</span>
+            </div>
+            <div id="roundMistakesGameGrid" class="mistake-games-grid">
+              <!-- 8 Oyun Butonu Dinamik -->
+            </div>
+          </div>
         </div>
       </div>
 
