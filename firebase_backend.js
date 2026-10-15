@@ -39,33 +39,33 @@ window.cachedFbUserData = null;
 // ==========================================
 window.SCHOOL_BRANCHES = [
   // İngilizce (EN-TR) - 17 Şube
-  { code: 'İHS 101', name: 'İHS 101', lang: 'EN-TR', track: '4B', level: 'B1', trackName: 'Üst Kur' },
-  { code: 'İHS 102', name: 'İHS 102', lang: 'EN-TR', track: '4B', level: 'B1', trackName: 'Üst Kur' },
-  { code: 'İHS 103', name: 'İHS 103', lang: 'EN-TR', track: '4B', level: 'B1', trackName: 'Üst Kur' },
-  { code: 'İHS 104', name: 'İHS 104', lang: 'EN-TR', track: '4B', level: 'B1', trackName: 'Üst Kur' },
-  { code: 'İHS 105', name: 'İHS 105', lang: 'EN-TR', track: '4B', level: 'B1', trackName: 'Üst Kur' },
-  { code: 'İHS 106', name: 'İHS 106', lang: 'EN-TR', track: '4B', level: 'B1', trackName: 'Üst Kur' },
-  { code: 'İHS 107', name: 'İHS 107', lang: 'EN-TR', track: '4B', level: 'B1', trackName: 'Üst Kur' },
-  { code: 'İHS 108', name: 'İHS 108', lang: 'EN-TR', track: '4B', level: 'B1', trackName: 'Üst Kur' },
-  { code: 'İHS 109', name: 'İHS 109', lang: 'EN-TR', track: '4B', level: 'B1', trackName: 'Üst Kur' },
-  { code: 'İHS 110', name: 'İHS 110', lang: 'EN-TR', track: '4B', level: 'B1', trackName: 'Üst Kur' },
-  { code: 'İHS 111', name: 'İHS 111', lang: 'EN-TR', track: '4B', level: 'B1', trackName: 'Üst Kur' },
-  { code: 'İHS 112', name: 'İHS 112', lang: 'EN-TR', track: '4A', level: 'A2', trackName: 'Alt Kur' },
-  { code: 'İHS 113', name: 'İHS 113', lang: 'EN-TR', track: '4A', level: 'A2', trackName: 'Alt Kur' },
-  { code: 'İHS 114', name: 'İHS 114', lang: 'EN-TR', track: '4A', level: 'A2', trackName: 'Alt Kur' },
-  { code: 'İHS 115', name: 'İHS 115', lang: 'EN-TR', track: '4A', level: 'A2', trackName: 'Alt Kur' },
-  { code: 'İHS 116', name: 'İHS 116', lang: 'EN-TR', track: '4A', level: 'A2', trackName: 'Alt Kur' },
-  { code: 'İHS 117', name: 'İHS 117', lang: 'EN-TR', track: '4A', level: 'A2', trackName: 'Alt Kur' },
+  { code: 'İHS 101', name: 'İngilizce Hazırlık 101', lang: 'EN-TR', track: '4B', level: 'B1', trackName: 'Üst Kur' },
+  { code: 'İHS 102', name: 'İngilizce Hazırlık 102', lang: 'EN-TR', track: '4B', level: 'B1', trackName: 'Üst Kur' },
+  { code: 'İHS 103', name: 'İngilizce Hazırlık 103', lang: 'EN-TR', track: '4B', level: 'B1', trackName: 'Üst Kur' },
+  { code: 'İHS 104', name: 'İngilizce Hazırlık 104', lang: 'EN-TR', track: '4B', level: 'B1', trackName: 'Üst Kur' },
+  { code: 'İHS 105', name: 'İngilizce Hazırlık 105', lang: 'EN-TR', track: '4B', level: 'B1', trackName: 'Üst Kur' },
+  { code: 'İHS 106', name: 'İngilizce Hazırlık 106', lang: 'EN-TR', track: '4B', level: 'B1', trackName: 'Üst Kur' },
+  { code: 'İHS 107', name: 'İngilizce Hazırlık 107', lang: 'EN-TR', track: '4B', level: 'B1', trackName: 'Üst Kur' },
+  { code: 'İHS 108', name: 'İngilizce Hazırlık 108', lang: 'EN-TR', track: '4B', level: 'B1', trackName: 'Üst Kur' },
+  { code: 'İHS 109', name: 'İngilizce Hazırlık 109', lang: 'EN-TR', track: '4B', level: 'B1', trackName: 'Üst Kur' },
+  { code: 'İHS 110', name: 'İngilizce Hazırlık 110', lang: 'EN-TR', track: '4B', level: 'B1', trackName: 'Üst Kur' },
+  { code: 'İHS 111', name: 'İngilizce Hazırlık 111', lang: 'EN-TR', track: '4B', level: 'B1', trackName: 'Üst Kur' },
+  { code: 'İHS 112', name: 'İngilizce Hazırlık 112', lang: 'EN-TR', track: '4A', level: 'A2', trackName: 'Alt Kur' },
+  { code: 'İHS 113', name: 'İngilizce Hazırlık 113', lang: 'EN-TR', track: '4A', level: 'A2', trackName: 'Alt Kur' },
+  { code: 'İHS 114', name: 'İngilizce Hazırlık 114', lang: 'EN-TR', track: '4A', level: 'A2', trackName: 'Alt Kur' },
+  { code: 'İHS 115', name: 'İngilizce Hazırlık 115', lang: 'EN-TR', track: '4A', level: 'A2', trackName: 'Alt Kur' },
+  { code: 'İHS 116', name: 'İngilizce Hazırlık 116', lang: 'EN-TR', track: '4A', level: 'A2', trackName: 'Alt Kur' },
+  { code: 'İHS 117', name: 'İngilizce Hazırlık 117', lang: 'EN-TR', track: '4A', level: 'A2', trackName: 'Alt Kur' },
 
   // Fransızca (FR-TR) - 3 Şube
-  { code: 'FHS 101', name: 'FHS 101', lang: 'FR-TR', track: '4B', level: 'B1', trackName: 'Üst Kur' },
-  { code: 'FHS 102', name: 'FHS 102', lang: 'FR-TR', track: '4A', level: 'A2', trackName: 'Alt Kur' },
-  { code: 'FHS 103', name: 'FHS 103', lang: 'FR-TR', track: '4A', level: 'A1', trackName: 'Alt Kur' },
+  { code: 'FHS 101', name: 'Fransızca Hazırlık 101', lang: 'FR-TR', track: '4B', level: 'B1', trackName: 'Üst Kur' },
+  { code: 'FHS 102', name: 'Fransızca Hazırlık 102', lang: 'FR-TR', track: '4A', level: 'A2', trackName: 'Alt Kur' },
+  { code: 'FHS 103', name: 'Fransızca Hazırlık 103', lang: 'FR-TR', track: '4A', level: 'A1', trackName: 'Alt Kur' },
 
   // Almanca (DE-TR) - 3 Şube
-  { code: 'AHS 101', name: 'AHS 101', lang: 'DE-TR', track: '4A', level: 'A1', trackName: 'Alt Kur' },
-  { code: 'AHS 102', name: 'AHS 102', lang: 'DE-TR', track: '4A', level: 'A2', trackName: 'Alt Kur' },
-  { code: 'AHS 103', name: 'AHS 103', lang: 'DE-TR', track: '4A', level: 'A1', trackName: 'Alt Kur' }
+  { code: 'AHS 101', name: 'Almanca Hazırlık 101', lang: 'DE-TR', track: '4A', level: 'A1', trackName: 'Alt Kur' },
+  { code: 'AHS 102', name: 'Almanca Hazırlık 102', lang: 'DE-TR', track: '4A', level: 'A2', trackName: 'Alt Kur' },
+  { code: 'AHS 103', name: 'Almanca Hazırlık 103', lang: 'DE-TR', track: '4A', level: 'A1', trackName: 'Alt Kur' }
 ];
 
 window.getCurrentWeekId = function() {

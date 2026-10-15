@@ -3271,7 +3271,8 @@ let activeAvatarCategory = 'all';
     if (branchTitleEl) {
       if (state.userBranch) {
         const foundB = (window.SCHOOL_BRANCHES || []).find(b => b.code === state.userBranch);
-        branchTitleEl.textContent = foundB ? `${foundB.code} (${foundB.name})` : state.userBranch;
+        const branchDetail = foundB && foundB.trackName ? `(${foundB.trackName} • ${foundB.level})` : (foundB && foundB.name !== foundB.code ? `(${foundB.name})` : '');
+        branchTitleEl.textContent = foundB ? `${foundB.code} ${branchDetail}`.trim() : state.userBranch;
         if (branchSubEl) branchSubEl.textContent = foundB ? `${foundB.trackName} - Sınıf İçi Liderlik & Düello` : 'Sınıf İçi Liderlik & Düello Şubesi';
       } else {
         branchTitleEl.textContent = 'Henüz Seçilmedi';
@@ -9776,13 +9777,13 @@ let activeAvatarCategory = 'all';
                   <div style="display: flex; align-items: center; justify-content: space-around; gap: 8px;">
                     <div style="flex: 1; text-align: center;">
                       <div style="font-size: 1.15rem; font-weight: 900; color: #f59e0b;">👑 ${b1.code}</div>
-                      <div style="font-size: 0.72rem; color: var(--text-muted);">${b1.name}</div>
+                      <div style="font-size: 0.72rem; color: var(--text-muted); font-weight: 600;">${b1.trackName ? `${b1.trackName} (${b1.level})` : (b1.name && b1.name !== b1.code ? b1.name : 'Hazırlık')}</div>
                       <div style="font-size: 0.86rem; font-weight: 800; color: #10b981; margin-top: 2px;">Ø ${b1.avgWeeklyXp} XP</div>
                     </div>
                     <div style="font-size: 1.3rem; font-weight: 900; color: #ef4444;">VS</div>
                     <div style="flex: 1; text-align: center;">
                       <div style="font-size: 1.15rem; font-weight: 900; color: #3b82f6;">🛡️ ${b2.code}</div>
-                      <div style="font-size: 0.72rem; color: var(--text-muted);">${b2.name}</div>
+                      <div style="font-size: 0.72rem; color: var(--text-muted); font-weight: 600;">${b2.trackName ? `${b2.trackName} (${b2.level})` : (b2.name && b2.name !== b2.code ? b2.name : 'Hazırlık')}</div>
                       <div style="font-size: 0.86rem; font-weight: 800; color: #10b981; margin-top: 2px;">Ø ${b2.avgWeeklyXp} XP</div>
                     </div>
                   </div>
@@ -9795,6 +9796,7 @@ let activeAvatarCategory = 'all';
               const isMyBranch = (state.userBranch && b.code === state.userBranch);
               const rankClass = rank === 1 ? 'rank-1' : (rank === 2 ? 'rank-2' : (rank === 3 ? 'rank-3' : ''));
               const highlightStyle = isMyBranch ? 'background: rgba(59, 130, 246, 0.16); border: 2px solid var(--accent);' : '';
+              const branchDetail = (b.trackName && b.level) ? `(${b.trackName} • ${b.level})` : (b.name && b.name !== b.code ? `(${b.name})` : '');
 
               listContainer.innerHTML += `
                 <div class="leaderboard-item ${rankClass}" style="${highlightStyle}">
@@ -9804,7 +9806,7 @@ let activeAvatarCategory = 'all';
                   </div>
                   <div class="lb-info">
                     <div style="display:flex; align-items:center; gap:6px;">
-                      <div class="lb-name" style="font-weight: 800;">${b.code} - ${b.name}</div>
+                      <div class="lb-name" style="font-weight: 800;">${b.code} ${branchDetail ? `<span style="font-size:0.75rem; font-weight:600; color:var(--text-muted); margin-left:4px;">${branchDetail}</span>` : ''}</div>
                       ${isMyBranch ? '<span style="font-size:0.72rem; font-weight:800; color:var(--accent);">(Şuben)</span>' : ''}
                     </div>
                     <div class="lb-badge" style="font-size: 0.72rem; color: var(--text-muted);">
@@ -9857,6 +9859,7 @@ let activeAvatarCategory = 'all';
               else if (idx === 2) { medalIcon = '🥉'; rankStyle = 'rank-3'; }
 
               const highlightStyle = isMyBranch ? 'background: rgba(245, 158, 11, 0.15); border: 2px solid #f59e0b;' : '';
+              const honorBranchDetail = h.trackName ? `(${h.trackName})` : (h.name && h.name !== h.code ? `(${h.name})` : '');
 
               listContainer.innerHTML += `
                 <div class="leaderboard-item ${rankStyle}" style="${highlightStyle}">
@@ -9866,7 +9869,7 @@ let activeAvatarCategory = 'all';
                   </div>
                   <div class="lb-info">
                     <div style="display:flex; align-items:center; gap:6px;">
-                      <div class="lb-name" style="font-weight: 800;">${h.code} - ${h.name}</div>
+                      <div class="lb-name" style="font-weight: 800;">${h.code} ${honorBranchDetail ? `<span style="font-size:0.75rem; font-weight:600; color:var(--text-muted); margin-left:4px;">${honorBranchDetail}</span>` : ''}</div>
                       ${isMyBranch ? '<span style="font-size:0.72rem; font-weight:800; color:#f59e0b;">(Şuben)</span>' : ''}
                     </div>
                     <div class="lb-badge" style="font-size: 0.72rem; color: var(--text-muted);">
