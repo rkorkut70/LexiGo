@@ -15,7 +15,7 @@
   <meta http-equiv="Expires" content="0">
   <title>LexiQ • Çok Dilli Akıllı Kelime Kartları</title>
   <link rel="icon" type="image/jpeg" href="logo.jpg">
-  <link rel="stylesheet" href="style.css?v=1.8.18">
+  <link rel="stylesheet" href="style.css?v=1.8.19">
 </head>
 <body>
   <div class="app-container">
@@ -1080,14 +1080,29 @@
 
             <!-- Hedef Kelime & Türkçe Anlam Alanı -->
             <div class="speak-target-display">
-              <div class="speak-target-badge" id="speakTargetLangBadge">🇬🇧 İngilizce</div>
+              <div style="display: flex; align-items: center; gap: 8px; flex-wrap: wrap; justify-content: center; margin-bottom: 6px;">
+                <div class="speak-target-badge" id="speakTargetLangBadge">🇬🇧 İngilizce</div>
+                
+                <!-- İngilizce için Hızlı Aksan Seçimi (US / GB) -->
+                <div class="speak-accent-selector" id="speakAccentSelector" style="display: none;" title="İngilizce Telaffuz ve Dinleme Aksanını Değiştir">
+                  <button type="button" class="speak-accent-pill-btn active" id="speakAccentUsBtn" data-accent="US">
+                    <span class="speak-accent-flag">🇺🇸</span>
+                    <span>US</span>
+                  </button>
+                  <button type="button" class="speak-accent-pill-btn" id="speakAccentUkBtn" data-accent="UK">
+                    <span class="speak-accent-flag">🇬🇧</span>
+                    <span>GB</span>
+                  </button>
+                </div>
+              </div>
+
               <h2 class="speak-target-word" id="speakTargetWord">Adventure</h2>
               <p class="speak-target-meaning" id="speakTargetMeaning">Macera</p>
               
               <!-- Doğru Telaffuzu Dinle Butonu -->
               <button id="speakListenNativeBtn" class="speak-listen-native-btn" type="button" title="Doğru Telaffuzu Dinle">
                 <span class="speak-speaker-icon">🔊</span>
-                <span>Doğru Okunuşu Dinle</span>
+                <span id="speakListenBtnText">Doğru Okunuşu Dinle</span>
               </button>
             </div>
 
@@ -1215,7 +1230,7 @@
         <div class="welcome-hero-section">
           <div class="welcome-brand-wrapper">
             <h1 class="welcome-brand-name">Lexi<span class="welcome-brand-q">Q</span></h1>
-            <span class="welcome-version-pill">v1.8.18</span>
+            <span class="welcome-version-pill">v1.8.19</span>
           </div>
           <!-- 3 Temel Başarı Sütunu (3D Pill Rozetleri) -->
           <div class="welcome-pillars-container">
@@ -1937,7 +1952,7 @@
         <div class="about-hero-box">
           <div class="about-brand-row">
             <span class="about-brand">Lexi<span class="brand-highlight">Q</span></span>
-            <span class="about-version-pill" id="aboutAppVersion">v1.8.18</span>
+            <span class="about-version-pill" id="aboutAppVersion">v1.8.19</span>
             <span class="about-platform-badge" id="aboutPlatformBadge" style="display: none; font-size: 0.72rem; font-weight: 700; padding: 3px 9px; border-radius: 12px; background: rgba(59,130,246,0.15); color: #3b82f6; border: 1px solid rgba(59,130,246,0.3);"></span>
           </div>
           <p class="about-tagline">Müfredat Tabanlı Çok Dilli Kelime Arenası</p>
@@ -2749,6 +2764,20 @@
               </div>
             </div>
 
+            <!-- İngilizce Aksan Tercihi (US / GB) -->
+            <div class="setting-block" id="settingEnAccentBlock">
+              <div class="setting-block-header">
+                <span class="setting-block-label">🗣️ İngilizce Aksan Tercihi</span>
+              </div>
+              <div class="setting-segment-compact" id="enAccentSegmentGroup">
+                <button type="button" class="setting-segment-btn active" id="settingAccentUsBtn" data-accent="US">🇺🇸 US (Amerikan)</button>
+                <button type="button" class="setting-segment-btn" id="settingAccentUkBtn" data-accent="UK">🇬🇧 GB (İngiliz)</button>
+              </div>
+              <p class="setting-block-hint" style="font-size: 0.74rem; color: var(--text-muted); margin-top: 6px; line-height: 1.35;">
+                Kartlarda ve Söyle &amp; Kazan arenasında telaffuz seslendirmesi ve konuşma tanıma için varsayılan aksan modeli.
+              </p>
+            </div>
+
             <!-- Kart Akış & Ses Seçenekleri -->
             <div class="setting-block">
               <div class="setting-compact-row">
@@ -3458,17 +3487,17 @@
       <div class="confirm-icon-wrap" style="font-size: 2.8rem; margin-bottom: 8px;">🎉</div>
       <h3 class="confirm-title" style="font-size: 1.3rem; font-weight: 800; margin: 0 0 6px 0;">LexiQ Güncellendi!</h3>
       <div class="app-update-version-badge" style="display: inline-block; padding: 4px 14px; border-radius: 20px; font-size: 0.84rem; font-weight: 800; margin-bottom: 14px;">
-        Sürüm <span id="appUpdateVersionText">v1.8.18</span>
+        Sürüm <span id="appUpdateVersionText">v1.8.19</span>
       </div>
       <div class="update-notes-box" style="text-align: left; border-radius: 16px; padding: 14px 16px; font-size: 0.88rem; line-height: 1.6; margin-bottom: 18px; max-height: 280px; overflow-y: auto;">
         <div class="update-notes-title" style="font-weight: 800; margin-bottom: 8px; display: flex; align-items: center; gap: 6px;">
           <span>✨</span><span>Bu Sürümdeki Yenilikler</span>
         </div>
         <ul style="margin: 0; padding-left: 20px; display: flex; flex-direction: column; gap: 8px;">
-          <li><strong>🎙️ Android Konuşma Motoru Kararlılığı:</strong> Android cihazlarda mikrofonun tek seferden sonra kilitlenmesi sorunu giderildi; SpeechRecognizer oturumu kararlı hale getirildi.</li>
-          <li><strong>⚡ Canlı Harf Dökümü & Ses Titreşimi:</strong> Konuşurken anlık harf dökümü ve mikrofon dalgalanma efekti eklendi.</li>
-          <li><strong>🗣️ Alternatif Google Sesli Giriş Modu:</strong> OEM/cihaz bağımsız kusursuz telaffuz deneyimi için yedek sesli giriş butonu eklendi.</li>
-          <li><strong>🏆 Telaffuz Rozetleri & Prestij Ligleri:</strong> Telaffuz Ustası, Hitabet Büyücüsü ve Kusursuz Aksan başarıları.</li>
+          <li><strong>🎙️ Söyle & Kazan Aksan Seçimi (US / GB):</strong> İngilizce sınıflar için telaffuz arenasında anlık Amerikan (en-US) veya İngiliz (en-GB) aksanını seçme imkanı eklendi.</li>
+          <li><strong>🗣️ Çift Aksanlı Ses Tanıma ve Seslendirme:</strong> Seçilen aksana göre hem dinleme telaffuzu hem de SpeechRecognizer akustik tanıma modeli dinamik olarak değişir.</li>
+          <li><strong>⚙️ Ayarlar Paneli Entegrasyonu:</strong> Kartlar ve Arena için varsayılan İngilizce aksan tercihi kalıcı olarak kaydedilebilir.</li>
+          <li><strong>⚡ Anlık Geri Bildirim ve İpuçları:</strong> Aksan değişiminde sesli örnek dinleme ve dinamik rozet gösterimi.</li>
         </ul>
       </div>
       <div style="display: flex; flex-direction: column; gap: 8px; width: 100%;">
@@ -3531,11 +3560,11 @@
   <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-storage-compat.js"></script>
-  <script src="firebase_backend.js?v=1.8.18"></script>
+  <script src="firebase_backend.js?v=1.8.19"></script>
 
   <!-- Kelime Verisi ve Uygulama Mantığı (Sadece Standart Vanilla JS) -->
-  <script src="words_data.js?v=1.8.18"></script>
-  <script src="app.js?v=1.8.18"></script>
+  <script src="words_data.js?v=1.8.19"></script>
+  <script src="app.js?v=1.8.19"></script>
 
   </body>
 </html>

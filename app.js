@@ -7,7 +7,7 @@
 (function () {
   'use strict';
 
-  const APP_VERSION = 'v1.8.18';
+  const APP_VERSION = 'v1.8.19';
   const CURRENT_APP_BUILD = 'lexiq_build_19_clean';
 
   // Build 13 temiz kurulum / sıfırlama güvencesi (Kullanıcı verilerini sıfırla, Hoş Geldin ekranını garantile)
@@ -825,6 +825,13 @@
     speakScorePct: document.getElementById('speakScorePct'),
     speakScoreLabel: document.getElementById('speakScoreLabel'),
     speakVoiceIntentBtn: document.getElementById('speakVoiceIntentBtn'),
+    speakAccentSelector: document.getElementById('speakAccentSelector'),
+    speakAccentUsBtn: document.getElementById('speakAccentUsBtn'),
+    speakAccentUkBtn: document.getElementById('speakAccentUkBtn'),
+    speakListenBtnText: document.getElementById('speakListenBtnText'),
+    settingEnAccentBlock: document.getElementById('settingEnAccentBlock'),
+    settingAccentUsBtn: document.getElementById('settingAccentUsBtn'),
+    settingAccentUkBtn: document.getElementById('settingAccentUkBtn'),
 
     // Modallar
     langModal: document.getElementById('langModal'),
@@ -2873,6 +2880,12 @@ let activeAvatarCategory = 'all';
       const settingSoundFx = document.getElementById('settingSoundFx');
       if (settingSoundFx) settingSoundFx.checked = soundFxEnabled;
       applySpeechSpeed(state.speechSpeed);
+
+      if (dom.settingAccentUsBtn && dom.settingAccentUkBtn) {
+        const isUk = (state.activeEnAccent === 'UK');
+        dom.settingAccentUkBtn.classList.toggle('active', isUk);
+        dom.settingAccentUsBtn.classList.toggle('active', !isUk);
+      }
 
       dom.settingsModal.classList.add('active');
     }
@@ -5020,6 +5033,66 @@ let activeAvatarCategory = 'all';
     }
   }
 
+  function setEnAccent(accent, updateSettings = true, speakSample = false) {
+    const validAccent = (accent === 'UK') ? 'UK' : 'US';
+    state.activeEnAccent = validAccent;
+    localStorage.setItem('kelime_en_accent', validAccent);
+
+    // 1. Kart telaffuz butonlarını senkronize et
+    if (dom.pronounceUkBtn && dom.pronounceUsBtn) {
+      if (validAccent === 'UK') {
+        dom.pronounceUkBtn.classList.add('active');
+        dom.pronounceUsBtn.classList.remove('active');
+      } else {
+        dom.pronounceUsBtn.classList.add('active');
+        dom.pronounceUkBtn.classList.remove('active');
+      }
+    }
+
+    // 2. Söyle & Kazan arena butonlarını güncelle
+    if (dom.speakAccentUkBtn && dom.speakAccentUsBtn) {
+      if (validAccent === 'UK') {
+        dom.speakAccentUkBtn.classList.add('active');
+        dom.speakAccentUsBtn.classList.remove('active');
+      } else {
+        dom.speakAccentUsBtn.classList.add('active');
+        dom.speakAccentUkBtn.classList.remove('active');
+      }
+    }
+
+    // 3. Söyle & Kazan etiket ve dinle butonu metnini güncelle
+    if (dom.speakTargetLangBadge && speakState && speakState.targetWord && speakState.targetWord.dil === 'EN-TR') {
+      dom.speakTargetLangBadge.textContent = validAccent === 'UK' ? '🇬🇧 İngilizce (GB)' : '🇺🇸 İngilizce (US)';
+    }
+    if (dom.speakListenBtnText && speakState && speakState.targetWord && speakState.targetWord.dil === 'EN-TR') {
+      dom.speakListenBtnText.textContent = validAccent === 'UK' ? 'Doğru Okunuşu Dinle (GB)' : 'Doğru Okunuşu Dinle (US)';
+    }
+
+    // 4. Ayarlar modalı aksan segmentlerini güncelle
+    if (updateSettings && dom.settingAccentUkBtn && dom.settingAccentUsBtn) {
+      if (validAccent === 'UK') {
+        dom.settingAccentUkBtn.classList.add('active');
+        dom.settingAccentUsBtn.classList.remove('active');
+      } else {
+        dom.settingAccentUsBtn.classList.add('active');
+        dom.settingAccentUkBtn.classList.remove('active');
+      }
+    }
+
+    // 5. İsteğe bağlı olarak mevcut kelimeyi telaffuz et
+    if (speakSample) {
+      if (state.activeMode === 'arena' && state.activeGame === 'speak' && speakState.targetWord) {
+        speakWord(speakState.targetWord.kelime, 'EN-TR', dom.speakListenNativeBtn, validAccent);
+        showToast(validAccent === 'UK' ? '🇬🇧 İngiliz aksanı (GB) seçildi' : '🇺🇸 Amerikan aksanı (US) seçildi');
+      } else {
+        const curWord = state.words[state.currentIndex];
+        if (curWord && curWord.dil === 'EN-TR') {
+          speakWord(curWord.kelime, 'EN-TR', null, validAccent);
+        }
+      }
+    }
+  }
+
   function speakCurrentWord(forcedAccent = null) {
     if (state.words.length === 0) return;
     const currentWord = state.words[state.currentIndex];
@@ -5027,16 +5100,7 @@ let activeAvatarCategory = 'all';
 
     if (currentWord.dil === 'EN-TR') {
       const accent = forcedAccent || state.activeEnAccent || 'US';
-      state.activeEnAccent = accent;
-      localStorage.setItem('kelime_en_accent', accent);
-
-      if (accent === 'UK') {
-        dom.pronounceUkBtn.classList.add('active');
-        dom.pronounceUsBtn.classList.remove('active');
-      } else {
-        dom.pronounceUsBtn.classList.add('active');
-        dom.pronounceUkBtn.classList.remove('active');
-      }
+      setEnAccent(accent, true, false);
     }
 
     speakWord(currentWord.kelime, currentWord.dil, null, forcedAccent);
@@ -8457,8 +8521,20 @@ let activeAvatarCategory = 'all';
     const cleanWord = (candidate.kelime || '').replace(/\|/g, '').trim();
     if (dom.speakTargetWord) dom.speakTargetWord.textContent = cleanWord;
     if (dom.speakTargetMeaning) dom.speakTargetMeaning.textContent = getWordMeaning(candidate) || '';
-    if (dom.speakTargetLangBadge) {
-      dom.speakTargetLangBadge.textContent = candidate.dil === 'DE-TR' ? '🇩🇪 Almanca' : (candidate.dil === 'FR-TR' ? '🇫🇷 Fransızca' : '🇬🇧 İngilizce');
+    
+    // Aksan ve Dil Etiketi Ayarı
+    if (candidate.dil === 'EN-TR') {
+      const isUk = (state.activeEnAccent === 'UK');
+      if (dom.speakTargetLangBadge) dom.speakTargetLangBadge.textContent = isUk ? '🇬🇧 İngilizce (GB)' : '🇺🇸 İngilizce (US)';
+      if (dom.speakAccentSelector) dom.speakAccentSelector.style.display = 'inline-flex';
+      if (dom.speakListenBtnText) dom.speakListenBtnText.textContent = isUk ? 'Doğru Okunuşu Dinle (GB)' : 'Doğru Okunuşu Dinle (US)';
+      setEnAccent(state.activeEnAccent || 'US', false, false);
+    } else {
+      if (dom.speakTargetLangBadge) {
+        dom.speakTargetLangBadge.textContent = candidate.dil === 'DE-TR' ? '🇩🇪 Almanca' : '🇫🇷 Fransızca';
+      }
+      if (dom.speakAccentSelector) dom.speakAccentSelector.style.display = 'none';
+      if (dom.speakListenBtnText) dom.speakListenBtnText.textContent = 'Doğru Okunuşu Dinle';
     }
 
     if (dom.speakFeedbackBox) {
@@ -8486,7 +8562,7 @@ let activeAvatarCategory = 'all';
     if (!speakState.targetWord || speakState.isEvaluating || speakState.isRoundCompleted) return;
     useHintWithPenalty(5);
     speakState.hintGiven = true;
-    speakWord(speakState.targetWord.kelime, speakState.targetWord.dil, dom.speakHintBtn);
+    speakWord(speakState.targetWord.kelime, speakState.targetWord.dil, dom.speakHintBtn, state.activeEnAccent);
     showToast('💡 İpucu: Telaffuz seslendirildi, dikkatlice dinle!');
     if (dom.speakHintBtn) dom.speakHintBtn.disabled = true;
   }
@@ -9523,6 +9599,20 @@ let activeAvatarCategory = 'all';
             showToast(`Telaffuz hızı: ${btn.textContent}`);
           }
         });
+      });
+    }
+
+    // İngilizce Aksan Tercihi (US / GB) Butonları
+    if (dom.settingAccentUsBtn) {
+      dom.settingAccentUsBtn.addEventListener('click', () => {
+        setEnAccent('US', true, false);
+        showToast('🇺🇸 Varsayılan İngilizce aksanı: US (Amerikan)');
+      });
+    }
+    if (dom.settingAccentUkBtn) {
+      dom.settingAccentUkBtn.addEventListener('click', () => {
+        setEnAccent('UK', true, false);
+        showToast('🇬🇧 Varsayılan İngilizce aksanı: GB (İngiliz)');
       });
     }
 
@@ -12475,8 +12565,20 @@ let activeAvatarCategory = 'all';
     if (dom.speakListenNativeBtn) {
       dom.speakListenNativeBtn.addEventListener('click', () => {
         if (speakState.targetWord) {
-          speakWord(speakState.targetWord.kelime, speakState.targetWord.dil, dom.speakListenNativeBtn);
+          speakWord(speakState.targetWord.kelime, speakState.targetWord.dil, dom.speakListenNativeBtn, state.activeEnAccent);
         }
+      });
+    }
+    if (dom.speakAccentUsBtn) {
+      dom.speakAccentUsBtn.addEventListener('click', (e) => {
+        e.preventDefault();
+        setEnAccent('US', true, true);
+      });
+    }
+    if (dom.speakAccentUkBtn) {
+      dom.speakAccentUkBtn.addEventListener('click', (e) => {
+        e.preventDefault();
+        setEnAccent('UK', true, true);
       });
     }
     if (dom.speakSkipBtn) {
