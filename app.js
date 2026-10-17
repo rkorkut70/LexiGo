@@ -7,7 +7,7 @@
 (function () {
   'use strict';
 
-  const APP_VERSION = 'v1.8.22';
+  const APP_VERSION = 'v1.8.23';
   const CURRENT_APP_BUILD = 'lexiq_build_19_clean';
 
   // Build 13 temiz kurulum / sıfırlama güvencesi (Kullanıcı verilerini sıfırla, Hoş Geldin ekranını garantile)
@@ -7764,15 +7764,17 @@ let activeAvatarCategory = 'all';
     if (pool.length < 3) return;
 
     // Tek kelimelik ve harf uzunluğu en az 3 olan kelimeleri öncelikle seç
+    const singleWords = pool.filter(w => !w.kelime.includes(' ') && w.kelime.length >= 3);
+    const candidatePool = singleWords.length > 0 ? singleWords : pool;
+
     let candidate = getNextMistakeRetryCandidate();
     if (!candidate) {
-      const singleWords = pool.filter(w => !w.kelime.includes(' ') && w.kelime.length >= 3);
-      const candidates = singleWords.length > 0 ? singleWords : pool;
-      candidate = candidates[Math.floor(Math.random() * candidates.length)];
+      candidate = candidatePool[Math.floor(Math.random() * candidatePool.length)];
+      if (candidatePool.length > 1 && tetrisState.targetWord && candidate.id === tetrisState.targetWord.id) {
+        candidate = candidatePool.find(w => w.id !== tetrisState.targetWord.id) || candidate;
+      }
     }
-    if (candidates.length > 1 && tetrisState.targetWord && candidate.id === tetrisState.targetWord.id) {
-      candidate = candidates.find(w => w.id !== tetrisState.targetWord.id) || candidate;
-    }
+    if (!candidate) return;
     tetrisState.targetWord = candidate;
     markWordPracticedInGame(candidate.id);
 
