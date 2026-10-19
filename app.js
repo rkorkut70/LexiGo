@@ -7,7 +7,7 @@
 (function () {
   'use strict';
 
-  const APP_VERSION = 'v1.8.29';
+  const APP_VERSION = 'v1.8.30';
   const DEFAULT_AVATAR = 'avatar_default';
   const CURRENT_APP_BUILD = 'lexiq_build_19_clean';
 
@@ -319,7 +319,7 @@
     }
   }
 
-  function recordGameWin(gameName, basePoints) {
+  function recordGameWin(gameName, basePoints, customOptions = {}) {
     state.gameStats = state.gameStats || {};
     state.gameStats[gameName] = (state.gameStats[gameName] || 0) + 1;
     localStorage.setItem('kelime_game_stats', JSON.stringify(state.gameStats));
@@ -330,8 +330,8 @@
     const adjustedBase = Math.max(2, Math.round(basePoints * gameRoundMult));
 
     const earned = addXp(adjustedBase);
-    const winTitle = getRandomCelebrationMessage();
-    const winIcon = getRandomCelebrationIcon();
+    const winTitle = customOptions.title || getRandomCelebrationMessage();
+    const winIcon = customOptions.icon || getRandomCelebrationIcon();
 
     let bonus = 0;
     if (!state.roundUsedHint) {
@@ -347,8 +347,11 @@
     }
 
     const multTag = gameRoundMult < 1.0 ? ` (Pratik: %${Math.round(gameRoundMult * 100)} XP)` : '';
-    const subtitle = bonus > 0 ? `Saf Zihin Bonusu (+${bonus} XP)${multTag}` : (multTag || '');
-    showCelebrationBanner(winTitle, subtitle, `+${earned + bonus} XP`, winIcon);
+    let subtitle = bonus > 0 ? `Saf Zihin Bonusu (+${bonus} XP)${multTag}` : (multTag || '');
+    if (customOptions.subtitle) {
+      subtitle = `${customOptions.subtitle}${bonus > 0 ? ` • +${bonus} XP Bonus` : ''}${multTag}`;
+    }
+    showCelebrationBanner(winTitle, subtitle, `+${earned + bonus} XP`, winIcon, customOptions.duration || 2600);
 
     const curH = new Date().getHours();
     const curM = new Date().getMinutes();
@@ -976,6 +979,9 @@
     roundMistakesReportBox: document.getElementById('roundMistakesReportBox'),
     roundMistakesCount: document.getElementById('roundMistakesCount'),
     roundMistakesList: document.getElementById('roundMistakesList'),
+    roundTfCorrectedReportBox: document.getElementById('roundTfCorrectedReportBox'),
+    roundTfCorrectedCount: document.getElementById('roundTfCorrectedCount'),
+    roundTfCorrectedList: document.getElementById('roundTfCorrectedList'),
     roundMistakesToCardsBtn: document.getElementById('roundMistakesToCardsBtn'),
     roundMistakesGameGrid: document.getElementById('roundMistakesGameGrid'),
     roundModalPedagogyBox: document.getElementById('roundModalPedagogyBox'),
@@ -5664,7 +5670,7 @@ let activeAvatarCategory = 'all';
   // BÜYÜK KUTLAMA BANNERI & BİLDİRİM (TOAST)
   // ==========================================
   let celebrationTimer = null;
-  function showCelebrationBanner(title, subtitle, xpText, icon = '🎉') {
+  function showCelebrationBanner(title, subtitle, xpText, icon = '🎉', duration = 2600) {
     const banner = document.getElementById('celebrationBanner');
     const iconEl = document.getElementById('celebrationIcon');
     const titleEl = document.getElementById('celebrationTitle');
@@ -5674,9 +5680,9 @@ let activeAvatarCategory = 'all';
     if (banner && titleEl && subEl && xpPill) {
       banner.classList.remove('is-wrong');
       if (iconEl) iconEl.textContent = icon;
-      titleEl.textContent = title;
+      titleEl.innerHTML = title;
       if (subtitle) {
-        subEl.textContent = subtitle;
+        subEl.innerHTML = subtitle;
         subEl.style.display = 'block';
       } else {
         subEl.textContent = '';
@@ -5691,7 +5697,7 @@ let activeAvatarCategory = 'all';
       clearTimeout(celebrationTimer);
       celebrationTimer = setTimeout(() => {
         banner.classList.remove('show');
-      }, 2600);
+      }, duration);
     } else {
       showToast(`${title} • ${subtitle}`, 'correct');
     }
@@ -6350,7 +6356,8 @@ let activeAvatarCategory = 'all';
       todayWordsTarget: todayTarget,
       isCompleted: false,
       mistakeWordIds: new Set(),
-      mistakeWords: []
+      mistakeWords: [],
+      identifiedWrongPairs: []
     };
 
     updateActiveGameRoundUI();
@@ -6410,6 +6417,7 @@ let activeAvatarCategory = 'all';
     if (!dom.gameRoundCompletedModal) return;
     dom.gameRoundCompletedModal.classList.remove('active');
     dom.gameRoundCompletedModal.style.display = 'none';
+    if (dom.roundTfCorrectedReportBox) dom.roundTfCorrectedReportBox.style.display = 'none';
   }
 
   function showGameRoundCompletedModal(gameName) {
@@ -6508,6 +6516,34 @@ let activeAvatarCategory = 'all';
         }
       } else {
         dom.roundMistakesReportBox.style.display = 'none';
+      }
+    }
+
+    // DOĞRU / YANLIŞ OYUNUNDA YAKALANAN DOĞRU ANLAMLAR LİSTESİ (TEBRİK EKRANI)
+    if (dom.roundTfCorrectedReportBox) {
+      const identifiedWrongPairs = (activeGameSession && activeGameSession.identifiedWrongPairs) ? activeGameSession.identifiedWrongPairs : [];
+      if (gameName === 'truefalse' && identifiedWrongPairs.length > 0) {
+        dom.roundTfCorrectedReportBox.style.display = 'block';
+        if (dom.roundTfCorrectedCount) dom.roundTfCorrectedCount.textContent = identifiedWrongPairs.length;
+        if (dom.roundTfCorrectedList) {
+          dom.roundTfCorrectedList.innerHTML = identifiedWrongPairs.map(item => {
+            const safeWord = (item.word || '').replace(/'/g, "\\'");
+            return `
+              <div class="mistake-word-item" style="border-left: 3px solid #10b981;">
+                <div class="mistake-word-left">
+                  <span class="mistake-word-text">${item.word}</span>
+                  <button type="button" class="mistake-word-audio-btn" title="Telaffuz" onclick="event.stopPropagation(); if (typeof window.speakWord === 'function') window.speakWord('${safeWord}', '${item.dil}');">🔊</button>
+                </div>
+                <div class="mistake-word-meaning" style="color: #10b981; font-weight: 800;">
+                  <span style="font-size: 0.75rem; color: var(--text-muted); text-decoration: line-through; margin-right: 6px;">${item.displayedMeaning}</span>
+                  <span>Doğru: "${item.trueMeaning}"</span>
+                </div>
+              </div>
+            `;
+          }).join('');
+        }
+      } else {
+        dom.roundTfCorrectedReportBox.style.display = 'none';
       }
     }
 
@@ -7214,6 +7250,7 @@ let activeAvatarCategory = 'all';
   }
 
   function launchGame(gameName) {
+    window.launchGame = launchGame;
     const cfg = GAME_CONFIG[gameName];
     if (!cfg) return;
 
@@ -9023,6 +9060,7 @@ let activeAvatarCategory = 'all';
     active: false,
     isAnswering: false
   };
+  window.tfState = tfState;
 
   function stopTrueFalseGame() {
     tfState.active = false;
@@ -9130,10 +9168,51 @@ let activeAvatarCategory = 'all';
 
     if (isUserCorrect) {
       speakWord(tfState.targetWord.kelime, tfState.targetWord.dil, dom.tfAudioBtn);
-      const earned = recordGameWin('truefalse', 15);
+      const trueMeaning = getWordMeaning(tfState.targetWord);
+      let customOpt = {};
+      let nextDelay = 2200;
+
+      // Öğrenci kelimenin yanlış eşleşme olduğunu doğru bildiyse:
+      // Tebrik ekranında (kutlama bannerında ve kartta) kelimenin doğru anlamını sun
+      if (!tfState.isCorrectMatch && userChoice === false) {
+        customOpt = {
+          title: 'Tebrikler! Yanlış Olduğunu Bildin 🎯',
+          subtitle: `Doğru Anlam: <strong>"${trueMeaning}"</strong>`,
+          icon: '👏',
+          duration: 3500
+        };
+        nextDelay = 3200;
+
+        if (dom.tfDisplayedMeaning) {
+          dom.tfDisplayedMeaning.innerHTML = `
+            <span style="text-decoration: line-through; opacity: 0.55; color: #ef4444; font-size: 0.92em;">${tfState.displayedMeaning}</span>
+            <div class="tf-revealed-correct-box">
+              <span class="tf-revealed-correct-label">✅ Doğru Anlamı:</span>
+              <span class="tf-revealed-correct-text">"${trueMeaning}"</span>
+            </div>
+          `;
+        }
+        if (dom.tfFalseBtn) dom.tfFalseBtn.classList.add('correct-choice');
+
+        if (activeGameSession) {
+          activeGameSession.identifiedWrongPairs = activeGameSession.identifiedWrongPairs || [];
+          activeGameSession.identifiedWrongPairs.push({
+            word: tfState.targetWord.kelime,
+            displayedMeaning: tfState.displayedMeaning,
+            trueMeaning: trueMeaning,
+            dil: tfState.targetWord.dil
+          });
+        }
+      } else if (tfState.isCorrectMatch && userChoice === true) {
+        if (dom.tfTrueBtn) dom.tfTrueBtn.classList.add('correct-choice');
+      }
+
+      const earned = recordGameWin('truefalse', 15, customOpt);
       const isRoundDone = onWordSolvedInRound('truefalse', tfState.targetWord.id, earned);
 
       setTimeout(() => {
+        if (dom.tfFalseBtn) dom.tfFalseBtn.classList.remove('correct-choice');
+        if (dom.tfTrueBtn) dom.tfTrueBtn.classList.remove('correct-choice');
         if (state.activeMode === 'arena' && state.activeGame === 'truefalse') {
           if (isRoundDone) {
             showGameRoundCompletedModal('truefalse');
@@ -9141,7 +9220,7 @@ let activeAvatarCategory = 'all';
             startTrueFalseRound();
           }
         }
-      }, isRoundDone ? 600 : 2200);
+      }, isRoundDone ? (nextDelay > 2200 ? 2800 : 800) : nextDelay);
     } else {
       recordMistakeInGame(tfState.targetWord);
       resetStreak();
