@@ -7,7 +7,7 @@
 (function () {
   'use strict';
 
-  const APP_VERSION = 'v1.8.35';
+  const APP_VERSION = 'v1.8.36';
   const DEFAULT_AVATAR = 'avatar_default';
   const CURRENT_APP_BUILD = 'lexiq_build_19_clean';
 
@@ -1088,6 +1088,7 @@
     updateArenaBadgeDot();
     updateUserProfileUI();
     updateHeaderUnitDisplay();
+    dismissArenaIdlePrompt();
 
     // Tüm arayüz versiyon rozetlerini otomatik olarak güncel APP_VERSION ile senkronize et
     try {
@@ -7551,6 +7552,7 @@ let activeAvatarCategory = 'all';
 
   function dismissArenaIdlePrompt() {
     if (dom.arenaIdlePromptOverlay) {
+      dom.arenaIdlePromptOverlay.classList.remove('active');
       dom.arenaIdlePromptOverlay.style.display = 'none';
     }
     arenaIdlePromptVisible = false;
@@ -7564,6 +7566,7 @@ let activeAvatarCategory = 'all';
       const pick = list[Math.floor(Math.random() * list.length)];
       if (dom.arenaIdleIcon) dom.arenaIdleIcon.textContent = pick.icon;
       if (dom.arenaIdleMessage) dom.arenaIdleMessage.textContent = pick.msg;
+      dom.arenaIdlePromptOverlay.classList.add('active');
       dom.arenaIdlePromptOverlay.style.display = 'flex';
       arenaIdlePromptVisible = true;
       triggerHapticFeedback('light');

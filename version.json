@@ -1,10 +1,12 @@
 {
-  "version": "v1.8.33",
-  "versionCode": 93,
-  "releaseDate": "2026-10-19",
+  "version": "v1.8.36",
+  "versionCode": 96,
+  "releaseDate": "2026-10-20",
   "notes": [
-    "🏆 Turnuva ve Liderler Ekranı 3D Yeniden Tasarımı: Alt kısım taşma ve görünmeme sorunu 100dvh ve safe-area mimarisiyle tamamen giderildi",
-    "✨ Tek Merkezli Akıcı Kaydırma: Çift scroll tuzağı kaldırılarak liste sonuna kadar kesintisiz kaydırma ve +95px alt tamponlama sağlandı",
-    "🛡️ 3D Yüzen Alt Kullanıcı Çubuğu: Buzlu cam (glassmorphism) ve neon ışıklandırmalı yüzen dock ile Okul, Sınıfım ve Şube Ligi dereceleri vurgulandı"
+    "🛠️ Açılışta Hareketsizlik Uyarısı Engeli Düzeltildi: Arena hareketsizlik penceresinin açılışta kilitli kalmasına neden olan CSS kuralı düzeltildi",
+    "⏰ Arena Hareketsizlik Hatırlatıcısı & Teşvik: 10 saniye işlem yapılmadığında oyuna başlama ve devam etmeyi teşvik eden 40 farklı eğlenceli cümle ve uyarı penceresi eklendi",
+    "🎙️ Aksan Butonları Düzeni: 6 arenada aksan butonları alt satıra alınıp ortalandı, ipucu butonlarıyla çakışması önlendi; dinle ve söyle oyunlarındaki küçük butonlar temizlendi",
+    "🃏 Kart Eşleştirme Sayacı: 'Eşleşen' ve '0 / 4' sayaçları iki satır halinde dikey olarak düzenlendi",
+    "🔖 Kelime Defterim & Zorlandıklarım: Oyun hataları zorlandıklarım listesine aktarılıp arenadan izole edildi, 'Listem'deki kelimeler arenaya dahil edildi"
   ]
 }

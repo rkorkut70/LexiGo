@@ -18596,10 +18596,14 @@ html:not([data-theme="dark"]) .tg-rule-card,
   background: rgba(0, 0, 0, 0.65) !important;
   backdrop-filter: blur(8px) !important;
   -webkit-backdrop-filter: blur(8px) !important;
-  display: flex !important;
+  display: none;
   align-items: center !important;
   justify-content: center !important;
   padding: 20px !important;
+}
+
+.arena-idle-overlay.active {
+  display: flex !important;
   animation: arenaIdleFadeIn 0.25s cubic-bezier(0.16, 1, 0.3, 1) forwards !important;
 }
 
@@ -18650,7 +18654,8 @@ html:not([data-theme="dark"]) .tg-rule-card,
   text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5) !important;
 }
 
-.arena-idle-dismiss-btn {
+.arena-idle-dismiss-btn,
+.arena-idle-btn {
   width: 100% !important;
   padding: 12px 20px !important;
   font-size: 0.98rem !important;
@@ -18671,7 +18676,8 @@ html:not([data-theme="dark"]) .tg-rule-card,
   gap: 8px !important;
 }
 
-.arena-idle-dismiss-btn:active {
+.arena-idle-dismiss-btn:active,
+.arena-idle-btn:active {
   transform: translateY(3px) !important;
   box-shadow:
     0 1px 0 #b45309,
