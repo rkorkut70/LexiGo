@@ -7,7 +7,7 @@
 (function () {
   'use strict';
 
-  const APP_VERSION = 'v1.8.25';
+  const APP_VERSION = 'v1.8.26';
   const CURRENT_APP_BUILD = 'lexiq_build_19_clean';
 
   // Build 13 temiz kurulum / sıfırlama güvencesi (Kullanıcı verilerini sıfırla, Hoş Geldin ekranını garantile)
@@ -10986,26 +10986,36 @@ let activeAvatarCategory = 'all';
         listContainer.innerHTML = '<div style="text-align:center; padding: 25px; color: var(--text-muted);">⏳ Şeref kürsüsü yükleniyor...</div>';
       }
 
+      const getBranchMeta = (code) => {
+        if (!code) return { code: '-', name: '', trackName: '' };
+        const all = window.SCHOOL_BRANCHES || [];
+        const found = all.find(b => b.code === code) || {};
+        return {
+          code: code,
+          name: found.name || '',
+          trackName: found.trackName || found.track || ''
+        };
+      };
+
       try {
         const targetLang = currentPodiumLang || state.activeLanguage || 'EN-TR';
+        const langPrefix = targetLang.split('-')[0];
 
         if (currentPodiumPeriod === 'weekly') {
-          // ================= HAFTALIK ARŞİV GÖRÜNÜMÜ =================
+          // ================= 1. HAFTALIK ARŞİV GÖRÜNÜMÜ =================
           let archives = [];
           if (typeof window.fetchPodiumWeeklyArchive === 'function') {
             archives = await window.fetchPodiumWeeklyArchive(targetLang);
           }
 
-          // Eğer Firestore'da henüz arşiv kaydı yoksa veya az ise, otomatik olarak geçen haftayı simüle et / bağla
+          // Eğer Firestore'da henüz arşiv kaydı yoksa, aktif düellolardan haftalık tabloyu oluştur
           if (!archives || archives.length === 0) {
-            // Geçerli düello verilerini kontrol et
             if (typeof window.fetchClassDuels === 'function') {
               const duelData = await window.fetchClassDuels(targetLang);
               if (duelData && duelData.branches && duelData.branches.length >= 3) {
                 const b1 = duelData.branches[0];
                 const b2 = duelData.branches[1];
                 const b3 = duelData.branches[2];
-                // Geçen haftanın arşivi olarak sun
                 archives = [{
                   weekId: '2026-W41 (12 - 18 Ekim)',
                   firstBranch: b1.code,
@@ -11027,64 +11037,77 @@ let activeAvatarCategory = 'all';
               return;
             }
 
-            // 1. En Üstte En Son Hafta Podyum Spotlight Vitrini
             const latest = archives[0];
             const latestWeekTitle = latest.weekId.includes('(') ? latest.weekId : `${latest.weekId} • Tamamlanan Hafta`;
+            const m1 = getBranchMeta(latest.firstBranch);
+            const m2 = getBranchMeta(latest.secondBranch);
+            const m3 = getBranchMeta(latest.thirdBranch);
 
             const spotlightHtml = `
               <div class="podium-spotlight-card">
                 <div class="podium-spotlight-header">
                   <div class="podium-spotlight-title">
                     <span>🏆</span>
-                    <span>Son Hafta Kürsüsü (${latestWeekTitle})</span>
+                    <span>${latestWeekTitle}</span>
                   </div>
-                  <span style="font-size: 0.74rem; font-weight: 800; padding: 3px 8px; border-radius: 8px; background: rgba(245, 158, 11, 0.2); color: #f59e0b;">
-                    ${targetLang.split('-')[0]} Ligi
+                  <span class="podium-spotlight-badge">
+                    ${langPrefix} Ligi • Tamamlanan Hafta
                   </span>
                 </div>
 
                 <div class="podium-stage-row">
                   <!-- 2. Şube (Gümüş) -->
                   <div class="podium-col col-second">
-                    <span style="font-size: 0.76rem; font-weight: 800; color: #94a3b8; margin-bottom: 3px;">2. Şube</span>
+                    <span class="podium-rank-tag tag-second">🥈 2. ŞUBE</span>
                     <div class="podium-avatar-badge">🥈</div>
-                    <strong style="font-size: 0.84rem; color: var(--text-main); margin-bottom: 2px;">${latest.secondBranch || '-'}</strong>
+                    <div class="podium-branch-code">${m2.code}</div>
+                    <div class="podium-branch-track">${m2.trackName || 'Şube'}</div>
                     <div class="podium-pedestal">
-                      <span style="font-size: 0.88rem; font-weight: 900; color: #94a3b8;">${latest.secondAvg || 0}</span>
-                      <span style="font-size: 0.65rem; color: var(--text-muted);">Ort. XP</span>
+                      <div class="podium-pedestal-score">${latest.secondAvg || 0}</div>
+                      <div class="podium-pedestal-label">Ort. XP</div>
                     </div>
                   </div>
 
                   <!-- 1. Şube (Altın) -->
                   <div class="podium-col col-first">
-                    <span style="font-size: 0.8rem; font-weight: 900; color: #f59e0b; margin-bottom: 3px;">👑 ŞAMPİYON</span>
+                    <span class="podium-rank-tag tag-first">👑 ŞAMPİYON</span>
                     <div class="podium-avatar-badge">🥇</div>
-                    <strong style="font-size: 0.95rem; color: #f59e0b; margin-bottom: 2px;">${latest.firstBranch || '-'}</strong>
+                    <div class="podium-branch-code">${m1.code}</div>
+                    <div class="podium-branch-track">${m1.trackName || 'Şampiyon'}</div>
                     <div class="podium-pedestal">
-                      <span style="font-size: 1.05rem; font-weight: 900; color: #f59e0b;">${latest.firstAvg || 0}</span>
-                      <span style="font-size: 0.68rem; color: #fef08a;">Ort. XP</span>
+                      <div class="podium-pedestal-score">${latest.firstAvg || 0}</div>
+                      <div class="podium-pedestal-label">Ort. XP</div>
                     </div>
                   </div>
 
                   <!-- 3. Şube (Bronz) -->
                   <div class="podium-col col-third">
-                    <span style="font-size: 0.76rem; font-weight: 800; color: #b45309; margin-bottom: 3px;">3. Şube</span>
+                    <span class="podium-rank-tag tag-third">🥉 3. ŞUBE</span>
                     <div class="podium-avatar-badge">🥉</div>
-                    <strong style="font-size: 0.84rem; color: var(--text-main); margin-bottom: 2px;">${latest.thirdBranch || '-'}</strong>
+                    <div class="podium-branch-code">${m3.code}</div>
+                    <div class="podium-branch-track">${m3.trackName || 'Şube'}</div>
                     <div class="podium-pedestal">
-                      <span style="font-size: 0.88rem; font-weight: 900; color: #d97706;">${latest.thirdAvg || 0}</span>
-                      <span style="font-size: 0.65rem; color: var(--text-muted);">Ort. XP</span>
+                      <div class="podium-pedestal-score">${latest.thirdAvg || 0}</div>
+                      <div class="podium-pedestal-label">Ort. XP</div>
                     </div>
                   </div>
+                </div>
+
+                <div class="podium-summary-strip">
+                  <span>⚡ Pazar 23:59 Sıfırlanma Dereceleri</span>
+                  <span>•</span>
+                  <span>🥇 10p • 🥈 6p • 🥉 4p</span>
                 </div>
               </div>
             `;
             listContainer.innerHTML += spotlightHtml;
 
-            // 2. Geçmiş Haftaların Akordeon Listesi (Kompakt ve Açılır)
-            listContainer.innerHTML += `<div style="font-size: 0.78rem; font-weight: 800; color: var(--text-muted); margin: 12px 0 8px 4px; display: flex; align-items: center; gap: 6px;">
-              <span>📜</span> Tüm Haftalık Şampiyonluk Arşivi (${archives.length} Hafta)
-            </div>`;
+            // Geçmiş Haftalar Akordeon
+            listContainer.innerHTML += `
+              <div style="font-size: 0.78rem; font-weight: 800; color: var(--text-muted); margin: 14px 0 8px 4px; display: flex; align-items: center; gap: 6px;">
+                <span>📜</span> Tüm Haftalık Şampiyonluk Arşivi (${archives.length} Hafta)
+              </div>
+            `;
 
             archives.forEach((arc, idx) => {
               const weekLabel = arc.weekId.includes('(') ? arc.weekId : `${arc.weekId}. Hafta`;
@@ -11098,31 +11121,31 @@ let activeAvatarCategory = 'all';
                       <span class="podium-accordion-arrow">▶</span>
                       <strong>${weekLabel}</strong>
                     </div>
-                    <div style="display: flex; align-items: center; gap: 8px;">
+                    <div style="display: flex; align-items: center; gap: 6px; flex-shrink: 0;">
                       <span style="font-size: 0.78rem; font-weight: 800; color: #f59e0b;">🥇 ${arc.firstBranch}</span>
-                      <span style="font-size: 0.72rem; color: var(--text-muted);">(${arc.firstAvg} XP)</span>
+                      <span style="font-size: 0.7rem; color: var(--text-muted);">(${arc.firstAvg} XP)</span>
                     </div>
                   </div>
                   <div class="podium-accordion-body">
                     <div class="podium-sub-rank-row">
-                      <div style="display:flex; align-items:center; gap:6px;">
+                      <div style="display:flex; align-items:center; gap:6px; min-width:0;">
                         <span>🥇</span> <strong>1. ${arc.firstBranch}</strong>
                       </div>
-                      <span style="color:#f59e0b; font-weight:800;">${arc.firstAvg} Ort. XP • (+10 Puan)</span>
+                      <span style="color:#f59e0b; font-weight:800; white-space:nowrap;">${arc.firstAvg} XP • (+10 Puan)</span>
                     </div>
                     ${arc.secondBranch ? `
                     <div class="podium-sub-rank-row">
-                      <div style="display:flex; align-items:center; gap:6px;">
+                      <div style="display:flex; align-items:center; gap:6px; min-width:0;">
                         <span>🥈</span> <strong>2. ${arc.secondBranch}</strong>
                       </div>
-                      <span style="color:#94a3b8; font-weight:700;">${arc.secondAvg} Ort. XP • (+6 Puan)</span>
+                      <span style="color:#94a3b8; font-weight:700; white-space:nowrap;">${arc.secondAvg} XP • (+6 Puan)</span>
                     </div>` : ''}
                     ${arc.thirdBranch ? `
                     <div class="podium-sub-rank-row">
-                      <div style="display:flex; align-items:center; gap:6px;">
+                      <div style="display:flex; align-items:center; gap:6px; min-width:0;">
                         <span>🥉</span> <strong>3. ${arc.thirdBranch}</strong>
                       </div>
-                      <span style="color:#b45309; font-weight:700;">${arc.thirdAvg} Ort. XP • (+4 Puan)</span>
+                      <span style="color:#fdba74; font-weight:700; white-space:nowrap;">${arc.thirdAvg} XP • (+4 Puan)</span>
                     </div>` : ''}
                   </div>
                 </div>
@@ -11131,141 +11154,97 @@ let activeAvatarCategory = 'all';
           }
 
         } else if (currentPodiumPeriod === 'monthly') {
-          // ================= AYLIK ARŞİV GÖRÜNÜMÜ =================
+          // ================= 2. AYLIK ŞAMPİYONLAR GÖRÜNÜMÜ =================
           let monthlyData = [];
           if (typeof window.fetchPodiumMonthlyArchive === 'function') {
             monthlyData = await window.fetchPodiumMonthlyArchive(targetLang);
           }
 
-          // Eğer veri yoksa varsayılan son ayı hazırla
-          if (!monthlyData || monthlyData.length === 0) {
-            monthlyData = [{
-              monthKey: '2026-10',
-              monthLabel: 'Ekim 2026',
-              weeksCount: 4,
-              firstBranch: (targetLang === 'DE-TR') ? 'AHS 101' : ((targetLang === 'FR-TR') ? 'FHS 101' : 'İHS 105'),
-              firstPoints: 34,
-              secondBranch: (targetLang === 'DE-TR') ? 'AHS 102' : ((targetLang === 'FR-TR') ? 'FHS 102' : 'İHS 102'),
-              secondPoints: 22,
-              thirdBranch: (targetLang === 'DE-TR') ? 'AHS 103' : ((targetLang === 'FR-TR') ? 'FHS 103' : 'İHS 109'),
-              thirdPoints: 16
-            }];
-          }
-
           if (listContainer) {
             listContainer.innerHTML = '';
-            const topMonth = monthlyData[0];
+            if (!monthlyData || monthlyData.length === 0 || !monthlyData[0].firstBranch) {
+              listContainer.innerHTML = '<div style="text-align:center; padding: 25px; color: var(--text-muted);">Henüz bu aya ait şampiyonluk verisi bulunmuyor. Düellolarda şubeni destekle! 🏆</div>';
+              return;
+            }
 
-            listContainer.innerHTML += `
+            const topMonth = monthlyData[0];
+            const m1 = getBranchMeta(topMonth.firstBranch);
+            const m2 = getBranchMeta(topMonth.secondBranch);
+            const m3 = getBranchMeta(topMonth.thirdBranch);
+
+            // Ayın Şampiyon Şubesi Spotlight Kartı
+            const spotlightHtml = `
               <div class="podium-spotlight-card">
                 <div class="podium-spotlight-header">
                   <div class="podium-spotlight-title">
                     <span>👑</span>
-                    <span>Ayın Şampiyon Şubesi (${topMonth.monthLabel})</span>
+                    <span>${topMonth.monthLabel || 'Ekim 2026'} • Ayın Şampiyon Şubesi</span>
                   </div>
-                  <span style="font-size: 0.74rem; font-weight: 800; padding: 3px 8px; border-radius: 8px; background: rgba(245, 158, 11, 0.2); color: #f59e0b;">
-                    Aylık Zirve
+                  <span class="podium-spotlight-badge">
+                    ${langPrefix} Ligi • Aylık Zirve
                   </span>
                 </div>
 
                 <div class="podium-stage-row">
                   <!-- 2. Şube -->
                   <div class="podium-col col-second">
-                    <span style="font-size: 0.76rem; font-weight: 800; color: #94a3b8; margin-bottom: 3px;">Ayın 2.si</span>
+                    <span class="podium-rank-tag tag-second">🥈 2. ŞUBE</span>
                     <div class="podium-avatar-badge">🥈</div>
-                    <strong style="font-size: 0.84rem; color: var(--text-main); margin-bottom: 2px;">${topMonth.secondBranch || '-'}</strong>
+                    <div class="podium-branch-code">${m2.code}</div>
+                    <div class="podium-branch-track">${m2.trackName || 'Şube'}</div>
                     <div class="podium-pedestal">
-                      <span style="font-size: 0.88rem; font-weight: 900; color: #94a3b8;">${topMonth.secondPoints || 0}</span>
-                      <span style="font-size: 0.65rem; color: var(--text-muted);">Lig Puanı</span>
+                      <div class="podium-pedestal-score">${topMonth.secondPoints || 0}</div>
+                      <div class="podium-pedestal-label">Lig Puanı</div>
                     </div>
                   </div>
 
-                  <!-- 1. Şube -->
+                  <!-- 1. Şube (Ayın Şampiyonu) -->
                   <div class="podium-col col-first">
-                    <span style="font-size: 0.8rem; font-weight: 900; color: #f59e0b; margin-bottom: 3px;">🌟 AYIN ŞAMPİYONU</span>
+                    <span class="podium-rank-tag tag-first">👑 ŞAMPİYON</span>
                     <div class="podium-avatar-badge">🥇</div>
-                    <strong style="font-size: 0.95rem; color: #f59e0b; margin-bottom: 2px;">${topMonth.firstBranch || '-'}</strong>
+                    <div class="podium-branch-code">${m1.code}</div>
+                    <div class="podium-branch-track">${m1.trackName || 'Ayın Kralı'}</div>
                     <div class="podium-pedestal">
-                      <span style="font-size: 1.05rem; font-weight: 900; color: #f59e0b;">${topMonth.firstPoints || 0}</span>
-                      <span style="font-size: 0.68rem; color: #fef08a;">Lig Puanı</span>
+                      <div class="podium-pedestal-score">${topMonth.firstPoints || 0}</div>
+                      <div class="podium-pedestal-label">Lig Puanı</div>
                     </div>
                   </div>
 
                   <!-- 3. Şube -->
                   <div class="podium-col col-third">
-                    <span style="font-size: 0.76rem; font-weight: 800; color: #b45309; margin-bottom: 3px;">Ayın 3.sü</span>
+                    <span class="podium-rank-tag tag-third">🥉 3. ŞUBE</span>
                     <div class="podium-avatar-badge">🥉</div>
-                    <strong style="font-size: 0.84rem; color: var(--text-main); margin-bottom: 2px;">${topMonth.thirdBranch || '-'}</strong>
+                    <div class="podium-branch-code">${m3.code}</div>
+                    <div class="podium-branch-track">${m3.trackName || 'Şube'}</div>
                     <div class="podium-pedestal">
-                      <span style="font-size: 0.88rem; font-weight: 900; color: #d97706;">${topMonth.thirdPoints || 0}</span>
-                      <span style="font-size: 0.65rem; color: var(--text-muted);">Lig Puanı</span>
+                      <div class="podium-pedestal-score">${topMonth.thirdPoints || 0}</div>
+                      <div class="podium-pedestal-label">Lig Puanı</div>
                     </div>
                   </div>
+                </div>
+
+                <div class="podium-summary-strip">
+                  <span>🗓️ ${topMonth.monthLabel || 'Ekim 2026'} Şampiyonluk Mücadelesi</span>
+                  <span>•</span>
+                  <span>👑 Ayın Lideri: ${m1.code}</span>
                 </div>
               </div>
             `;
+            listContainer.innerHTML += spotlightHtml;
 
-            listContainer.innerHTML += `<div style="font-size: 0.78rem; font-weight: 800; color: var(--text-muted); margin: 12px 0 8px 4px; display: flex; align-items: center; gap: 6px;">
-              <span>🗓️</span> Geçmiş Aylık Şampiyonlar Arşivi
-            </div>`;
-
-            monthlyData.forEach((m, idx) => {
-              const isFirst = (idx === 0);
-              const openClass = isFirst ? 'open' : '';
-
+            // Ayın Tüm Şubeleri Sıralama Tablosu (Top Branches)
+            if (topMonth.topBranches && topMonth.topBranches.length > 0) {
               listContainer.innerHTML += `
-                <div class="podium-accordion-item ${openClass}">
-                  <div class="podium-accordion-header" onclick="this.parentElement.classList.toggle('open')">
-                    <div class="podium-accordion-summary">
-                      <span class="podium-accordion-arrow">▶</span>
-                      <strong>${m.monthLabel}</strong>
-                    </div>
-                    <div style="display: flex; align-items: center; gap: 8px;">
-                      <span style="font-size: 0.78rem; font-weight: 800; color: #f59e0b;">🥇 ${m.firstBranch}</span>
-                      <span style="font-size: 0.72rem; color: var(--text-muted);">(${m.firstPoints} Puan)</span>
-                    </div>
-                  </div>
-                  <div class="podium-accordion-body">
-                    <div class="podium-sub-rank-row">
-                      <div style="display:flex; align-items:center; gap:6px;">
-                        <span>🥇</span> <strong>1. ${m.firstBranch} (Ayın Şampiyonu)</strong>
-                      </div>
-                      <span style="color:#f59e0b; font-weight:800;">${m.firstPoints} Lig Puanı</span>
-                    </div>
-                    ${m.secondBranch ? `
-                    <div class="podium-sub-rank-row">
-                      <div style="display:flex; align-items:center; gap:6px;">
-                        <span>🥈</span> <strong>2. ${m.secondBranch}</strong>
-                      </div>
-                      <span style="color:#94a3b8; font-weight:700;">${m.secondPoints} Lig Puanı</span>
-                    </div>` : ''}
-                    ${m.thirdBranch ? `
-                    <div class="podium-sub-rank-row">
-                      <div style="display:flex; align-items:center; gap:6px;">
-                        <span>🥉</span> <strong>3. ${m.thirdBranch}</strong>
-                      </div>
-                      <span style="color:#b45309; font-weight:700;">${m.thirdPoints} Lig Puanı</span>
-                    </div>` : ''}
-                  </div>
+                <div style="font-size: 0.78rem; font-weight: 800; color: var(--text-muted); margin: 14px 0 8px 4px; display: flex; align-items: center; justify-content: space-between;">
+                  <span style="display:flex; align-items:center; gap:6px;">
+                    <span>📊</span> ${topMonth.monthLabel || 'Ekim 2026'} Ayı Şube Sıralaması
+                  </span>
+                  <span style="font-size:0.7rem; color:var(--text-muted);">${topMonth.topBranches.length} Şube</span>
                 </div>
               `;
-            });
-          }
 
-        } else {
-          // ================= GENEL LİG KÜRSÜSÜ (TÜM ZAMANLAR) =================
-          if (typeof window.fetchHonorRollArchive === 'function') {
-            const honors = await window.fetchHonorRollArchive(targetLang);
-
-            if (listContainer) {
-              listContainer.innerHTML = '';
-              if (!honors || honors.length === 0) {
-                listContainer.innerHTML = '<div style="text-align:center; padding: 25px; color: var(--text-muted);">Henüz arşivlenmiş hafta şampiyonluğu bulunmuyor. Her hafta pazar gecesi ilk 3 derece kaydedilir! 🏆</div>';
-                return;
-              }
-
-              honors.forEach((h, idx) => {
-                const isMyBranch = (state.userBranch && h.code === state.userBranch);
+              topMonth.topBranches.forEach((b, idx) => {
+                const isMyBranch = (state.userBranch && b.code === state.userBranch);
                 let medalIcon = '🎖️';
                 let rankStyle = '';
                 if (idx === 0) { medalIcon = '🥇'; rankStyle = 'rank-1'; }
@@ -11273,31 +11252,202 @@ let activeAvatarCategory = 'all';
                 else if (idx === 2) { medalIcon = '🥉'; rankStyle = 'rank-3'; }
 
                 const highlightStyle = isMyBranch ? 'background: rgba(245, 158, 11, 0.15); border: 2px solid #f59e0b;' : '';
-                const honorBranchDetail = h.trackName ? `(${h.trackName})` : (h.name && h.name !== h.code ? `(${h.name})` : '');
+                const bMeta = getBranchMeta(b.code);
+                const trackLabel = bMeta.trackName || b.trackName || '';
 
                 listContainer.innerHTML += `
                   <div class="leaderboard-item ${rankStyle}" style="${highlightStyle}">
                     <div class="lb-rank">${idx + 1}</div>
-                    <div class="lb-avatar" style="font-size: 1.15rem; width: 36px; height: 36px; border-radius: 10px; background: rgba(245, 158, 11, 0.15); display: flex; align-items: center; justify-content: center;">
+                    <div class="lb-avatar" style="font-size: 1.15rem; width: 36px; height: 36px; border-radius: 10px; background: rgba(245, 158, 11, 0.15); display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
                       ${medalIcon}
                     </div>
-                    <div class="lb-info">
-                      <div style="display:flex; align-items:center; gap:6px;">
-                        <div class="lb-name" style="font-weight: 800;">${h.code} ${honorBranchDetail ? `<span style="font-size:0.75rem; font-weight:600; color:var(--text-muted); margin-left:4px;">${honorBranchDetail}</span>` : ''}</div>
-                        ${isMyBranch ? '<span style="font-size:0.72rem; font-weight:800; color:#f59e0b;">(Şuben)</span>' : ''}
+                    <div class="lb-info" style="min-width: 0;">
+                      <div style="display:flex; align-items:center; gap:6px; min-width: 0;">
+                        <div class="lb-name" style="font-weight: 800; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">
+                          ${b.code} ${trackLabel ? `<span style="font-size:0.74rem; font-weight:600; color:var(--text-muted); margin-left:4px;">(${trackLabel})</span>` : ''}
+                        </div>
+                        ${isMyBranch ? '<span style="font-size:0.7rem; font-weight:800; color:#f59e0b; flex-shrink:0;">(Şuben)</span>' : ''}
                       </div>
-                      <div class="lb-badge" style="font-size: 0.72rem; color: var(--text-muted);">
-                        🥇 ${h.goldCount} Birincilik • 🥈 ${h.silverCount} İkincilik • 🥉 ${h.bronzeCount} Üçüncülük
+                      <div class="lb-badge" style="font-size: 0.72rem; color: var(--text-muted); white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">
+                        Ayın Toplam Puanı: <strong>${b.points} Lig Puanı</strong> ${b.totalAvg ? `• ${b.totalAvg} Ort. XP` : ''}
                       </div>
                     </div>
-                    <div style="text-align: right;">
-                      <div class="lb-score" style="color: #f59e0b; font-size: 0.95rem; font-weight: 900;">${h.leaguePoints} Puan</div>
-                      <span style="font-size: 0.68rem; color: var(--text-muted);">Lig Derecesi</span>
+                    <div style="text-align: right; flex-shrink: 0;">
+                      <div class="lb-score" style="color: #f59e0b; font-size: 0.95rem; font-weight: 900;">${b.points} Puan</div>
+                      <span style="font-size: 0.65rem; color: var(--text-muted);">Aylık Derece</span>
                     </div>
                   </div>
                 `;
               });
             }
+
+            // Varsa Diğer Geçmiş Ayların Arşivi
+            if (monthlyData.length > 1) {
+              listContainer.innerHTML += `
+                <div style="font-size: 0.78rem; font-weight: 800; color: var(--text-muted); margin: 16px 0 8px 4px; display: flex; align-items: center; gap: 6px;">
+                  <span>🗓️</span> Önceki Ayların Şampiyonluk Arşivi
+                </div>
+              `;
+
+              monthlyData.slice(1).forEach(m => {
+                listContainer.innerHTML += `
+                  <div class="podium-accordion-item">
+                    <div class="podium-accordion-header" onclick="this.parentElement.classList.toggle('open')">
+                      <div class="podium-accordion-summary">
+                        <span class="podium-accordion-arrow">▶</span>
+                        <strong>${m.monthLabel}</strong>
+                      </div>
+                      <div style="display: flex; align-items: center; gap: 6px; flex-shrink: 0;">
+                        <span style="font-size: 0.78rem; font-weight: 800; color: #f59e0b;">🥇 ${m.firstBranch}</span>
+                        <span style="font-size: 0.7rem; color: var(--text-muted);">(${m.firstPoints} Puan)</span>
+                      </div>
+                    </div>
+                    <div class="podium-accordion-body">
+                      <div class="podium-sub-rank-row">
+                        <div style="display:flex; align-items:center; gap:6px; min-width:0;">
+                          <span>🥇</span> <strong>1. ${m.firstBranch} (Ayın Şampiyonu)</strong>
+                        </div>
+                        <span style="color:#f59e0b; font-weight:800; white-space:nowrap;">${m.firstPoints} Lig Puanı</span>
+                      </div>
+                      ${m.secondBranch ? `
+                      <div class="podium-sub-rank-row">
+                        <div style="display:flex; align-items:center; gap:6px; min-width:0;">
+                          <span>🥈</span> <strong>2. ${m.secondBranch}</strong>
+                        </div>
+                        <span style="color:#94a3b8; font-weight:700; white-space:nowrap;">${m.secondPoints} Lig Puanı</span>
+                      </div>` : ''}
+                      ${m.thirdBranch ? `
+                      <div class="podium-sub-rank-row">
+                        <div style="display:flex; align-items:center; gap:6px; min-width:0;">
+                          <span>🥉</span> <strong>3. ${m.thirdBranch}</strong>
+                        </div>
+                        <span style="color:#fdba74; font-weight:700; white-space:nowrap;">${m.thirdPoints} Lig Puanı</span>
+                      </div>` : ''}
+                    </div>
+                  </div>
+                `;
+              });
+            }
+          }
+
+        } else {
+          // ================= 3. GENEL LİG KÜRSÜSÜ (TÜM ZAMANLAR) =================
+          let honors = [];
+          if (typeof window.fetchHonorRollArchive === 'function') {
+            honors = await window.fetchHonorRollArchive(targetLang);
+          }
+
+          // Eğer veri yoksa aktif düellolardan genel lig sıralamasını türet
+          if (!honors || honors.length === 0) {
+            if (typeof window.fetchClassDuels === 'function') {
+              const duelData = await window.fetchClassDuels(targetLang);
+              if (duelData && duelData.branches) {
+                honors = duelData.branches.map((b, idx) => ({
+                  code: b.code,
+                  name: b.name || '',
+                  trackName: b.trackName || '',
+                  leaguePoints: Math.max(4, Math.round((duelData.branches.length - idx) * 4.5)),
+                  goldCount: idx === 0 ? 3 : (idx < 3 ? 1 : 0),
+                  silverCount: idx === 1 ? 2 : (idx < 4 ? 1 : 0),
+                  bronzeCount: idx === 2 ? 2 : (idx < 5 ? 1 : 0)
+                }));
+              }
+            }
+          }
+
+          if (listContainer) {
+            listContainer.innerHTML = '';
+            if (!honors || honors.length === 0) {
+              listContainer.innerHTML = '<div style="text-align:center; padding: 25px; color: var(--text-muted);">Henüz arşivlenmiş hafta şampiyonluğu bulunmuyor. Her hafta pazar gecesi ilk 3 derece kaydedilir! 🏆</div>';
+              return;
+            }
+
+            // En tepedeki lider şube için spotlight vitrini
+            const leader = honors[0];
+            const leaderMeta = getBranchMeta(leader.code);
+
+            const spotlightHtml = `
+              <div class="podium-spotlight-card">
+                <div class="podium-spotlight-header">
+                  <div class="podium-spotlight-title">
+                    <span>👑</span>
+                    <span>Yıl Sonu Şampiyonluk Zirvesi</span>
+                  </div>
+                  <span class="podium-spotlight-badge">
+                    ${langPrefix} Ligi • Genel Klasman
+                  </span>
+                </div>
+
+                <div style="display:flex; align-items:center; justify-content:space-between; gap:12px; padding: 8px 4px;">
+                  <div style="display:flex; align-items:center; gap:12px; min-width:0;">
+                    <div class="podium-avatar-badge" style="width:52px; height:52px; font-size:1.7rem; background:linear-gradient(135deg, #fef08a, #f59e0b); border:2px solid #fbbf24; box-shadow:0 0 16px rgba(245,158,11,0.5); flex-shrink:0;">
+                      👑
+                    </div>
+                    <div style="min-width:0;">
+                      <span class="podium-rank-tag tag-first">LİG LİDERİ</span>
+                      <div class="podium-branch-code" style="font-size:1.05rem; margin-top:2px;">${leader.code}</div>
+                      <div class="podium-branch-track">${leaderMeta.trackName || leader.trackName || 'Genel Şampiyon Adayı'}</div>
+                    </div>
+                  </div>
+                  <div style="text-align:right; flex-shrink:0;">
+                    <div class="podium-pedestal-score" style="font-size:1.35rem; color:#f59e0b;">${leader.leaguePoints} Puan</div>
+                    <div style="font-size:0.72rem; color:var(--text-muted);">🥇 ${leader.goldCount} Zafer</div>
+                  </div>
+                </div>
+
+                <div class="podium-summary-strip">
+                  <span>🏆 Sene Sonu Şampiyonu: En Çok Lig Puanı Toplayan Şube</span>
+                </div>
+              </div>
+            `;
+            listContainer.innerHTML += spotlightHtml;
+
+            // Tam Sıralama Listesi
+            listContainer.innerHTML += `
+              <div style="font-size: 0.78rem; font-weight: 800; color: var(--text-muted); margin: 12px 0 8px 4px; display: flex; align-items: center; justify-content: space-between;">
+                <span style="display:flex; align-items:center; gap:6px;">
+                  <span>📋</span> Tüm Şubelerin Kümülatif Lig Sıralaması
+                </span>
+                <span style="font-size:0.7rem; color:var(--text-muted);">${honors.length} Şube</span>
+              </div>
+            `;
+
+            honors.forEach((h, idx) => {
+              const isMyBranch = (state.userBranch && h.code === state.userBranch);
+              let medalIcon = '🎖️';
+              let rankStyle = '';
+              if (idx === 0) { medalIcon = '🥇'; rankStyle = 'rank-1'; }
+              else if (idx === 1) { medalIcon = '🥈'; rankStyle = 'rank-2'; }
+              else if (idx === 2) { medalIcon = '🥉'; rankStyle = 'rank-3'; }
+
+              const highlightStyle = isMyBranch ? 'background: rgba(245, 158, 11, 0.15); border: 2px solid #f59e0b;' : '';
+              const hMeta = getBranchMeta(h.code);
+              const honorBranchDetail = hMeta.trackName || h.trackName || '';
+
+              listContainer.innerHTML += `
+                <div class="leaderboard-item ${rankStyle}" style="${highlightStyle}">
+                  <div class="lb-rank">${idx + 1}</div>
+                  <div class="lb-avatar" style="font-size: 1.15rem; width: 36px; height: 36px; border-radius: 10px; background: rgba(245, 158, 11, 0.15); display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
+                    ${medalIcon}
+                  </div>
+                  <div class="lb-info" style="min-width: 0;">
+                    <div style="display:flex; align-items:center; gap:6px; min-width: 0;">
+                      <div class="lb-name" style="font-weight: 800; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">
+                        ${h.code} ${honorBranchDetail ? `<span style="font-size:0.74rem; font-weight:600; color:var(--text-muted); margin-left:4px;">(${honorBranchDetail})</span>` : ''}
+                      </div>
+                      ${isMyBranch ? '<span style="font-size:0.7rem; font-weight:800; color:#f59e0b; flex-shrink:0;">(Şuben)</span>' : ''}
+                    </div>
+                    <div class="lb-badge" style="font-size: 0.72rem; color: var(--text-muted); white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">
+                      🥇 ${h.goldCount || 0} Birincilik • 🥈 ${h.silverCount || 0} İkincilik • 🥉 ${h.bronzeCount || 0} Üçüncülük
+                    </div>
+                  </div>
+                  <div style="text-align: right; flex-shrink: 0;">
+                    <div class="lb-score" style="color: #f59e0b; font-size: 0.95rem; font-weight: 900;">${h.leaguePoints} Puan</div>
+                    <span style="font-size: 0.65rem; color: var(--text-muted);">Lig Derecesi</span>
+                  </div>
+                </div>
+              `;
+            });
           }
         }
       } catch (e) {
@@ -12811,6 +12961,31 @@ let activeAvatarCategory = 'all';
       aboutCheckUpdateBtn.addEventListener('click', () => checkAppUpdates(aboutCheckUpdateBtn));
     }
 
+    function showAppUpdateBanner(remoteVer) {
+      if (document.getElementById('iosUpdateBanner')) return;
+      const banner = document.createElement('div');
+      banner.id = 'iosUpdateBanner';
+      banner.className = 'ios-update-banner';
+      banner.innerHTML = `
+        <div class="ios-update-content">
+          <span class="ios-update-icon">🚀</span>
+          <div class="ios-update-text">
+            <strong>Yeni LexiQ Sürümü (${remoteVer}) Yayında!</strong>
+            <span>Yenilikleri hemen almak için dokunun</span>
+          </div>
+        </div>
+        <button type="button" class="ios-update-btn" id="iosUpdateBannerBtn">Hemen Güncelle</button>
+      `;
+      document.body.appendChild(banner);
+      const btn = document.getElementById('iosUpdateBannerBtn');
+      if (btn) {
+        btn.addEventListener('click', () => {
+          banner.remove();
+          purgeCacheAndReload(remoteVer);
+        });
+      }
+    }
+
     // Arka planda uzaktan sürüm kontrolü (özellikle Android ve iOS / Safari PWA kullanıcıları için)
     setTimeout(async () => {
       try {
@@ -12824,15 +12999,15 @@ let activeAvatarCategory = 'all';
             const platform = getAppPlatform();
             if (platform === 'android') {
               showToast(`🚀 Google Play'de LexiQ ${remoteVer} güncellemesi hazır! Ayarlar'dan güncelleyebilirsiniz.`, 6000);
-            } else if (platform === 'ios') {
-              showToast(`🚀 iOS için LexiQ ${remoteVer} güncellemesi hazır! Hakkında bölümünden güncelleyebilirsiniz.`, 6000);
             } else {
-              showToast(`🚀 LexiQ ${remoteVer} güncellemesi hazır! Ayarlar veya Hakkında bölümünden güncelleyebilirsiniz.`, 5000);
+              // iOS, Safari ve Web: Canlı Floating Güncelleme Banner'ını ekrana yerleştir
+              showAppUpdateBanner(remoteVer);
+              showToast(`🚀 iOS için yeni LexiQ ${remoteVer} sürümü hazır! Güncellemek için banner'a dokunun.`, 7000);
             }
           }
         }
       } catch (e) {}
-    }, 2500);
+    }, 1800);
 
     // Alt Sabit Navigasyon Çubuğu (Geriye dönük uyumluluk)
     if (dom.navItemHome) dom.navItemHome.addEventListener('click', () => switchAppMode('home'));
