@@ -9008,9 +9008,9 @@ body[data-theme="dark"] .home-unit-select-btn,
 /* === YENİ 3D KART SEKMELERİ (ÖĞRENİLECEKLER / ÖĞRENİLENLER) === */
 .card-filter-tabs-container {
   width: 100%;
-  height: 94px !important;
-  min-height: 94px !important;
-  max-height: 94px !important;
+  height: auto !important;
+  min-height: auto !important;
+  max-height: none !important;
   background: rgba(255, 255, 255, 0.75) !important;
   backdrop-filter: blur(14px);
   -webkit-backdrop-filter: blur(14px);
@@ -9024,6 +9024,7 @@ body[data-theme="dark"] .home-unit-select-btn,
   padding: 6px 8px !important;
   display: flex !important;
   flex-direction: column !important;
+  gap: 4px !important;
   justify-content: space-between !important;
   transition: none !important;
 }
@@ -9035,28 +9036,37 @@ body[data-theme="dark"] .home-unit-select-btn,
 }
 
 .card-tab-buttons {
-  display: flex;
-  width: 100%;
-  height: 38px !important;
-  min-height: 38px !important;
-  max-height: 38px !important;
+  display: flex !important;
+  flex-direction: column !important;
+  width: 100% !important;
+  height: auto !important;
+  min-height: auto !important;
+  max-height: none !important;
   box-sizing: border-box !important;
   border-bottom: none !important;
-  gap: 8px;
-  padding: 2px 4px;
+  gap: 5px !important;
+  padding: 2px 2px !important;
+}
+
+.card-tab-row {
+  display: flex !important;
+  width: 100% !important;
+  height: 33px !important;
+  min-height: 33px !important;
+  gap: 6px !important;
 }
 
 .card-tab-btn {
   flex: 1;
   height: 100% !important;
-  background: transparent;
-  border: none;
+  background: rgba(0, 0, 0, 0.04);
+  border: 1px solid rgba(0, 0, 0, 0.06);
   border-radius: 9999px;
-  padding: 0 12px;
+  padding: 0 8px;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 0.88rem;
+  font-size: 0.81rem;
   font-weight: 700;
   color: var(--text-muted);
   cursor: pointer;
@@ -9064,14 +9074,20 @@ body[data-theme="dark"] .home-unit-select-btn,
   position: relative;
   outline: none !important;
   user-select: none;
+  white-space: nowrap;
   -webkit-tap-highlight-color: transparent !important;
+}
+
+[data-theme="dark"] .card-tab-btn {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.08);
 }
 
 .card-tab-btn::after {
   display: none !important;
 }
 
-/* 3D Turuncu Pill Buton (Öğrenilecekler Aktif - Görsel 1 & 2) */
+/* 3D Turuncu Pill Buton (Öğrenilecekler Aktif) */
 #cardTabPendingBtn.active,
 .card-tab-btn[data-filter="pending"].active {
   background: linear-gradient(180deg, #fba156 0%, #f97316 55%, #ea580c 100%) !important;
@@ -9101,6 +9117,36 @@ body[data-theme="dark"] .home-unit-select-btn,
   box-shadow: 0 4px 0 #064e3b, 0 0 20px rgba(16, 185, 129, 0.5) !important;
 }
 
+/* 3D İndigo Pill Buton (Listem / Kelime Defterim Aktif) */
+#cardTabMyListBtn.active,
+.card-tab-btn[data-filter="mylist"].active {
+  background: linear-gradient(180deg, #818cf8 0%, #6366f1 55%, #4f46e5 100%) !important;
+  color: #ffffff !important;
+  box-shadow: 0 4px 0 #3730a3, 0 6px 14px rgba(99, 102, 241, 0.35) !important;
+  transform: translateY(-1px);
+}
+
+[data-theme="dark"] #cardTabMyListBtn.active,
+[data-theme="dark"] .card-tab-btn[data-filter="mylist"].active {
+  background: linear-gradient(180deg, #a5b4fc 0%, #6366f1 60%, #4338ca 100%) !important;
+  box-shadow: 0 4px 0 #312e81, 0 0 20px rgba(99, 102, 241, 0.5) !important;
+}
+
+/* 3D Gül Kurusu / Kırmızı Pill Buton (Zorlandıklarım Aktif) */
+#cardTabTroubledBtn.active,
+.card-tab-btn[data-filter="troubled"].active {
+  background: linear-gradient(180deg, #fb7185 0%, #e11d48 55%, #be123c 100%) !important;
+  color: #ffffff !important;
+  box-shadow: 0 4px 0 #9f1239, 0 6px 14px rgba(225, 29, 72, 0.35) !important;
+  transform: translateY(-1px);
+}
+
+[data-theme="dark"] #cardTabTroubledBtn.active,
+[data-theme="dark"] .card-tab-btn[data-filter="troubled"].active {
+  background: linear-gradient(180deg, #fda4af 0%, #f43f5e 60%, #be123c 100%) !important;
+  box-shadow: 0 4px 0 #881337, 0 0 20px rgba(244, 63, 94, 0.5) !important;
+}
+
 .card-tab-btn.active:active {
   transform: translateY(2px) !important;
   box-shadow: 0 1px 0 rgba(0, 0, 0, 0.2) !important;
@@ -9108,8 +9154,68 @@ body[data-theme="dark"] .home-unit-select-btn,
 
 .card-tab-btn.active .tab-badge {
   color: #ffffff !important;
-  opacity: 0.92;
+  opacity: 0.95;
   font-weight: 800;
+}
+
+/* Kart Üstü Listem ve Zorlandıklarım Butonları */
+.card-top-actions {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.card-notebook-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 3px 8px;
+  font-size: 0.72rem;
+  font-weight: 800;
+  border-radius: 10px;
+  background: rgba(99, 102, 241, 0.12);
+  color: #6366f1;
+  border: 1px solid rgba(99, 102, 241, 0.28);
+  cursor: pointer;
+  transition: all 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+  user-select: none;
+  -webkit-tap-highlight-color: transparent;
+}
+
+[data-theme="dark"] .card-notebook-btn {
+  background: rgba(99, 102, 241, 0.18);
+  color: #a5b4fc;
+  border-color: rgba(99, 102, 241, 0.4);
+}
+
+.card-notebook-btn:hover {
+  transform: translateY(-1px) scale(1.02);
+}
+
+.card-notebook-btn.in-notebook {
+  background: linear-gradient(135deg, rgba(245, 158, 11, 0.25), rgba(217, 119, 6, 0.35)) !important;
+  color: #f59e0b !important;
+  border: 1px solid rgba(245, 158, 11, 0.55) !important;
+  box-shadow: 0 2px 8px rgba(245, 158, 11, 0.25) !important;
+}
+
+[data-theme="dark"] .card-notebook-btn.in-notebook {
+  background: linear-gradient(135deg, rgba(245, 158, 11, 0.3), rgba(217, 119, 6, 0.45)) !important;
+  color: #fbbf24 !important;
+  border-color: rgba(245, 158, 11, 0.65) !important;
+  box-shadow: 0 0 12px rgba(245, 158, 11, 0.3) !important;
+}
+
+.card-troubled-pill {
+  background: rgba(244, 63, 94, 0.14) !important;
+  color: #f43f5e !important;
+  border-color: rgba(244, 63, 94, 0.35) !important;
+}
+
+[data-theme="dark"] .card-troubled-pill {
+  background: rgba(244, 63, 94, 0.22) !important;
+  color: #fb7185 !important;
+  border-color: rgba(244, 63, 94, 0.5) !important;
 }
 
 .card-tab-content {
@@ -12384,7 +12490,7 @@ html[data-flip-speed="slow"] .flashcard {
   align-items: center;
   justify-content: center;
   font-size: 2.3rem;
-  margin-bottom: 2px;
+  margin: 0 auto 8px auto;
   box-shadow: 0 12px 28px rgba(239, 68, 68, 0.35), inset 0 2px 4px rgba(255, 255, 255, 0.4), inset 0 -3px 6px rgba(0, 0, 0, 0.4);
   animation: bounceFlame 2.5s infinite ease-in-out;
 }
@@ -13833,7 +13939,11 @@ html.screen-fit-compact .welcome-action-guest {
 }
 
 /* ============================================================
-   TURNUVA & LİDERLER VE TURNUVA REHBERİ TAM EKRAN TASARIMI
+   TURNUVA & LİDERLER VE TURNUVA REHBERİ YENİDEN TASARIMI (3D ADAPTIVE)
+   - %100 Safe-Area ve 100dvh ile ekrandan taşma ve kesilme sorunları tamamen çözüldü
+   - Tek merkezli akıcı kaydırma (Single Scroll Container), iç scroll tuzakları kaldırıldı
+   - Yüzen 3D Alt Kullanıcı Barı (#lbCurrentUserBar) ve son liste kartları için +95px alt tamponlama
+   - 3D derinlik, cam-katman efektleri (glassmorphism), neon ışıklar ve taktil dokunuş hissi
    ============================================================ */
 #leaderboardModal.full-screen-modal,
 #tournamentGuideModal.full-screen-modal {
@@ -13842,10 +13952,12 @@ html.screen-fit-compact .welcome-action-guest {
   width: 100vw !important;
   height: 100% !important;
   height: 100dvh !important;
-  height: 100vh !important;
+  max-height: 100dvh !important;
   padding: 0 !important;
   margin: 0 !important;
-  background: var(--bg-body, #0f172a) !important;
+  background: rgba(8, 10, 16, 0.95) !important;
+  backdrop-filter: blur(16px) !important;
+  -webkit-backdrop-filter: blur(16px) !important;
   display: none;
   flex-direction: column !important;
   align-items: stretch !important;
@@ -13866,8 +13978,6 @@ html.screen-fit-compact .welcome-action-guest {
   max-width: 100% !important;
   height: 100% !important;
   height: 100dvh !important;
-  height: 100vh !important;
-  max-height: 100% !important;
   max-height: 100dvh !important;
   border-radius: 0 !important;
   border: none !important;
@@ -13876,43 +13986,54 @@ html.screen-fit-compact .welcome-action-guest {
   display: flex !important;
   flex-direction: column !important;
   box-shadow: none !important;
-  background: var(--bg-body, #0f172a) !important;
+  background: linear-gradient(180deg, #101320 0%, #0a0c14 100%) !important;
   overflow: hidden !important;
+  position: relative !important;
   box-sizing: border-box !important;
   flex: 1 1 auto !important;
   min-height: 0 !important;
 }
 
-/* Üst Başlık (Header) - Safe Area Uyumlu */
+/* Üst Başlık (Header) - 3D Glassmorphic Header & Safe-Area Uyumlu */
 #leaderboardModal.full-screen-modal .leaderboard-modal-header,
 #tournamentGuideModal.full-screen-modal .tournament-guide-header {
-  padding-top: calc(env(safe-area-inset-top, 10px) + 8px) !important;
+  padding-top: calc(env(safe-area-inset-top, 0px) + 12px) !important;
   padding-left: clamp(14px, 4vw, 24px) !important;
   padding-right: clamp(14px, 4vw, 24px) !important;
   padding-bottom: 12px !important;
-  background: var(--bg-surface) !important;
-  border-bottom: 1px solid var(--border-color) !important;
+  background: linear-gradient(180deg, rgba(23, 27, 43, 0.98) 0%, rgba(16, 19, 31, 0.94) 100%) !important;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08) !important;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.25) !important;
   display: flex !important;
   align-items: center !important;
   justify-content: space-between !important;
   flex-shrink: 0 !important;
+  z-index: 10 !important;
 }
 
-/* Sekmeler Gezintisi - 4 Eşit Sütunlu Responsive Grid */
+#leaderboardModal.full-screen-modal .modal-title {
+  font-size: clamp(1.05rem, 3.2vw, 1.25rem) !important;
+  font-weight: 900 !important;
+  background: linear-gradient(135deg, #ffffff 0%, #cbd5e1 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  letter-spacing: -0.3px;
+}
+
+/* Sekmeler Gezintisi - 3D Pill Segment Container */
 #leaderboardModal.full-screen-modal .leaderboard-tabs-nav {
   display: grid !important;
   grid-template-columns: repeat(4, 1fr) !important;
-  gap: 4px !important;
-  padding: 6px clamp(4px, 1.8vw, 10px) !important;
-  background: var(--bg-surface) !important;
-  border-bottom: 1px solid var(--border-color) !important;
-  margin: 0 !important;
-  border-radius: 0 !important;
-  width: 100% !important;
-  max-width: 100% !important;
+  gap: 6px !important;
+  padding: 6px !important;
+  margin: 8px clamp(10px, 3vw, 18px) !important;
+  background: rgba(13, 16, 26, 0.85) !important;
+  border: 1px solid rgba(255, 255, 255, 0.08) !important;
+  border-radius: 14px !important;
+  box-shadow: inset 0 2px 5px rgba(0, 0, 0, 0.4), 0 2px 8px rgba(0, 0, 0, 0.2) !important;
   box-sizing: border-box !important;
-  overflow: hidden !important;
   flex-shrink: 0 !important;
+  z-index: 5 !important;
 }
 
 #leaderboardModal.full-screen-modal .leaderboard-tabs-nav::-webkit-scrollbar {
@@ -13923,29 +14044,37 @@ html.screen-fit-compact .welcome-action-guest {
   flex: none !important;
   min-width: 0 !important;
   width: 100% !important;
-  padding: 8px 2px !important;
-  font-size: clamp(0.7rem, 2.2vw, 0.82rem) !important;
+  padding: 8px 3px !important;
+  font-size: clamp(0.72rem, 2.2vw, 0.82rem) !important;
   font-weight: 800 !important;
   border-radius: 10px !important;
   border: 1px solid transparent !important;
   cursor: pointer !important;
-  transition: all 0.2s ease !important;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1) !important;
   display: flex !important;
   align-items: center !important;
   justify-content: center !important;
-  gap: 3px !important;
+  gap: 4px !important;
   white-space: nowrap !important;
   overflow: hidden !important;
   text-overflow: ellipsis !important;
   box-sizing: border-box !important;
-  background: rgba(255, 255, 255, 0.04);
-  color: var(--text-muted);
+  background: transparent !important;
+  color: #94a3b8 !important;
+  text-shadow: 0 1px 2px rgba(0,0,0,0.4);
+}
+
+#leaderboardModal.full-screen-modal .lb-tab-btn:hover {
+  color: #f1f5f9 !important;
+  background: rgba(255, 255, 255, 0.04) !important;
 }
 
 #leaderboardModal.full-screen-modal .lb-tab-btn.active {
-  background: var(--accent) !important;
+  background: linear-gradient(135deg, #6366f1 0%, #4f46e5 100%) !important;
   color: #ffffff !important;
-  box-shadow: 0 3px 10px rgba(99, 102, 241, 0.35) !important;
+  border: 1px solid rgba(255, 255, 255, 0.2) !important;
+  box-shadow: 0 4px 14px rgba(99, 102, 241, 0.45), inset 0 1px 0 rgba(255, 255, 255, 0.35) !important;
+  transform: translateY(-1px) scale(1.02) !important;
 }
 
 #leaderboardModal.full-screen-modal .lb-tab-btn .tab-3d-icon {
@@ -13954,10 +14083,10 @@ html.screen-fit-compact .welcome-action-guest {
   flex-shrink: 0 !important;
   margin: 0 !important;
   vertical-align: middle !important;
+  filter: drop-shadow(0 2px 4px rgba(0,0,0,0.35));
 }
 
-
-/* İçerik Gövdesi - Tam Ekran Kaydırılabilir Alan */
+/* İçerik Gövdesi - Tek Merkezli Kaydırılabilir Gövde (Single Scroll View) */
 #leaderboardModal.full-screen-modal .leaderboard-modal-body,
 #tournamentGuideModal.full-screen-modal .tournament-guide-body {
   flex: 1 1 auto !important;
@@ -13968,30 +14097,91 @@ html.screen-fit-compact .welcome-action-guest {
   overflow-y: auto !important;
   overflow-x: hidden !important;
   -webkit-overflow-scrolling: touch !important;
-  padding: 14px clamp(12px, 3.5vw, 20px) !important;
+  overscroll-behavior-y: contain !important;
+  padding: 8px clamp(10px, 3vw, 18px) calc(env(safe-area-inset-bottom, 16px) + 95px) !important;
   box-sizing: border-box !important;
 }
 
 #leaderboardModal.full-screen-modal .lb-panel {
-  flex: 1 1 auto !important;
-  min-height: 0 !important;
+  flex: none !important;
+  width: 100% !important;
+  min-height: auto !important;
   display: flex;
   flex-direction: column !important;
+  overflow: visible !important;
 }
 
 #leaderboardModal.full-screen-modal .leaderboard-list {
   max-height: none !important;
-  flex: 1 1 auto !important;
-  min-height: 200px !important;
-  overflow-y: auto !important;
-  padding-bottom: 14px !important;
+  flex: none !important;
+  min-height: auto !important;
+  overflow: visible !important;
+  padding-bottom: 8px !important;
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 8px !important;
+  width: 100% !important;
+}
+
+/* 3D Kart Görünümü & Liste Satırları */
+#leaderboardModal.full-screen-modal .leaderboard-item {
+  background: rgba(23, 27, 43, 0.75) !important;
+  backdrop-filter: blur(10px) !important;
+  -webkit-backdrop-filter: blur(10px) !important;
+  border: 1px solid rgba(255, 255, 255, 0.08) !important;
+  border-radius: 14px !important;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2), inset 0 1px 0 rgba(255, 255, 255, 0.06) !important;
+  padding: 10px 12px !important;
+  margin-bottom: 4px !important;
+  transition: transform 0.15s ease, box-shadow 0.15s ease !important;
+}
+
+#leaderboardModal.full-screen-modal .leaderboard-item:active {
+  transform: scale(0.985) !important;
+}
+
+#leaderboardModal.full-screen-modal .lb-rank {
+  font-weight: 900 !important;
+  width: 28px !important;
+  height: 28px !important;
+  border-radius: 9px !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  background: rgba(255, 255, 255, 0.05) !important;
+  border: 1px solid rgba(255, 255, 255, 0.08) !important;
+  color: #94a3b8 !important;
+  font-size: 0.85rem !important;
+  flex-shrink: 0 !important;
+}
+
+#leaderboardModal.full-screen-modal .leaderboard-item.rank-1 .lb-rank {
+  background: linear-gradient(135deg, #f59e0b, #d97706) !important;
+  color: #fffbeb !important;
+  border: 1px solid #fef08a !important;
+  box-shadow: 0 2px 8px rgba(245, 158, 11, 0.5) !important;
+}
+
+#leaderboardModal.full-screen-modal .leaderboard-item.rank-2 .lb-rank {
+  background: linear-gradient(135deg, #94a3b8, #64748b) !important;
+  color: #f8fafc !important;
+  border: 1px solid #cbd5e1 !important;
+  box-shadow: 0 2px 6px rgba(148, 163, 184, 0.4) !important;
+}
+
+#leaderboardModal.full-screen-modal .leaderboard-item.rank-3 .lb-rank {
+  background: linear-gradient(135deg, #b45309, #78350f) !important;
+  color: #fff7ed !important;
+  border: 1px solid #fcd34d !important;
+  box-shadow: 0 2px 6px rgba(180, 83, 9, 0.4) !important;
 }
 
 /* Tablet ve Geniş Ekranda Dengeli Genişlik */
 @media (min-width: 640px) {
   #leaderboardModal.full-screen-modal .leaderboard-modal-body > *,
   #leaderboardModal.full-screen-modal .leaderboard-tabs-nav,
-  #tournamentGuideModal.full-screen-modal .tournament-guide-content {
+  #tournamentGuideModal.full-screen-modal .tournament-guide-content,
+  #leaderboardModal.full-screen-modal #lbCurrentUserBar > div {
     max-width: 620px;
     margin-left: auto !important;
     margin-right: auto !important;
@@ -13999,23 +14189,33 @@ html.screen-fit-compact .welcome-action-guest {
   }
 }
 
-/* Kullanıcının Sırası Vurgusu (Sabit Alt Bar) */
+/* Kullanıcının Sırası Vurgusu (Sabit 3D Yüzen Alt Bar) */
 #leaderboardModal.full-screen-modal #lbCurrentUserBar {
+  position: absolute !important;
+  bottom: 0 !important;
+  left: 0 !important;
+  right: 0 !important;
+  width: 100% !important;
+  z-index: 25 !important;
   flex-shrink: 0 !important;
   margin: 0 !important;
   border-radius: 0 !important;
   border-left: none !important;
   border-right: none !important;
   border-bottom: none !important;
-  border-top: 1.5px solid var(--border-color) !important;
+  border-top: 1.5px solid rgba(99, 102, 241, 0.35) !important;
   padding-top: 10px !important;
   padding-bottom: calc(env(safe-area-inset-bottom, 12px) + 8px) !important;
   padding-left: clamp(14px, 4vw, 24px) !important;
   padding-right: clamp(14px, 4vw, 24px) !important;
-  background: var(--bg-surface) !important;
-  display: flex;
+  background: rgba(16, 19, 31, 0.96) !important;
+  backdrop-filter: blur(18px) !important;
+  -webkit-backdrop-filter: blur(18px) !important;
+  box-shadow: 0 -8px 24px rgba(0, 0, 0, 0.55), inset 0 1px 0 rgba(255, 255, 255, 0.1) !important;
+  display: flex !important;
   align-items: center !important;
   justify-content: space-between !important;
+  box-sizing: border-box !important;
 }
 
 #leaderboardModal.full-screen-modal #lbCurrentUserBar.is-hidden,
@@ -14026,12 +14226,14 @@ html.screen-fit-compact .welcome-action-guest {
 #leaderboardModal.full-screen-modal #lbPanelHonor {
   overflow: visible !important;
   flex: none !important;
+  width: 100% !important;
 }
 
 #leaderboardModal.full-screen-modal #honorLeaderboardList {
   overflow: visible !important;
   flex: none !important;
   min-height: auto !important;
+  width: 100% !important;
 }
 
 /* ==========================================================================
@@ -14094,23 +14296,33 @@ html.screen-fit-compact .welcome-action-guest {
   box-sizing: border-box !important;
 }
 
-/* Tablet ve Masaüstü Ekranlarda 3D Floating Kart Görünümü */
-@media (min-width: 640px) and (min-height: 600px) {
-  #settingsModal.full-screen-modal {
-    padding: clamp(16px, 3vh, 32px) !important;
-  }
-  #settingsModal.full-screen-modal .settings-modal-card {
-    max-width: 620px !important;
-    height: auto !important;
-    max-height: min(92vh, 880px) !important;
-    border-radius: 28px !important;
-    border: 1px solid rgba(255, 255, 255, 0.12) !important;
-    box-shadow: 
-      0 24px 60px -12px rgba(0, 0, 0, 0.75),
-      0 0 0 1px rgba(255, 255, 255, 0.06),
-      inset 0 1px 1px rgba(255, 255, 255, 0.25) !important;
-    transform: translateY(0) scale(1) !important;
-    animation: settingsCardPop 0.32s cubic-bezier(0.16, 1, 0.3, 1) !important;
+/* Ayarlar Modalı: Her Ekran Boyutunda (Mobil, Tablet, Masaüstü) Kesintisiz %100 Tam Ekran */
+#settingsModal.full-screen-modal {
+  padding: 0 !important;
+  margin: 0 !important;
+  width: 100vw !important;
+  height: 100% !important;
+  height: 100dvh !important;
+}
+
+#settingsModal.full-screen-modal .settings-modal-card {
+  width: 100% !important;
+  max-width: 100% !important;
+  height: 100% !important;
+  height: 100dvh !important;
+  max-height: 100% !important;
+  max-height: 100dvh !important;
+  border-radius: 0 !important;
+  border: none !important;
+}
+
+/* Tablet ve Masaüstü Ekranlarda İçerik Bloklarını Merkeze Hizala (Kart Tam Ekran Kalır) */
+@media (min-width: 640px) {
+  #settingsModal.full-screen-modal .settings-tab-panels > * {
+    max-width: 680px !important;
+    width: 100% !important;
+    margin-left: auto !important;
+    margin-right: auto !important;
   }
 }
 
@@ -14315,10 +14527,10 @@ html.screen-fit-compact .welcome-action-guest {
   overflow-y: auto !important;
   overflow-x: hidden !important;
   -webkit-overflow-scrolling: touch !important;
-  padding: 14px clamp(12px, 3.5vw, 22px) calc(env(safe-area-inset-bottom, 14px) + 24px) clamp(12px, 3.5vw, 22px) !important;
+  padding: 14px clamp(12px, 3.5vw, 22px) calc(env(safe-area-inset-bottom, 12px) + 8px) clamp(12px, 3.5vw, 22px) !important;
   display: flex !important;
   flex-direction: column !important;
-  gap: 14px !important;
+  gap: 12px !important;
 }
 
 #settingsModal .settings-tab-panel {
@@ -16907,6 +17119,21 @@ html:not([data-theme="dark"]) .tg-rule-card,
   box-sizing: border-box;
   max-width: 440px;
   overflow: hidden;
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: center !important;
+  text-align: center !important;
+}
+
+#roundModalIcon {
+  margin: 0 auto 12px auto !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  background: linear-gradient(135deg, rgba(245, 158, 11, 0.28), rgba(217, 119, 6, 0.38)) !important;
+  border: 2px solid rgba(245, 158, 11, 0.55) !important;
+  border-bottom: 5px solid rgba(180, 83, 9, 0.85) !important;
+  box-shadow: 0 12px 28px rgba(245, 158, 11, 0.35), inset 0 2px 4px rgba(255, 255, 255, 0.4) !important;
 }
 
 .mistake-games-grid {
@@ -18320,6 +18547,136 @@ html:not([data-theme="dark"]) .tg-rule-card,
   box-shadow: 0 6px 16px rgba(245, 158, 11, 0.35),
               0 0 22px rgba(245, 158, 11, 0.7),
               inset 0 2px 4px rgba(255, 255, 255, 0.9) !important;
+}
+
+/* ============================================================
+   ARENA OYUNLARI AKSAN SEÇİM BUTONLARI ALT SATIR YERLEŞİMİ
+   ============================================================ */
+.game-accent-subrow {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 8px !important;
+  width: 100% !important;
+  margin: 6px 0 6px 0 !important;
+}
+
+.match-score-badge {
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: center !important;
+  justify-content: center !important;
+  line-height: 1.15 !important;
+  padding: 4px 10px !important;
+  text-align: center !important;
+}
+
+.match-score-lbl {
+  font-size: 0.68rem !important;
+  font-weight: 700 !important;
+  text-transform: uppercase !important;
+  letter-spacing: 0.5px !important;
+  opacity: 0.85 !important;
+  display: block !important;
+}
+
+.match-score-nums {
+  font-size: 0.95rem !important;
+  font-weight: 800 !important;
+  display: block !important;
+}
+
+/* ============================================================
+   ARENA HAREKETSİZLİK (IDLE) HATIRLATICI / TEŞVİK PENCERESİ
+   ============================================================ */
+.arena-idle-overlay {
+  position: fixed !important;
+  inset: 0 !important;
+  z-index: 999999 !important;
+  background: rgba(0, 0, 0, 0.65) !important;
+  backdrop-filter: blur(8px) !important;
+  -webkit-backdrop-filter: blur(8px) !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  padding: 20px !important;
+  animation: arenaIdleFadeIn 0.25s cubic-bezier(0.16, 1, 0.3, 1) forwards !important;
+}
+
+@keyframes arenaIdleFadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.arena-idle-box {
+  width: 100% !important;
+  max-width: 360px !important;
+  background: linear-gradient(165deg, rgba(30, 34, 53, 0.98) 0%, rgba(18, 20, 32, 0.99) 100%) !important;
+  border: 1.5px solid rgba(245, 158, 11, 0.45) !important;
+  border-radius: 24px !important;
+  padding: 24px 20px 20px 20px !important;
+  text-align: center !important;
+  box-shadow: 
+    0 20px 50px rgba(0, 0, 0, 0.75),
+    0 0 35px rgba(245, 158, 11, 0.25),
+    inset 0 1px 0 rgba(255, 255, 255, 0.15) !important;
+  transform: scale(0.9) !important;
+  animation: arenaIdleBoxPop 0.3s cubic-bezier(0.34, 1.56, 0.64, 1) forwards !important;
+}
+
+@keyframes arenaIdleBoxPop {
+  to { transform: scale(1) !important; }
+}
+
+.arena-idle-icon {
+  font-size: 3.2rem !important;
+  line-height: 1 !important;
+  margin-bottom: 12px !important;
+  filter: drop-shadow(0 4px 12px rgba(245, 158, 11, 0.4)) !important;
+  animation: arenaIdlePulse 1.8s infinite ease-in-out !important;
+}
+
+@keyframes arenaIdlePulse {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.1); }
+}
+
+.arena-idle-message {
+  font-size: 1.05rem !important;
+  font-weight: 700 !important;
+  line-height: 1.5 !important;
+  color: #f1f5f9 !important;
+  margin: 0 0 18px 0 !important;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5) !important;
+}
+
+.arena-idle-dismiss-btn {
+  width: 100% !important;
+  padding: 12px 20px !important;
+  font-size: 0.98rem !important;
+  font-weight: 800 !important;
+  color: #0f172a !important;
+  background: linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%) !important;
+  border: none !important;
+  border-radius: 16px !important;
+  box-shadow:
+    0 4px 0 #b45309,
+    0 8px 20px rgba(245, 158, 11, 0.35),
+    inset 0 1px 0 rgba(255, 255, 255, 0.3) !important;
+  cursor: pointer !important;
+  transition: transform 0.1s ease, box-shadow 0.1s ease !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 8px !important;
+}
+
+.arena-idle-dismiss-btn:active {
+  transform: translateY(3px) !important;
+  box-shadow:
+    0 1px 0 #b45309,
+    0 4px 10px rgba(245, 158, 11, 0.3),
+    inset 0 1px 0 rgba(255, 255, 255, 0.2) !important;
 }
 
 

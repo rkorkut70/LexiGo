@@ -1,11 +1,10 @@
 {
-  "version": "v1.8.31",
-  "versionCode": 91,
+  "version": "v1.8.33",
+  "versionCode": 93,
   "releaseDate": "2026-10-19",
   "notes": [
-    "✨ 3D Şampiyon Rozetleri & Canlı Neon Efektleri: Turnuva, Liderler ve Şeref Kürsüsü ekranlarındaki 1. sıra ve şampiyon şube rozetleri 3D kupa/taç ikonlarıyla yenilendi, arkalarına yanıp sönen altın neon ışık hüzmesi (aura) efekti eklendi",
-    "🏫 Modern Şube Onay Modali: Şube seçiminde sistemin kaba 'file://' popup'ı kaldırılarak yerine şık, özel tasarımlı 3D onay penceresi entegre edildi. Şube seçildikten sonra liderlik tablosu anında güncelleniyor",
-    "📈 Ünite Açma Eşiği %80: Sonraki ünite kilidini açma barajı pedagojik standartlara uygun olarak %75'ten %80'e yükseltildi",
-    "🎯 Doğru/Yanlış Akıllı Anlam Bildirimi: Yanlış eşleştirilmiş bir kelimeye öğrenci doğru şekilde 'YANLIŞ' cevabı verdiğinde, anlık tebrik bildiriminde ve oyun kartında kelimenin gerçek doğru anlamı vurgulu olarak öğretilmektedir"
+    "🏆 Turnuva ve Liderler Ekranı 3D Yeniden Tasarımı: Alt kısım taşma ve görünmeme sorunu 100dvh ve safe-area mimarisiyle tamamen giderildi",
+    "✨ Tek Merkezli Akıcı Kaydırma: Çift scroll tuzağı kaldırılarak liste sonuna kadar kesintisiz kaydırma ve +95px alt tamponlama sağlandı",
+    "🛡️ 3D Yüzen Alt Kullanıcı Çubuğu: Buzlu cam (glassmorphism) ve neon ışıklandırmalı yüzen dock ile Okul, Sınıfım ve Şube Ligi dereceleri vurgulandı"
   ]
 }

@@ -7,7 +7,7 @@
 (function () {
   'use strict';
 
-  const APP_VERSION = 'v1.8.31';
+  const APP_VERSION = 'v1.8.35';
   const DEFAULT_AVATAR = 'avatar_default';
   const CURRENT_APP_BUILD = 'lexiq_build_19_clean';
 
@@ -68,13 +68,18 @@
     activeUnitNo: null,
     activeFilter: (function() {
       const f = localStorage.getItem('kelime_active_filter');
-      return f === 'learned' ? 'learned' : 'pending';
-    })(), // 'pending' | 'learned'
+      if (['pending', 'learned', 'mylist', 'troubled'].includes(f)) return f;
+      return 'pending';
+    })(), // 'pending' | 'learned' | 'mylist' | 'troubled'
     currentIndex: 0,
     isFlipped: false,
     words: [],
     // Öğrenilmiş kelime kimlikleri ve tekrar tarihleri: { [wordId]: { learned: true, timestamp: number } }
     learnedMap: JSON.parse(localStorage.getItem('kelime_learned_map') || '{}'),
+    // Öğrencinin "Kelime Defterim" (Listem) listesi: { [wordId]: { addedAt: number, lang: string } }
+    notebookMap: JSON.parse(localStorage.getItem('lexiq_notebook_words') || '{}'),
+    // Oyunlarda hata yapılan "Zorlandıklarım" listesi: { [wordId]: { mistakeCount: number, lastMistakeAt: number, lang: string } }
+    troubledMap: JSON.parse(localStorage.getItem('lexiq_troubled_words') || '{}'),
     touchStartX: 0,
     touchEndX: 0,
 
@@ -655,10 +660,24 @@
     cardFilterTabsContainer: document.querySelector('.card-filter-tabs-container'),
     cardTabPendingBtn: document.getElementById('cardTabPendingBtn'),
     cardTabLearnedBtn: document.getElementById('cardTabLearnedBtn'),
+    cardTabMyListBtn: document.getElementById('cardTabMyListBtn'),
+    cardTabTroubledBtn: document.getElementById('cardTabTroubledBtn'),
     pendingTabCount: document.getElementById('pendingTabCount'),
     learnedTabCount: document.getElementById('learnedTabCount'),
+    myListTabCount: document.getElementById('myListTabCount'),
+    troubledTabCount: document.getElementById('troubledTabCount'),
     tabContentPending: document.getElementById('tabContentPending'),
     tabContentLearned: document.getElementById('tabContentLearned'),
+    tabContentMyList: document.getElementById('tabContentMyList'),
+    tabContentTroubled: document.getElementById('tabContentTroubled'),
+    myListTotalBadge: document.getElementById('myListTotalBadge'),
+    troubledTotalBadge: document.getElementById('troubledTotalBadge'),
+    cardNotebookToggleBtn: document.getElementById('cardNotebookToggleBtn'),
+    cardBackNotebookToggleBtn: document.getElementById('cardBackNotebookToggleBtn'),
+    cardNotebookBtnText: document.getElementById('cardNotebookBtnText'),
+    cardBackNotebookBtnText: document.getElementById('cardBackNotebookBtnText'),
+    cardTroubledActionBtn: document.getElementById('cardTroubledActionBtn'),
+    cardBackTroubledActionBtn: document.getElementById('cardBackTroubledActionBtn'),
     inlineDailyGoalSelect: document.getElementById('inlineDailyGoalSelect'),
     inlineUnitTotalBadge: document.getElementById('inlineUnitTotalBadge'),
     filterTabs: document.querySelectorAll('.filter-tab'),
@@ -735,6 +754,10 @@
     learnMoreWordsBtn: document.getElementById('learnMoreWordsBtn'),
     learnMoreBtnText: document.getElementById('learnMoreBtnText'),
     closeGoalCompleteModalBtn: document.getElementById('closeGoalCompleteModalBtn'),
+    arenaIdlePromptOverlay: document.getElementById('arenaIdlePromptOverlay'),
+    arenaIdleIcon: document.getElementById('arenaIdleIcon'),
+    arenaIdleMessage: document.getElementById('arenaIdleMessage'),
+    arenaIdleDismissBtn: document.getElementById('arenaIdleDismissBtn'),
 
     // 1. Kart Eşleştirme (Match)
     gameMatchView: document.getElementById('gameMatchView'),
@@ -3752,7 +3775,10 @@ let activeAvatarCategory = 'all';
     const subEl = document.getElementById('obAvatarTriggerSub');
     const indicatorEl = document.getElementById('obAvatarSelectedIndicator');
     if (previewEl) setAvatarElement(previewEl, avatar);
-    if (subEl) subEl.textContent = `Seçili: ${avatar} (Değiştirmek için dokun)`;
+    if (subEl) {
+      const displayAvatarName = (avatar === DEFAULT_AVATAR || isCustomAvatar(avatar)) ? 'Öğrenci' : avatar;
+      subEl.textContent = `Seçili: ${displayAvatarName} (Değiştirmek için dokun)`;
+    }
     if (indicatorEl) setAvatarElement(indicatorEl, avatar);
 
     const grid = document.getElementById('obAvatarGrid');
@@ -3952,7 +3978,7 @@ let activeAvatarCategory = 'all';
 
     // İçerikleri görünür yapmadan ÖNCE hazırla (Böylece ekranda çift boyama / blink olmaz)
     if (stepNum === 1) {
-      updateOnboardingAvatarUI(obState.avatar || '🦊');
+      updateOnboardingAvatarUI(obState.avatar || DEFAULT_AVATAR);
       renderOnboardingAvatarDropdown(activeObAvatarCat);
       const menu = document.getElementById('obAvatarDropdownMenu');
       if (menu) {
@@ -4281,6 +4307,110 @@ let activeAvatarCategory = 'all';
   }
 
   // ==========================================
+  // KELİME DEFTERİM (LİSTEM) VE ZORLANDIKLARIM YÖNETİMİ
+  // ==========================================
+  function isWordInNotebook(wordId) {
+    if (!wordId || !state.notebookMap) return false;
+    return Boolean(state.notebookMap[wordId]);
+  }
+
+  function toggleWordInNotebook(wordObj) {
+    if (!wordObj || !wordObj.id) return;
+    const wordId = wordObj.id;
+    if (!state.notebookMap) state.notebookMap = {};
+
+    if (state.notebookMap[wordId]) {
+      delete state.notebookMap[wordId];
+      localStorage.setItem('lexiq_notebook_words', JSON.stringify(state.notebookMap));
+      showToast(`"${wordObj.kelime}" Kelime Defterim'den çıkarıldı.`);
+    } else {
+      state.notebookMap[wordId] = {
+        addedAt: Date.now(),
+        lang: wordObj.dil || state.activeLanguage
+      };
+      localStorage.setItem('lexiq_notebook_words', JSON.stringify(state.notebookMap));
+      showToast(`🔖 "${wordObj.kelime}" Kelime Defterim'e eklendi!`);
+    }
+
+    if (typeof window.syncProgressToFirebase === 'function') {
+      window.syncProgressToFirebase();
+    }
+
+    // Kart üzerindeki buton görünümünü ve sekme sayaçlarını anında güncelle
+    updateNotebookCardButtonUI(wordObj);
+    if (state.activeFilter === 'mylist') {
+      refreshWordsList();
+    } else {
+      updateCardCategoryCounters();
+    }
+  }
+
+  function updateNotebookCardButtonUI(wordObj) {
+    if (!wordObj) return;
+    const inBook = isWordInNotebook(wordObj.id);
+    const updateBtn = (btn, textEl) => {
+      if (!btn) return;
+      btn.classList.toggle('in-notebook', inBook);
+      btn.title = inBook ? "Kelime Defterim'de (Çıkarmak için dokunun)" : "Kelime Defterim'e Ekle";
+      if (textEl) {
+        textEl.textContent = inBook ? 'Listemde' : 'Listeme Ekle';
+      }
+    };
+    updateBtn(dom.cardNotebookToggleBtn, dom.cardNotebookBtnText);
+    updateBtn(dom.cardBackNotebookToggleBtn, dom.cardBackNotebookBtnText);
+  }
+
+  function isWordInTroubled(wordId) {
+    if (!wordId || !state.troubledMap) return false;
+    return Boolean(state.troubledMap[wordId]);
+  }
+
+  function addWordToTroubled(wordObj) {
+    if (!wordObj || !wordObj.id) return;
+    if (!state.troubledMap) state.troubledMap = {};
+    const cur = state.troubledMap[wordObj.id] || {
+      mistakeCount: 0,
+      lang: wordObj.dil || state.activeLanguage
+    };
+    cur.mistakeCount = (cur.mistakeCount || 0) + 1;
+    cur.lastMistakeAt = Date.now();
+    state.troubledMap[wordObj.id] = cur;
+    localStorage.setItem('lexiq_troubled_words', JSON.stringify(state.troubledMap));
+    updateCardCategoryCounters();
+    if (typeof window.syncProgressToFirebase === 'function') {
+      window.syncProgressToFirebase();
+    }
+  }
+
+  function removeWordFromTroubled(wordId) {
+    if (!wordId || !state.troubledMap) return;
+    if (state.troubledMap[wordId]) {
+      delete state.troubledMap[wordId];
+      localStorage.setItem('lexiq_troubled_words', JSON.stringify(state.troubledMap));
+      if (typeof window.syncProgressToFirebase === 'function') {
+        window.syncProgressToFirebase();
+      }
+      showToast('Kelime Zorlandıklarım listesinden kaldırıldı.');
+      if (state.activeFilter === 'troubled') {
+        refreshWordsList();
+      } else {
+        updateCardCategoryCounters();
+      }
+    }
+  }
+
+  function updateCardCategoryCounters() {
+    const allWords = getWordsData().filter(w => w.dil === state.activeLanguage);
+    const myListCount = allWords.filter(w => state.notebookMap && state.notebookMap[w.id]).length;
+    const troubledCount = allWords.filter(w => state.troubledMap && state.troubledMap[w.id]).length;
+
+    if (dom.myListTabCount) dom.myListTabCount.textContent = `(${myListCount})`;
+    if (dom.troubledTabCount) dom.troubledTabCount.textContent = `(${troubledCount})`;
+    if (dom.myListTotalBadge) dom.myListTotalBadge.textContent = `Kayıtlı: ${myListCount}`;
+    if (dom.troubledTotalBadge) dom.troubledTotalBadge.textContent = `Hatalı: ${troubledCount}`;
+  }
+
+  // ==========================================
   // VERİ YÖNETİMİ & FİLTRELEME
   // ==========================================
   function refreshWordsList() {
@@ -4319,16 +4449,31 @@ let activeAvatarCategory = 'all';
 
     // Durumları localStorage'dan senkronize et (Kural 6)
     unitWords = unitWords.map(w => {
-      const isLearned = state.learnedMap[w.id] && state.learnedMap[w.id].learned === true;
+      const isTroubled = Boolean(state.troubledMap && state.troubledMap[w.id]);
+      const isLearned = !isTroubled && Boolean(state.learnedMap[w.id] && state.learnedMap[w.id].learned === true);
       return {
         ...w,
         ogrenilme_durumu: isLearned ? 1 : 0
       };
     });
 
-    // Öğrenilmemiş ve öğrenilmiş kelimeleri ayır
-    const unlearnedWords = unitWords.filter(w => w.ogrenilme_durumu === 0);
+    // Öğrenilmemiş ve öğrenilmiş kelimeleri ayır:
+    // (Zorlandıklarım listesindeki kelimeler ne öğrenilecekler'e ne de öğrenilenler'e girer, kendi kategorisinde kalır)
+    const unlearnedWords = unitWords.filter(w => w.ogrenilme_durumu === 0 && !(state.troubledMap && state.troubledMap[w.id]));
     const learnedWords = unitWords.filter(w => w.ogrenilme_durumu === 1);
+
+    // Tüm müfredattaki "Listem" (Kelime Defterim) kelimeleri
+    const myListWords = allWords.filter(w => state.notebookMap && state.notebookMap[w.id]).map(w => {
+      const isTroubled = Boolean(state.troubledMap && state.troubledMap[w.id]);
+      const isLearned = !isTroubled && Boolean(state.learnedMap[w.id] && state.learnedMap[w.id].learned === true);
+      return { ...w, ogrenilme_durumu: isLearned ? 1 : 0 };
+    });
+
+    // Tüm müfredattaki "Zorlandıklarım" (Oyun Hataları) kelimeleri
+    // Öğrenci yeniden 'Öğrendim' diyene kadar ogrenilme_durumu = 0 olarak çalışılır
+    const troubledWords = allWords.filter(w => state.troubledMap && state.troubledMap[w.id]).map(w => {
+      return { ...w, ogrenilme_durumu: 0 };
+    });
 
     // Bugün öğrenilen kelimelerin sayısı (mevcut ünite için)
     const startOfDay = new Date();
@@ -4353,17 +4498,20 @@ let activeAvatarCategory = 'all';
       unlearnedWords.sort((a, b) => {
         const aRecord = state.learnedMap[a.id];
         const bRecord = state.learnedMap[b.id];
-        // Daha önce öğrenilip tekrara düşenler veya ipucu kullanılanlar en başa
         const aScore = aRecord ? (aRecord.learnedAt ? 1 : 2) : 0;
         const bScore = bRecord ? (bRecord.learnedAt ? 1 : 2) : 0;
         return bScore - aScore;
       });
     }
 
-    // Filtreleme: Kullanıcı kart çalışırken öğrenilen kelimeler TEKRAR önüne gelmez
+    // Filtreleme: 4 Kategori Desteği (Öğrenilecekler, Öğrenilenler, Listem, Zorlandıklarım)
     let filtered;
     if (state.activeFilter === 'learned') {
       filtered = [...learnedWords];
+    } else if (state.activeFilter === 'mylist') {
+      filtered = [...myListWords];
+    } else if (state.activeFilter === 'troubled') {
+      filtered = [...troubledWords];
     } else {
       // 'pending' filtresi: Günlük kota kadar kelime gösterilir (Tüm Ünite seçilmişse hepsi)
       if (isFullUnitMode) {
@@ -4393,7 +4541,9 @@ let activeAvatarCategory = 'all';
       todayLearned: todayLearnedInUnit,
       effectiveGoal: effectiveGoal,
       remainingForGoal: remainingForGoal,
-      isFullUnitMode: isFullUnitMode
+      isFullUnitMode: isFullUnitMode,
+      myListCount: myListWords.length,
+      troubledCount: troubledWords.length
     });
     updateArenaBadgeDot();
     updateHomeScreenUI();
@@ -4455,6 +4605,18 @@ let activeAvatarCategory = 'all';
     if (dom.learnedTabCount) {
       dom.learnedTabCount.textContent = `(${data.unitLearned})`;
     }
+    if (dom.myListTabCount) {
+      dom.myListTabCount.textContent = `(${data.myListCount || 0})`;
+    }
+    if (dom.troubledTabCount) {
+      dom.troubledTabCount.textContent = `(${data.troubledCount || 0})`;
+    }
+    if (dom.myListTotalBadge) {
+      dom.myListTotalBadge.textContent = `Kayıtlı: ${data.myListCount || 0}`;
+    }
+    if (dom.troubledTotalBadge) {
+      dom.troubledTotalBadge.textContent = `Hatalı: ${data.troubledCount || 0}`;
+    }
 
     if (dom.inlineUnitTotalBadge) {
       dom.inlineUnitTotalBadge.textContent = `Ünitede Kalan: ${data.unlearnedCount}`;
@@ -4469,24 +4631,33 @@ let activeAvatarCategory = 'all';
   }
 
   function updateCardTabsUI() {
-    if (!dom.cardTabPendingBtn || !dom.cardTabLearnedBtn) return;
-    const isLearned = state.activeFilter === 'learned';
+    if (!dom.cardTabPendingBtn) return;
+    const filter = state.activeFilter || 'pending';
 
-    dom.cardTabPendingBtn.classList.toggle('active', !isLearned);
-    dom.cardTabLearnedBtn.classList.toggle('active', isLearned);
+    if (dom.cardTabPendingBtn) dom.cardTabPendingBtn.classList.toggle('active', filter === 'pending');
+    if (dom.cardTabLearnedBtn) dom.cardTabLearnedBtn.classList.toggle('active', filter === 'learned');
+    if (dom.cardTabMyListBtn) dom.cardTabMyListBtn.classList.toggle('active', filter === 'mylist');
+    if (dom.cardTabTroubledBtn) dom.cardTabTroubledBtn.classList.toggle('active', filter === 'troubled');
 
     if (dom.tabContentPending) {
-      dom.tabContentPending.classList.toggle('active', !isLearned);
-      dom.tabContentPending.style.display = !isLearned ? 'block' : 'none';
+      dom.tabContentPending.classList.toggle('active', filter === 'pending');
+      dom.tabContentPending.style.display = (filter === 'pending') ? 'block' : 'none';
     }
     if (dom.tabContentLearned) {
-      dom.tabContentLearned.classList.toggle('active', isLearned);
-      dom.tabContentLearned.style.display = isLearned ? 'block' : 'none';
+      dom.tabContentLearned.classList.toggle('active', filter === 'learned');
+      dom.tabContentLearned.style.display = (filter === 'learned') ? 'block' : 'none';
+    }
+    if (dom.tabContentMyList) {
+      dom.tabContentMyList.classList.toggle('active', filter === 'mylist');
+      dom.tabContentMyList.style.display = (filter === 'mylist') ? 'block' : 'none';
+    }
+    if (dom.tabContentTroubled) {
+      dom.tabContentTroubled.classList.toggle('active', filter === 'troubled');
+      dom.tabContentTroubled.style.display = (filter === 'troubled') ? 'block' : 'none';
     }
 
     if (dom.cardFilterTabsContainer) {
-      dom.cardFilterTabsContainer.classList.toggle('theme-pending', !isLearned);
-      dom.cardFilterTabsContainer.classList.toggle('theme-learned', isLearned);
+      dom.cardFilterTabsContainer.className = `card-filter-tabs-container theme-${filter}`;
     }
   }
 
@@ -4515,6 +4686,10 @@ let activeAvatarCategory = 'all';
         dom.cardSentenceTranslation.textContent = '';
         dom.cardIndexCounter.textContent = '0 / 0';
         dom.cardStatusBadge.className = 'card-status-badge status-learned';
+        if (dom.cardNotebookToggleBtn) dom.cardNotebookToggleBtn.style.display = 'none';
+        if (dom.cardBackNotebookToggleBtn) dom.cardBackNotebookToggleBtn.style.display = 'none';
+        if (dom.cardTroubledActionBtn) dom.cardTroubledActionBtn.style.display = 'none';
+        if (dom.cardBackTroubledActionBtn) dom.cardBackTroubledActionBtn.style.display = 'none';
         if (dom.cardPhonetic) dom.cardPhonetic.style.display = 'none';
         if (dom.cardPos) dom.cardPos.style.display = 'none';
         if (dom.enAccentGroup) {
@@ -4532,6 +4707,88 @@ let activeAvatarCategory = 'all';
         if (dom.markLearnedBtn) {
           dom.markLearnedBtn.disabled = true;
           if (dom.markLearnedBtnText) dom.markLearnedBtnText.textContent = 'Öğrenildi';
+        }
+        if (dom.markRepeatBtn) dom.markRepeatBtn.disabled = true;
+        return;
+      } else if (state.activeFilter === 'mylist') {
+        if (dom.flashcardWrapper) dom.flashcardWrapper.style.display = 'block';
+        if (dom.cardNavBar) dom.cardNavBar.style.display = 'flex';
+        if (dom.actionPanel) dom.actionPanel.style.display = 'block';
+        if (dom.flashcardGoalCompletedView) {
+          dom.flashcardGoalCompletedView.classList.remove('active');
+          dom.flashcardGoalCompletedView.classList.add('is-hidden');
+          dom.flashcardGoalCompletedView.style.setProperty('display', 'none', 'important');
+        }
+
+        dom.cardTargetWord.textContent = 'Kelime Defterim Boş 🔖';
+        dom.cardMeaningText.textContent = 'Henüz özel çalışma listene kelime eklemedin.';
+        dom.cardExampleSentence.textContent = 'Kartlardaki "Listeme Ekle" butonuna dokunarak istediğin kelimeleri buraya ekleyebilirsin.';
+        dom.cardStatusBadge.textContent = 'Boş';
+        dom.cardSentenceTranslation.textContent = '';
+        dom.cardIndexCounter.textContent = '0 / 0';
+        dom.cardStatusBadge.className = 'card-status-badge status-pending';
+        if (dom.cardNotebookToggleBtn) dom.cardNotebookToggleBtn.style.display = 'none';
+        if (dom.cardBackNotebookToggleBtn) dom.cardBackNotebookToggleBtn.style.display = 'none';
+        if (dom.cardTroubledActionBtn) dom.cardTroubledActionBtn.style.display = 'none';
+        if (dom.cardBackTroubledActionBtn) dom.cardBackTroubledActionBtn.style.display = 'none';
+        if (dom.cardPhonetic) dom.cardPhonetic.style.display = 'none';
+        if (dom.cardPos) dom.cardPos.style.display = 'none';
+        if (dom.enAccentGroup) {
+          dom.enAccentGroup.classList.add('is-hidden');
+          dom.enAccentGroup.style.setProperty('display', 'none', 'important');
+        }
+        if (dom.pronounceBtn) {
+          dom.pronounceBtn.classList.add('is-hidden');
+          dom.pronounceBtn.style.setProperty('display', 'none', 'important');
+        }
+
+        if (dom.cardBottomControls) dom.cardBottomControls.style.display = 'flex';
+        if (dom.prevCardBtn) dom.prevCardBtn.disabled = true;
+        if (dom.nextCardBtn) dom.nextCardBtn.disabled = true;
+        if (dom.markLearnedBtn) {
+          dom.markLearnedBtn.disabled = true;
+          if (dom.markLearnedBtnText) dom.markLearnedBtnText.textContent = 'Öğrendim';
+        }
+        if (dom.markRepeatBtn) dom.markRepeatBtn.disabled = true;
+        return;
+      } else if (state.activeFilter === 'troubled') {
+        if (dom.flashcardWrapper) dom.flashcardWrapper.style.display = 'block';
+        if (dom.cardNavBar) dom.cardNavBar.style.display = 'flex';
+        if (dom.actionPanel) dom.actionPanel.style.display = 'block';
+        if (dom.flashcardGoalCompletedView) {
+          dom.flashcardGoalCompletedView.classList.remove('active');
+          dom.flashcardGoalCompletedView.classList.add('is-hidden');
+          dom.flashcardGoalCompletedView.style.setProperty('display', 'none', 'important');
+        }
+
+        dom.cardTargetWord.textContent = 'Harika! Hata Yok 🎯';
+        dom.cardMeaningText.textContent = 'Zorlandığın veya oyunlarda hata yaptığın kelime bulunmuyor.';
+        dom.cardExampleSentence.textContent = 'Arenada oyun oynarken yanlış yapılan kelimeler otomatik olarak burada toplanacaktır.';
+        dom.cardStatusBadge.textContent = 'Temiz';
+        dom.cardSentenceTranslation.textContent = '';
+        dom.cardIndexCounter.textContent = '0 / 0';
+        dom.cardStatusBadge.className = 'card-status-badge status-learned';
+        if (dom.cardNotebookToggleBtn) dom.cardNotebookToggleBtn.style.display = 'none';
+        if (dom.cardBackNotebookToggleBtn) dom.cardBackNotebookToggleBtn.style.display = 'none';
+        if (dom.cardTroubledActionBtn) dom.cardTroubledActionBtn.style.display = 'none';
+        if (dom.cardBackTroubledActionBtn) dom.cardBackTroubledActionBtn.style.display = 'none';
+        if (dom.cardPhonetic) dom.cardPhonetic.style.display = 'none';
+        if (dom.cardPos) dom.cardPos.style.display = 'none';
+        if (dom.enAccentGroup) {
+          dom.enAccentGroup.classList.add('is-hidden');
+          dom.enAccentGroup.style.setProperty('display', 'none', 'important');
+        }
+        if (dom.pronounceBtn) {
+          dom.pronounceBtn.classList.add('is-hidden');
+          dom.pronounceBtn.style.setProperty('display', 'none', 'important');
+        }
+
+        if (dom.cardBottomControls) dom.cardBottomControls.style.display = 'flex';
+        if (dom.prevCardBtn) dom.prevCardBtn.disabled = true;
+        if (dom.nextCardBtn) dom.nextCardBtn.disabled = true;
+        if (dom.markLearnedBtn) {
+          dom.markLearnedBtn.disabled = true;
+          if (dom.markLearnedBtnText) dom.markLearnedBtnText.textContent = 'Öğrendim';
         }
         if (dom.markRepeatBtn) dom.markRepeatBtn.disabled = true;
         return;
@@ -4577,7 +4834,8 @@ let activeAvatarCategory = 'all';
     if (dom.markRepeatBtn) dom.markRepeatBtn.disabled = false;
 
     const currentWord = state.words[state.currentIndex];
-    const isLearned = currentWord.ogrenilme_durumu === 1 || Boolean(state.learnedMap[currentWord.id] && state.learnedMap[currentWord.id].learned);
+    const isTroubled = isWordInTroubled(currentWord);
+    const isLearned = !isTroubled && (currentWord.ogrenilme_durumu === 1 || Boolean(state.learnedMap[currentWord.id] && state.learnedMap[currentWord.id].learned));
 
     if (dom.cardReviewGoArenaBtn) {
       dom.cardReviewGoArenaBtn.style.setProperty('display', 'none', 'important');
@@ -4600,12 +4858,17 @@ let activeAvatarCategory = 'all';
         dom.markLearnedBtn.disabled = false;
         dom.markLearnedBtn.classList.remove('is-already-learned');
         if (dom.markLearnedBtnText) {
-          dom.markLearnedBtnText.textContent = 'Öğrendim';
+          dom.markLearnedBtnText.textContent = isTroubled ? 'Öğrendim ✓' : 'Öğrendim';
         }
       }
       if (dom.cardStatusBadge) {
-        dom.cardStatusBadge.textContent = 'Bekliyor';
-        dom.cardStatusBadge.className = 'card-status-badge status-pending';
+        if (isTroubled) {
+          dom.cardStatusBadge.textContent = '⚠️ Zorlandın';
+          dom.cardStatusBadge.className = 'card-status-badge status-pending';
+        } else {
+          dom.cardStatusBadge.textContent = 'Bekliyor';
+          dom.cardStatusBadge.className = 'card-status-badge status-pending';
+        }
       }
     }
 
@@ -4709,6 +4972,19 @@ let activeAvatarCategory = 'all';
       dom.cardStatusBadge.className = 'card-status-badge status-pending';
     }
 
+    // Defterim / Zorlandıklarım Aksiyon Butonları UI Güncellemesi
+    if (dom.cardNotebookToggleBtn) dom.cardNotebookToggleBtn.style.display = 'inline-flex';
+    if (dom.cardBackNotebookToggleBtn) dom.cardBackNotebookToggleBtn.style.display = 'inline-flex';
+    updateNotebookCardButtonUI(currentWord);
+
+    const showTroubledBtn = isTroubled || state.activeFilter === 'troubled';
+    if (dom.cardTroubledActionBtn) {
+      dom.cardTroubledActionBtn.style.display = showTroubledBtn ? 'inline-flex' : 'none';
+    }
+    if (dom.cardBackTroubledActionBtn) {
+      dom.cardBackTroubledActionBtn.style.display = showTroubledBtn ? 'inline-flex' : 'none';
+    }
+
     // Gezinme Durumu
     dom.cardIndexCounter.textContent = `${state.currentIndex + 1} / ${state.words.length}`;
     dom.prevCardBtn.disabled = state.currentIndex === 0;
@@ -4781,12 +5057,19 @@ let activeAvatarCategory = 'all';
       if (!state.sessionLearnedIds) state.sessionLearnedIds = new Set();
       state.sessionLearnedIds.add(wordId);
       updateDailyStudyStreak();
-      const wasLearned = !!(state.learnedMap[wordId] && state.learnedMap[wordId].learned);
-      if (!wasLearned) {
+      const isTroubledWord = Boolean(state.troubledMap && state.troubledMap[wordId]);
+      if (isTroubledWord) {
+        removeWordFromTroubled(wordId);
         addXp(10);
-        showToast('Tebrikler! Kelime öğrenildi ✓ (+10 XP)');
+        showToast('🎯 Harika! Kelime pekiştirildi ve "Öğrenilenler" listesine aktarıldı ✓ (+10 XP)');
       } else {
-        showToast('Tebrikler! Kelime öğrenildi ✓');
+        const wasLearned = !!(state.learnedMap[wordId] && state.learnedMap[wordId].learned);
+        if (!wasLearned) {
+          addXp(10);
+          showToast('Tebrikler! Kelime öğrenildi ✓ (+10 XP)');
+        } else {
+          showToast('Tebrikler! Kelime öğrenildi ✓');
+        }
       }
     } else {
       triggerHapticFeedback('warning');
@@ -6100,6 +6383,8 @@ let activeAvatarCategory = 'all';
     const allWords = getWordsData().filter(w => w.dil === state.activeLanguage && (!targetLevel || w.seviye === targetLevel));
 
     return allWords.filter(w => {
+      // Zorlandıklarım listesindeki kelimeler hariç tutulur
+      if (state.troubledMap && state.troubledMap[w.id]) return false;
       const rec = state.learnedMap[w.id];
       if (!rec || !rec.learned) return false;
       if (state.sessionLearnedIds && state.sessionLearnedIds.has(w.id)) return true;
@@ -6333,6 +6618,9 @@ let activeAvatarCategory = 'all';
       activeGameSession.mistakeWordIds.add(wordObj.id);
       activeGameSession.mistakeWords.push(wordObj);
     }
+    // Kullanıcı Kuralı: Oyunlarda yapılan hatalar Zorlandıklarım listesine kaydedilir
+    addWordToTroubled(wordObj);
+    recordArenaUserAction(true);
   }
 
   function getNextMistakeRetryCandidate() {
@@ -6396,6 +6684,7 @@ let activeAvatarCategory = 'all';
   }
 
   function onWordSolvedInRound(gameName, wordId, earnedXp) {
+    recordArenaUserAction(true);
     if (!activeGameSession || activeGameSession.gameName !== gameName) {
       initGameSession(gameName);
     }
@@ -6423,6 +6712,9 @@ let activeAvatarCategory = 'all';
 
   function showGameRoundCompletedModal(gameName) {
     if (!dom.gameRoundCompletedModal) return;
+
+    // Kesinlikle tüm açık oyun sayaçlarını (True/False, Tetris vb.) durdur
+    stopAllGames();
 
     if (typeof closeDailyPracticeMilestoneModal === 'function') {
       closeDailyPracticeMilestoneModal();
@@ -6467,19 +6759,18 @@ let activeAvatarCategory = 'all';
           }).join('');
         }
 
-        // SEÇENEK 1: Kelimeleri öğrenilecek kelimelere geri ekle ve kartlara git
+        // SEÇENEK 1: Zorlandıklarım Listesinde İncele & Kartları Çalış
         if (dom.roundMistakesToCardsBtn) {
           dom.roundMistakesToCardsBtn.onclick = () => {
             mistakeWords.forEach(w => {
-              delete state.learnedMap[w.id];
-              if (state.sessionLearnedIds) state.sessionLearnedIds.delete(w.id);
+              addWordToTroubled(w);
             });
-            localStorage.setItem('kelime_learned_map', JSON.stringify(state.learnedMap));
-            if (typeof window.syncProgressToFirebase === 'function') window.syncProgressToFirebase();
+            state.activeFilter = 'troubled';
             closeGameRoundCompletedModal();
             stopAllGames();
             switchAppMode('flashcards');
-            showToast(`📚 ${mistakeWords.length} kelime tekrar öğrenilecek kelimelere eklendi! Kartlar açılıyor...`);
+            refreshWordsList();
+            showToast(`⚠️ ${mistakeWords.length} kelime "Zorlandıklarım" sekmesinde listelendi! Kartlar açılıyor...`);
           };
         }
 
@@ -6550,22 +6841,34 @@ let activeAvatarCategory = 'all';
 
     const cfg = GAME_CONFIG[gameName] || { name: 'Alıştırma' };
 
-    if (isTodayPoolExhausted) {
+    if (activeGameSession && activeGameSession.solvedCount < activeGameSession.targetCount) {
+      if (dom.roundModalIcon) dom.roundModalIcon.textContent = '📊';
+      if (dom.roundModalTitle) {
+        dom.roundModalTitle.textContent = 'Alıştırma Özeti';
+        dom.roundModalTitle.style.color = '';
+        dom.roundModalTitle.classList.remove('gold-title');
+        dom.roundModalTitle.classList.add('blue-title');
+      }
+      if (dom.roundModalSubtitle) dom.roundModalSubtitle.textContent = `${cfg.name} oturumu sonlandırıldı (${activeGameSession.solvedCount} / ${activeGameSession.targetCount} kelime tamamlandı).`;
+      if (dom.roundModalPedagogyText) {
+        dom.roundModalPedagogyText.innerHTML = `Alıştırmayı erken sonlandırdınız ancak çözdüğünüz <strong>${activeGameSession.solvedCount} kelime</strong> ve kazandığınız <strong>+${activeGameSession.earnedXp} XP</strong> kaydedildi.`;
+      }
+    } else if (isTodayPoolExhausted) {
       if (dom.roundModalIcon) dom.roundModalIcon.textContent = '🌟';
       if (dom.roundModalTitle) {
-        dom.roundModalTitle.textContent = 'Günün Kelimeleri Pekiştirildi! 🎉';
+        dom.roundModalTitle.textContent = 'Günün Kelimeleri Pekiştirildi!';
         dom.roundModalTitle.style.color = '';
         dom.roundModalTitle.classList.remove('blue-title');
         dom.roundModalTitle.classList.add('gold-title');
       }
       if (dom.roundModalSubtitle) dom.roundModalSubtitle.textContent = `Bugün öğrendiğin tüm kelimeleri (${todayLearned.length} kelime) ${cfg.name} ile tamamladın!`;
       if (dom.roundModalPedagogyText) {
-        dom.roundModalPedagogyText.innerHTML = `<strong>Tebrikler!</strong> Bugün öğrendiğiniz tüm kelimelerle bu alıştırmayı yaptınız. 🎯<br><br>Kelimeleri kalıcı hafızaya atmak ve farklı açılardan pekiştirmek için şimdi <strong>başka bir alıştırma</strong> denemek ister misiniz?`;
+        dom.roundModalPedagogyText.innerHTML = `<strong>Tebrikler!</strong> Bugün öğrendiğiniz tüm kelimelerle bu alıştırmayı yaptınız.<br><br>Kelimeleri kalıcı hafızaya atmak ve farklı açılardan pekiştirmek için şimdi <strong>başka bir alıştırma</strong> denemek ister misiniz?`;
       }
     } else {
       if (dom.roundModalIcon) dom.roundModalIcon.textContent = '🏆';
       if (dom.roundModalTitle) {
-        dom.roundModalTitle.textContent = `${activeGameSession.roundNumber}. Tur Tamamlandı! 🎯`;
+        dom.roundModalTitle.textContent = `${activeGameSession.roundNumber}. Tur Tamamlandı!`;
         dom.roundModalTitle.style.color = '';
         dom.roundModalTitle.classList.remove('gold-title');
         dom.roundModalTitle.classList.add('blue-title');
@@ -6675,17 +6978,21 @@ let activeAvatarCategory = 'all';
   function getLearnedWordsPool() {
     const targetLevel = state.userLevel || getLevelForTrack(state.activeLanguage, state.userTrack);
     const allWords = getWordsData().filter(w => w.dil === state.activeLanguage && (!targetLevel || w.seviye === targetLevel));
-    const allLearned = allWords.filter(w => state.learnedMap[w.id] && state.learnedMap[w.id].learned === true);
 
-    // Hata yapılan kelimeler varsa havuzun en başına öncelikli yerleştir
-    if (state.arenaMistakeRetryPool && state.arenaMistakeRetryPool.length > 0) {
-      const mistakeIds = new Set(state.arenaMistakeRetryPool.map(w => w.id));
-      const rest = allLearned.filter(w => !mistakeIds.has(w.id));
-      return [...state.arenaMistakeRetryPool, ...rest];
-    }
+    // Kural (Kullanıcı İstemi):
+    // 1. "Zorlandıklarım" listesindeki kelimeler öğrenci yeniden 'öğrendim' diyene kadar Arenada KULLANILMAZ.
+    // 2. "Listem" (Kelime Defterim) listesindeki kelimeler Arenada KULLANILIR.
+    // 3. Normal öğrenilen kelimeler Arenada KULLANILIR.
+    const isTroubled = (w) => Boolean(state.troubledMap && state.troubledMap[w.id]);
+    const isNotebook = (w) => Boolean(state.notebookMap && state.notebookMap[w.id]);
+    const isLearned = (w) => Boolean(state.learnedMap[w.id] && state.learnedMap[w.id].learned === true);
 
-    if (state.arenaUseAllLearnedWordsPool || allLearned.length <= 3) {
-      return allLearned;
+    // Arenada kullanılabilecek geçerli kelimeler:
+    // (Öğrenilenler VEYA Listem'dekiler) VE Zorlandıklarım'da OLMAYANLAR
+    const eligibleWords = allWords.filter(w => !isTroubled(w) && (isLearned(w) || isNotebook(w)));
+
+    if (state.arenaUseAllLearnedWordsPool || eligibleWords.length <= 3) {
+      return eligibleWords;
     }
 
     const todayLearned = getTodayLearnedWordsList();
@@ -6695,12 +7002,12 @@ let activeAvatarCategory = 'all';
 
       if (unpracticedToday.length >= 3) {
         // Bugün öğrenilip henüz oyunda karşısına çıkmamış kelimeleri önceliklendir
-        const rest = allLearned.filter(w => !unpracticedToday.some(u => u.id === w.id));
+        const rest = eligibleWords.filter(w => !unpracticedToday.some(u => u.id === w.id));
         return [...unpracticedToday, ...rest];
       }
     }
 
-    return allLearned;
+    return eligibleWords;
   }
 
   function updateArenaBadgeDot() {
@@ -7189,9 +7496,108 @@ let activeAvatarCategory = 'all';
     } catch (e) {}
   }
 
-  let scrambleNextTimeout = null;
+  // ==========================================
+  // ARENA HAREKETSİZLİK (IDLE) HATIRLATICI & TEŞVİK SİSTEMİ
+  // ==========================================
+  let arenaIdleTimer = null;
+  let arenaHasStartedAction = false;
+  let arenaIdlePromptVisible = false;
+
+  const ARENA_START_REMINDER_MESSAGES = [
+    { icon: '🚀', msg: 'Hey şampiyon! Arena seni bekliyor, ilk hamleni yapmaya hazır mısın?' },
+    { icon: '✨', msg: 'Kelimeler sabırsızlanıyor! Macerayı başlatmak için bir dokun bakalım.' },
+    { icon: '🎯', msg: 'İlk adım her zaman en heyecanlısıdır! Hadi, sahne senin!' },
+    { icon: '⚡', msg: 'Zaman akıyor, kelime hazinenden ilk cevabı çıkarmanın tam vakti!' },
+    { icon: '🔥', msg: 'Küçük bir dokunuşla büyük bir seri başlayabilir! Hadi başla!' },
+    { icon: '🌟', msg: 'Burada keşfedilecek harika kelimeler var! İlk seçeneğe tıkla.' },
+    { icon: '⚔️', msg: 'Reflekslerini test etme zamanı! Arenada ilk kelime seni çağırıyor.' },
+    { icon: '💎', msg: 'Hadi bakalım, bugün kaç XP toplayacaksın? Başlangıç butonuna dokun!' },
+    { icon: '💃', msg: 'Kelimeler parmaklarının ucunda dans etmeyi bekliyor!' },
+    { icon: '🍀', msg: 'Şans cesurlardan yanadır! İlk tahminini yapmaktan çekinme.' },
+    { icon: '🧠', msg: 'Bugün harika bir dil günü! İlk kelimeyle zihnini ısıt.' },
+    { icon: '🏆', msg: 'Gözler üzerinde! Arenadaki ilk hamleni merakla bekliyoruz.' },
+    { icon: '🔗', msg: 'Kelimelerle arandaki bağı güçlendirmeye sadece bir dokunuş kaldı!' },
+    { icon: '🚀', msg: 'Biraz düşündün, şimdi harekete geçme vakti! Başla!' },
+    { icon: '🏁', msg: 'Her büyük başarı ilk adımla başlar! Hadi ilk kelimeyi seç.' },
+    { icon: '💡', msg: 'Zihnindeki kelime dağarcığını serbest bırak! İlk hamle senden.' },
+    { icon: '👑', msg: 'Arenanın şampiyonu olmak için ilk adımı at!' },
+    { icon: '📱', msg: 'Hey! Ekran biraz yalnız kaldı, ona bir dokunuş hediye et!' },
+    { icon: '🏹', msg: 'Kelime avcısı iş başında olmalı! Avını yakalamak için başla.' },
+    { icon: '⚡', msg: 'Enerjin tavan, kelimeler hazır! Oyunu başlat ve puanları kap!' }
+  ];
+
+  const ARENA_CONTINUE_ENCOURAGEMENT_MESSAGES = [
+    { icon: '🔥', msg: 'Harika gidiyordun! Hadi seriyi bozma, hız kesmeden devam et!' },
+    { icon: '💡', msg: 'Pes etmek yok! Doğru cevap parmaklarının ucunda, hissedebiliyorum.' },
+    { icon: '🎯', msg: 'Biraz soluklandın, şimdi cevabı yapıştırma zamanı! Devam et!' },
+    { icon: '🌟', msg: "XP'ler seni bekliyor, durmak yok yola devam!" },
+    { icon: '💪', msg: 'Odaklan şampiyon! Bu kelimeyi de doğru yapacaksın, inanıyoruz.' },
+    { icon: '🚀', msg: 'Derin bir nefes aldın, şimdi sıradaki puanı kapma sırası sende!' },
+    { icon: '⚡', msg: 'Seri çarpanın yükseliyor! Ritmini kaybetmeden sonraki hamleye geç.' },
+    { icon: '🏁', msg: 'Çok iyi ilerliyorsun, yarım bırakmak senin tarzın değil! Devam!' },
+    { icon: '💡', msg: 'Zihnindeki ışık parladı mı? Hadi o şıkkı seç!' },
+    { icon: '🌪️', msg: 'Arenada fırtına gibi esiyordun, rüzgarı arkana alıp devam et!' },
+    { icon: '🏆', msg: 'Liderlik tablosu seni çağırıyor! Bir sonraki cevaba dokun.' },
+    { icon: '🎯', msg: 'Hata yapmaktan korkma, her deneme seni daha usta yapar! Devam et.' },
+    { icon: '🎵', msg: 'Kelimeler senin kontrolünde! Hadi ritmi yakala ve ilerle.' },
+    { icon: '🥊', msg: 'Bu turu zaferle tamamlamaya çok az kaldı! Bırakma!' },
+    { icon: '💎', msg: 'Mükemmel gidiyorsun, biraz daha dikkatle tam puan cepte!' },
+    { icon: '🔥', msg: 'Seriyi korumak senin elinde! Sıradaki hamleni bekliyoruz.' },
+    { icon: '⏱️', msg: 'Zaman işliyor ama kontrol sende! Hadi bir sonraki kelimeye dokun.' },
+    { icon: '🧠', msg: 'Beyin jimnastiği tam gaz sürüyor! Durmak yok, kelimeye dokun.' },
+    { icon: '🥇', msg: 'Son düzlüktesin! Bir gayretle bu turu şampiyon gibi bitir.' },
+    { icon: '✨', msg: 'Harika bir tempo yakalamıştın, sahneye geri dön ve parılda!' }
+  ];
+
+  function dismissArenaIdlePrompt() {
+    if (dom.arenaIdlePromptOverlay) {
+      dom.arenaIdlePromptOverlay.style.display = 'none';
+    }
+    arenaIdlePromptVisible = false;
+  }
+
+  function showArenaIdlePrompt() {
+    if (!state.activeGame) return;
+    if (dom.gameRoundCompletedModal && dom.gameRoundCompletedModal.style.display !== 'none') return;
+    if (dom.arenaIdlePromptOverlay) {
+      const list = arenaHasStartedAction ? ARENA_CONTINUE_ENCOURAGEMENT_MESSAGES : ARENA_START_REMINDER_MESSAGES;
+      const pick = list[Math.floor(Math.random() * list.length)];
+      if (dom.arenaIdleIcon) dom.arenaIdleIcon.textContent = pick.icon;
+      if (dom.arenaIdleMessage) dom.arenaIdleMessage.textContent = pick.msg;
+      dom.arenaIdlePromptOverlay.style.display = 'flex';
+      arenaIdlePromptVisible = true;
+      triggerHapticFeedback('light');
+    }
+  }
+
+  function resetArenaIdleTimer() {
+    if (arenaIdleTimer) {
+      clearTimeout(arenaIdleTimer);
+      arenaIdleTimer = null;
+    }
+    dismissArenaIdlePrompt();
+
+    // Sadece aktif bir oyun ekranı varken 10 saniye hareketsizlik sayacı çalışır
+    if (state.activeGame && dom.arenaActiveGameArea && dom.arenaActiveGameArea.style.display !== 'none') {
+      arenaIdleTimer = setTimeout(() => {
+        showArenaIdlePrompt();
+      }, 10000);
+    }
+  }
+
+  function recordArenaUserAction(isGameplayProgress = false) {
+    if (isGameplayProgress) {
+      arenaHasStartedAction = true;
+    }
+    resetArenaIdleTimer();
+  }
 
   function stopAllGames() {
+    if (arenaIdleTimer) {
+      clearTimeout(arenaIdleTimer);
+      arenaIdleTimer = null;
+    }
+    dismissArenaIdlePrompt();
     stopTetrisGame();
     stopTrueFalseGame();
     stopSpeakGame();
@@ -7268,6 +7674,8 @@ let activeAvatarCategory = 'all';
   function startGameRound(gameName) {
     stopAllGames();
     state.activeGame = gameName;
+    arenaHasStartedAction = false;
+    resetArenaIdleTimer();
     openFullscreenIfSupported();
     initGameSession(gameName);
 
@@ -9164,6 +9572,7 @@ let activeAvatarCategory = 'all';
   function handleTrueFalseAnswer(userChoice) {
     if (!tfState.active || tfState.isAnswering) return;
     tfState.isAnswering = true;
+    stopTrueFalseGame(); // Sayacı derhal durdur ki arka planda süre bitip uyarı vermesin
 
     const isUserCorrect = (userChoice === tfState.isCorrectMatch);
 
@@ -10540,6 +10949,65 @@ let activeAvatarCategory = 'all';
       });
     }
 
+    if (dom.cardTabMyListBtn) {
+      dom.cardTabMyListBtn.addEventListener('click', () => {
+        state.activeFilter = 'mylist';
+        localStorage.setItem('kelime_active_filter', 'mylist');
+        state.currentIndex = 0;
+        updateCardTabsUI();
+        refreshWordsList();
+      });
+    }
+
+    if (dom.cardTabTroubledBtn) {
+      dom.cardTabTroubledBtn.addEventListener('click', () => {
+        state.activeFilter = 'troubled';
+        localStorage.setItem('kelime_active_filter', 'troubled');
+        state.currentIndex = 0;
+        updateCardTabsUI();
+        refreshWordsList();
+      });
+    }
+
+    // Kelime Defterim (Listem) ve Zorlandıklarım Buton Aksiyonları
+    const handleNotebookToggle = (e) => {
+      if (e) { e.preventDefault(); e.stopPropagation(); }
+      if (!state.words || state.words.length === 0) return;
+      const currentWord = state.words[state.currentIndex];
+      if (!currentWord) return;
+      const added = toggleWordInNotebook(currentWord);
+      updateNotebookCardButtonUI(currentWord);
+      updateCardCategoryCounters();
+      if (added) {
+        showToast(`🔖 "${currentWord.kelime}" Kelime Defterim'e eklendi!`);
+      } else {
+        showToast(`"${currentWord.kelime}" listenden çıkarıldı.`);
+        if (state.activeFilter === 'mylist') {
+          refreshWordsList();
+        }
+      }
+    };
+
+    if (dom.cardNotebookToggleBtn) {
+      dom.cardNotebookToggleBtn.addEventListener('click', handleNotebookToggle);
+    }
+    if (dom.cardBackNotebookToggleBtn) {
+      dom.cardBackNotebookToggleBtn.addEventListener('click', handleNotebookToggle);
+    }
+
+    const handleTroubledAction = (e) => {
+      if (e) { e.preventDefault(); e.stopPropagation(); }
+      if (!state.words || state.words.length === 0) return;
+      markWordStatus(1);
+    };
+
+    if (dom.cardTroubledActionBtn) {
+      dom.cardTroubledActionBtn.addEventListener('click', handleTroubledAction);
+    }
+    if (dom.cardBackTroubledActionBtn) {
+      dom.cardBackTroubledActionBtn.addEventListener('click', handleTroubledAction);
+    }
+
     // Kart Sayfası İçi Hızlı Günlük Hedef Seçimi (Inline)
     if (dom.inlineDailyGoalSelect) {
       dom.inlineDailyGoalSelect.addEventListener('change', (e) => {
@@ -10626,7 +11094,7 @@ let activeAvatarCategory = 'all';
         isSwiping = false;
         return;
       }
-      if (e.target.closest('#pronounceBtn, #pronounceUsBtn, #pronounceUkBtn, .accent-btn, .audio-btn, .accent-btn-group, .audio-controls-row, #prevCardBtn, #nextCardBtn, .card-edge-nav-btn, #markLearnedBtn, #markRepeatBtn, .card-inner-action-btn')) return;
+      if (e.target.closest('#pronounceBtn, #pronounceUsBtn, #pronounceUkBtn, .accent-btn, .audio-btn, .accent-btn-group, .audio-controls-row, #prevCardBtn, #nextCardBtn, .card-edge-nav-btn, #markLearnedBtn, #markRepeatBtn, .card-inner-action-btn, #cardNotebookToggleBtn, #cardBackNotebookToggleBtn, .card-notebook-btn, #cardTroubledActionBtn, #cardBackTroubledActionBtn, .card-troubled-pill')) return;
       toggleFlip();
     });
 
@@ -10871,7 +11339,7 @@ let activeAvatarCategory = 'all';
               listContainer.innerHTML += `
                 <div class="leaderboard-item ${rankClass}" style="${highlightStyle}">
                   ${rankDisplayHtml}
-                  <div class="lb-avatar">${getAvatarMarkup(user.avatar || '🦊', 'width:38px; height:38px;')}</div>
+                  <div class="lb-avatar">${getAvatarMarkup(user.avatar || DEFAULT_AVATAR, 'width:38px; height:38px;')}</div>
                   <div class="lb-info">
                     <div style="display:flex; align-items:center; gap:6px;">
                       <div class="lb-name">${user.displayName || 'Öğrenci'}</div>
@@ -11010,6 +11478,30 @@ let activeAvatarCategory = 'all';
                 </div>
               `;
             });
+
+            // Alt bar şube durumu
+            if (myBar) {
+              const myBranchIdx = branches.findIndex(b => state.userBranch && b.code === state.userBranch);
+              if (myBranchIdx !== -1) {
+                const myB = branches[myBranchIdx];
+                myBar.style.display = 'flex';
+                const rankB = document.getElementById('lbMyRankBadge');
+                const avB = document.getElementById('lbMyAvatar');
+                const nameB = document.getElementById('lbMyName');
+                const tagB = document.getElementById('lbMyBranchTag');
+                const scoreB = document.getElementById('lbMyScore');
+                if (rankB) rankB.textContent = `#${myBranchIdx + 1}`;
+                if (avB) {
+                  avB.innerHTML = '🏫';
+                  avB.style.fontSize = '1.2rem';
+                }
+                if (nameB) nameB.textContent = `Şuben: ${myB.code}`;
+                if (tagB) tagB.textContent = `👥 ${myB.studentCount} Öğrenci`;
+                if (scoreB) scoreB.textContent = `Ø ${myB.avgWeeklyXp} XP`;
+              } else {
+                myBar.style.display = 'none';
+              }
+            }
           }
         } catch (e) {
           console.warn('Duels leaderboard error:', e);
@@ -11128,6 +11620,37 @@ let activeAvatarCategory = 'all';
         return all;
       };
 
+      const formatWeekDisplay = (weekId) => {
+        if (!weekId) return 'Tamamlanan Hafta';
+        if (typeof weekId === 'string' && weekId.includes('Haftası')) return weekId;
+        const dateMatch = typeof weekId === 'string' ? weekId.match(/\(([^)]+)\)/) : null;
+        if (dateMatch) return `${dateMatch[1].trim()} Haftası`;
+        const isoMatch = typeof weekId === 'string' ? weekId.match(/(\d{4})-W(\d{1,2})/i) : null;
+        if (isoMatch) {
+          const year = parseInt(isoMatch[1], 10);
+          const weekNum = parseInt(isoMatch[2], 10);
+          try {
+            const jan4 = new Date(Date.UTC(year, 0, 4));
+            const dayOfWeek = jan4.getUTCDay() || 7;
+            const monWeek1 = new Date(jan4);
+            monWeek1.setUTCDate(jan4.getUTCDate() - dayOfWeek + 1);
+            const monday = new Date(monWeek1);
+            monday.setUTCDate(monWeek1.getUTCDate() + (weekNum - 1) * 7);
+            const sunday = new Date(monday);
+            sunday.setUTCDate(monday.getUTCDate() + 6);
+            const months = ['Ocak', 'Şubat', 'Mart', 'Nisan', 'Mayıs', 'Haziran', 'Temmuz', 'Ağustos', 'Eylül', 'Ekim', 'Kasım', 'Aralık'];
+            const m1 = months[monday.getUTCMonth()];
+            const m2 = months[sunday.getUTCMonth()];
+            const d1 = monday.getUTCDate();
+            const d2 = sunday.getUTCDate();
+            return (m1 === m2) ? `${d1} - ${d2} ${m1} Haftası` : `${d1} ${m1} - ${d2} ${m2} Haftası`;
+          } catch(e) {
+            return `${weekNum}. Hafta`;
+          }
+        }
+        return weekId;
+      };
+
       try {
         const targetLang = currentPodiumLang || state.activeLanguage || 'EN-TR';
         const langPrefix = targetLang.split('-')[0];
@@ -11163,7 +11686,7 @@ let activeAvatarCategory = 'all';
             const baseAvg = Math.max(rawA1, rawA2, rawA3, 350);
 
             archives = [{
-              weekId: '2026-W41 (12 - 18 Ekim)',
+              weekId: '12 - 18 Ekim Haftası',
               firstBranch: b1.code,
               firstAvg: Math.max(rawA1, baseAvg + 240, 1420),
               secondBranch: b2.code,
@@ -11213,7 +11736,7 @@ let activeAvatarCategory = 'all';
             listContainer.innerHTML += monthBannerHtml;
 
             const latest = archives[0];
-            const latestWeekTitle = latest.weekId.includes('(') ? latest.weekId : `${latest.weekId} • Tamamlanan Hafta`;
+            const latestWeekTitle = formatWeekDisplay(latest.weekId);
             const m1 = getBranchMeta(latest.firstBranch);
             const m2 = getBranchMeta(latest.secondBranch);
             const m3 = getBranchMeta(latest.thirdBranch);
@@ -11287,7 +11810,7 @@ let activeAvatarCategory = 'all';
               `;
 
               archives.slice(1).forEach(arc => {
-                const weekLabel = arc.weekId.includes('(') ? arc.weekId : `Hafta ${arc.weekId}`;
+                const weekLabel = formatWeekDisplay(arc.weekId);
                 listContainer.innerHTML += `
                   <div class="podium-accordion-item">
                     <div class="podium-accordion-header" onclick="this.parentElement.classList.toggle('open')">
@@ -11702,6 +12225,7 @@ let activeAvatarCategory = 'all';
             } else {
               let currentRank = 1;
               let previousXP = null;
+              let myRank = null;
 
               leaders.forEach((user, index) => {
                 if (previousXP !== null && user.xp < previousXP) {
@@ -11715,7 +12239,8 @@ let activeAvatarCategory = 'all';
                 if (user.xp >= 5000) badge = 'Efsane';
                 if (user.xp >= 10000) badge = 'Şampiyon';
                 
-                const isMe = (window.fbUser && user.uid === window.fbUser.uid);
+                const isMe = (window.fbUser && user.uid === window.fbUser.uid) || (user.displayName === state.userName && user.avatar === state.userAvatar);
+                if (isMe) myRank = { rank, xp: user.xp };
                 const userLang = user.lang || (isMe ? state.activeLanguage : 'EN-TR');
                 const flagIcon = getLangFlag(userLang);
                 const langTitle = (typeof LANG_META !== 'undefined' && LANG_META[userLang] && LANG_META[userLang].name) ? LANG_META[userLang].name : userLang;
@@ -11730,7 +12255,7 @@ let activeAvatarCategory = 'all';
                 listContainer.innerHTML += `
                   <div class="leaderboard-item rank-${rank}" style="${isMe ? 'background: rgba(37, 99, 235, 0.1); border-left: 4px solid var(--accent);' : ''}">
                     ${rankDisplayHtml}
-                    <div class="lb-avatar">${getAvatarMarkup(user.avatar || '🦊', 'width:38px; height:38px;')}</div>
+                    <div class="lb-avatar">${getAvatarMarkup(user.avatar || DEFAULT_AVATAR, 'width:38px; height:38px;')}</div>
                     <div class="lb-info">
                       <div style="display:flex; align-items:center; gap:6px; flex-wrap:wrap;">
                         <div class="lb-name">${user.displayName || 'Öğrenci'}</div>
@@ -11744,6 +12269,25 @@ let activeAvatarCategory = 'all';
                   </div>
                 `;
               });
+
+              // Alt bar kullanıcı durumu (Genel Sıralama)
+              if (myBar) {
+                if (myRank) {
+                  myBar.style.display = 'flex';
+                  const rankB = document.getElementById('lbMyRankBadge');
+                  const avB = document.getElementById('lbMyAvatar');
+                  const nameB = document.getElementById('lbMyName');
+                  const tagB = document.getElementById('lbMyBranchTag');
+                  const scoreB = document.getElementById('lbMyScore');
+                  if (rankB) rankB.textContent = `#${myRank.rank}`;
+                  if (avB) setAvatarElement(avB, state.userAvatar);
+                  if (nameB) nameB.textContent = state.userName;
+                  if (tagB) tagB.textContent = `Okul Geneli`;
+                  if (scoreB) scoreB.textContent = `${myRank.xp.toLocaleString()} XP`;
+                } else {
+                  myBar.style.display = 'none';
+                }
+              }
             }
           }
         } catch(e) {
@@ -12111,7 +12655,7 @@ let activeAvatarCategory = 'all';
         e.preventDefault();
         state.userName = 'Öğrenci';
         state.userEmail = '';
-        state.userAvatar = '🦊';
+        state.userAvatar = DEFAULT_AVATAR;
         state.xp = 0;
         state.streak = 0;
         state.maxStreak = 0;
@@ -12124,7 +12668,7 @@ let activeAvatarCategory = 'all';
         state.dailyGoalExtra = 0;
 
         localStorage.setItem('lexiq_user_name', 'Öğrenci');
-        localStorage.setItem('lexiq_user_avatar', '🦊');
+        localStorage.setItem('lexiq_user_avatar', DEFAULT_AVATAR);
         localStorage.removeItem('lexiq_user_email');
         localStorage.setItem('kelime_xp', '0');
         localStorage.removeItem('kelime_learned_map');
@@ -12153,7 +12697,7 @@ let activeAvatarCategory = 'all';
         refreshWordsList();
 
         obState.name = '';
-        obState.avatar = '🦊';
+        obState.avatar = DEFAULT_AVATAR;
         if (dom.obNameInput) {
           dom.obNameInput.value = '';
           dom.obNameInput.classList.remove('ob-input-error');
@@ -12465,7 +13009,7 @@ let activeAvatarCategory = 'all';
     window.onUserLogout = function() {
       state.userName = 'Öğrenci';
       state.userEmail = '';
-      state.userAvatar = '🦊';
+      state.userAvatar = DEFAULT_AVATAR;
       state.userTrack = '4A';
       state.userLevel = 'A2';
       state.isOnboarded = false;
@@ -12486,7 +13030,7 @@ let activeAvatarCategory = 'all';
       localStorage.removeItem('lexiq_user_email');
       localStorage.setItem('lexiq_remember_me', 'false');
       localStorage.setItem('lexiq_user_name', 'Öğrenci');
-      localStorage.setItem('lexiq_user_avatar', '🦊');
+      localStorage.setItem('lexiq_user_avatar', DEFAULT_AVATAR);
       localStorage.setItem('lexiq_user_track', '4A');
       localStorage.setItem('lexiq_user_level', 'A2');
       localStorage.removeItem('lexiq_user_onboarded');
@@ -13415,7 +13959,48 @@ let activeAvatarCategory = 'all';
     }
 
     // Kelime Arenası Listesine Geri Dön (Geri Butonu, Bitir Butonu ve Kapat ✕ Butonu)
-    function handleGameExitWithSummary() {
+    async function handleGameExitWithSummary() {
+      // Eğer bir alıştırma oturumu açıksa ve henüz 10 kelimenin hepsi tamamlanmamışsa kullanıcıyı uyar
+      if (activeGameSession && !activeGameSession.isCompleted && activeGameSession.solvedCount < activeGameSession.targetCount) {
+        const currentGame = state.activeGame;
+        // Zamanlayıcıları (True/False, Tetris vb.) hemen durdur ki arka planda süre akıp 'Süre doldu' demesin
+        stopAllGames();
+
+        const solved = activeGameSession.solvedCount || 0;
+        const target = activeGameSession.targetCount || 10;
+
+        const confirmExit = await showAppConfirm({
+          title: 'Alıştırmadan Çıkılsın mı?',
+          message: `Henüz ${target} kelimenin hepsi tamamlanmadı (${solved} / ${target}).\n\nBuna rağmen alıştırmayı sonlandırmak istiyor musunuz?`,
+          icon: '⚠️',
+          okText: 'Evet, Bitir',
+          cancelText: 'Devam Et',
+          isDanger: true
+        });
+
+        if (!confirmExit) {
+          // Kullanıcı 'Devam Et' seçti: Oyunu kaldığı yerden sürdür
+          if (state.activeMode === 'arena' && currentGame) {
+            state.activeGame = currentGame;
+            if (currentGame === 'truefalse') {
+              startTrueFalseRound();
+            } else if (currentGame === 'tetris' && typeof startTetrisRound === 'function') {
+              startTetrisRound();
+            }
+          }
+          return;
+        }
+
+        // Kullanıcı yine de çıkmak/bitirmek istedi:
+        if (activeGameSession.solvedCount > 0 || (activeGameSession.mistakeWords && activeGameSession.mistakeWords.length > 0)) {
+          showGameRoundCompletedModal(state.activeGame);
+        } else {
+          showGamesMenu();
+        }
+        return;
+      }
+
+      // Normal durum (10 kelimelik tur tamamlanmışsa veya oturumda çözülen varsa özet göster)
       if (activeGameSession && (activeGameSession.solvedCount > 0 || (activeGameSession.mistakeWords && activeGameSession.mistakeWords.length > 0))) {
         showGameRoundCompletedModal(state.activeGame);
       } else {
@@ -13438,7 +14023,35 @@ let activeAvatarCategory = 'all';
         const endBtn = e.target.closest('.game-card-header-actions .active-game-end-btn') ||
                         e.target.closest('.tetris-header-right .active-game-end-btn');
         if (endBtn) {
-          showGamesMenu();
+          handleGameExitWithSummary();
+        }
+      });
+
+      // Hareketsizlik sayacını her dokunuşta yenile
+      dom.arenaActiveGameArea.addEventListener('pointerdown', () => {
+        if (arenaIdlePromptVisible) {
+          dismissArenaIdlePrompt();
+        }
+        resetArenaIdleTimer();
+      }, { passive: true });
+    }
+
+    if (dom.arenaIdleDismissBtn) {
+      dom.arenaIdleDismissBtn.addEventListener('click', (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        dismissArenaIdlePrompt();
+        resetArenaIdleTimer();
+      });
+    }
+
+    if (dom.arenaIdlePromptOverlay) {
+      dom.arenaIdlePromptOverlay.addEventListener('click', (e) => {
+        if (e.target === dom.arenaIdlePromptOverlay) {
+          e.preventDefault();
+          e.stopPropagation();
+          dismissArenaIdlePrompt();
+          resetArenaIdleTimer();
         }
       });
     }

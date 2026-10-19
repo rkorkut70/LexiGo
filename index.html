@@ -15,7 +15,7 @@
   <meta http-equiv="Expires" content="0">
   <title>LexiQ • Çok Dilli Akıllı Kelime Kartları</title>
   <link rel="icon" type="image/jpeg" href="logo.jpg">
-  <link rel="stylesheet" href="style.css?v=1.8.31">
+  <link rel="stylesheet" href="style.css?v=1.8.35">
 </head>
 <body>
   <div class="app-container">
@@ -34,7 +34,7 @@
 
         <!-- Ayarlar & Profil Butonu (Tıklanınca Ayarları Açar) -->
         <button id="userProfileBtn" class="pill-btn user-header-btn student-profile-header-btn" title="Öğrenci Bilgileri & Profil" onclick="if(window.openStudentProfileModal) window.openStudentProfileModal();">
-          <span id="headerUserAvatar" class="settings-btn-icon">🦊</span>
+          <span id="headerUserAvatar" class="settings-btn-icon"><img src="assets/avatars/avatar_default.jpg" class="avatar-img-fluid" alt="Avatar"></span>
           <span id="headerUserName" class="header-btn-text">Öğrenci</span>
         </button>
 
@@ -123,7 +123,7 @@
           
           <div class="home-hero-top">
             <div class="home-user-greeting">
-              <span class="greeting-avatar" id="homeUserAvatar">🦊</span>
+              <span class="greeting-avatar" id="homeUserAvatar"><img src="assets/avatars/avatar_default.jpg" class="avatar-img-fluid" alt="Avatar"></span>
               <span class="greeting-text">Merhaba, <strong id="homeUserName">Öğrenci</strong>!</span>
             </div>
             <div class="home-unit-badge" id="homeUnitBadge">
@@ -227,12 +227,22 @@
         <!-- KART FİLTRE VE İSTATİSTİK SEKMELERİ -->
         <div class="card-filter-tabs-container">
           <div class="card-tab-buttons">
-            <button class="card-tab-btn active" data-filter="pending" id="cardTabPendingBtn">
-              Öğrenilecekler <span class="tab-badge" id="pendingTabCount">(0)</span>
-            </button>
-            <button class="card-tab-btn" data-filter="learned" id="cardTabLearnedBtn">
-              Öğrenilenler <span class="tab-badge" id="learnedTabCount">(0)</span>
-            </button>
+            <div class="card-tab-row primary-tab-row">
+              <button class="card-tab-btn active" data-filter="pending" id="cardTabPendingBtn">
+                <span>📚 Öğrenilecekler</span> <span class="tab-badge" id="pendingTabCount">(0)</span>
+              </button>
+              <button class="card-tab-btn" data-filter="learned" id="cardTabLearnedBtn">
+                <span>✅ Öğrenilenler</span> <span class="tab-badge" id="learnedTabCount">(0)</span>
+              </button>
+            </div>
+            <div class="card-tab-row secondary-tab-row">
+              <button class="card-tab-btn" data-filter="mylist" id="cardTabMyListBtn">
+                <span>🔖 Listem</span> <span class="tab-badge" id="myListTabCount">(0)</span>
+              </button>
+              <button class="card-tab-btn" data-filter="troubled" id="cardTabTroubledBtn">
+                <span>⚠️ Zorlandıklarım</span> <span class="tab-badge" id="troubledTabCount">(0)</span>
+              </button>
+            </div>
           </div>
           
           <div class="card-tab-content">
@@ -268,6 +278,32 @@
                 <div id="cardTodayProgressFill" class="today-bar-fill"></div>
               </div>
             </div>
+
+            <!-- 3. LİSTEM (KELİME DEFTERİM) İÇERİĞİ -->
+            <div id="tabContentMyList" class="tab-pane" style="display: none;">
+              <div class="today-bar-content">
+                <div class="today-bar-left">
+                  <span class="today-bar-title" style="color: #6366f1;">🔖 Kelime Defterim:</span>
+                  <span style="font-size: 0.76rem; color: var(--text-muted); margin-left: 4px;">Özel Seçtiğin Kelimeler</span>
+                </div>
+                <div class="today-bar-right">
+                  <span class="inline-unit-total" id="myListTotalBadge" style="background: rgba(99,102,241,0.15); color: #818cf8; border: 1px solid rgba(99,102,241,0.3); font-weight: 800; border-radius: 10px; padding: 2px 8px;">Kayıtlı: 0</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- 4. ZORLANDIKLARIM (OYUN HATALARI) İÇERİĞİ -->
+            <div id="tabContentTroubled" class="tab-pane" style="display: none;">
+              <div class="today-bar-content">
+                <div class="today-bar-left">
+                  <span class="today-bar-title" style="color: #f43f5e;">⚠️ Zorlandıklarım:</span>
+                  <span style="font-size: 0.76rem; color: var(--text-muted); margin-left: 4px;">Oyunlarda Hata Yapılanlar</span>
+                </div>
+                <div class="today-bar-right">
+                  <span class="inline-unit-total" id="troubledTotalBadge" style="background: rgba(244,63,94,0.15); color: #fb7185; border: 1px solid rgba(244,63,94,0.3); font-weight: 800; border-radius: 10px; padding: 2px 8px;">Hatalı: 0</span>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
 
@@ -278,9 +314,19 @@
             <div class="card-face card-front" id="cardFrontFace" lang="en">
               <div class="card-top">
                 <span class="card-unit-label" id="cardUnitBadge" lang="en">UNIT 1</span>
-                <span class="card-status-badge status-pending" id="cardStatusBadge">
-                  Bekliyor
-                </span>
+                <div class="card-top-actions">
+                  <button type="button" id="cardNotebookToggleBtn" class="card-notebook-btn" title="Kelime Defterime Ekle / Çıkar" aria-label="Kelime Defterim">
+                    <span class="notebook-btn-icon">🔖</span>
+                    <span class="notebook-btn-text" id="cardNotebookBtnText">Listeme Ekle</span>
+                  </button>
+                  <button type="button" id="cardTroubledActionBtn" class="card-notebook-btn card-troubled-pill" style="display: none;" title="Zorlandıklarımdan Kaldır" aria-label="Zorlandıklarımdan Kaldır">
+                    <span class="notebook-btn-icon">✅</span>
+                    <span class="notebook-btn-text">Pekiştirildi</span>
+                  </button>
+                  <span class="card-status-badge status-pending" id="cardStatusBadge">
+                    Bekliyor
+                  </span>
+                </div>
               </div>
 
               <div class="card-center">
@@ -356,9 +402,19 @@
             <div class="card-face card-back">
               <div class="card-top">
                 <span class="card-unit-label" id="cardBackWordLabel">Kelime</span>
-                <span class="card-status-badge status-pending" id="cardBackStatusBadge">
-                  Türkçe Çeviri
-                </span>
+                <div class="card-top-actions">
+                  <button type="button" id="cardBackNotebookToggleBtn" class="card-notebook-btn" title="Kelime Defterime Ekle / Çıkar" aria-label="Kelime Defterim">
+                    <span class="notebook-btn-icon">🔖</span>
+                    <span class="notebook-btn-text" id="cardBackNotebookBtnText">Listeme Ekle</span>
+                  </button>
+                  <button type="button" id="cardBackTroubledActionBtn" class="card-notebook-btn card-troubled-pill" style="display: none;" title="Zorlandıklarımdan Kaldır" aria-label="Zorlandıklarımdan Kaldır">
+                    <span class="notebook-btn-icon">✅</span>
+                    <span class="notebook-btn-text">Pekiştirildi</span>
+                  </button>
+                  <span class="card-status-badge status-pending" id="cardBackStatusBadge">
+                    Türkçe Çeviri
+                  </span>
+                </div>
               </div>
 
               <div class="card-center">
@@ -508,7 +564,7 @@
         <div class="empty-trophy-icon">🏆</div>
         <h2 class="empty-title">Arenaya Giriş Kilitli!</h2>
         <p class="empty-desc">
-          Arenada sadece kartlarda <strong>"Öğrendim"</strong> dediğin kelimeler yarışır. Yarışmaya başlamak için kartlardan en az <strong>3 kelimeyi</strong> öğrenmelisin!
+          Arenada kartlarda <strong>"Öğrendim"</strong> dediğin ve <strong>"Listem"</strong>e eklediğin kelimeler yarışır (Zorlandıkların hariç). Başlamak için en az <strong>3 kelimeye</strong> ihtiyacın var!
         </p>
         <div class="empty-progress-box">
           <div class="empty-progress-text">Hazır Kelimeler: <span id="arenaReadyCount">0</span> / 3</div>
@@ -517,7 +573,7 @@
           </div>
         </div>
         <button id="arenaGoToCardsBtn" class="pill-btn primary-action-btn">
-          <span>🃏</span> Kartlara Dön ve Kelime Öğren
+          <span>🃏</span> Kartlara Dön ve Kelime Seç / Öğren
         </button>
       </div>
 
@@ -755,20 +811,24 @@
               <div class="game-header-left">
                 <button id="matchHintBtn" class="game-hint-btn" type="button" title="Bir Çift İpucu Göster (-5 XP)"><img src="assets/icons/icon_3d_hint.png" class="btn-3d-icon" alt="İpucu"> İpucu <span class="hint-cost-badge">-5 XP</span></button>
               </div>
-              <div class="game-header-center">
-                <div class="game-accent-audio-group" id="matchAccentGroup" style="display: none;" title="Aksan Seçimi">
-                  <button type="button" class="game-accent-btn active" id="matchUsBtn" data-accent="US" title="Amerikan İngilizcesi (US)">
-                    <span class="game-accent-flag">🇺🇸</span>
-                    <span class="game-accent-name">US</span>
-                  </button>
-                  <button type="button" class="game-accent-btn" id="matchUkBtn" data-accent="UK" title="İngiliz İngilizcesi (GB)">
-                    <span class="game-accent-flag">🇬🇧</span>
-                    <span class="game-accent-name">GB</span>
-                  </button>
-                </div>
-              </div>
+              <div class="game-header-center"></div>
               <div class="game-card-header-actions">
-                <span class="match-score-badge">Eşleşen: <strong id="matchFoundCount">0</strong> / 4</span>
+                <span class="match-score-badge">
+                  <span class="match-score-lbl">Eşleşen</span>
+                  <span class="match-score-nums"><strong id="matchFoundCount">0</strong> / 4</span>
+                </span>
+              </div>
+            </div>
+            <div class="game-accent-subrow">
+              <div class="game-accent-audio-group" id="matchAccentGroup" style="display: none;" title="Aksan Seçimi">
+                <button type="button" class="game-accent-btn active" id="matchUsBtn" data-accent="US" title="Amerikan İngilizcesi (US)">
+                  <span class="game-accent-flag">🇺🇸</span>
+                  <span class="game-accent-name">US</span>
+                </button>
+                <button type="button" class="game-accent-btn" id="matchUkBtn" data-accent="UK" title="İngiliz İngilizcesi (GB)">
+                  <span class="game-accent-flag">🇬🇧</span>
+                  <span class="game-accent-name">GB</span>
+                </button>
               </div>
             </div>
             <div class="game-prompt">
@@ -789,27 +849,28 @@
               <div class="game-header-left">
                 <button id="tfHintBtn" class="game-hint-btn" type="button" title="Kelime Hakkında İpucu Al (-3 XP)"><img src="assets/icons/icon_3d_hint.png" class="btn-3d-icon" alt="İpucu"> İpucu <span class="hint-cost-badge">-3 XP</span></button>
               </div>
-              <div class="game-header-center">
-                <div class="game-accent-audio-group" id="tfAccentGroup" style="display: none;" title="Aksan Seçimi">
-                  <button type="button" class="game-accent-btn active" id="tfUsBtn" data-accent="US" title="Amerikan Telaffuzu (US)">
-                    <span class="game-accent-flag">🇺🇸</span>
-                    <span class="game-accent-name">US</span>
-                  </button>
-                  <button type="button" class="game-accent-btn" id="tfUkBtn" data-accent="UK" title="İngiliz Telaffuzu (GB)">
-                    <span class="game-accent-flag">🇬🇧</span>
-                    <span class="game-accent-name">GB</span>
-                  </button>
-                </div>
-                <button class="mini-audio-btn" id="tfAudioBtn" title="Telaffuzu Dinle" aria-label="Telaffuz" type="button">
-                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
-                    <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon>
-                    <path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"></path>
-                  </svg>
-                </button>
-              </div>
+              <div class="game-header-center"></div>
               <div class="game-card-header-actions">
                 <span class="tetris-timer-badge">⏱️ <span id="tfTimer">20</span>s</span>
               </div>
+            </div>
+            <div class="game-accent-subrow">
+              <div class="game-accent-audio-group" id="tfAccentGroup" style="display: none;" title="Aksan Seçimi">
+                <button type="button" class="game-accent-btn active" id="tfUsBtn" data-accent="US" title="Amerikan Telaffuzu (US)">
+                  <span class="game-accent-flag">🇺🇸</span>
+                  <span class="game-accent-name">US</span>
+                </button>
+                <button type="button" class="game-accent-btn" id="tfUkBtn" data-accent="UK" title="İngiliz Telaffuzu (GB)">
+                  <span class="game-accent-flag">🇬🇧</span>
+                  <span class="game-accent-name">GB</span>
+                </button>
+              </div>
+              <button class="mini-audio-btn" id="tfAudioBtn" title="Telaffuzu Dinle" aria-label="Telaffuz" type="button">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                  <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon>
+                  <path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"></path>
+                </svg>
+              </button>
             </div>
             <div class="tf-card-body">
               <div id="tfHintDetail" class="game-hint-bubble" style="display: none;"></div>
@@ -847,27 +908,28 @@
               <div class="game-header-left tetris-header-left">
                 <button id="tetrisHintBtn" class="game-hint-btn" type="button" title="Sıradaki Harfi Doldur (-5 XP)"><img src="assets/icons/icon_3d_hint.png" class="btn-3d-icon" alt="İpucu"> İpucu <span class="hint-cost-badge">-5 XP</span></button>
               </div>
-              <div class="game-header-center">
-                <div class="game-accent-audio-group" id="tetrisAccentGroup" style="display: none;" title="Aksan Seçimi">
-                  <button type="button" class="game-accent-btn active" id="tetrisUsBtn" data-accent="US" title="Amerikan Telaffuzu (US)">
-                    <span class="game-accent-flag">🇺🇸</span>
-                    <span class="game-accent-name">US</span>
-                  </button>
-                  <button type="button" class="game-accent-btn" id="tetrisUkBtn" data-accent="UK" title="İngiliz Telaffuzu (GB)">
-                    <span class="game-accent-flag">🇬🇧</span>
-                    <span class="game-accent-name">GB</span>
-                  </button>
-                </div>
-                <button class="mini-audio-btn" id="tetrisAudioBtn" title="Telaffuzu Dinle" aria-label="Telaffuz" type="button">
-                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
-                    <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon>
-                    <path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"></path>
-                  </svg>
-                </button>
-              </div>
+              <div class="game-header-center"></div>
               <div class="game-card-header-actions tetris-header-right">
                 <span class="tetris-timer-badge">⏱️ <span id="tetrisTimer">30</span>s</span>
               </div>
+            </div>
+            <div class="game-accent-subrow">
+              <div class="game-accent-audio-group" id="tetrisAccentGroup" style="display: none;" title="Aksan Seçimi">
+                <button type="button" class="game-accent-btn active" id="tetrisUsBtn" data-accent="US" title="Amerikan Telaffuzu (US)">
+                  <span class="game-accent-flag">🇺🇸</span>
+                  <span class="game-accent-name">US</span>
+                </button>
+                <button type="button" class="game-accent-btn" id="tetrisUkBtn" data-accent="UK" title="İngiliz Telaffuzu (GB)">
+                  <span class="game-accent-flag">🇬🇧</span>
+                  <span class="game-accent-name">GB</span>
+                </button>
+              </div>
+              <button class="mini-audio-btn" id="tetrisAudioBtn" title="Telaffuzu Dinle" aria-label="Telaffuz" type="button">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                  <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon>
+                  <path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"></path>
+                </svg>
+              </button>
             </div>
 
             <div class="game-prompt tetris-prompt">
@@ -897,27 +959,28 @@
               <div class="game-header-left">
                 <button id="anagramHintBtn" class="game-hint-btn" type="button" title="Sıradaki Doğru Harfi Yerleştir (-5 XP)"><img src="assets/icons/icon_3d_hint.png" class="btn-3d-icon" alt="İpucu"> İpucu <span class="hint-cost-badge">-5 XP</span></button>
               </div>
-              <div class="game-header-center">
-                <div class="game-accent-audio-group" id="anagramAccentGroup" style="display: none;" title="Aksan Seçimi">
-                  <button type="button" class="game-accent-btn active" id="anagramUsBtn" data-accent="US" title="Amerikan Telaffuzu (US)">
-                    <span class="game-accent-flag">🇺🇸</span>
-                    <span class="game-accent-name">US</span>
-                  </button>
-                  <button type="button" class="game-accent-btn" id="anagramUkBtn" data-accent="UK" title="İngiliz Telaffuzu (GB)">
-                    <span class="game-accent-flag">🇬🇧</span>
-                    <span class="game-accent-name">GB</span>
-                  </button>
-                </div>
-                <button class="mini-audio-btn" id="anagramAudioBtn" title="Telaffuzu Dinle" aria-label="Telaffuz" type="button">
-                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
-                    <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon>
-                    <path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"></path>
-                  </svg>
-                </button>
-              </div>
+              <div class="game-header-center"></div>
               <div class="game-card-header-actions">
                 <span class="xp-bubble">+10 XP</span>
               </div>
+            </div>
+            <div class="game-accent-subrow">
+              <div class="game-accent-audio-group" id="anagramAccentGroup" style="display: none;" title="Aksan Seçimi">
+                <button type="button" class="game-accent-btn active" id="anagramUsBtn" data-accent="US" title="Amerikan Telaffuzu (US)">
+                  <span class="game-accent-flag">🇺🇸</span>
+                  <span class="game-accent-name">US</span>
+                </button>
+                <button type="button" class="game-accent-btn" id="anagramUkBtn" data-accent="UK" title="İngiliz Telaffuzu (GB)">
+                  <span class="game-accent-flag">🇬🇧</span>
+                  <span class="game-accent-name">GB</span>
+                </button>
+              </div>
+              <button class="mini-audio-btn" id="anagramAudioBtn" title="Telaffuzu Dinle" aria-label="Telaffuz" type="button">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                  <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon>
+                  <path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"></path>
+                </svg>
+              </button>
             </div>
 
             <div class="game-prompt">
@@ -956,24 +1019,7 @@
               <div class="game-header-left">
                 <button id="listenHintBtn" class="game-hint-btn" type="button" title="Türkçe Anlam İpucu Al (-5 XP)"><img src="assets/icons/icon_3d_hint.png" class="btn-3d-icon" alt="İpucu"> İpucu <span class="hint-cost-badge">-5 XP</span></button>
               </div>
-              <div class="game-header-center">
-                <div class="game-accent-audio-group" id="listenHeaderAccentGroup" style="display: none;" title="Aksan Seçimi">
-                  <button type="button" class="game-accent-btn active" id="listenHeaderUsBtn" data-accent="US" title="Amerikan Telaffuzu (US)">
-                    <span class="game-accent-flag">🇺🇸</span>
-                    <span class="game-accent-name">US</span>
-                  </button>
-                  <button type="button" class="game-accent-btn" id="listenHeaderUkBtn" data-accent="UK" title="İngiliz Telaffuzu (GB)">
-                    <span class="game-accent-flag">🇬🇧</span>
-                    <span class="game-accent-name">GB</span>
-                  </button>
-                </div>
-                <button class="mini-audio-btn" id="listenHeaderAudioBtn" title="Sesi Dinle" aria-label="Telaffuz" type="button">
-                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
-                    <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon>
-                    <path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"></path>
-                  </svg>
-                </button>
-              </div>
+              <div class="game-header-center"></div>
               <div class="game-card-header-actions">
                 <span class="xp-bubble">+15 XP</span>
               </div>
@@ -1073,27 +1119,28 @@
               <div class="game-header-left">
                 <button id="scrambleHintBtn" class="game-hint-btn" type="button" title="Sıradaki Doğru Kelimeyi Yerleştir (-5 XP)"><img src="assets/icons/icon_3d_hint.png" class="btn-3d-icon" alt="İpucu"> İpucu <span class="hint-cost-badge">-5 XP</span></button>
               </div>
-              <div class="game-header-center">
-                <div class="game-accent-audio-group" id="scrambleAccentGroup" style="display: none;" title="Aksan Seçimi">
-                  <button type="button" class="game-accent-btn active" id="scrambleUsBtn" data-accent="US" title="Amerikan Telaffuzu (US)">
-                    <span class="game-accent-flag">🇺🇸</span>
-                    <span class="game-accent-name">US</span>
-                  </button>
-                  <button type="button" class="game-accent-btn" id="scrambleUkBtn" data-accent="UK" title="İngiliz Telaffuzu (GB)">
-                    <span class="game-accent-flag">🇬🇧</span>
-                    <span class="game-accent-name">GB</span>
-                  </button>
-                </div>
-                <button class="mini-audio-btn" id="scrambleAudioBtn" title="Cümleyi Dinle" aria-label="Telaffuz" type="button">
-                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
-                    <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon>
-                    <path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"></path>
-                  </svg>
-                </button>
-              </div>
+              <div class="game-header-center"></div>
               <div class="game-card-header-actions">
                 <span class="xp-bubble">+15 XP</span>
               </div>
+            </div>
+            <div class="game-accent-subrow">
+              <div class="game-accent-audio-group" id="scrambleAccentGroup" style="display: none;" title="Aksan Seçimi">
+                <button type="button" class="game-accent-btn active" id="scrambleUsBtn" data-accent="US" title="Amerikan Telaffuzu (US)">
+                  <span class="game-accent-flag">🇺🇸</span>
+                  <span class="game-accent-name">US</span>
+                </button>
+                <button type="button" class="game-accent-btn" id="scrambleUkBtn" data-accent="UK" title="İngiliz Telaffuzu (GB)">
+                  <span class="game-accent-flag">🇬🇧</span>
+                  <span class="game-accent-name">GB</span>
+                </button>
+              </div>
+              <button class="mini-audio-btn" id="scrambleAudioBtn" title="Cümleyi Dinle" aria-label="Telaffuz" type="button">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                  <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon>
+                  <path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"></path>
+                </svg>
+              </button>
             </div>
             <div class="scramble-prompt-box">
               <span class="game-prompt-label">CÜMLENİN TÜRKÇE KARŞILIĞI</span>
@@ -1128,27 +1175,28 @@
               <div class="game-header-left">
                 <button id="clozeHintBtn" class="game-hint-btn" type="button" title="2 Yanlış Şıkkı Ele (-5 XP)">💡 50:50 Joker <span class="hint-cost-badge">-5 XP</span></button>
               </div>
-              <div class="game-header-center">
-                <div class="game-accent-audio-group" id="clozeAccentGroup" style="display: none;" title="Aksan Seçimi">
-                  <button type="button" class="game-accent-btn active" id="clozeUsBtn" data-accent="US" title="Amerikan Telaffuzu (US)">
-                    <span class="game-accent-flag">🇺🇸</span>
-                    <span class="game-accent-name">US</span>
-                  </button>
-                  <button type="button" class="game-accent-btn" id="clozeUkBtn" data-accent="UK" title="İngiliz Telaffuzu (GB)">
-                    <span class="game-accent-flag">🇬🇧</span>
-                    <span class="game-accent-name">GB</span>
-                  </button>
-                </div>
-                <button class="mini-audio-btn" id="clozeAudioBtn" title="Cümleyi Dinle" aria-label="Telaffuz" type="button" style="display: none;">
-                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
-                    <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon>
-                    <path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"></path>
-                  </svg>
-                </button>
-              </div>
+              <div class="game-header-center"></div>
               <div class="game-card-header-actions">
                 <span class="xp-bubble">+10 XP</span>
               </div>
+            </div>
+            <div class="game-accent-subrow">
+              <div class="game-accent-audio-group" id="clozeAccentGroup" style="display: none;" title="Aksan Seçimi">
+                <button type="button" class="game-accent-btn active" id="clozeUsBtn" data-accent="US" title="Amerikan Telaffuzu (US)">
+                  <span class="game-accent-flag">🇺🇸</span>
+                  <span class="game-accent-name">US</span>
+                </button>
+                <button type="button" class="game-accent-btn" id="clozeUkBtn" data-accent="UK" title="İngiliz Telaffuzu (GB)">
+                  <span class="game-accent-flag">🇬🇧</span>
+                  <span class="game-accent-name">GB</span>
+                </button>
+              </div>
+              <button class="mini-audio-btn" id="clozeAudioBtn" title="Cümleyi Dinle" aria-label="Telaffuz" type="button" style="display: none;">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                  <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon>
+                  <path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"></path>
+                </svg>
+              </button>
             </div>
 
             <div class="cloze-sentence-box">
@@ -1347,7 +1395,7 @@
         <div class="welcome-hero-section">
           <div class="welcome-brand-wrapper">
             <h1 class="welcome-brand-name">Lexi<span class="welcome-brand-q">Q</span></h1>
-            <span class="welcome-version-pill">v1.8.31</span>
+            <span class="welcome-version-pill">v1.8.35</span>
           </div>
           <!-- 3 Temel Başarı Sütunu (3D Pill Rozetleri) -->
           <div class="welcome-pillars-container">
@@ -1972,7 +2020,7 @@
       <div id="lbCurrentUserBar" style="display: none;">
         <div style="display: flex; align-items: center; gap: 8px;">
           <span id="lbMyRankBadge" style="font-size: 0.85rem; font-weight: 800; color: var(--accent);">#--</span>
-          <span id="lbMyAvatar" style="font-size: 1.2rem;">🦊</span>
+          <span id="lbMyAvatar" style="font-size: 1.2rem;"><img src="assets/avatars/avatar_default.jpg" class="avatar-img-fluid" alt="Avatar" style="width:24px;height:24px;border-radius:50%;"></span>
           <div>
             <strong id="lbMyName" style="font-size: 0.82rem; color: var(--text-main); display: block;">Sen</strong>
             <span id="lbMyBranchTag" style="font-size: 0.7rem; color: var(--text-muted);">Şube: -</span>
@@ -2107,7 +2155,7 @@
         <div class="about-hero-box">
           <div class="about-brand-row">
             <span class="about-brand">Lexi<span class="brand-highlight">Q</span></span>
-            <span class="about-version-pill" id="aboutAppVersion">v1.8.31</span>
+            <span class="about-version-pill" id="aboutAppVersion">v1.8.35</span>
             <span class="about-platform-badge" id="aboutPlatformBadge" style="display: none; font-size: 0.72rem; font-weight: 700; padding: 3px 9px; border-radius: 12px; background: rgba(59,130,246,0.15); color: #3b82f6; border: 1px solid rgba(59,130,246,0.3);"></span>
           </div>
           <p class="about-tagline">Müfredat Tabanlı Çok Dilli Kelime Arenası</p>
@@ -3579,10 +3627,21 @@
     </div>
   </div>
 
+  <!-- ARENA HAREKETSİZLİK (IDLE) HATIRLATICI / TEŞVİK PENCERESİ -->
+  <div id="arenaIdlePromptOverlay" class="arena-idle-overlay" style="display: none;">
+    <div class="arena-idle-box">
+      <div class="arena-idle-icon" id="arenaIdleIcon">💡</div>
+      <p class="arena-idle-message" id="arenaIdleMessage">Mesaj metni...</p>
+      <button type="button" class="arena-idle-dismiss-btn" id="arenaIdleDismissBtn">
+        <span>⚡ Devam Et!</span>
+      </button>
+    </div>
+  </div>
+
   <!-- OYUN TUR / SEANS SONU VE AKILLI REHBERLİK MODALI -->
   <div id="gameRoundCompletedModal" class="modal-overlay" style="display: none;">
     <div class="modal-card celebration-modal-card round-completed-modal-card" style="text-align: center; border-radius: 24px;">
-      <div class="confirm-icon-wrap" id="roundModalIcon" style="font-size: 3.2rem; margin-bottom: 6px;">🎉</div>
+      <div class="confirm-icon-wrap" id="roundModalIcon" style="font-size: 3.2rem; margin: 0 auto 10px auto;">🏆</div>
       <h3 class="confirm-title" id="roundModalTitle" style="font-size: 1.3rem; font-weight: 800; margin: 0 0 6px 0;">Tur Tamamlandı!</h3>
       <div id="roundModalSubtitle" style="font-size: 0.92rem; font-weight: 600; margin-bottom: 14px;">10 kelime başarıyla tamamlandı</div>
       
@@ -3621,30 +3680,18 @@
           <!-- Dinamik Kartlar -->
         </div>
 
-        <!-- İKİ SEÇENEK SUNUMU -->
+        <!-- HATA EYLEMLERİ: ZORLANDIKLARIM KARTLARINA YÖNLENDİRME -->
         <div class="round-mistakes-actions-section">
-          <!-- SEÇENEK 1: KARTLARA GERİ EKLE -->
-          <div class="mistake-option-block">
-            <div class="mistake-option-title">
-              <span class="option-badge">1</span>
-              <span>Kelimeleri Kartlara Geri Ekle</span>
+          <div class="mistake-option-block" style="background: rgba(244,63,94,0.08); border: 1px solid rgba(244,63,94,0.25); border-radius: 14px; padding: 12px 14px;">
+            <div style="font-size: 0.84rem; color: #fca5a5; margin-bottom: 10px; line-height: 1.45;">
+              ⚠️ Bu kelimeler <strong>"Zorlandıklarım"</strong> listenize kaydedildi. Arenadaki oyunlarda tekrar karşınıza çıkabilmesi için önce kartlarda <strong>"Öğrendim"</strong> butonuna basıp öğrenilenler listesine aktarmalısınız.
             </div>
-            <button type="button" id="roundMistakesToCardsBtn" class="pill-btn mistake-to-cards-btn">
-              <span>📚</span>
-              <span>Kelimeleri Öğrenilecekler Havuzuna Ekle & Kartlara Git</span>
+            <button type="button" id="roundMistakesToCardsBtn" class="pill-btn mistake-to-cards-btn" style="width: 100%;">
+              <span>🃏</span>
+              <span>Kartlara Git & Zorlandıklarımı Öğren</span>
             </button>
           </div>
-
-          <!-- SEÇENEK 2: AŞAĞIDAKİ OYUNLARDA TEKRAR DENE -->
-          <div class="mistake-option-block" style="margin-top: 14px;">
-            <div class="mistake-option-title">
-              <span class="option-badge">2</span>
-              <span>Bu Kelimeleri Aşağıdaki Oyunlarda Tekrar Dene:</span>
-            </div>
-            <div id="roundMistakesGameGrid" class="mistake-games-grid">
-              <!-- 8 Oyun Butonu Dinamik -->
-            </div>
-          </div>
+          <div id="roundMistakesGameGrid" style="display: none;"></div>
         </div>
       </div>
 
@@ -3703,16 +3750,17 @@
       <div class="confirm-icon-wrap" style="font-size: 2.8rem; margin-bottom: 8px;">🎉</div>
       <h3 class="confirm-title" style="font-size: 1.3rem; font-weight: 800; margin: 0 0 6px 0;">LexiQ Güncellendi!</h3>
       <div class="app-update-version-badge" style="display: inline-block; padding: 4px 14px; border-radius: 20px; font-size: 0.84rem; font-weight: 800; margin-bottom: 14px;">
-        Sürüm <span id="appUpdateVersionText">v1.8.31</span>
+        Sürüm <span id="appUpdateVersionText">v1.8.35</span>
       </div>
       <div class="update-notes-box" style="text-align: left; border-radius: 16px; padding: 14px 16px; font-size: 0.88rem; line-height: 1.6; margin-bottom: 18px; max-height: 280px; overflow-y: auto;">
         <div class="update-notes-title" style="font-weight: 800; margin-bottom: 8px; display: flex; align-items: center; gap: 6px;">
           <span>✨</span><span>Bu Sürümdeki Yenilikler</span>
         </div>
         <ul style="margin: 0; padding-left: 20px; display: flex; flex-direction: column; gap: 8px;">
-          <li><strong>✨ 3D Şampiyon Rozetleri & Canlı Neon Efektleri:</strong> Turnuva, Liderler ve Şeref Kürsüsü ekranlarındaki 1. sıra ve şampiyon şube rozetleri 3D kupa/taç ikonlarıyla yenilendi, arkalarına yanıp sönen altın neon ışık hüzmesi (aura) efekti eklendi.</li>
-          <li><strong>🏫 Modern Şube Onay Modali:</strong> Şube seçiminde sistemin kaba 'file://' popup'ı kaldırılarak yerine şık, özel tasarımlı 3D onay penceresi entegre edildi. Şube seçildikten sonra liderlik tablosu anında güncelleniyor.</li>
-          <li><strong>📈 Ünite Açma Eşiği %80:</strong> Sonraki ünite kilidini açma barajı pedagojik standartlara uygun olarak %75'ten %80'e yükseltildi.</li>
+          <li><strong>⏰ Arena Hareketsizlik Hatırlatıcısı & Teşvik:</strong> Arenada 10 saniye işlem yapılmadığında oyuna başlama veya oyuna devam etmeyi motive eden 40 farklı eğlenceli cümle ve uyarı kutusu eklendi.</li>
+          <li><strong>🎙️ Aksan Butonları Düzeni:</strong> Oyun başlıklarındaki aksan seçim butonları alt satıra alınıp ortalandı, ipucu butonlarıyla çakışması önlendi.</li>
+          <li><strong>🃏 Kart Eşleştirme Sayacı:</strong> "Eşleşen" ve "0 / 4" sayaçları iki satır halinde dikey olarak düzenlendi.</li>
+          <li><strong>🔖 Kelime Defterim & Zorlandıklarım:</strong> Zorlandıklarım havuzundaki kelimeler kartlarda tekrar öğrenilene kadar arenadan izole edildi, "Listem"deki kelimeler ise doğrudan arenada pratik edilebilir kılındı.</li>
         </ul>
       </div>
       <div style="display: flex; flex-direction: column; gap: 8px; width: 100%;">
@@ -3775,11 +3823,11 @@
   <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-storage-compat.js"></script>
-  <script src="firebase_backend.js?v=1.8.31"></script>
+  <script src="firebase_backend.js?v=1.8.35"></script>
 
   <!-- Kelime Verisi ve Uygulama Mantığı (Sadece Standart Vanilla JS) -->
-  <script src="words_data.js?v=1.8.31"></script>
-  <script src="app.js?v=1.8.31"></script>
+  <script src="words_data.js?v=1.8.35"></script>
+  <script src="app.js?v=1.8.35"></script>
 
   </body>
 </html>
