@@ -17439,3 +17439,293 @@ html:not([data-theme="dark"]) .tg-rule-card,
   border-color: #c084fc;
   box-shadow: 0 0 14px rgba(192, 132, 252, 0.45);
 }
+
+/* ==========================================================================
+   ŞEREF KÜRSÜSÜ (PODIUM & CHAMPIONS ARCHIVE) GELİŞMİŞ TASARIM
+   ========================================================================== */
+
+.podium-filter-bar {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-bottom: 10px;
+  flex-shrink: 0;
+}
+
+.podium-period-nav {
+  display: flex;
+  gap: 6px;
+  background: var(--bg-surface);
+  padding: 4px;
+  border-radius: 14px;
+  border: 1px solid var(--border-color);
+}
+
+.podium-period-btn {
+  flex: 1;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 7px 10px;
+  border-radius: 10px;
+  border: none;
+  background: transparent;
+  color: var(--text-muted);
+  font-size: 0.82rem;
+  font-weight: 800;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  user-select: none;
+}
+
+.podium-period-btn.active {
+  background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+  color: #ffffff !important;
+  box-shadow: 0 3px 10px rgba(245, 158, 11, 0.35);
+  transform: translateY(-1px);
+}
+
+.podium-period-btn:not(.active):hover {
+  color: var(--text-main);
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.podium-lang-chips {
+  display: flex;
+  gap: 6px;
+  overflow-x: auto;
+  scrollbar-width: none;
+  padding: 2px 0;
+}
+
+.podium-lang-chips::-webkit-scrollbar {
+  display: none;
+}
+
+.podium-lang-chip {
+  flex: 1;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 6px 12px;
+  border-radius: 12px;
+  border: 1.5px solid var(--border-color);
+  background: var(--bg-card);
+  color: var(--text-muted);
+  font-size: 0.78rem;
+  font-weight: 700;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: all 0.2s ease;
+  user-select: none;
+}
+
+.podium-lang-chip.active {
+  border-color: #3b82f6;
+  background: rgba(59, 130, 246, 0.15);
+  color: #60a5fa;
+  box-shadow: 0 2px 8px rgba(59, 130, 246, 0.22);
+}
+
+.podium-info-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 12px;
+  background: rgba(245, 158, 11, 0.12);
+  border: 1px solid rgba(245, 158, 11, 0.3);
+  border-radius: 12px;
+  margin-bottom: 10px;
+  flex-shrink: 0;
+}
+
+/* Vitrin Spotlight Kartı */
+.podium-spotlight-card {
+  background: linear-gradient(145deg, rgba(30, 36, 74, 0.95), rgba(18, 22, 48, 0.98));
+  border: 1.5px solid rgba(245, 158, 11, 0.45);
+  border-radius: 18px;
+  padding: 14px 16px;
+  margin-bottom: 14px;
+  box-shadow: 0 6px 20px rgba(245, 158, 11, 0.18), inset 0 1px 0 rgba(255, 255, 255, 0.1);
+  position: relative;
+  overflow: hidden;
+}
+
+[data-theme="light"] .podium-spotlight-card {
+  background: linear-gradient(145deg, #fffbeb, #fef3c7);
+  border: 1.5px solid #fde68a;
+  box-shadow: 0 4px 16px rgba(245, 158, 11, 0.15);
+}
+
+.podium-spotlight-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 12px;
+  border-bottom: 1px dashed rgba(245, 158, 11, 0.25);
+  padding-bottom: 8px;
+}
+
+.podium-spotlight-title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.92rem;
+  font-weight: 900;
+  color: #f59e0b;
+}
+
+.podium-stage-row {
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  gap: 8px;
+  margin: 10px 0 6px 0;
+}
+
+.podium-col {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+
+.podium-col.col-first {
+  order: 2;
+  transform: translateY(-6px);
+}
+
+.podium-col.col-second {
+  order: 1;
+}
+
+.podium-col.col-third {
+  order: 3;
+}
+
+.podium-avatar-badge {
+  width: 44px;
+  height: 44px;
+  border-radius: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.35rem;
+  margin-bottom: 6px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+.col-first .podium-avatar-badge {
+  width: 52px;
+  height: 52px;
+  font-size: 1.65rem;
+  background: linear-gradient(135deg, #fef08a, #f59e0b);
+  border: 2px solid #fbbf24;
+  box-shadow: 0 0 16px rgba(245, 158, 11, 0.5);
+}
+
+.col-second .podium-avatar-badge {
+  background: linear-gradient(135deg, #f1f5f9, #94a3b8);
+  border: 1.5px solid #cbd5e1;
+}
+
+.col-third .podium-avatar-badge {
+  background: linear-gradient(135deg, #ffedd5, #b45309);
+  border: 1.5px solid #fed7aa;
+}
+
+.podium-pedestal {
+  width: 100%;
+  border-radius: 12px 12px 6px 6px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 8px 4px;
+}
+
+.col-first .podium-pedestal {
+  height: 78px;
+  background: linear-gradient(180deg, rgba(245, 158, 11, 0.3) 0%, rgba(217, 119, 6, 0.45) 100%);
+  border: 1.5px solid rgba(245, 158, 11, 0.55);
+}
+
+.col-second .podium-pedestal {
+  height: 60px;
+  background: linear-gradient(180deg, rgba(148, 163, 184, 0.2) 0%, rgba(100, 116, 139, 0.35) 100%);
+  border: 1.5px solid rgba(148, 163, 184, 0.4);
+}
+
+.col-third .podium-pedestal {
+  height: 50px;
+  background: linear-gradient(180deg, rgba(180, 83, 9, 0.2) 0%, rgba(146, 64, 14, 0.35) 100%);
+  border: 1.5px solid rgba(180, 83, 9, 0.4);
+}
+
+/* Akordeon Arşiv Kartları */
+.podium-accordion-item {
+  background: var(--bg-surface);
+  border: 1.5px solid var(--border-color);
+  border-radius: 14px;
+  margin-bottom: 8px;
+  overflow: hidden;
+  transition: all 0.25s ease;
+}
+
+.podium-accordion-item:hover {
+  border-color: rgba(245, 158, 11, 0.4);
+}
+
+.podium-accordion-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 14px;
+  cursor: pointer;
+  user-select: none;
+}
+
+.podium-accordion-summary {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.podium-accordion-arrow {
+  font-size: 0.82rem;
+  color: var(--text-muted);
+  transition: transform 0.2s ease;
+}
+
+.podium-accordion-item.open .podium-accordion-arrow {
+  transform: rotate(90deg);
+  color: #f59e0b;
+}
+
+.podium-accordion-body {
+  display: none;
+  padding: 8px 14px 12px 14px;
+  border-top: 1px solid var(--border-subtle);
+  background: rgba(0, 0, 0, 0.08);
+}
+
+.podium-accordion-item.open .podium-accordion-body {
+  display: block;
+}
+
+.podium-sub-rank-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 6px 0;
+  border-bottom: 1px dashed rgba(255, 255, 255, 0.06);
+  font-size: 0.82rem;
+}
+
+.podium-sub-rank-row:last-child {
+  border-bottom: none;
+}
+

@@ -872,7 +872,7 @@ window.fetchHonorRollArchive = async function(lang) {
     const snapshot = await db.collection('tournament_archive')
                              .where('lang', '==', targetLang)
                              .orderBy('timestamp', 'desc')
-                             .limit(50)
+                             .limit(60)
                              .get();
 
     // Şubeler bazında lig puanı ve kazanılan madalya sayısını hesapla
@@ -923,6 +923,117 @@ window.fetchHonorRollArchive = async function(lang) {
     return sortedHonor;
   } catch (e) {
     console.error("Şeref kürsüsü verisi alınamadı:", e);
+    return [];
+  }
+};
+
+// 4.1 Haftalık Arşiv Listesini Çekme (Hafta hafta şampiyonlar dökümü)
+window.fetchPodiumWeeklyArchive = async function(lang) {
+  if (!db) return [];
+  try {
+    const targetLang = lang || localStorage.getItem('kelime_active_lang') || 'EN-TR';
+    const snapshot = await db.collection('tournament_archive')
+                             .where('lang', '==', targetLang)
+                             .orderBy('timestamp', 'desc')
+                             .limit(50)
+                             .get();
+
+    const archives = [];
+    snapshot.forEach(doc => {
+      const data = doc.data() || {};
+      archives.push({
+        id: doc.id,
+        weekId: data.weekId || '',
+        lang: data.lang || targetLang,
+        firstBranch: data.firstBranch || '',
+        firstAvg: data.firstAvg || 0,
+        secondBranch: data.secondBranch || '',
+        secondAvg: data.secondAvg || 0,
+        thirdBranch: data.thirdBranch || '',
+        thirdAvg: data.thirdAvg || 0,
+        timestamp: data.timestamp ? (data.timestamp.toDate ? data.timestamp.toDate() : new Date(data.timestamp)) : new Date()
+      });
+    });
+
+    return archives;
+  } catch (e) {
+    console.warn("Haftalık podyum arşivi alınamadı:", e);
+    return [];
+  }
+};
+
+// 4.2 Aylık Şampiyonlar Listesini Hesaplama & Çekme
+window.fetchPodiumMonthlyArchive = async function(lang) {
+  if (!db) return [];
+  try {
+    const targetLang = lang || localStorage.getItem('kelime_active_lang') || 'EN-TR';
+    const weeklyArchives = await window.fetchPodiumWeeklyArchive(targetLang);
+
+    if (!weeklyArchives || weeklyArchives.length === 0) return [];
+
+    // Haftaları aylara göre grupla (Örn: "2026-10" / "Ekim 2026")
+    const monthMap = {};
+    const monthNames = ["Ocak", "Şubat", "Mart", "Nisan", "Mayıs", "Haziran", "Temmuz", "Ağustos", "Eylül", "Ekim", "Kasım", "Aralık"];
+
+    weeklyArchives.forEach(w => {
+      const d = w.timestamp instanceof Date ? w.timestamp : new Date();
+      const monthKey = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`;
+      const monthLabel = `${monthNames[d.getMonth()]} ${d.getFullYear()}`;
+
+      if (!monthMap[monthKey]) {
+        monthMap[monthKey] = {
+          monthKey: monthKey,
+          monthLabel: monthLabel,
+          branchPoints: {},
+          branchAvgSums: {},
+          weeksCount: 0
+        };
+      }
+
+      monthMap[monthKey].weeksCount += 1;
+
+      // 1. Şubeye 10 puan
+      if (w.firstBranch) {
+        monthMap[monthKey].branchPoints[w.firstBranch] = (monthMap[monthKey].branchPoints[w.firstBranch] || 0) + 10;
+        monthMap[monthKey].branchAvgSums[w.firstBranch] = (monthMap[monthKey].branchAvgSums[w.firstBranch] || 0) + (w.firstAvg || 0);
+      }
+      // 2. Şubeye 6 puan
+      if (w.secondBranch) {
+        monthMap[monthKey].branchPoints[w.secondBranch] = (monthMap[monthKey].branchPoints[w.secondBranch] || 0) + 6;
+        monthMap[monthKey].branchAvgSums[w.secondBranch] = (monthMap[monthKey].branchAvgSums[w.secondBranch] || 0) + (w.secondAvg || 0);
+      }
+      // 3. Şubeye 4 puan
+      if (w.thirdBranch) {
+        monthMap[monthKey].branchPoints[w.thirdBranch] = (monthMap[monthKey].branchPoints[w.thirdBranch] || 0) + 4;
+        monthMap[monthKey].branchAvgSums[w.thirdBranch] = (monthMap[monthKey].branchAvgSums[w.thirdBranch] || 0) + (w.thirdAvg || 0);
+      }
+    });
+
+    // Her ay için sıralama yap ve ilk 3'ü belirle
+    const monthlyResults = Object.values(monthMap).map(m => {
+      const sortedBranches = Object.keys(m.branchPoints).map(code => ({
+        code: code,
+        points: m.branchPoints[code],
+        totalAvg: m.branchAvgSums[code] || 0
+      })).sort((a, b) => (b.points - a.points) || (b.totalAvg - a.totalAvg));
+
+      return {
+        monthKey: m.monthKey,
+        monthLabel: m.monthLabel,
+        weeksCount: m.weeksCount,
+        firstBranch: sortedBranches[0]?.code || '',
+        firstPoints: sortedBranches[0]?.points || 0,
+        secondBranch: sortedBranches[1]?.code || '',
+        secondPoints: sortedBranches[1]?.points || 0,
+        thirdBranch: sortedBranches[2]?.code || '',
+        thirdPoints: sortedBranches[2]?.points || 0,
+        topBranches: sortedBranches
+      };
+    }).sort((a, b) => b.monthKey.localeCompare(a.monthKey));
+
+    return monthlyResults;
+  } catch (e) {
+    console.warn("Aylık podyum arşivi hesaplanamadı:", e);
     return [];
   }
 };
