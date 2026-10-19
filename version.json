@@ -1,11 +1,11 @@
 {
-  "version": "v1.8.28",
-  "versionCode": 88,
+  "version": "v1.8.29",
+  "versionCode": 89,
   "releaseDate": "2026-10-19",
   "notes": [
-    "👑 Şeref Kürsüsü ve Ayın Şampiyon Şubesi Tam Görünüm: Kürsü ekranında 'Ayın Şampiyon Şubesi Lideri' vitrin kartı, 3D podyum ve tam sıralama tablosu tüm ekran boyutlarına kusursuz uyarlandı",
-    "🏆 Dinamik Kürsü Yedekleme & Sıralama: Arşiv verisi henüz bulunmasa bile resmi şube kadrosundan canlı liderlik podyumu ve aylık şube ligi anında oluşturulur",
-    "🎨 Yüksek Kontrastlı 3D Podyum: Açık ve koyu temalarda altın, gümüş ve bronz basamaklarda metin ve lig puanı kontrastı en üst seviyeye çıkarıldı",
+    "🏆 Turnuva & Liderler Responsive Sekme Düzeni: 'Kürsü' sekmesi dahil tüm 4 sekme (Okul, Sınıfım, Şube Ligi, Kürsü) en dar mobil ekranlarda dahi ekrana %100 tam oturacak 4 eşit sütunlu responsive grid yapısına kavuşturuldu, sağdan taşma ve kesilme tamamen giderildi",
+    "👑 Şeref Kürsüsü ve Ayın Şampiyon Şubesi: Kürsü sayfası 3D podyum ve modern kart tasarımıyla baştan sona yenilendi. Her ay ve haftanın şampiyon şubeleri tüm ekran boyutlarında kusursuz olarak listeleniyor",
+    "🎨 Yeni Varsayılan Suluboya Öğrenci Avatarı: Profil oluşturma ekranında sanatsal suluboya stiliyle tam uyumlu sevimli öğrenci avatarı varsayılan olarak tanımlandı",
     "📱 iOS & Android Kusursuz Düzen: Kürsü sekmesinde ilgisiz bildirim çubukları ve alt kullanıcı barı gizlenerek temiz, ferah ve akıcı bir vitrin deneyimi sunuldu"
   ]
 }
