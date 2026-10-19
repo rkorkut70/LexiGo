@@ -3,6 +3,7 @@
     "category": "Kampüs & Akademik Yaşam",
     "icon": "🎓",
     "avatars": [
+      { "id": "avatar_default", "name": "Genç Dil Öğrencisi (Varsayılan)", "src": "assets/avatars/avatar_default.jpg" },
       { "id": "avatar_1_1", "name": "Edebiyat & Dil Öğrencisi", "src": "assets/avatars/avatar_1_1.jpg" },
       { "id": "avatar_1_2", "name": "Mühendislik & Teknoloji", "src": "assets/avatars/avatar_1_2.jpg" },
       { "id": "avatar_1_3", "name": "Mimarlık & Tasarım", "src": "assets/avatars/avatar_1_3.jpg" },

@@ -15,7 +15,7 @@
   <meta http-equiv="Expires" content="0">
   <title>LexiQ • Çok Dilli Akıllı Kelime Kartları</title>
   <link rel="icon" type="image/jpeg" href="logo.jpg">
-  <link rel="stylesheet" href="style.css?v=1.8.26">
+  <link rel="stylesheet" href="style.css?v=1.8.27">
 </head>
 <body>
   <div class="app-container">
@@ -1347,7 +1347,7 @@
         <div class="welcome-hero-section">
           <div class="welcome-brand-wrapper">
             <h1 class="welcome-brand-name">Lexi<span class="welcome-brand-q">Q</span></h1>
-            <span class="welcome-version-pill">v1.8.26</span>
+            <span class="welcome-version-pill">v1.8.27</span>
           </div>
           <!-- 3 Temel Başarı Sütunu (3D Pill Rozetleri) -->
           <div class="welcome-pillars-container">
@@ -1398,14 +1398,14 @@
       <div class="onboarding-step-view" id="obStep1" style="display: none;">
         
         <div class="ob-step-tag" style="margin-bottom:8px;">ADIM 1 / 6</div>
-        <h2 class="ob-title">Profilini Oluştur 👤</h2>
+        <h2 class="ob-title">Profilini Oluştur</h2>
         <p class="ob-subtitle">Öğrenme maceranda seni temsil edecek adını ve avatarını belirle.</p>
 
         <!-- Karakter Avatar Önizleme & Açılır Menü Tetikleyici -->
         <div class="ob-hero-avatar-section">
           <div class="ob-hero-avatar-orb" id="obAvatarPreviewOrb" role="button" tabindex="0" title="Avatarını Değiştirmek İçin Dokun">
             <span class="ob-hero-avatar-emoji" id="obAvatarPreview">
-              <img src="assets/avatars/avatar_1_1.jpg" class="avatar-img-fluid" alt="Öğrenci Avatarı">
+              <img src="assets/avatars/avatar_default.jpg" class="avatar-img-fluid" alt="Öğrenci Avatarı">
             </span>
             <div class="ob-hero-avatar-edit-badge" title="Değiştir">✏️</div>
           </div>
@@ -1455,7 +1455,7 @@
             <div class="ob-avatar-sheet-selected-preview">
               <span>Seçili Avatar:</span>
               <strong id="obAvatarSelectedIndicator">
-                <img src="assets/avatars/avatar_1_1.jpg" style="width:28px; height:28px; border-radius:50%; object-fit:cover; display:inline-block; vertical-align:middle;" alt="Avatar">
+                <img src="assets/avatars/avatar_default.jpg" style="width:28px; height:28px; border-radius:50%; object-fit:cover; display:inline-block; vertical-align:middle;" alt="Avatar">
               </strong>
             </div>
 
@@ -1477,7 +1477,7 @@
       <!-- 2. ADIM: DİL SEÇİMİ -->
       <div class="onboarding-step-view" id="obStep2" style="display: none;">
         <div class="ob-step-tag">ADIM 2 / 6</div>
-        <h2 class="ob-title">Öğrenmek İstediğin Dil 🌍</h2>
+        <h2 class="ob-title">Öğrenmek İstediğin Dil</h2>
         <p class="ob-subtitle">Hedef dilini seç. Bunu dilediğin zaman ayarlardan değiştirebilirsin.</p>
 
         <div class="ob-options-list" id="obLangOptions">
@@ -1516,7 +1516,7 @@
       <!-- 3. ADIM: RESMİ ŞUBE SEÇİMİ (23 RESMİ ŞUBE) -->
       <div class="onboarding-step-view" id="obStep3" style="display: none;">
         <div class="ob-step-tag">ADIM 3 / 6</div>
-        <h2 class="ob-title">Şubeni Seç 🏫</h2>
+        <h2 class="ob-title">Şubeni Seç</h2>
         <p class="ob-subtitle">Sınıf içi liderlik tablosu ve şubeler arası düelloda sınıfını temsil etmek için şubeni seç.</p>
 
         <div style="margin-bottom: 14px; text-align: left;">
@@ -1544,17 +1544,22 @@
           </p>
         </div>
 
-        <div class="ob-btn-row" style="display: flex; gap: 8px; flex-wrap: wrap;">
+        <div class="ob-btn-row">
           <button type="button" class="pill-btn secondary-btn" id="obStep3BackBtn">← Geri</button>
-          <button type="button" class="pill-btn secondary-btn" id="obStep3SkipBranchBtn" style="border: 1.5px dashed #3b82f6; color: #3b82f6; font-weight: 700;">🏫 Şubesiz Devam Et</button>
           <button type="button" class="pill-btn primary-action-btn" id="obStep3NextBtn">İleri ➔</button>
+        </div>
+
+        <div style="margin-top: 10px; text-align: center; width: 100%;">
+          <button type="button" id="obStep3SkipBranchBtn" style="background: none; border: none; color: #3b82f6; font-size: 0.85rem; font-weight: 700; text-decoration: underline; cursor: pointer; padding: 6px 12px; border-radius: 8px; transition: opacity 0.2s ease;">
+            🏫 Şubesiz devam etmek istiyorum (Okul dışı / Bireysel)
+          </button>
         </div>
       </div>
 
       <!-- 4. ADIM: MÜFREDAT BİLGİSİ & GÜNLÜK HEDEF -->
       <div class="onboarding-step-view" id="obStep4" style="display: none;">
         <div class="ob-step-tag">ADIM 4 / 6</div>
-        <h2 class="ob-title">Rotan Oluşturuldu! 🗺️</h2>
+        <h2 class="ob-title">Rotan Oluşturuldu!</h2>
         
         <div id="obTrackInfoBox" style="background: rgba(59, 130, 246, 0.1); border: 1px solid var(--accent); padding: 15px; border-radius: 8px; margin-bottom: 20px; font-size: 0.9rem; line-height: 1.4; color: var(--text-main); text-align: left;">
           <!-- JS fills this in -->
@@ -1580,7 +1585,7 @@
       <!-- 5. ADIM: GÜNLÜK SERİ SÖZÜ & MOTİVASYON (STREAK PLEDGE) -->
       <div class="onboarding-step-view" id="obStep5" style="display: none;">
         <div class="ob-step-tag">ADIM 5 / 6</div>
-        <h2 class="ob-title">Aralıksız Seri Sözü! 🔥</h2>
+        <h2 class="ob-title">Aralıksız Seri Sözü!</h2>
         <p class="ob-subtitle">Kelime öğrenmenin en güçlü sırrı her gün zinciri kırmamaktır.</p>
 
         <!-- Motive Edici Bilgi Kutusu -->
@@ -1634,7 +1639,7 @@
       <!-- 6. ADIM: GÜNLÜK ÇALIŞMA HATIRLATICI -->
       <div class="onboarding-step-view" id="obStep6" style="display: none;">
         <div class="ob-step-tag">ADIM 6 / 6</div>
-        <h2 class="ob-title">Günlük Hatırlatıcı ⏰</h2>
+        <h2 class="ob-title">Günlük Hatırlatıcı</h2>
         <p class="ob-subtitle">Öğrenme ritmini korumak için sana en uygun çalışma saatini belirle.</p>
 
         <!-- Motive Edici Bilgi Kutusu -->
@@ -2102,7 +2107,7 @@
         <div class="about-hero-box">
           <div class="about-brand-row">
             <span class="about-brand">Lexi<span class="brand-highlight">Q</span></span>
-            <span class="about-version-pill" id="aboutAppVersion">v1.8.26</span>
+            <span class="about-version-pill" id="aboutAppVersion">v1.8.27</span>
             <span class="about-platform-badge" id="aboutPlatformBadge" style="display: none; font-size: 0.72rem; font-weight: 700; padding: 3px 9px; border-radius: 12px; background: rgba(59,130,246,0.15); color: #3b82f6; border: 1px solid rgba(59,130,246,0.3);"></span>
           </div>
           <p class="about-tagline">Müfredat Tabanlı Çok Dilli Kelime Arenası</p>
@@ -2602,7 +2607,7 @@
           <div class="student-hero-top-row">
             <div class="student-hero-identity">
               <button type="button" class="student-avatar-badge student-avatar-clickable" id="profHeroAvatarBtn" title="Avatarı Değiştir">
-                <span id="profHeroAvatar"><img src="assets/avatars/avatar_1_1.jpg" class="avatar-img-fluid" style="width:100%; height:100%; border-radius:50%; object-fit:cover; display:block;" alt="Avatar"></span>
+                <span id="profHeroAvatar"><img src="assets/avatars/avatar_default.jpg" class="avatar-img-fluid" style="width:100%; height:100%; border-radius:50%; object-fit:cover; display:block;" alt="Avatar"></span>
                 <span class="avatar-edit-icon" title="Değiştir">✏️</span>
               </button>
               <div class="student-hero-user-meta">
@@ -3684,16 +3689,16 @@
       <div class="confirm-icon-wrap" style="font-size: 2.8rem; margin-bottom: 8px;">🎉</div>
       <h3 class="confirm-title" style="font-size: 1.3rem; font-weight: 800; margin: 0 0 6px 0;">LexiQ Güncellendi!</h3>
       <div class="app-update-version-badge" style="display: inline-block; padding: 4px 14px; border-radius: 20px; font-size: 0.84rem; font-weight: 800; margin-bottom: 14px;">
-        Sürüm <span id="appUpdateVersionText">v1.8.26</span>
+        Sürüm <span id="appUpdateVersionText">v1.8.27</span>
       </div>
       <div class="update-notes-box" style="text-align: left; border-radius: 16px; padding: 14px 16px; font-size: 0.88rem; line-height: 1.6; margin-bottom: 18px; max-height: 280px; overflow-y: auto;">
         <div class="update-notes-title" style="font-weight: 800; margin-bottom: 8px; display: flex; align-items: center; gap: 6px;">
           <span>✨</span><span>Bu Sürümdeki Yenilikler</span>
         </div>
         <ul style="margin: 0; padding-left: 20px; display: flex; flex-direction: column; gap: 8px;">
+          <li><strong>🎨 Yeni Varsayılan Suluboya Öğrenci Avatarı:</strong> Profil oluşturma ekranında ve varsayılan öğrenci profilinde, uygulamanın sanatsal suluboya stiliyle tam uyumlu, modern ve kulaklıklı sevimli öğrenci avatarı varsayılan olarak tanımlandı.</li>
           <li><strong>👑 Şeref Kürsüsü ve Ayın Şampiyon Şubesi:</strong> Kürsü sayfası 3D podyum ve modern kart tasarımıyla baştan sona yenilendi. Her ay ve haftanın şampiyon şubeleri tüm ekran boyutlarında kusursuz ve eksiksiz olarak listeleniyor.</li>
           <li><strong>📱 iOS Otomatik Güncelleme Bildirimi:</strong> iOS ve Safari kullanıcıları için otomatik sürüm kontrolü ve tek dokunuşla önbellek yenileyip güncelleme alma bildirimi eklendi.</li>
-          <li><strong>⚡ Çapraz Platform Ekran & Tipografi Adaptasyonu:</strong> Küçük ekranlardan tabletlere kadar tüm cihazlarda taşmaları önleyen dinamik ve akıcı düzenleme yapıldı.</li>
         </ul>
       </div>
       <div style="display: flex; flex-direction: column; gap: 8px; width: 100%;">
@@ -3756,11 +3761,11 @@
   <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-storage-compat.js"></script>
-  <script src="firebase_backend.js?v=1.8.26"></script>
+  <script src="firebase_backend.js?v=1.8.27"></script>
 
   <!-- Kelime Verisi ve Uygulama Mantığı (Sadece Standart Vanilla JS) -->
-  <script src="words_data.js?v=1.8.26"></script>
-  <script src="app.js?v=1.8.26"></script>
+  <script src="words_data.js?v=1.8.27"></script>
+  <script src="app.js?v=1.8.27"></script>
 
   </body>
 </html>

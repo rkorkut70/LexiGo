@@ -1,11 +1,11 @@
 {
-  "version": "v1.8.26",
-  "versionCode": 86,
+  "version": "v1.8.27",
+  "versionCode": 87,
   "releaseDate": "2026-10-19",
   "notes": [
+    "🎨 Yeni Varsayılan Suluboya Öğrenci Avatarı: Profil oluşturma sihirbazı ve varsayılan öğrenci profilinde modern ve kulaklıklı suluboya öğrenci avatarı tanımlandı",
     "👑 Şeref Kürsüsü ve Ayın Şampiyon Şubesi Yeniden Tasarlandı: Tüm ekran boyutlarına tam uyumlu 3D podyum ve zenginleştirilmiş aylık şampiyonluk tablosu",
     "📱 iOS Otomatik Güncelleme Bildirimi: Yeni sürümlerde otomatik güncelleme penceresi ve tek dokunuşla anında önbellek yenileme",
-    "⚡ Çapraz Platform ve Mobil Adaptasyon: Küçük ve orta ölçekli ekranlarda metin taşmaları ve boşluklar optimize edildi",
-    "🎙️ Ses Motoru Kararlılığı: Yabancı dil seslendirmeleri için akıllı doğal ses akışı koruması"
+    "⚡ Çapraz Platform ve Mobil Adaptasyon: Küçük ve orta ölçekli ekranlarda metin taşmaları ve boşluklar optimize edildi"
   ]
 }

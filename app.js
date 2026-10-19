@@ -7,7 +7,8 @@
 (function () {
   'use strict';
 
-  const APP_VERSION = 'v1.8.26';
+  const APP_VERSION = 'v1.8.27';
+  const DEFAULT_AVATAR = 'avatar_default';
   const CURRENT_APP_BUILD = 'lexiq_build_19_clean';
 
   // Build 13 temiz kurulum / sıfırlama güvencesi (Kullanıcı verilerini sıfırla, Hoş Geldin ekranını garantile)
@@ -106,9 +107,9 @@
     userName: localStorage.getItem('lexiq_user_name') || 'Öğrenci',
     userAvatar: (() => {
       const av = localStorage.getItem('lexiq_user_avatar');
-      if (!av || av === '🦊') {
-        localStorage.setItem('lexiq_user_avatar', 'avatar_1_1');
-        return 'avatar_1_1';
+      if (!av || av === '🦊' || av === 'avatar_1_1') {
+        localStorage.setItem('lexiq_user_avatar', DEFAULT_AVATAR);
+        return DEFAULT_AVATAR;
       }
       return av;
     })(),
@@ -2005,7 +2006,7 @@
       }
 
       state.userName = 'Öğrenci';
-      state.userAvatar = 'avatar_1_1';
+      state.userAvatar = DEFAULT_AVATAR;
       state.userEmail = '';
       state.userTrack = '4A';
       state.userLevel = 'A2';
@@ -2692,7 +2693,7 @@
 
   function setAvatarElement(el, avatarVal) {
     if (!el) return;
-    const av = avatarVal || state.userAvatar || 'avatar_1_1';
+    const av = avatarVal || state.userAvatar || DEFAULT_AVATAR;
     if (isCustomAvatar(av)) {
       el.style.display = 'inline-flex';
       el.style.alignItems = 'center';
@@ -2726,7 +2727,7 @@
   }
 
   function getAvatarMarkup(avatarVal, sizeStyle = 'width:32px; height:32px;') {
-    const av = avatarVal || 'avatar_1_1';
+    const av = avatarVal || DEFAULT_AVATAR;
     if (isCustomAvatar(av)) {
       return '<img src="' + getAvatarSrc(av) + '" class="avatar-img-inline" style="' + sizeStyle + ' border-radius:50%; object-fit:cover; display:inline-block; vertical-align:middle;" alt="Avatar">';
     }
@@ -2744,7 +2745,7 @@
       name: 'Öğrenciler & Kampüs',
       icon: '🎓',
       avatars: [
-        'avatar_1_1', 'avatar_1_2', 'avatar_1_3', 'avatar_1_4', 'avatar_1_5',
+        'avatar_default', 'avatar_1_1', 'avatar_1_2', 'avatar_1_3', 'avatar_1_4', 'avatar_1_5',
         'avatar_1_6', 'avatar_1_7', 'avatar_1_8', 'avatar_1_9', 'avatar_1_10'
       ]
     },
@@ -3726,11 +3727,11 @@ let activeAvatarCategory = 'all';
   const obState = {
     step: 1,
     name: '',
-    avatar: '🦊',
+    avatar: DEFAULT_AVATAR,
     lang: 'EN-TR',
-    branch: 'İHS 101',
-    track: '4B',
-    level: 'B1',
+    branch: '',
+    track: '4A',
+    level: 'A2',
     unitNo: 1,
     dailyGoal: 15,
     streakPledgeDays: 5,
@@ -3795,14 +3796,14 @@ let activeAvatarCategory = 'all';
       }
       list = Array.from(set);
       if (list.length === 0) {
-        list = ['avatar_1_1', 'avatar_1_2', 'avatar_1_3', 'avatar_1_4', 'avatar_1_5'];
+        list = [DEFAULT_AVATAR, 'avatar_1_1', 'avatar_1_2', 'avatar_1_3', 'avatar_1_4', 'avatar_1_5'];
       }
     } else {
       const found = typeof AVATAR_CATEGORIES !== 'undefined' ? AVATAR_CATEGORIES.find(c => c.id === activeObAvatarCat) : null;
       list = (found && found.avatars) ? found.avatars : [];
     }
 
-    const currentSelected = obState.avatar || 'avatar_1_1';
+    const currentSelected = obState.avatar || DEFAULT_AVATAR;
     list.forEach(av => {
       const btn = document.createElement('button');
       btn.type = 'button';
@@ -3905,8 +3906,9 @@ let activeAvatarCategory = 'all';
     window.startOnboardingFlow = startOnboardingFlow;
     obState.step = 0;
     obState.name = (state.userName && state.userName !== 'Öğrenci') ? state.userName : '';
-    obState.avatar = state.userAvatar || 'avatar_1_1';
+    obState.avatar = (state.userAvatar && state.userAvatar !== '🦊' && state.userAvatar !== 'avatar_1_1') ? state.userAvatar : DEFAULT_AVATAR;
     obState.lang = state.activeLanguage || 'EN-TR';
+    obState.branch = state.userBranch || '';
     obState.track = state.userTrack || '4A';
     obState.level = state.userLevel || getLevelForTrack(obState.lang, obState.track);
     obState.unitNo = calculateCurrentUnitByDate(obState.lang, obState.level);
@@ -4067,10 +4069,10 @@ let activeAvatarCategory = 'all';
     if (branchSelect) {
       branchSelect.innerHTML = '';
       
-      // Şubesiz Devam seçeneğini en üste ekle
+      // Şubesiz Devam seçeneğini en üste ekle (Varsayılan Tercih)
       const skipOpt = document.createElement('option');
       skipOpt.value = '';
-      skipOpt.textContent = '🏫 Şubesiz Devam Et (Bireysel / Okul Dışı)';
+      skipOpt.textContent = '🏫 Şubesiz Devam Et (Okul Dışı / Bireysel)';
       branchSelect.appendChild(skipOpt);
 
       if (branches.length > 0) {
@@ -4081,17 +4083,15 @@ let activeAvatarCategory = 'all';
           branchSelect.appendChild(opt);
         });
 
-        // Eğer mevcut seçili şube bu dilde varsa onu koru
+        // Eğer mevcut seçili şube bu dilde varsa onu koru, yoksa varsayılan ŞUBESİZ gelsin
         if (obState.branch && branches.some(b => b.code === obState.branch)) {
           branchSelect.value = obState.branch;
-        } else if (obState.branch === '') {
-          branchSelect.value = '';
         } else {
-          // Varsayılan ilk resmi şube seçili gelsin
-          obState.branch = branches[0].code;
-          branchSelect.value = obState.branch;
+          obState.branch = '';
+          branchSelect.value = '';
         }
       } else {
+        obState.branch = '';
         branchSelect.value = '';
       }
 
@@ -4191,7 +4191,7 @@ let activeAvatarCategory = 'all';
 
   function completeOnboarding() {
     state.userName = (obState.name && obState.name.trim()) || localStorage.getItem('lexiq_user_name') || state.userName || 'Öğrenci';
-    state.userAvatar = (obState.avatar && obState.avatar !== '🦊') ? obState.avatar : ((state.userAvatar && state.userAvatar !== '🦊') ? state.userAvatar : (localStorage.getItem('lexiq_user_avatar') || 'avatar_1_1'));
+    state.userAvatar = (obState.avatar && obState.avatar !== '🦊') ? obState.avatar : ((state.userAvatar && state.userAvatar !== '🦊') ? state.userAvatar : (localStorage.getItem('lexiq_user_avatar') || DEFAULT_AVATAR));
     state.activeLanguage = obState.lang || 'EN-TR';
     state.userTrack = obState.track || '4A';
     state.userLevel = obState.level || getLevelForTrack(state.activeLanguage, state.userTrack);

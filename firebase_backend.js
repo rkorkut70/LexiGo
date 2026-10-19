@@ -180,7 +180,7 @@ async function syncUserData(user) {
         ? localName
         : (currentUser.displayName || 'Öğrenci'));
 
-  const resolvedAvatar = (docData && docData.avatar && docData.avatar !== '🦊') ? docData.avatar : (localStorage.getItem('lexiq_user_avatar') || 'avatar_1_1');
+  const resolvedAvatar = (docData && docData.avatar && docData.avatar !== '🦊') ? docData.avatar : (localStorage.getItem('lexiq_user_avatar') || 'avatar_default');
   const resolvedEmail = currentUser.email || (docData && docData.email) || localStorage.getItem('lexiq_user_email') || '';
   const resolvedTrack = (docData && docData.track) || localStorage.getItem('lexiq_user_track') || '4A';
   const resolvedLevel = (docData && docData.level) || localStorage.getItem('lexiq_user_level') || 'A2';
@@ -377,7 +377,7 @@ window.registerWithEmail = async function(email, password, name, avatar, remembe
       await auth.setPersistence(persistence).catch(e => console.warn("Persistence error:", e));
     }
     const trimmedName = (name || '').trim() || 'Öğrenci';
-    const chosenAvatar = (avatar && avatar !== '🦊') ? avatar : ((window.state && window.state.userAvatar && window.state.userAvatar !== '🦊') ? window.state.userAvatar : (localStorage.getItem('lexiq_user_avatar') || 'avatar_1_1'));
+    const chosenAvatar = (avatar && avatar !== '🦊') ? avatar : ((window.state && window.state.userAvatar && window.state.userAvatar !== '🦊') ? window.state.userAvatar : (localStorage.getItem('lexiq_user_avatar') || 'avatar_default'));
     const chosenTrack = (window.state && window.state.userTrack) || localStorage.getItem('lexiq_user_track') || '4A';
     const chosenLevel = (window.state && window.state.userLevel) || localStorage.getItem('lexiq_user_level') || 'A2';
     const chosenLang = (window.state && window.state.activeLanguage) || localStorage.getItem('kelime_active_lang') || 'EN-TR';
@@ -615,7 +615,7 @@ window.syncProgressToFirebase = function(customData, immediate = false) {
 
     const payload = {
       displayName: s.userName || localStorage.getItem('lexiq_user_name') || 'Öğrenci',
-      avatar: (s.userAvatar && s.userAvatar !== '🦊') ? s.userAvatar : (localStorage.getItem('lexiq_user_avatar') || 'avatar_1_1'),
+      avatar: (s.userAvatar && s.userAvatar !== '🦊') ? s.userAvatar : (localStorage.getItem('lexiq_user_avatar') || 'avatar_default'),
       lang: s.activeLanguage || localStorage.getItem('kelime_active_lang') || 'EN-TR',
       branch: s.userBranch || localStorage.getItem('lexiq_user_branch') || '',
       branchLocked: s.branchLocked || (localStorage.getItem('lexiq_branch_locked') === 'true') || !!(s.userBranch || localStorage.getItem('lexiq_user_branch')),
