@@ -18125,4 +18125,202 @@ html:not([data-theme="dark"]) .tg-rule-card,
   transform: scale(0.95);
 }
 
+/* ==========================================================================
+   TURNUVA & LİDERLER: 3D ŞAMPİYON ROZETLERİ VE NEON PARILTI EFEKTLERİ
+   ========================================================================== */
+
+/* Neon Nefes Alma / Işıma Keyframe Animasyonu */
+@keyframes championNeonGlow {
+  0% {
+    box-shadow: 0 0 10px rgba(251, 191, 36, 0.4),
+                0 0 20px rgba(245, 158, 11, 0.3),
+                0 0 35px rgba(245, 158, 11, 0.15),
+                inset 0 1px 1px rgba(255, 255, 255, 0.6);
+    filter: drop-shadow(0 0 6px rgba(251, 191, 36, 0.5));
+  }
+  50% {
+    box-shadow: 0 0 16px rgba(251, 191, 36, 0.8),
+                0 0 30px rgba(245, 158, 11, 0.6),
+                0 0 50px rgba(245, 158, 11, 0.35),
+                inset 0 1px 2px rgba(255, 255, 255, 0.8);
+    filter: drop-shadow(0 0 12px rgba(251, 191, 36, 0.85));
+  }
+  100% {
+    box-shadow: 0 0 10px rgba(251, 191, 36, 0.4),
+                0 0 20px rgba(245, 158, 11, 0.3),
+                0 0 35px rgba(245, 158, 11, 0.15),
+                inset 0 1px 1px rgba(255, 255, 255, 0.6);
+    filter: drop-shadow(0 0 6px rgba(251, 191, 36, 0.5));
+  }
+}
+
+@keyframes championCardNeonBorder {
+  0% {
+    border-color: rgba(251, 191, 36, 0.6);
+    box-shadow: 0 4px 18px rgba(245, 158, 11, 0.18),
+                inset 0 0 12px rgba(245, 158, 11, 0.08);
+  }
+  50% {
+    border-color: rgba(251, 191, 36, 0.95);
+    box-shadow: 0 6px 26px rgba(245, 158, 11, 0.32),
+                inset 0 0 18px rgba(245, 158, 11, 0.16);
+  }
+  100% {
+    border-color: rgba(251, 191, 36, 0.6);
+    box-shadow: 0 4px 18px rgba(245, 158, 11, 0.18),
+                inset 0 0 12px rgba(245, 158, 11, 0.08);
+  }
+}
+
+/* 1. Liderlik Tablosu Kartları (rank-1: 1. Sıra / Şampiyon) */
+.leaderboard-item.rank-1 {
+  position: relative;
+  background: linear-gradient(135deg, rgba(251, 191, 36, 0.22) 0%, rgba(217, 119, 6, 0.10) 100%) !important;
+  border: 1.5px solid rgba(251, 191, 36, 0.75) !important;
+  animation: championCardNeonBorder 2.4s ease-in-out infinite;
+  overflow: visible;
+}
+
+/* Şampiyon satırının solunda 3D neon parıltı rozeti */
+.leaderboard-item.rank-1 .lb-rank {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  font-size: 0.95rem;
+  font-weight: 900;
+  color: #78350f;
+  background: linear-gradient(135deg, #fffbeb 0%, #fbbf24 60%, #d97706 100%);
+  border: 1.5px solid #fef08a;
+  box-shadow: 0 3px 6px rgba(0, 0, 0, 0.35),
+              0 0 12px rgba(251, 191, 36, 0.8),
+              inset 0 1px 1px rgba(255, 255, 255, 0.9);
+  text-shadow: 0 1px 0 rgba(255, 255, 255, 0.6);
+}
+
+/* 3D Şampiyon Rozet İkonu & Görseli */
+.lb-champion-3d-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  width: 36px;
+  height: 36px;
+  flex-shrink: 0;
+  border-radius: 12px;
+  background: linear-gradient(145deg, rgba(254, 240, 138, 0.25), rgba(245, 158, 11, 0.15));
+  border: 1.5px solid rgba(251, 191, 36, 0.7);
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.25),
+              0 0 15px rgba(245, 158, 11, 0.45),
+              inset 0 1px 1px rgba(255, 255, 255, 0.5);
+  animation: championNeonGlow 2.4s ease-in-out infinite;
+}
+
+.lb-champion-3d-badge img {
+  width: 26px;
+  height: 26px;
+  object-fit: contain;
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.4));
+  transform: translateZ(0);
+}
+
+/* 2. Şeref Kürsüsü (Podium) 1. Şube / Şampiyon Podyum Rozeti */
+.col-first .podium-avatar-badge {
+  position: relative;
+  width: clamp(52px, 14vw, 66px) !important;
+  height: clamp(52px, 14vw, 66px) !important;
+  background: radial-gradient(circle at 35% 30%, #fffbeb 0%, #fbbf24 50%, #d97706 100%) !important;
+  border: 2px solid #fef08a !important;
+  border-radius: 18px !important;
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.4),
+              0 0 24px rgba(251, 191, 36, 0.85),
+              0 0 45px rgba(245, 158, 11, 0.5),
+              inset 0 2px 4px rgba(255, 255, 255, 0.8) !important;
+  animation: championNeonGlow 2.2s ease-in-out infinite !important;
+  z-index: 2;
+}
+
+/* Podyum rozetinin arkasındaki neon halka (aura / flare efekti) */
+.col-first .podium-avatar-badge::before {
+  content: '';
+  position: absolute;
+  top: -6px;
+  left: -6px;
+  right: -6px;
+  bottom: -6px;
+  border-radius: 24px;
+  background: radial-gradient(circle, rgba(251, 191, 36, 0.5) 0%, rgba(245, 158, 11, 0) 70%);
+  z-index: -1;
+  pointer-events: none;
+  filter: blur(4px);
+  animation: championNeonGlow 2.2s ease-in-out infinite;
+}
+
+/* Podyum Şampiyon İkonu (3D Trophy / Crown) */
+.col-first .podium-avatar-badge img.podium-3d-icon {
+  width: clamp(34px, 9vw, 44px);
+  height: clamp(34px, 9vw, 44px);
+  object-fit: contain;
+  filter: drop-shadow(0 3px 6px rgba(0, 0, 0, 0.5));
+  transform: translateY(-1px);
+}
+
+/* 2. ve 3. Derece Podyum Rozetleri de 3D Yapı */
+.col-second .podium-avatar-badge {
+  background: radial-gradient(circle at 35% 30%, #ffffff 0%, #cbd5e1 50%, #64748b 100%) !important;
+  border: 1.5px solid #f8fafc !important;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3),
+              0 0 14px rgba(203, 213, 225, 0.45),
+              inset 0 1px 2px rgba(255, 255, 255, 0.8) !important;
+}
+
+.col-second .podium-avatar-badge img.podium-3d-icon {
+  width: clamp(26px, 7vw, 34px);
+  height: clamp(26px, 7vw, 34px);
+  object-fit: contain;
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.35));
+}
+
+.col-third .podium-avatar-badge {
+  background: radial-gradient(circle at 35% 30%, #ffedd5 0%, #fb923c 50%, #9a3412 100%) !important;
+  border: 1.5px solid #fed7aa !important;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3),
+              0 0 14px rgba(251, 146, 60, 0.45),
+              inset 0 1px 2px rgba(255, 255, 255, 0.8) !important;
+}
+
+.col-third .podium-avatar-badge img.podium-3d-icon {
+  width: clamp(26px, 7vw, 34px);
+  height: clamp(26px, 7vw, 34px);
+  object-fit: contain;
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.35));
+}
+
+/* Şampiyonluk Başlık Rozeti (Tag-First) Neon Vurgusu */
+.tag-first {
+  color: #fffbeb !important;
+  background: linear-gradient(135deg, #f59e0b, #d97706) !important;
+  border: 1px solid #fef08a !important;
+  box-shadow: 0 2px 8px rgba(245, 158, 11, 0.5),
+              0 0 14px rgba(251, 191, 36, 0.6) !important;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.4);
+  letter-spacing: 0.4px;
+}
+
+/* Açık Tema Uyumluluğu */
+[data-theme="light"] .leaderboard-item.rank-1 {
+  background: linear-gradient(135deg, #fffbeb 0%, #fef3c7 100%) !important;
+  border-color: #f59e0b !important;
+}
+
+[data-theme="light"] .col-first .podium-avatar-badge {
+  box-shadow: 0 6px 16px rgba(245, 158, 11, 0.35),
+              0 0 22px rgba(245, 158, 11, 0.7),
+              inset 0 2px 4px rgba(255, 255, 255, 0.9) !important;
+}
+
+
 

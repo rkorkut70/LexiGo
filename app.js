@@ -7,7 +7,7 @@
 (function () {
   'use strict';
 
-  const APP_VERSION = 'v1.8.30';
+  const APP_VERSION = 'v1.8.31';
   const DEFAULT_AVATAR = 'avatar_default';
   const CURRENT_APP_BUILD = 'lexiq_build_19_clean';
 
@@ -2533,10 +2533,10 @@
     listEl.innerHTML = '';
 
     units.forEach((unit, idx) => {
-      const lockInfo = lockMap[unit.unite_no] || { isUnlocked: idx === 0, progress: { percent: 0, isPassed75: false, learned: 0, total: 0 } };
+      const lockInfo = lockMap[unit.unite_no] || { isUnlocked: idx === 0, progress: { percent: 0, isPassed80: false, isPassed75: false, learned: 0, total: 0 } };
       const prog = lockInfo.progress || getUnitProgress(unit, langCode);
       const isUnlocked = lockInfo.isUnlocked;
-      const isPassed = prog.isPassed75;
+      const isPassed = prog.isPassed80 || prog.isPassed75;
       const isComplete = prog.total > 0 && prog.learned >= prog.total;
 
       const itemEl = document.createElement('div');
@@ -2551,7 +2551,7 @@
       } else if (isPassed) {
         badgeHtml = `<span class="pup-badge pup-passed">✅ %${prog.percent} (Açıldı)</span>`;
       } else {
-        badgeHtml = `<span class="pup-badge pup-progress">%${prog.percent} (Hedef %75)</span>`;
+        badgeHtml = `<span class="pup-badge pup-progress">%${prog.percent} (Hedef %80)</span>`;
       }
 
       itemEl.innerHTML = `
@@ -2565,9 +2565,9 @@
           </div>
           ${badgeHtml}
         </div>
-        <div class="pup-bar-track" title="%${prog.percent} tamamlandı (Baraj: %75)">
+        <div class="pup-bar-track" title="%${prog.percent} tamamlandı (Baraj: %80)">
           <div class="pup-bar-fill" style="width: ${Math.min(100, prog.percent)}%;"></div>
-          <div class="pup-bar-threshold" title="%75 Kuralı Eşiği" style="left: 75%;"></div>
+          <div class="pup-bar-threshold" title="%80 Kuralı Eşiği" style="left: 80%;"></div>
         </div>
       `;
 
@@ -3134,7 +3134,7 @@ let activeAvatarCategory = 'all';
    * Bir ünitenin öğrenilme oranını (%0 - %100) ve öğrenilen kelime sayısını hesaplar.
    */
   function getUnitProgress(unit, langCode = state.activeLanguage) {
-    if (!unit) return { total: 0, learned: 0, percent: 0, ratio: 0, isPassed75: false };
+    if (!unit) return { total: 0, learned: 0, percent: 0, ratio: 0, isPassed80: false, isPassed75: false };
     syncLearnedMapFromStorage();
     const allWords = getWordsData();
     const unitWords = allWords.filter(w => w.dil === unit.dil && (!unit.seviye || w.seviye === unit.seviye) && w.unite_no === unit.unite_no);
@@ -3142,13 +3142,13 @@ let activeAvatarCategory = 'all';
     const learned = unitWords.filter(w => state.learnedMap[w.id] && state.learnedMap[w.id].learned === true).length;
     const ratio = total > 0 ? (learned / total) : 1;
     const percent = total > 0 ? Math.round(ratio * 100) : 100;
-    const isPassed75 = ratio >= 0.75;
-    return { total, learned, percent, ratio, isPassed75 };
+    const isPassed80 = ratio >= 0.80;
+    return { total, learned, percent, ratio, isPassed80, isPassed75: isPassed80 };
   }
 
   /**
    * Müfredat / Kur bazında tüm ünitelerin kilit durumlarını hesaplar.
-   * Kural 4: 1. ünite daima açıktır. Sonraki ünite (i), bir önceki ünite (i-1) en az %75 tamamlandığında açılır.
+   * Kural 4: 1. ünite daima açıktır. Sonraki ünite (i), bir önceki ünite (i-1) en az %80 tamamlandığında açılır.
    * Kullanıcı kilidi açılmış tüm geçmiş ünitelere serbestçe geri dönebilir.
    */
   function getUnitLockStatusMap(langCode = state.activeLanguage, level = null) {
@@ -3169,8 +3169,8 @@ let activeAvatarCategory = 'all';
       } else {
         const prevUnit = units[idx - 1];
         const prevStatus = lockMap[prevUnit.unite_no];
-        // Önceki ünite açık ve en az %75 tamamlanmışsa bu ünite açılır
-        const isUnlocked = Boolean(prevStatus && prevStatus.isUnlocked && prevStatus.progress.isPassed75);
+        // Önceki ünite açık ve en az %80 tamamlanmışsa bu ünite açılır
+        const isUnlocked = Boolean(prevStatus && prevStatus.isUnlocked && (prevStatus.progress.isPassed80 || prevStatus.progress.isPassed75));
         lockMap[u.unite_no] = {
           isUnlocked,
           progress,
@@ -3608,7 +3608,7 @@ let activeAvatarCategory = 'all';
       let title = u.baslik || (u.unite_adi ? `${u.seviye || ''} • ${u.unite_adi}` : `Ünite ${displayNo}`);
       if (!isUnlocked) {
         opt.disabled = true;
-        opt.textContent = `${title} 🔒 (%75 Gerekli)`;
+        opt.textContent = `${title} 🔒 (%80 Gerekli)`;
       } else {
         opt.disabled = false;
         opt.textContent = title;
@@ -4156,7 +4156,7 @@ let activeAvatarCategory = 'all';
         let title = u.baslik || (u.unite_adi ? `${u.seviye || ''} • ${u.unite_adi}` : `Ünite ${displayNo}`);
         if (!isUnlocked) {
           opt.disabled = true;
-          opt.textContent = `${title} 🔒 (%75 Gerekli)`;
+          opt.textContent = `${title} 🔒 (%80 Gerekli)`;
         } else {
           opt.disabled = false;
           opt.textContent = title;
@@ -4182,7 +4182,7 @@ let activeAvatarCategory = 'all';
         </div>
         <div style="font-size: 0.88rem; opacity: 0.95; margin-bottom: 4px;">📚 Müfredat: <strong>${trackName}</strong></div>
         <div style="font-size: 0.88rem; opacity: 0.95; margin-bottom: 4px;">📖 Başlangıç Ünitesi: <strong>${unitLabel}</strong></div>
-        <div style="font-size: 0.82rem; opacity: 0.8; line-height: 1.4;">Kademeli öğrenme sistemi: Sonraki üniteye geçmek için mevcut ünitenin en az %75'ini tamamlamalısınız.</div>
+        <div style="font-size: 0.82rem; opacity: 0.8; line-height: 1.4;">Kademeli öğrenme sistemi: Sonraki üniteye geçmek için mevcut ünitenin en az %80'ini tamamlamalısınız.</div>
       `;
     }
 
@@ -4821,10 +4821,11 @@ let activeAvatarCategory = 'all';
       if (curUnit) {
         noteUnitStart(curUnit);
         const prog = getUnitProgress(curUnit, state.activeLanguage);
-        if (prog.isPassed75 && (!state.hasToastPassed75ForUnit || !state.hasToastPassed75ForUnit[curUnit.unite_no])) {
-          if (!state.hasToastPassed75ForUnit) state.hasToastPassed75ForUnit = {};
-          state.hasToastPassed75ForUnit[curUnit.unite_no] = true;
-          showToast('🔓 Harika! Bu ünitenin %75\'ini öğrendin ve sonraki ünite açıldı!');
+        const isPassedCurrent = prog.isPassed80 || prog.isPassed75;
+        if (isPassedCurrent && (!state.hasToastPassed80ForUnit || !state.hasToastPassed80ForUnit[curUnit.unite_no])) {
+          if (!state.hasToastPassed80ForUnit) state.hasToastPassed80ForUnit = {};
+          state.hasToastPassed80ForUnit[curUnit.unite_no] = true;
+          showToast('🔓 Harika! Bu ünitenin %80\'ini öğrendin ve sonraki ünite açıldı!');
         }
         if (prog.total > 0 && prog.learned >= prog.total) {
           noteUnitCompleted(curUnit);
@@ -5373,7 +5374,7 @@ let activeAvatarCategory = 'all';
       dom.unitModalTitle.textContent = `📚 ${bookName} Üniteleri`;
     }
     if (dom.unitModalSubtitle) {
-      dom.unitModalSubtitle.textContent = 'Çalışmak istediğiniz üniteyi seçin. Sonraki üniteyi açabilmek için mevcut ünitenin en az %75\'ini tamamlamalısınız.';
+      dom.unitModalSubtitle.textContent = 'Çalışmak istediğiniz üniteyi seçin. Sonraki üniteyi açabilmek için mevcut ünitenin en az %80\'ini tamamlamalısınız.';
     }
 
     const allWords = getWordsData();
@@ -5406,10 +5407,10 @@ let activeAvatarCategory = 'all';
 
       let statBadgeHtml = '';
       if (!isUnlocked) {
-        statBadgeHtml = `<span class="unit-stat-badge locked">🔒 Kilitli (%75 Gerekli)</span>`;
+        statBadgeHtml = `<span class="unit-stat-badge locked">🔒 Kilitli (%80 Gerekli)</span>`;
       } else if (isCompleted) {
         statBadgeHtml = `<span class="unit-stat-badge completed">✓ Tamamlandı (%100)</span>`;
-      } else if (percent >= 75) {
+      } else if (percent >= 80) {
         statBadgeHtml = `<span class="unit-stat-badge completed">✓ Açıldı (%${percent})</span>`;
       } else {
         statBadgeHtml = `<span class="unit-stat-badge">${learnedCount} / ${totalTarget} (%${percent})</span>`;
@@ -5429,7 +5430,7 @@ let activeAvatarCategory = 'all';
             <span class="unit-pill total">Toplam: ${totalTarget} Kelime</span>
             <span class="unit-pill learned">Öğrendin: ${learnedCount}</span>
             <span class="unit-pill pending">Kalan: ${pendingCount} Kelime</span>
-            ${!isUnlocked ? '<span class="unit-pill locked-info">🔒 Önceki üniteden en az %75 öğrenilmelidir</span>' : ''}
+            ${!isUnlocked ? '<span class="unit-pill locked-info">🔒 Önceki üniteden en az %80 öğrenilmelidir</span>' : ''}
           </div>
           <div class="unit-progress-bar">
             <div class="unit-progress-fill" style="width: ${percent}%;"></div>
@@ -5439,7 +5440,7 @@ let activeAvatarCategory = 'all';
 
       card.addEventListener('click', () => {
         if (!isUnlocked) {
-          showToast('🔒 Bu ünite henüz kilitli! Açabilmek için önceki ünitedeki kelimelerin en az %75\'ini öğrenmelisiniz.');
+          showToast('🔒 Bu ünite henüz kilitli! Açabilmek için önceki ünitedeki kelimelerin en az %80\'ini öğrenmelisiniz.');
           return;
         }
         state.activeUnitNo = u.unite_no;
@@ -10862,14 +10863,19 @@ let activeAvatarCategory = 'all';
 
               const rankClass = rank === 1 ? 'rank-1' : (rank === 2 ? 'rank-2' : (rank === 3 ? 'rank-3' : ''));
               const highlightStyle = isMe ? 'background: rgba(59, 130, 246, 0.15); border: 2px solid var(--accent);' : '';
+              const rankDisplayHtml = rank === 1 
+                ? `<div class="lb-rank" title="Şampiyon">1</div>`
+                : `<div class="lb-rank">${rank}</div>`;
+              const championBadgeTag = rank === 1 ? `<span class="lb-champion-3d-badge" title="Sınıf Şampiyonu"><img src="assets/icons/icon_3d_trophy.png" alt="Şampiyon"></span>` : '';
 
               listContainer.innerHTML += `
                 <div class="leaderboard-item ${rankClass}" style="${highlightStyle}">
-                  <div class="lb-rank">${rank}</div>
+                  ${rankDisplayHtml}
                   <div class="lb-avatar">${getAvatarMarkup(user.avatar || '🦊', 'width:38px; height:38px;')}</div>
                   <div class="lb-info">
                     <div style="display:flex; align-items:center; gap:6px;">
                       <div class="lb-name">${user.displayName || 'Öğrenci'}</div>
+                      ${championBadgeTag}
                       ${isMe ? '<span style="font-size:0.72rem; font-weight:800; color:var(--accent);">(Sen)</span>' : ''}
                     </div>
                     <div class="lb-badge" style="color: var(--text-muted); font-size: 0.72rem;">Toplam: ${(user.totalXp || 0).toLocaleString()} XP</div>
@@ -10974,16 +10980,23 @@ let activeAvatarCategory = 'all';
               const rankClass = rank === 1 ? 'rank-1' : (rank === 2 ? 'rank-2' : (rank === 3 ? 'rank-3' : ''));
               const highlightStyle = isMyBranch ? 'background: rgba(59, 130, 246, 0.16); border: 2px solid var(--accent);' : '';
               const branchDetail = (b.trackName && b.level) ? `(${b.trackName} • ${b.level})` : (b.name && b.name !== b.code ? `(${b.name})` : '');
+              const rankDisplayHtml = (idx === 0) 
+                ? `<div class="lb-rank" title="Lig Şampiyonu">1</div>` 
+                : `<div class="lb-rank">${idx + 1}</div>`;
+              const championBadgeTag = (idx === 0) 
+                ? `<span class="lb-champion-3d-badge" title="Haftalık Şube Ligi Şampiyonu"><img src="assets/icons/icon_3d_trophy.png" alt="Şampiyon"></span>` 
+                : '';
 
               listContainer.innerHTML += `
                 <div class="leaderboard-item ${rankClass}" style="${highlightStyle}">
-                  <div class="lb-rank">${idx + 1}</div>
+                  ${rankDisplayHtml}
                   <div class="lb-avatar" style="font-size: 1.1rem; font-weight: 800; border-radius: 10px; background: rgba(59, 130, 246, 0.15); color: #3b82f6; width: 36px; height: 36px; display: flex; align-items: center; justify-content: center;">
                     🏫
                   </div>
                   <div class="lb-info">
                     <div style="display:flex; align-items:center; gap:6px;">
                       <div class="lb-name" style="font-weight: 800;">${b.code} ${branchDetail ? `<span style="font-size:0.75rem; font-weight:600; color:var(--text-muted); margin-left:4px;">${branchDetail}</span>` : ''}</div>
+                      ${championBadgeTag}
                       ${isMyBranch ? '<span style="font-size:0.72rem; font-weight:800; color:var(--accent);">(Şuben)</span>' : ''}
                     </div>
                     <div class="lb-badge" style="font-size: 0.72rem; color: var(--text-muted);">
@@ -11221,7 +11234,7 @@ let activeAvatarCategory = 'all';
                   <!-- 2. Şube (Gümüş) -->
                   <div class="podium-col col-second">
                     <span class="podium-rank-tag tag-second">🥈 2. ŞUBE</span>
-                    <div class="podium-avatar-badge">🥈</div>
+                    <div class="podium-avatar-badge"><img src="assets/icons/icon_3d_arena.png" class="podium-3d-icon" alt="2. Şube"></div>
                     <div class="podium-branch-code">${m2.code}</div>
                     <div class="podium-branch-track">${m2.trackName || 'Şube'}</div>
                     <div class="podium-pedestal">
@@ -11233,7 +11246,7 @@ let activeAvatarCategory = 'all';
                   <!-- 1. Şube (Altın) -->
                   <div class="podium-col col-first">
                     <span class="podium-rank-tag tag-first">👑 ŞAMPİYON</span>
-                    <div class="podium-avatar-badge">🥇</div>
+                    <div class="podium-avatar-badge"><img src="assets/icons/icon_3d_trophy.png" class="podium-3d-icon" alt="Şampiyon"></div>
                     <div class="podium-branch-code">${m1.code}</div>
                     <div class="podium-branch-track">${m1.trackName || 'Şampiyon'}</div>
                     <div class="podium-pedestal">
@@ -11245,7 +11258,7 @@ let activeAvatarCategory = 'all';
                   <!-- 3. Şube (Bronz) -->
                   <div class="podium-col col-third">
                     <span class="podium-rank-tag tag-third">🥉 3. ŞUBE</span>
-                    <div class="podium-avatar-badge">🥉</div>
+                    <div class="podium-avatar-badge"><img src="assets/icons/icon_3d_school.png" class="podium-3d-icon" alt="3. Şube"></div>
                     <div class="podium-branch-code">${m3.code}</div>
                     <div class="podium-branch-track">${m3.trackName || 'Şube'}</div>
                     <div class="podium-pedestal">
@@ -11378,7 +11391,7 @@ let activeAvatarCategory = 'all';
                   <!-- 2. Şube -->
                   <div class="podium-col col-second">
                     <span class="podium-rank-tag tag-second">🥈 2. ŞUBE</span>
-                    <div class="podium-avatar-badge">🥈</div>
+                    <div class="podium-avatar-badge"><img src="assets/icons/icon_3d_arena.png" class="podium-3d-icon" alt="2. Şube"></div>
                     <div class="podium-branch-code">${m2.code}</div>
                     <div class="podium-branch-track">${m2.trackName || 'Şube'}</div>
                     <div class="podium-pedestal">
@@ -11390,7 +11403,7 @@ let activeAvatarCategory = 'all';
                   <!-- 1. Şube (Ayın Şampiyonu) -->
                   <div class="podium-col col-first">
                     <span class="podium-rank-tag tag-first">👑 ŞAMPİYON</span>
-                    <div class="podium-avatar-badge">🥇</div>
+                    <div class="podium-avatar-badge"><img src="assets/icons/icon_3d_crown.png" class="podium-3d-icon" alt="Ayın Şampiyonu"></div>
                     <div class="podium-branch-code">${m1.code}</div>
                     <div class="podium-branch-track">${m1.trackName || 'Ayın Kralı'}</div>
                     <div class="podium-pedestal">
@@ -11402,7 +11415,7 @@ let activeAvatarCategory = 'all';
                   <!-- 3. Şube -->
                   <div class="podium-col col-third">
                     <span class="podium-rank-tag tag-third">🥉 3. ŞUBE</span>
-                    <div class="podium-avatar-badge">🥉</div>
+                    <div class="podium-avatar-badge"><img src="assets/icons/icon_3d_school.png" class="podium-3d-icon" alt="3. Şube"></div>
                     <div class="podium-branch-code">${m3.code}</div>
                     <div class="podium-branch-track">${m3.trackName || 'Şube'}</div>
                     <div class="podium-pedestal">
@@ -11574,7 +11587,7 @@ let activeAvatarCategory = 'all';
                   <!-- 2. Şube -->
                   <div class="podium-col col-second">
                     <span class="podium-rank-tag tag-second">🥈 2. ŞUBE</span>
-                    <div class="podium-avatar-badge">🥈</div>
+                    <div class="podium-avatar-badge"><img src="assets/icons/icon_3d_arena.png" class="podium-3d-icon" alt="2. Şube"></div>
                     <div class="podium-branch-code">${m2.code}</div>
                     <div class="podium-branch-track">${m2.trackName || 'Şube'}</div>
                     <div class="podium-pedestal">
@@ -11586,7 +11599,7 @@ let activeAvatarCategory = 'all';
                   <!-- 1. Şube (Lig Lideri) -->
                   <div class="podium-col col-first">
                     <span class="podium-rank-tag tag-first">👑 LİG LİDERİ</span>
-                    <div class="podium-avatar-badge">🥇</div>
+                    <div class="podium-avatar-badge"><img src="assets/icons/icon_3d_trophy.png" class="podium-3d-icon" alt="Lig Lideri"></div>
                     <div class="podium-branch-code">${m1.code}</div>
                     <div class="podium-branch-track">${m1.trackName || 'Genel Lider'}</div>
                     <div class="podium-pedestal">
@@ -11598,7 +11611,7 @@ let activeAvatarCategory = 'all';
                   <!-- 3. Şube -->
                   <div class="podium-col col-third">
                     <span class="podium-rank-tag tag-third">🥉 3. ŞUBE</span>
-                    <div class="podium-avatar-badge">🥉</div>
+                    <div class="podium-avatar-badge"><img src="assets/icons/icon_3d_school.png" class="podium-3d-icon" alt="3. Şube"></div>
                     <div class="podium-branch-code">${m3.code}</div>
                     <div class="podium-branch-track">${m3.trackName || 'Şube'}</div>
                     <div class="podium-pedestal">
@@ -11707,13 +11720,21 @@ let activeAvatarCategory = 'all';
                 const flagIcon = getLangFlag(userLang);
                 const langTitle = (typeof LANG_META !== 'undefined' && LANG_META[userLang] && LANG_META[userLang].name) ? LANG_META[userLang].name : userLang;
                 
+                const rankDisplayHtml = (rank === 1) 
+                  ? `<div class="lb-rank" title="Okul Şampiyonu">1</div>` 
+                  : `<div class="lb-rank">${rank}</div>`;
+                const championBadgeTag = (rank === 1) 
+                  ? `<span class="lb-champion-3d-badge" title="Tüm Zamanlar Okul Şampiyonu"><img src="assets/icons/icon_3d_crown.png" alt="Şampiyon"></span>` 
+                  : '';
+                
                 listContainer.innerHTML += `
                   <div class="leaderboard-item rank-${rank}" style="${isMe ? 'background: rgba(37, 99, 235, 0.1); border-left: 4px solid var(--accent);' : ''}">
-                    <div class="lb-rank">${rank}</div>
+                    ${rankDisplayHtml}
                     <div class="lb-avatar">${getAvatarMarkup(user.avatar || '🦊', 'width:38px; height:38px;')}</div>
                     <div class="lb-info">
                       <div style="display:flex; align-items:center; gap:6px; flex-wrap:wrap;">
                         <div class="lb-name">${user.displayName || 'Öğrenci'}</div>
+                        ${championBadgeTag}
                         <span class="lb-lang-flag" title="${langTitle}" aria-label="${langTitle}" style="font-size:1.1rem; line-height:1; display:inline-flex; align-items:center; cursor:help;">${flagIcon}</span>
                         ${isMe ? '<span style="font-size:0.7rem; font-weight:800; color:var(--accent); flex-shrink:0;">(Sen)</span>' : ''}
                       </div>
@@ -11816,8 +11837,17 @@ let activeAvatarCategory = 'all';
           return;
         }
 
-        const confirmText = `⚠️ DİKKAT: "${chosenCode}" sınıfını seçmek üzeresiniz.\n\nSınıf/Şube seçimi isteğe bağlıdır ancak bir kez onayladığınızda KALICI OLARAK KİLİTLENİR ve sonradan DEĞİŞTİRİLEMEZ.\n\n"${chosenCode}" şubesini onaylayıp kilitlemek istiyor musunuz?`;
-        if (!window.confirm(confirmText)) {
+        const confirmMsg = `"${chosenCode}" sınıfını/şubesini seçmek üzeresiniz.\n\nSınıf/Şube seçimi isteğe bağlıdır ancak bir kez onayladığınızda profilinize KALICI OLARAK KİLİTLENİR ve sonradan ayarlardan değiştirilemez.\n\n"${chosenCode}" şubesini onaylayıp kilitlemek istiyor musunuz?`;
+        const confirmed = await showAppConfirm({
+          title: 'Resmi Şubeni Onayla',
+          message: confirmMsg,
+          icon: '🏫',
+          okText: 'Evet, Şubemi Kilitle',
+          cancelText: 'Vazgeç',
+          isDanger: false
+        });
+
+        if (!confirmed) {
           return;
         }
 
@@ -11851,7 +11881,17 @@ let activeAvatarCategory = 'all';
         }
         closeSelectBranchModal();
         showToast(`🎉 Sınıfınız "${chosenCode}" olarak başarıyla kilitlendi!`, 4000);
-        if (typeof renderClassLeaderboard === 'function') {
+
+        // Turnuva ve Liderler ekranındaki "Henüz Bir Şube Seçmedin" uyarısını anında gizle
+        const noBranchAlert = document.getElementById('lbNoBranchAlert');
+        if (noBranchAlert) {
+          noBranchAlert.style.display = 'none';
+        }
+
+        // Liderlik tablosunu anında aktif sekmeye göre tazele
+        if (typeof switchLeaderboardTab === 'function' && typeof currentLbTab !== 'undefined') {
+          switchLeaderboardTab(currentLbTab || 'class');
+        } else if (typeof renderClassLeaderboard === 'function') {
           renderClassLeaderboard();
         }
       });

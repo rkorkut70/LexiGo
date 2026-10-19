@@ -1,11 +1,11 @@
 {
-  "version": "v1.8.30",
-  "versionCode": 90,
+  "version": "v1.8.31",
+  "versionCode": 91,
   "releaseDate": "2026-10-19",
   "notes": [
-    "🎯 Doğru/Yanlış Akıllı Anlam Bildirimi: Yanlış eşleştirilmiş bir kelimeye öğrenci doğru şekilde 'YANLIŞ' cevabı verdiğinde, anlık tebrik bildiriminde ve oyun kartında kelimenin gerçek doğru anlamı vurgulu olarak öğretilmektedir. Tur sonunda da düzeltilen tüm kelimeler telaffuzlarıyla listelenir",
-    "🏆 Turnuva & Liderler Responsive Sekme Düzeni: 'Kürsü' sekmesi dahil tüm 4 sekme (Okul, Sınıfım, Şube Ligi, Kürsü) en dar mobil ekranlarda dahi ekrana %100 tam oturacak 4 eşit sütunlu responsive grid yapısına kavuşturuldu, sağdan taşma ve kesilme tamamen giderildi",
-    "👑 Şeref Kürsüsü ve Ayın Şampiyon Şubesi: Kürsü sayfası 3D podyum ve modern kart tasarımıyla baştan sona yenilendi. Her ay ve haftanın şampiyon şubeleri tüm ekran boyutlarında kusursuz olarak listeleniyor",
-    "🎨 Yeni Varsayılan Suluboya Öğrenci Avatarı: Profil oluşturma ekranında sanatsal suluboya stiliyle tam uyumlu sevimli öğrenci avatarı varsayılan olarak tanımlandı"
+    "✨ 3D Şampiyon Rozetleri & Canlı Neon Efektleri: Turnuva, Liderler ve Şeref Kürsüsü ekranlarındaki 1. sıra ve şampiyon şube rozetleri 3D kupa/taç ikonlarıyla yenilendi, arkalarına yanıp sönen altın neon ışık hüzmesi (aura) efekti eklendi",
+    "🏫 Modern Şube Onay Modali: Şube seçiminde sistemin kaba 'file://' popup'ı kaldırılarak yerine şık, özel tasarımlı 3D onay penceresi entegre edildi. Şube seçildikten sonra liderlik tablosu anında güncelleniyor",
+    "📈 Ünite Açma Eşiği %80: Sonraki ünite kilidini açma barajı pedagojik standartlara uygun olarak %75'ten %80'e yükseltildi",
+    "🎯 Doğru/Yanlış Akıllı Anlam Bildirimi: Yanlış eşleştirilmiş bir kelimeye öğrenci doğru şekilde 'YANLIŞ' cevabı verdiğinde, anlık tebrik bildiriminde ve oyun kartında kelimenin gerçek doğru anlamı vurgulu olarak öğretilmektedir"
   ]
 }
