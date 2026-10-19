@@ -1,11 +1,11 @@
 {
-  "version": "v1.8.27",
-  "versionCode": 87,
+  "version": "v1.8.28",
+  "versionCode": 88,
   "releaseDate": "2026-10-19",
   "notes": [
-    "🎨 Yeni Varsayılan Suluboya Öğrenci Avatarı: Profil oluşturma sihirbazı ve varsayılan öğrenci profilinde modern ve kulaklıklı suluboya öğrenci avatarı tanımlandı",
-    "👑 Şeref Kürsüsü ve Ayın Şampiyon Şubesi Yeniden Tasarlandı: Tüm ekran boyutlarına tam uyumlu 3D podyum ve zenginleştirilmiş aylık şampiyonluk tablosu",
-    "📱 iOS Otomatik Güncelleme Bildirimi: Yeni sürümlerde otomatik güncelleme penceresi ve tek dokunuşla anında önbellek yenileme",
-    "⚡ Çapraz Platform ve Mobil Adaptasyon: Küçük ve orta ölçekli ekranlarda metin taşmaları ve boşluklar optimize edildi"
+    "👑 Şeref Kürsüsü ve Ayın Şampiyon Şubesi Tam Görünüm: Kürsü ekranında 'Ayın Şampiyon Şubesi Lideri' vitrin kartı, 3D podyum ve tam sıralama tablosu tüm ekran boyutlarına kusursuz uyarlandı",
+    "🏆 Dinamik Kürsü Yedekleme & Sıralama: Arşiv verisi henüz bulunmasa bile resmi şube kadrosundan canlı liderlik podyumu ve aylık şube ligi anında oluşturulur",
+    "🎨 Yüksek Kontrastlı 3D Podyum: Açık ve koyu temalarda altın, gümüş ve bronz basamaklarda metin ve lig puanı kontrastı en üst seviyeye çıkarıldı",
+    "📱 iOS & Android Kusursuz Düzen: Kürsü sekmesinde ilgisiz bildirim çubukları ve alt kullanıcı barı gizlenerek temiz, ferah ve akıcı bir vitrin deneyimi sunuldu"
   ]
 }

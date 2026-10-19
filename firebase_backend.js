@@ -871,7 +871,6 @@ window.fetchHonorRollArchive = async function(lang) {
     // Firestore'da 'tournament_archive' koleksiyonundan haftalık şampiyonları çek
     const snapshot = await db.collection('tournament_archive')
                              .where('lang', '==', targetLang)
-                             .orderBy('timestamp', 'desc')
                              .limit(60)
                              .get();
 
@@ -934,7 +933,6 @@ window.fetchPodiumWeeklyArchive = async function(lang) {
     const targetLang = lang || localStorage.getItem('kelime_active_lang') || 'EN-TR';
     const snapshot = await db.collection('tournament_archive')
                              .where('lang', '==', targetLang)
-                             .orderBy('timestamp', 'desc')
                              .limit(50)
                              .get();
 
@@ -955,6 +953,7 @@ window.fetchPodiumWeeklyArchive = async function(lang) {
       });
     });
 
+    archives.sort((a, b) => b.timestamp - a.timestamp);
     return archives;
   } catch (e) {
     console.warn("Haftalık podyum arşivi alınamadı:", e);

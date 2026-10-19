@@ -13924,15 +13924,26 @@ html.screen-fit-compact .welcome-action-guest {
   padding-left: clamp(14px, 4vw, 24px) !important;
   padding-right: clamp(14px, 4vw, 24px) !important;
   background: var(--bg-surface) !important;
-  box-shadow: 0 -4px 16px rgba(0, 0, 0, 0.2) !important;
-  display: flex !important;
+  display: flex;
   align-items: center !important;
   justify-content: space-between !important;
 }
 
+#leaderboardModal.full-screen-modal #lbCurrentUserBar.is-hidden,
+#leaderboardModal.full-screen-modal #lbCurrentUserBar[style*="display: none"] {
+  display: none !important;
+}
 
+#leaderboardModal.full-screen-modal #lbPanelHonor {
+  overflow: visible !important;
+  flex: none !important;
+}
 
-
+#leaderboardModal.full-screen-modal #honorLeaderboardList {
+  overflow: visible !important;
+  flex: none !important;
+  min-height: auto !important;
+}
 
 /* ==========================================================================
    LEXIQ ULTRA-MODERN 3D & ADAPTIVE AYARLAR EKRANI TASARIMI (v1.5.4)
@@ -17786,6 +17797,41 @@ html:not([data-theme="dark"]) .tg-rule-card,
   color: #fef08a;
 }
 
+[data-theme="light"] .col-first .podium-pedestal {
+  background: linear-gradient(180deg, #fef3c7 0%, #fde68a 100%) !important;
+  border-color: #f59e0b !important;
+}
+
+[data-theme="light"] .col-second .podium-pedestal {
+  background: linear-gradient(180deg, #f8fafc 0%, #e2e8f0 100%) !important;
+  border-color: #cbd5e1 !important;
+}
+
+[data-theme="light"] .col-third .podium-pedestal {
+  background: linear-gradient(180deg, #ffedd5 0%, #fed7aa 100%) !important;
+  border-color: #f97316 !important;
+}
+
+[data-theme="light"] .col-first .podium-pedestal-score {
+  color: #78350f !important;
+}
+
+[data-theme="light"] .col-second .podium-pedestal-score {
+  color: #1e293b !important;
+}
+
+[data-theme="light"] .col-third .podium-pedestal-score {
+  color: #7c2d12 !important;
+}
+
+[data-theme="light"] .podium-pedestal-label {
+  color: #475569 !important;
+}
+
+[data-theme="light"] .col-first .podium-pedestal-label {
+  color: #92400e !important;
+}
+
 /* Bilgi ve İstatistik Şeridi */
 .podium-summary-strip {
   display: flex;
@@ -17799,6 +17845,12 @@ html:not([data-theme="dark"]) .tg-rule-card,
   border: 1px solid rgba(255, 255, 255, 0.05);
   font-size: clamp(0.68rem, 2vw, 0.76rem);
   color: var(--text-muted);
+}
+
+[data-theme="light"] .podium-summary-strip {
+  background: rgba(245, 158, 11, 0.08);
+  border-color: rgba(245, 158, 11, 0.2);
+  color: #78350f;
 }
 
 /* Akordeon Arşiv Kartları */
