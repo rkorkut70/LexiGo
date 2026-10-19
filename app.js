@@ -7,7 +7,7 @@
 (function () {
   'use strict';
 
-  const APP_VERSION = 'v1.8.24';
+  const APP_VERSION = 'v1.8.25';
   const CURRENT_APP_BUILD = 'lexiq_build_19_clean';
 
   // Build 13 temiz kurulum / sıfırlama güvencesi (Kullanıcı verilerini sıfırla, Hoş Geldin ekranını garantile)
@@ -60,6 +60,7 @@
     cardAutoAccent: localStorage.getItem('lexiq_card_auto_accent') || 'US', // 'US' | 'UK'
     arenaDefaultAccent: localStorage.getItem('lexiq_arena_default_accent') || 'US', // 'US' | 'UK'
     activeEnAccent: localStorage.getItem('kelime_en_accent') || 'US', // 'US' | 'UK'
+    speechEngine: localStorage.getItem('lexiq_speech_engine') || 'auto', // 'auto' | 'cloud' | 'device'
     dailyGoal: parseInt(localStorage.getItem('kelime_daily_goal'), 10) || 15,
     dailyGoalExtra: 0,
     sessionLearnedIds: new Set(),
@@ -919,6 +920,7 @@
     settingCardFilter: document.getElementById('settingCardFilter'),
     settingAutoplayAudio: document.getElementById('settingAutoplayAudio'),
     speechSpeedBtns: document.querySelectorAll('#speechSpeedSegmentGroup .setting-segment-btn'),
+    speechEngineBtns: document.querySelectorAll('#speechEngineSegmentGroup .setting-segment-btn'),
     settingShuffle: document.getElementById('settingShuffle'),
     settingAutoSlideshow: document.getElementById('settingAutoSlideshow'),
     settingSrsPriority: document.getElementById('settingSrsPriority'),
@@ -1085,13 +1087,18 @@
       window.syncUserData(window.fbUser);
     }
 
-    // Tarayıcı / Mobil Web Speech API ses motorunu ilk kullanıcı etkileşiminde uyandır
+    // Tarayıcı / Mobil Web Speech API ve Native Audio ses motorunu ilk kullanıcı etkileşiminde uyandır
     const wakeUpSpeechAudio = () => {
       if (typeof window !== 'undefined' && 'speechSynthesis' in window) {
         loadSystemVoices();
         if (window.speechSynthesis.paused) {
           window.speechSynthesis.resume();
         }
+      }
+      if (!fallbackAudioPlayer) {
+        try {
+          fallbackAudioPlayer = new Audio();
+        } catch (e) {}
       }
     };
     document.addEventListener('click', wakeUpSpeechAudio, { once: true });
@@ -1647,6 +1654,17 @@
     if (dom.speechSpeedBtns) {
       dom.speechSpeedBtns.forEach(btn => {
         btn.classList.toggle('active', parseFloat(btn.getAttribute('data-speed')) === state.speechSpeed);
+      });
+    }
+  }
+
+  function applySpeechEngine(engine) {
+    const valid = ['auto', 'cloud', 'device'].includes(engine) ? engine : 'auto';
+    state.speechEngine = valid;
+    localStorage.setItem('lexiq_speech_engine', valid);
+    if (dom.speechEngineBtns) {
+      dom.speechEngineBtns.forEach(btn => {
+        btn.classList.toggle('active', btn.getAttribute('data-engine') === valid);
       });
     }
   }
@@ -2925,6 +2943,7 @@ let activeAvatarCategory = 'all';
       const settingSoundFx = document.getElementById('settingSoundFx');
       if (settingSoundFx) settingSoundFx.checked = soundFxEnabled;
       applySpeechSpeed(state.speechSpeed);
+      applySpeechEngine(state.speechEngine || 'auto');
 
       if (dom.settingAccentUsBtn && dom.settingAccentUkBtn) {
         const isUk = (state.activeEnAccent === 'UK');
@@ -4897,6 +4916,7 @@ let activeAvatarCategory = 'all';
   /**
    * Hedef dile özgü yerel ana dil sesini bulur.
    * İngilizce için US (Amerikan) ve UK (İngiliz) aksan filtrelemesi uygular.
+   * KESİNLİKLE Türkçe sesleri yabancı diller için aday yapmaz (iOS Opera koruması).
    */
   function findNativeVoice(targetLangCode, accentPreference) {
     if (typeof window === 'undefined' || !('speechSynthesis' in window)) return null;
@@ -4912,22 +4932,21 @@ let activeAvatarCategory = 'all';
 
     const targetPrefix = targetLangCode.split('-')[0].toLowerCase(); // 'en', 'fr', 'de'
 
-    // Yabancı dil seslerini filtrele (Türkçe sesleri ele)
+    // Yabancı dil seslerini filtrele (Türkçe sistem seslerini kesinlikle hariç tut)
     let candidates = voices.filter(v => {
       const vLang = (v.lang || '').replace('_', '-').toLowerCase();
-      if (vLang.startsWith('tr')) return false;
+      const vName = (v.name || '').toLowerCase();
+      // Türkçe sesleri kesinlikle ele (Yelda, Cem, Tolga vb.)
+      if (vLang.startsWith('tr') || vName.includes('turkish') || vName.includes('türkçe') || vName.includes('yelda') || vName.includes('cem')) {
+        return false;
+      }
       return vLang.startsWith(targetPrefix);
     });
 
+    // Eğer hedef dilde (en, de, fr) hiçbir yabancı ses bulunamadıysa KESİNLİKLE null dön!
+    // Asla voices[0] dönme; aksi halde iOS Opera cihazın Türkçe sesini İngilizceye atar.
     if (candidates.length === 0) {
-      candidates = voices.filter(v => {
-        const vLang = (v.lang || '').replace('_', '-').toLowerCase();
-        return !vLang.startsWith('tr');
-      });
-    }
-
-    if (candidates.length === 0) {
-      return voices[0] || null;
+      return null;
     }
 
     // İngilizce için US ve UK ayrımı
@@ -4935,8 +4954,8 @@ let activeAvatarCategory = 'all';
       const isUk = accentPreference === 'UK';
       const exactCode = isUk ? 'en-gb' : 'en-us';
       const keywords = isUk
-        ? ['great britain', 'united kingdom', 'uk', 'british', 'george', 'hazel', 'susan', 'oliver', 'stephanie']
-        : ['united states', 'us', 'american', 'zira', 'david', 'mark', 'samantha'];
+        ? ['great britain', 'united kingdom', 'uk', 'british', 'george', 'hazel', 'susan', 'oliver', 'stephanie', 'daniel', 'serena', 'kate', 'arthur', 'martha']
+        : ['united states', 'us', 'american', 'zira', 'david', 'mark', 'samantha', 'alex', 'fred', 'victoria', 'aaron', 'nicky', 'ava', 'allison'];
 
       // 1. Dil kodu tam eşleşen (örn: en-gb veya en-us)
       const exact = candidates.find(v => (v.lang || '').replace('_', '-').toLowerCase() === exactCode);
@@ -4949,7 +4968,7 @@ let activeAvatarCategory = 'all';
       });
       if (byName) return byName;
 
-      // 3. Eğer UK istenmiş ama sistemde sadece US ses varsa veya tam tersi
+      // 3. Genel İngilizce sesi
       const anyEn = candidates.find(v => (v.lang || '').replace('_', '-').toLowerCase().startsWith('en'));
       if (anyEn) return anyEn;
     }
@@ -4964,13 +4983,80 @@ let activeAvatarCategory = 'all';
              name.includes('online');
     });
 
-    return highQualityVoice || candidates[0];
+    return highQualityVoice || candidates[0] || null;
+  }
+
+  /**
+   * Yüksek kaliteli yerel telaffuz akışı (Google Cloud Audio fallback).
+   * iOS Opera, Safari veya yabancı sistem sesi bulunmayan tarayıcılarda kusursuz ana dil sesi sağlar.
+   */
+  function playNativeAudioFallback(text, targetLangCode, onEnd, onError) {
+    if (!text) {
+      if (typeof onEnd === 'function') onEnd();
+      return;
+    }
+    try {
+      if (!fallbackAudioPlayer) {
+        fallbackAudioPlayer = new Audio();
+      } else {
+        try {
+          fallbackAudioPlayer.pause();
+          fallbackAudioPlayer.currentTime = 0;
+        } catch (e) {}
+      }
+
+      let ttsLang = 'en-US';
+      const lower = (targetLangCode || '').toLowerCase();
+      if (lower.startsWith('en')) {
+        ttsLang = (lower.includes('gb') || lower.includes('uk')) ? 'en-GB' : 'en-US';
+      } else if (lower.startsWith('de')) {
+        ttsLang = 'de';
+      } else if (lower.startsWith('fr')) {
+        ttsLang = 'fr';
+      }
+
+      const cleanText = text.trim();
+      const audioUrl = `https://translate.google.com/translate_tts?ie=UTF-8&client=tw-ob&tl=${encodeURIComponent(ttsLang)}&q=${encodeURIComponent(cleanText)}`;
+
+      fallbackAudioPlayer.src = audioUrl;
+      fallbackAudioPlayer.playbackRate = (state && state.speechSpeed) ? state.speechSpeed : 1.0;
+
+      let finished = false;
+      const handleFinish = () => {
+        if (!finished) {
+          finished = true;
+          if (typeof onEnd === 'function') onEnd();
+        }
+      };
+
+      fallbackAudioPlayer.onended = handleFinish;
+      fallbackAudioPlayer.onerror = (e) => {
+        console.warn('Native audio fallback player error:', e);
+        handleFinish();
+        if (typeof onError === 'function') onError(e);
+      };
+
+      const playPromise = fallbackAudioPlayer.play();
+      if (playPromise !== undefined) {
+        playPromise.catch(err => {
+          console.warn('Fallback audio playback catch:', err);
+          handleFinish();
+        });
+      }
+
+      // Emniyet zaman aşımı
+      setTimeout(handleFinish, Math.max(3000, cleanText.length * 150));
+    } catch (err) {
+      console.warn('playNativeAudioFallback genel hata:', err);
+      if (typeof onEnd === 'function') onEnd();
+    }
   }
 
   let activeUtterance = null; // Chromium Garbage Collection (GC) önleyici
 
   /**
-   * Kelimeyi veya cümleyi seçilen dilde veya aksanda (US / UK) Web Speech API ile net seslendirir.
+   * Kelimeyi veya cümleyi seçilen dilde veya aksanda (US / UK)
+   * Web Speech API veya Akıllı Doğal Ses akışı ile net seslendirir.
    */
   window.speakWord = speakWord;
   function speakWord(text, dil, buttonEl = null, forcedAccent = null) {
@@ -5014,7 +5100,7 @@ let activeAvatarCategory = 'all';
     };
 
     // 1. Android Native TextToSpeech Köprüsü (APK içinde native ses motoru)
-    if (window.AndroidTTS && typeof window.AndroidTTS.speak === 'function') {
+    if (window.AndroidTTS && typeof window.AndroidTTS.speak === 'function' && state.speechEngine !== 'cloud') {
       try {
         const rate = (state.speechSpeed || 1.0);
         window.AndroidTTS.speak(text, targetLangCode, rate);
@@ -5026,7 +5112,29 @@ let activeAvatarCategory = 'all';
       }
     }
 
-    // 2. Tarayıcı / Web Speech API (Masaüstü ve Web Görünümü için)
+    // 2. Kullanıcı Ayarlarından "Doğal Ses (Cloud HD)" Zorlandıysa Doğrudan Akışa Git
+    if (state.speechEngine === 'cloud') {
+      playNativeAudioFallback(text, targetLangCode, finish, finish);
+      return;
+    }
+
+    // 3. Web Speech API ile Tarayıcı Sentezleyicisi Kontrolü
+    const accentPref = dil === 'EN-TR' ? (forcedAccent || state.activeEnAccent) : null;
+    let nativeVoice = findNativeVoice(targetLangCode, accentPref);
+    if (!nativeVoice) {
+      loadSystemVoices();
+      nativeVoice = findNativeVoice(targetLangCode, accentPref);
+    }
+
+    // iOS Opera, Safari veya cihazında ilgili yabancı dil ses paketi bulunmayan tarayıcılar:
+    // Eğer uygun yabancı ses yoksa ve 'device' zorlanmamışsa, KESİNLİKLE Türkçe sese düşme,
+    // derhal stüdyo kalitesindeki Doğal Ses akışına geç!
+    if (!nativeVoice && state.speechEngine !== 'device') {
+      playNativeAudioFallback(text, targetLangCode, finish, finish);
+      return;
+    }
+
+    // 4. Tarayıcı / Web Speech API ile Yerel Sentezleme
     if (typeof window !== 'undefined' && 'speechSynthesis' in window) {
       try {
         if (window.speechSynthesis.paused) {
@@ -5037,10 +5145,7 @@ let activeAvatarCategory = 'all';
         }
 
         const utterance = new SpeechSynthesisUtterance(text);
-        activeUtterance = utterance; // GC tarafından silinmesini önle
-
-        const accentPref = dil === 'EN-TR' ? (forcedAccent || state.activeEnAccent) : null;
-        const nativeVoice = findNativeVoice(targetLangCode, accentPref);
+        activeUtterance = utterance; // GC silinmesini önle
 
         if (nativeVoice) {
           utterance.voice = nativeVoice;
@@ -5065,8 +5170,12 @@ let activeAvatarCategory = 'all';
 
         utterance.onend = finish;
         utterance.onerror = (e) => {
-          console.warn('SpeechSynthesis hata:', e);
-          finish();
+          console.warn('SpeechSynthesis hata, doğal ses akışı deneniyor:', e);
+          if (state.speechEngine !== 'device') {
+            playNativeAudioFallback(text, targetLangCode, finish, finish);
+          } else {
+            finish();
+          }
         };
 
         // Zaman aşımı emniyeti
@@ -5080,11 +5189,21 @@ let activeAvatarCategory = 'all';
         window.speechSynthesis.speak(utterance);
         return;
       } catch (err) {
-        console.warn('SpeechSynthesis hatası:', err);
-        finish();
+        console.warn('SpeechSynthesis hatası, fallback uygulanıyor:', err);
+        if (state.speechEngine !== 'device') {
+          playNativeAudioFallback(text, targetLangCode, finish, finish);
+        } else {
+          finish();
+        }
+        return;
       }
     } else {
-      finish();
+      // Tarayıcıda speechSynthesis hiç yoksa
+      if (state.speechEngine !== 'device') {
+        playNativeAudioFallback(text, targetLangCode, finish, finish);
+      } else {
+        finish();
+      }
     }
   }
 
@@ -9817,6 +9936,24 @@ let activeAvatarCategory = 'all';
           if (speed) {
             applySpeechSpeed(speed);
             showToast(`Telaffuz hızı: ${btn.textContent}`);
+          }
+        });
+      });
+    }
+
+    // Seslendirme Motoru (Tarayıcı Uyumu) Butonları
+    if (dom.speechEngineBtns) {
+      dom.speechEngineBtns.forEach(btn => {
+        btn.addEventListener('click', () => {
+          const engine = btn.getAttribute('data-engine');
+          if (engine) {
+            applySpeechEngine(engine);
+            const msgs = {
+              auto: '🤖 Ses motoru: Akıllı Otomatik (Tarayıcı Uyumlu Hibrit)',
+              cloud: '🌐 Ses motoru: Doğal Ses (Online HD - Tüm Tarayıcılar)',
+              device: '📱 Ses motoru: Cihaz Sentezleyicisi (Web Speech)'
+            };
+            showToast(msgs[engine] || 'Ses motoru güncellendi');
           }
         });
       });
