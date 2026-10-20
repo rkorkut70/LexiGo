@@ -7,7 +7,7 @@
 (function () {
   'use strict';
 
-  const APP_VERSION = 'v1.8.36';
+  const APP_VERSION = 'v1.8.37';
   const DEFAULT_AVATAR = 'avatar_default';
   const CURRENT_APP_BUILD = 'lexiq_build_19_clean';
 
@@ -7503,6 +7503,7 @@ let activeAvatarCategory = 'all';
   let arenaIdleTimer = null;
   let arenaHasStartedAction = false;
   let arenaIdlePromptVisible = false;
+  let scrambleNextTimeout = null;
 
   const ARENA_START_REMINDER_MESSAGES = [
     { icon: '🚀', msg: 'Hey şampiyon! Arena seni bekliyor, ilk hamleni yapmaya hazır mısın?' },

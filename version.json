@@ -1,8 +1,9 @@
 {
-  "version": "v1.8.36",
-  "versionCode": 96,
+  "version": "v1.8.37",
+  "versionCode": 97,
   "releaseDate": "2026-10-20",
   "notes": [
+    "🛠️ Arena Oyun Başlatma Hatası Giderildi: 'stopAllGames()' fonksiyonunda tanımlanmamış değişken kaynaklı oyunların başlamasını engelleyen hata düzeltildi",
     "🛠️ Açılışta Hareketsizlik Uyarısı Engeli Düzeltildi: Arena hareketsizlik penceresinin açılışta kilitli kalmasına neden olan CSS kuralı düzeltildi",
     "⏰ Arena Hareketsizlik Hatırlatıcısı & Teşvik: 10 saniye işlem yapılmadığında oyuna başlama ve devam etmeyi teşvik eden 40 farklı eğlenceli cümle ve uyarı penceresi eklendi",
     "🎙️ Aksan Butonları Düzeni: 6 arenada aksan butonları alt satıra alınıp ortalandı, ipucu butonlarıyla çakışması önlendi; dinle ve söyle oyunlarındaki küçük butonlar temizlendi",
