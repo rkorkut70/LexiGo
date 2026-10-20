@@ -1,6 +1,6 @@
 {
-  "version": "v1.8.37",
-  "versionCode": 97,
+  "version": "v1.8.38",
+  "versionCode": 98,
   "releaseDate": "2026-10-20",
   "notes": [
     "🛠️ Arena Oyun Başlatma Hatası Giderildi: 'stopAllGames()' fonksiyonunda tanımlanmamış değişken kaynaklı oyunların başlamasını engelleyen hata düzeltildi",
