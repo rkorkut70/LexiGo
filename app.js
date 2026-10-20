@@ -2497,15 +2497,17 @@
 
     if (profTimeCards) profTimeCards.textContent = formatSecondsToHuman(state.timeTracking.cardSeconds);
     if (profTimeGames) profTimeGames.textContent = formatSecondsToHuman(state.timeTracking.gameSeconds);
-    if (profStartDate) profStartDate.textContent = formatDateToHuman(state.timeTracking.firstStartedAt);
+    if (profStartDate) {
+      const startAt = state.timeTracking.firstStartedAt || Date.now();
+      profStartDate.textContent = formatDateToHuman(startAt);
+    }
 
     if (profRegDate) {
       const isFbLoggedIn = typeof fbUser !== 'undefined' && fbUser !== null;
-      if (isFbLoggedIn) {
-        const regTime = state.timeTracking.registeredAt || (fbUser.metadata && fbUser.metadata.creationTime ? new Date(fbUser.metadata.creationTime).getTime() : Date.now());
+      const isRegistered = isFbLoggedIn || Boolean(state.userEmail && state.userEmail.trim() !== '');
+      if (isRegistered) {
+        const regTime = state.timeTracking.registeredAt || (isFbLoggedIn && fbUser.metadata && fbUser.metadata.creationTime ? new Date(fbUser.metadata.creationTime).getTime() : Date.now());
         profRegDate.textContent = formatDateToHuman(regTime);
-      } else if (state.timeTracking.registeredAt) {
-        profRegDate.textContent = formatDateToHuman(state.timeTracking.registeredAt);
       } else {
         profRegDate.textContent = 'Misafir Kullanıcı';
       }
@@ -7189,6 +7191,7 @@ let activeAvatarCategory = 'all';
 
   function switchAppMode(mode) {
     state.activeMode = mode;
+    document.body.classList.remove('arena-game-active');
 
     // Alt navigasyon ve yüzen menü aktif durumunu güncelle
     document.querySelectorAll('.bottom-nav-item').forEach(item => {
@@ -7202,18 +7205,26 @@ let activeAvatarCategory = 'all';
     closeFloatingNavMenu();
     updateFloatingNavItems();
     const appHeader = document.querySelector('.app-header');
-    if (appHeader) appHeader.style.display = 'flex';
+    if (appHeader) {
+      appHeader.style.display = 'flex';
+      appHeader.style.visibility = 'visible';
+    }
 
     if (mode === 'home') {
       if (dom.tabFlashcards) dom.tabFlashcards.classList.remove('active');
       if (dom.tabArena) dom.tabArena.classList.remove('active');
-      if (dom.homeView) dom.homeView.style.display = 'flex';
+      if (dom.homeView) {
+        dom.homeView.style.display = 'flex';
+        dom.homeView.scrollTop = 0;
+      }
       if (dom.flashcardsView) dom.flashcardsView.style.display = 'none';
       if (dom.arenaView) dom.arenaView.style.display = 'none';
       if (dom.floatingNavDock) dom.floatingNavDock.style.display = 'none';
       stopAllGames();
       state.activeGame = null;
+      window.scrollTo(0, 0);
       updateHomeScreenUI();
+      updateUserProfileUI();
     } else if (mode === 'flashcards') {
       if (dom.tabFlashcards) dom.tabFlashcards.classList.add('active');
       if (dom.tabArena) dom.tabArena.classList.remove('active');
@@ -7237,6 +7248,8 @@ let activeAvatarCategory = 'all';
       if (dom.arenaView) dom.arenaView.style.display = 'flex';
       if (dom.floatingNavDock) dom.floatingNavDock.style.display = 'flex';
       state.activeGame = null;
+      arenaHasStartedAction = false;
+      resetArenaIdleTimer();
       updateArenaHeaderAndStats();
       checkArenaEligibility();
     }
@@ -7560,10 +7573,10 @@ let activeAvatarCategory = 'all';
   }
 
   function showArenaIdlePrompt() {
-    if (!state.activeGame) return;
+    if (state.activeMode !== 'arena') return;
     if (dom.gameRoundCompletedModal && dom.gameRoundCompletedModal.style.display !== 'none') return;
     if (dom.arenaIdlePromptOverlay) {
-      const list = arenaHasStartedAction ? ARENA_CONTINUE_ENCOURAGEMENT_MESSAGES : ARENA_START_REMINDER_MESSAGES;
+      const list = (state.activeGame && arenaHasStartedAction) ? ARENA_CONTINUE_ENCOURAGEMENT_MESSAGES : ARENA_START_REMINDER_MESSAGES;
       const pick = list[Math.floor(Math.random() * list.length)];
       if (dom.arenaIdleIcon) dom.arenaIdleIcon.textContent = pick.icon;
       if (dom.arenaIdleMessage) dom.arenaIdleMessage.textContent = pick.msg;
@@ -7579,13 +7592,11 @@ let activeAvatarCategory = 'all';
       clearTimeout(arenaIdleTimer);
       arenaIdleTimer = null;
     }
-    dismissArenaIdlePrompt();
-
-    // Sadece aktif bir oyun ekranı varken 10 saniye hareketsizlik sayacı çalışır
-    if (state.activeGame && dom.arenaActiveGameArea && dom.arenaActiveGameArea.style.display !== 'none') {
+    // Sadece arena modundayken (oyunlar menüsü veya aktif oyun) 20 saniyelik hareketsizlik sayacı çalışır
+    if (state.activeMode === 'arena') {
       arenaIdleTimer = setTimeout(() => {
         showArenaIdlePrompt();
-      }, 10000);
+      }, 20000);
     }
   }
 
@@ -7602,6 +7613,7 @@ let activeAvatarCategory = 'all';
       arenaIdleTimer = null;
     }
     dismissArenaIdlePrompt();
+    document.body.classList.remove('arena-game-active');
     stopTetrisGame();
     stopTrueFalseGame();
     stopSpeakGame();
@@ -7644,6 +7656,7 @@ let activeAvatarCategory = 'all';
     closeGameRoundCompletedModal();
     closeDailyPracticeMilestoneModal();
     state.activeGame = null;
+    arenaHasStartedAction = false;
     howToPlayCurrentGame = null;
     if (dom.gameHowToPlayOverlay) dom.gameHowToPlayOverlay.style.display = 'none';
     exitFullscreenIfSupported();
@@ -7652,10 +7665,14 @@ let activeAvatarCategory = 'all';
     if (dom.arenaGamesMenu) dom.arenaGamesMenu.style.display = 'block';
     document.body.classList.remove('arena-game-active');
     const appHeader = document.querySelector('.app-header');
-    if (appHeader) appHeader.style.display = 'flex';
+    if (appHeader) {
+      appHeader.style.display = 'flex';
+      appHeader.style.visibility = 'visible';
+    }
     if (dom.floatingNavDock && (state.activeMode === 'arena' || state.activeMode === 'flashcards')) {
       dom.floatingNavDock.style.display = 'flex';
     }
+    resetArenaIdleTimer();
     updateArenaHeaderAndStats();
     updateGamesHubLocks();
   }
@@ -8089,6 +8106,7 @@ let activeAvatarCategory = 'all';
   function startAnagramRound() {
     state.roundUsedHint = false;
     anagramState.isLocked = false;
+    resetArenaIdleTimer();
     const pool = getLearnedWordsPool();
     if (pool.length < 3) return;
 
@@ -8329,6 +8347,7 @@ let activeAvatarCategory = 'all';
   function startTetrisRound() {
     state.roundUsedHint = false;
     stopTetrisGame();
+    resetArenaIdleTimer();
     const pool = getLearnedWordsPool();
     if (pool.length < 3) return;
 
@@ -8473,6 +8492,7 @@ let activeAvatarCategory = 'all';
         e.preventDefault();
         e.stopPropagation();
       }
+      recordArenaUserAction(true);
       if (!tetrisState.active) return;
 
       // Aynı bloğa tekrar basılmasını önle
@@ -8583,6 +8603,7 @@ let activeAvatarCategory = 'all';
 
   function startClozeRound() {
     state.roundUsedHint = false;
+    resetArenaIdleTimer();
     const rawPool = getLearnedWordsPool();
     const currentLang = state.activeLanguage || 'EN-TR';
     const pool = rawPool.filter(w => isValidForeignWord(w, currentLang));
@@ -9189,6 +9210,7 @@ let activeAvatarCategory = 'all';
 
   function startSpeakRound() {
     state.roundUsedHint = false;
+    resetArenaIdleTimer();
     speakState.isEvaluating = false;
     speakState.isRoundCompleted = false;
     speakState.hintGiven = false;
@@ -9295,6 +9317,7 @@ let activeAvatarCategory = 'all';
 
   function startMatchRound() {
     state.roundUsedHint = false;
+    resetArenaIdleTimer();
     if (dom.matchAccentGroup) {
       dom.matchAccentGroup.style.display = (state.activeLanguage === 'EN-TR') ? 'inline-flex' : 'none';
       setEnAccent(state.arenaDefaultAccent || state.activeEnAccent || 'US', false, false);
@@ -9486,6 +9509,7 @@ let activeAvatarCategory = 'all';
   function startTrueFalseRound() {
     state.roundUsedHint = false;
     stopTrueFalseGame();
+    resetArenaIdleTimer();
     const pool = getLearnedWordsPool();
     if (pool.length < 3) return;
 
@@ -9695,6 +9719,7 @@ let activeAvatarCategory = 'all';
   function startListenRound() {
     state.roundUsedHint = false;
     listenState.isLocked = false;
+    resetArenaIdleTimer();
     const pool = getLearnedWordsPool();
     if (pool.length < 3) return;
 
@@ -9921,6 +9946,7 @@ let activeAvatarCategory = 'all';
 
   function startQuizRound() {
     state.roundUsedHint = false;
+    resetArenaIdleTimer();
     const pool = getLearnedWordsPool();
     if (pool.length < 3) return;
 
@@ -10040,6 +10066,7 @@ let activeAvatarCategory = 'all';
   function startScrambleRound() {
     state.roundUsedHint = false;
     scrambleState.isLocked = false;
+    resetArenaIdleTimer();
     const pool = getLearnedWordsPool();
     if (pool.length < 3) return;
 
@@ -12687,6 +12714,22 @@ let activeAvatarCategory = 'all';
         localStorage.removeItem('kelime_unlocked_badges');
         localStorage.removeItem('kelime_game_stats');
 
+        const now = Date.now();
+        state.timeTracking = {
+          cardSeconds: 0,
+          gameSeconds: 0,
+          firstStartedAt: now,
+          registeredAt: 0,
+          unitDurations: {},
+          unitStartTimes: {}
+        };
+        localStorage.setItem('lexiq_first_started_at', String(now));
+        localStorage.removeItem('lexiq_registered_at');
+        localStorage.setItem('lexiq_time_cards', '0');
+        localStorage.setItem('lexiq_time_games', '0');
+        localStorage.setItem('lexiq_unit_durations', '{}');
+        localStorage.setItem('lexiq_unit_start_times', '{}');
+
         state.isOnboarded = true;
         localStorage.setItem('lexiq_user_onboarded', 'true');
 
@@ -13050,6 +13093,22 @@ let activeAvatarCategory = 'all';
       state.hasEarlyWin = false;
       localStorage.removeItem('kelime_unlocked_badges');
       localStorage.removeItem('kelime_game_stats');
+
+      const now = Date.now();
+      state.timeTracking = {
+        cardSeconds: 0,
+        gameSeconds: 0,
+        firstStartedAt: now,
+        registeredAt: 0,
+        unitDurations: {},
+        unitStartTimes: {}
+      };
+      localStorage.setItem('lexiq_first_started_at', String(now));
+      localStorage.removeItem('lexiq_registered_at');
+      localStorage.setItem('lexiq_time_cards', '0');
+      localStorage.setItem('lexiq_time_games', '0');
+      localStorage.setItem('lexiq_unit_durations', '{}');
+      localStorage.setItem('lexiq_unit_start_times', '{}');
 
       // Arayüz sayaçlarını ve ekranlarını sıfırla
       updateUserProfileUI();
@@ -14031,7 +14090,7 @@ let activeAvatarCategory = 'all';
         }
       });
 
-      // Hareketsizlik sayacını her dokunuşta yenile
+      // Hareketsizlik sayacını ekranda herhangi bir yere dokunulduğunda anında yenile
       dom.arenaActiveGameArea.addEventListener('pointerdown', () => {
         if (arenaIdlePromptVisible) {
           dismissArenaIdlePrompt();
@@ -14039,6 +14098,18 @@ let activeAvatarCategory = 'all';
         resetArenaIdleTimer();
       }, { passive: true });
     }
+
+    // Global yakalayıcı: Arenada (menü veya aktif oyun) kullanıcının ekrandaki her dokunuşunda sayacı sıfırlar
+    ['pointerdown', 'touchstart', 'mousedown', 'keydown'].forEach(evtType => {
+      window.addEventListener(evtType, () => {
+        if (arenaIdlePromptVisible) {
+          dismissArenaIdlePrompt();
+        }
+        if (state.activeMode === 'arena') {
+          resetArenaIdleTimer();
+        }
+      }, { passive: true, capture: true });
+    });
 
     if (dom.arenaIdleDismissBtn) {
       dom.arenaIdleDismissBtn.addEventListener('click', (e) => {
