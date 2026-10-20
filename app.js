@@ -7592,11 +7592,11 @@ let activeAvatarCategory = 'all';
       clearTimeout(arenaIdleTimer);
       arenaIdleTimer = null;
     }
-    // Sadece arena modundayken (oyunlar menüsü veya aktif oyun) 20 saniyelik hareketsizlik sayacı çalışır
+    // Sadece arena modundayken (oyunlar menüsü veya aktif oyun) 45 saniyelik hareketsizlik sayacı çalışır
     if (state.activeMode === 'arena') {
       arenaIdleTimer = setTimeout(() => {
         showArenaIdlePrompt();
-      }, 20000);
+      }, 45000);
     }
   }
 
