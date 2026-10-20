@@ -349,7 +349,8 @@ async function syncUserData(user) {
         gameStats: mergedGameStats,
         cleanWins: bestCleanWins,
         timeTracking: syncedTimeTracking,
-        lastActive: firebase.firestore.FieldValue.serverTimestamp()
+        lastActive: firebase.firestore.FieldValue.serverTimestamp(),
+        lastLoginAt: firebase.firestore.FieldValue.serverTimestamp()
       }, { merge: true });
     } catch (e) {
       console.warn("Firestore sync update hatası:", e);
@@ -1139,4 +1140,42 @@ window.deleteAccountCompletely = async function() {
   fbUser = null;
   return { success: true };
 };
+
+// ==========================================
+// CANLI ÇEVRİMİÇİ (PRESENCE & HEARTBEAT) YÖNETİMİ
+// ==========================================
+(function initPresenceHeartbeat() {
+  if (typeof window === 'undefined') return;
+
+  function sendHeartbeat(isLeaving) {
+    if (!window.fbUser || !db) return;
+    try {
+      db.collection('users').doc(window.fbUser.uid).set({
+        isOnline: !isLeaving,
+        lastActive: firebase.firestore.FieldValue.serverTimestamp()
+      }, { merge: true }).catch(function() {});
+    } catch(e) {}
+  }
+
+  // Her 2 dakikada bir kullanıcı aktifse heartbeat gönder
+  setInterval(function() {
+    if (typeof document !== 'undefined' && document.visibilityState === 'visible') {
+      sendHeartbeat(false);
+    }
+  }, 120000);
+
+  // Sekme arka plana geçtiğinde veya kapandığında
+  if (typeof document !== 'undefined') {
+    document.addEventListener('visibilitychange', function() {
+      if (document.visibilityState === 'hidden') {
+        sendHeartbeat(true);
+      } else if (document.visibilityState === 'visible') {
+        sendHeartbeat(false);
+      }
+    });
+  }
+
+  window.addEventListener('pagehide', function() { sendHeartbeat(true); });
+  window.addEventListener('beforeunload', function() { sendHeartbeat(true); });
+})();
 
