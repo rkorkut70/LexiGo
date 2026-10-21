@@ -1,10 +1,10 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="tr" data-theme="dark">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>LexiQ • Yönetici ve Eğitmen Kontrol Paneli (Admin Hub)</title>
-  <link rel="icon" type="image/jpeg" href="logo.jpg">
+  <link rel="icon" type="image/jpeg" href="../kelime/logo.jpg">
   
   <script src="words_data.js"></script>
   <!-- Firebase SDKs -->
@@ -911,6 +911,9 @@
     <button class="tab-btn" data-tab="leaderboardTab">
       <span>🏆 Liderlik Tablosu</span>
     </button>
+    <a href="password-reset-tool.html" target="_blank" class="tab-btn" style="text-decoration:none; margin-left:auto; background:rgba(99,102,241,0.12); border:1px solid rgba(99,102,241,0.3); color:#a5b4fc;" title="Kullanıcı Şifre Sıfırlama & Belirleme Aracı">
+      <span>🔐 Şifre Sıfırlama Aracı</span>
+    </a>
   </div>
 
   <!-- MAIN CONTAINER -->
@@ -1441,6 +1444,21 @@
         <div id="modalBadgesList" style="display: flex; flex-wrap: wrap; gap: 8px;">
           <span style="color: var(--text-dim); font-size: 0.85rem;">Henüz rozet kazanılmadı.</span>
         </div>
+      </div>
+
+      <!-- ÖĞRENCİ ŞİFRE SIFIRLAMA / GEÇİCİ ŞİFRE ALANI -->
+      <div style="margin-top: 18px; padding: 14px 16px; border-radius: var(--radius-sm); background: rgba(99, 102, 241, 0.08); border: 1.5px solid rgba(99, 102, 241, 0.25); display: flex; justify-content: space-between; align-items: center; gap: 12px;">
+        <div>
+          <div style="font-weight: 800; font-size: 0.92rem; color: var(--accent); display: flex; align-items: center; gap: 6px;">
+            <span>🔑</span><span>Şifre Sıfırlama / Belirleme</span>
+          </div>
+          <div style="font-size: 0.78rem; color: var(--text-dim); margin-top: 2px;">
+            Posta kutusu dolu olan veya şifresini unutan öğrenci için doğrudan geçici şifre belirleyin.
+          </div>
+        </div>
+        <button type="button" class="btn btn-primary" id="modalResetPasswordBtn" style="padding: 8px 16px; font-size: 0.84rem; white-space: nowrap; background: linear-gradient(135deg, #6366f1, #4f46e5); color:#fff;">
+          🔑 Şifre Sıfırla
+        </button>
       </div>
 
       <!-- ÖĞRENCİ SİLME ALANI (DANGER ZONE) -->
@@ -2630,6 +2648,18 @@
       }
     });
 
+    // Modal içindeki tekil kullanıcı şifre sıfırlama butonu
+    const modalResetPwBtn = document.getElementById('modalResetPasswordBtn');
+    if (modalResetPwBtn) {
+      modalResetPwBtn.addEventListener('click', () => {
+        if (!currentActiveDetailUserId) return;
+        const u = rawUsers.find(x => x.id === currentActiveDetailUserId);
+        const email = u && (u.email || u.userEmail) ? encodeURIComponent(u.email || u.userEmail) : '';
+        const url = 'password-reset-tool.html' + (email ? `?email=${email}` : '');
+        window.open(url, '_blank');
+      });
+    }
+
     // Modal içindeki tekil kullanıcı sil butonu
     const modalDelBtn = document.getElementById('modalDeleteStudentBtn');
     if (modalDelBtn) {
@@ -2889,4 +2919,3 @@
   </script>
 </body>
 </html>
-
