@@ -7,7 +7,7 @@
 (function () {
   'use strict';
 
-  const APP_VERSION = 'v1.8.38';
+  const APP_VERSION = 'v1.8.39';
   const DEFAULT_AVATAR = 'avatar_default';
   const CURRENT_APP_BUILD = 'lexiq_build_19_clean';
 
