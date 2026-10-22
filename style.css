@@ -18778,3 +18778,169 @@ html:not([data-theme="dark"]) .tg-rule-card,
 
 
 
+
+
+/* ==========================================================================
+   LEXIQ UI/UX GELİŞMİŞ İYİLEŞTİRMELER (TABLET PORTRAIT, MODALLAR & TEMALAR)
+   ========================================================================== */
+
+/* 1. KARTLAR (FLASHCARDS) TABLET PORTRAIT VE KONTRAST İYİLEŞTİRMELERİ */
+@media (min-width: 768px) {
+  .card-pure-section .flashcard-wrapper,
+  .flashcard-wrapper {
+    max-width: 520px !important;
+  }
+  .card-word {
+    font-size: clamp(2rem, 3.8vw, 2.6rem) !important;
+  }
+}
+
+/* Açık Temada Kelime Kartları Kontrast Güçlendirmesi */
+[data-theme="light"] .card-notebook-btn.in-notebook,
+html:not([data-theme="dark"]) .card-notebook-btn.in-notebook {
+  color: #b45309 !important;
+  border-color: #f59e0b !important;
+  background: #fef3c7 !important;
+}
+
+[data-theme="light"] .card-troubled-pill,
+html:not([data-theme="dark"]) .card-troubled-pill {
+  color: #be123c !important;
+  background: #ffe4e6 !important;
+  border-color: #fecdd3 !important;
+}
+
+/* 2. HAKKINDA (ABOUT) VE GENEL MODAL HEADER TABLET MERKEZLEME */
+@media (min-width: 640px) {
+  #aboutModal.full-screen-modal .about-modal-header {
+    max-width: 620px !important;
+    width: 100% !important;
+    margin-left: auto !important;
+    margin-right: auto !important;
+  }
+  
+  #aboutModal.full-screen-modal .about-modal-body {
+    max-width: 620px !important;
+    width: 100% !important;
+    margin-left: auto !important;
+    margin-right: auto !important;
+  }
+
+  /* Öğrenci Profili, Ayarlar, Geri Bildirim ve Sıralamalar Header & Tabs Tablet Dengesi */
+  #studentProfileModal.full-screen-modal .student-profile-header,
+  #feedbackModal.full-screen-modal .feedback-modal-header,
+  #settingsModal.full-screen-modal .settings-header-compact,
+  #leaderboardModal.full-screen-modal .leaderboard-modal-header {
+    max-width: 720px !important;
+    width: 100% !important;
+    margin-left: auto !important;
+    margin-right: auto !important;
+  }
+
+  #settingsModal.full-screen-modal .settings-tabs-nav {
+    max-width: 720px !important;
+    width: 100% !important;
+    margin-left: auto !important;
+    margin-right: auto !important;
+  }
+}
+
+/* Hakkında Modal Okul & Kurum Notu Açık Mod Kontrastı */
+[data-theme="light"] .about-school-note,
+html:not([data-theme="dark"]) .about-school-note {
+  color: #334155 !important;
+}
+
+/* 3. SIRALAMALAR (LEADERBOARD) AÇIK TEMA UYARI KONTRASTI */
+[data-theme="light"] #lbNoBranchAlert,
+html:not([data-theme="dark"]) #lbNoBranchAlert {
+  background: #fef3c7 !important;
+  border-color: #fde68a !important;
+  color: #92400e !important;
+}
+
+[data-theme="light"] #lbNoBranchAlert strong,
+html:not([data-theme="dark"]) #lbNoBranchAlert strong {
+  color: #78350f !important;
+}
+
+/* 4. OYUN TURU SONU KUTLAMA MODALI & HATA RAPORU STİLLERİ */
+.mistake-option-block {
+  background: rgba(244, 63, 94, 0.08);
+  border: 1px solid rgba(244, 63, 94, 0.25);
+  border-radius: 14px;
+  padding: 12px 14px;
+}
+
+.round-mistake-guide-text {
+  font-size: 0.84rem;
+  color: #fca5a5;
+  margin-bottom: 10px;
+  line-height: 1.45;
+}
+
+[data-theme="light"] .mistake-option-block,
+html:not([data-theme="dark"]) .mistake-option-block {
+  background: #fff1f2 !important;
+  border-color: #fecdd3 !important;
+}
+
+[data-theme="light"] .round-mistake-guide-text,
+html:not([data-theme="dark"]) .round-mistake-guide-text {
+  color: #9f1239 !important;
+  font-weight: 600 !important;
+}
+
+/* 5. UYGULAMA İÇİ ÖZEL ONAY MODALI (CUSTOM CONFIRM) AÇIK TEMA */
+[data-theme="light"] .custom-confirm-card,
+html:not([data-theme="dark"]) .custom-confirm-card {
+  background: #ffffff !important;
+  border: 1.5px solid #e2e8f0 !important;
+  border-bottom: 5px solid #cbd5e1 !important;
+  box-shadow: 0 20px 50px rgba(15, 23, 42, 0.15), 0 8px 0 #94a3b8 !important;
+}
+
+[data-theme="light"] .custom-confirm-card .confirm-title,
+html:not([data-theme="dark"]) .custom-confirm-card .confirm-title {
+  color: #0f172a !important;
+  text-shadow: none !important;
+}
+
+[data-theme="light"] .custom-confirm-card .confirm-message-box,
+html:not([data-theme="dark"]) .custom-confirm-card .confirm-message-box {
+  background: #f8fafc !important;
+  border-color: #e2e8f0 !important;
+  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.04) !important;
+}
+
+[data-theme="light"] .custom-confirm-card .confirm-message,
+html:not([data-theme="dark"]) .custom-confirm-card .confirm-message {
+  color: #334155 !important;
+}
+
+[data-theme="light"] .custom-confirm-card .confirm-cancel-btn,
+html:not([data-theme="dark"]) .custom-confirm-card .confirm-cancel-btn {
+  background: linear-gradient(180deg, #f8fafc 0%, #f1f5f9 100%) !important;
+  color: #334155 !important;
+  border: 1.5px solid #cbd5e1 !important;
+  border-bottom: 4px solid #94a3b8 !important;
+  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.06) !important;
+}
+
+[data-theme="light"] .custom-confirm-card .confirm-cancel-btn:hover,
+html:not([data-theme="dark"]) .custom-confirm-card .confirm-cancel-btn:hover {
+  background: #e2e8f0 !important;
+  color: #0f172a !important;
+}
+
+/* 6. ARENA AKTİF OYUN SAHASI TABLET DİKEY DENGESİ */
+@media (min-width: 768px) {
+  .active-game-top-bar,
+  .active-game-title-row {
+    max-width: 880px;
+    margin-left: auto;
+    margin-right: auto;
+    border-radius: 16px;
+    margin-top: 6px;
+  }
+}
