@@ -7630,9 +7630,9 @@ body[data-theme="dark"] .drawer-home-btn,
 }
 
 #onboardingModal.modal-overlay.full-screen-modal {
-  backdrop-filter: none !important;
-  -webkit-backdrop-filter: none !important;
-  background: #0f172a !important;
+  backdrop-filter: blur(8px) !important;
+  -webkit-backdrop-filter: blur(8px) !important;
+  background: rgba(15, 23, 42, 0.72) !important;
   display: flex !important;
   align-items: center !important;
   justify-content: center !important;
@@ -7663,6 +7663,10 @@ body[data-theme="dark"] .drawer-home-btn,
   transition: none !important;
   animation: none !important;
   box-sizing: border-box !important;
+}
+
+[data-theme="dark"] #onboardingModal.modal-overlay.full-screen-modal {
+  background: rgba(9, 10, 26, 0.92) !important;
 }
 
 [data-theme="dark"] .onboarding-card {
@@ -8848,6 +8852,63 @@ body[data-theme="dark"] .drawer-home-btn,
 .ob-btn-row .ob-next-btn,
 .ob-btn-row #obCompleteBtn {
   flex: 1.6 !important;
+}
+
+/* ==========================================================================
+   ONBOARDING AÇIK / KOYU TEMA KONTRAST & OKUNURLUK YARDIMCILARI
+   ========================================================================== */
+.ob-warning-note {
+  color: #b45309 !important;
+}
+[data-theme="dark"] .ob-warning-note {
+  color: #fbbf24 !important;
+}
+
+.ob-skip-link {
+  background: none;
+  border: none;
+  color: #1d4ed8;
+  font-size: 0.85rem;
+  font-weight: 700;
+  text-decoration: underline;
+  cursor: pointer;
+  padding: 6px 12px;
+  border-radius: 8px;
+  transition: opacity 0.2s ease;
+}
+.ob-skip-link:hover {
+  opacity: 0.85;
+}
+[data-theme="dark"] .ob-skip-link {
+  color: #60a5fa;
+}
+
+.ob-streak-motivation-title {
+  color: #b45309 !important;
+}
+[data-theme="dark"] .ob-streak-motivation-title {
+  color: #fbbf24 !important;
+}
+
+.ob-streak-badge {
+  font-size: 0.72rem;
+  color: #92400e;
+  font-weight: 800;
+  background: rgba(251, 191, 36, 0.24);
+  padding: 2px 8px;
+  border-radius: 10px;
+  border: 1px solid rgba(245, 158, 11, 0.3);
+}
+[data-theme="dark"] .ob-streak-badge {
+  color: #fde68a;
+  background: rgba(251, 191, 36, 0.16);
+  border-color: rgba(251, 191, 36, 0.35);
+}
+
+@media (max-width: 360px) {
+  .ob-reminder-presets {
+    grid-template-columns: repeat(2, 1fr) !important;
+  }
 }
 
 /* Ayarlar Modalında Profil Sekmesi */
@@ -10426,7 +10487,11 @@ body[data-theme="dark"] .home-unit-select-btn:hover,
    ========================================================================== */
 .auth-modal-card {
   max-width: 500px;
-  padding: 40px 30px;
+  width: 92%;
+  max-height: 90dvh;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  padding: clamp(24px, 4vh, 38px) clamp(18px, 4vw, 30px);
   text-align: center;
 }
 
@@ -11721,6 +11786,32 @@ body[data-theme="dark"] .home-unit-select-btn:hover,
    ADAPTİF TABLET (11 INCH) & GENİŞ EKRAN RESPONSIVE DÜZEN
    ========================================================================== */
 @media (min-width: 768px) {
+  /* Tablet Dikey (Portrait) & Geniş Ekran: Onboarding Kartı Ferahlığı */
+  .onboarding-card {
+    max-width: 500px !important;
+    padding: 28px 26px !important;
+    border-radius: 32px !important;
+  }
+
+  .welcome-screen-view {
+    max-width: 460px !important;
+    gap: 20px !important;
+  }
+
+  .welcome-actions-container {
+    max-width: 440px !important;
+    gap: 14px !important;
+  }
+
+  .ob-title {
+    font-size: 1.55rem !important;
+  }
+
+  .ob-subtitle {
+    font-size: 0.90rem !important;
+    max-width: 400px !important;
+  }
+
   /* Ana kapsayıcı genişletilerek ferahlatılır */
   .app-container {
     max-width: 860px !important;
