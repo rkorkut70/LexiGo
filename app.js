@@ -537,6 +537,12 @@
     { id: 'badge_fr_a2_usta', name: 'Fransızca A2 Usta', icon: '🏰', desc: 'Fransızca A2 kurunda 450 kelime öğren', type: 'diamond', category: 'lang', check: (s) => getLearnedCountFor(s, 'FR-TR', 'A2') >= 450 },
     { id: 'badge_fr_a2_ustat', name: 'Fransızca A2 Üstat', icon: '👑', desc: 'Fransızca A2 kurunda 750 kelime öğren', type: 'legend', category: 'lang', check: (s) => getLearnedCountFor(s, 'FR-TR', 'A2') >= 750 },
 
+    { id: 'badge_fr_b1_acemi', name: 'Fransızca B1 Acemi', icon: '🌱', desc: 'Fransızca B1 kurunda 25 kelime öğren', type: 'bronze', category: 'lang', check: (s) => getLearnedCountFor(s, 'FR-TR', 'B1') >= 25 },
+    { id: 'badge_fr_b1_cirak', name: 'Fransızca B1 Çırak', icon: '📖', desc: 'Fransızca B1 kurunda 75 kelime öğren', type: 'silver', category: 'lang', check: (s) => getLearnedCountFor(s, 'FR-TR', 'B1') >= 75 },
+    { id: 'badge_fr_b1_kalfa', name: 'Fransızca B1 Kalfa', icon: '📚', desc: 'Fransızca B1 kurunda 200 kelime öğren', type: 'gold', category: 'lang', check: (s) => getLearnedCountFor(s, 'FR-TR', 'B1') >= 200 },
+    { id: 'badge_fr_b1_usta', name: 'Fransızca B1 Usta', icon: '🏰', desc: 'Fransızca B1 kurunda 450 kelime öğren', type: 'diamond', category: 'lang', check: (s) => getLearnedCountFor(s, 'FR-TR', 'B1') >= 450 },
+    { id: 'badge_fr_b1_ustat', name: 'Fransızca B1 Üstat', icon: '👑', desc: 'Fransızca B1 kurunda 800 kelime öğren', type: 'legend', category: 'lang', check: (s) => getLearnedCountFor(s, 'FR-TR', 'B1') >= 800 },
+
     // Çok Dilli Gezgin & Poliglot Rozetleri
     { id: 'lang_polyglot', name: 'Çok Dilli Gezgin', icon: '🌍', desc: 'En az iki farklı dilde 30\'ar kelime öğren', type: 'cosmic', category: 'lang', check: (s) => isMultiLingual(s, 30) },
     { id: 'polyglot_spark', name: 'Poliglot Kıvılcımı', icon: '🌍', desc: 'En az iki farklı dilde 50\'şer kelime öğren', type: 'legend', category: 'lang', check: (s) => isMultiLingual(s, 50) }
@@ -3094,7 +3100,7 @@ let activeAvatarCategory = 'all';
   function getLevelForTrack(langCode, track) {
     const trk = track || '4A';
     if (langCode === 'EN-TR') return trk === '4B' ? 'B1' : 'A2';
-    if (langCode === 'FR-TR') return trk === '4B' ? 'A2' : 'A1';
+    if (langCode === 'FR-TR') return trk === '4B' ? 'B1' : 'A2';
     if (langCode === 'DE-TR') return trk === '4B' ? 'A2' : 'A1';
     return trk === '4B' ? 'B1' : 'A2';
   }
