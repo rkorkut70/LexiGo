@@ -397,7 +397,7 @@
     { id: 'infinity_guardian', name: 'Sonsuzluk Muhafızı', icon: '💠', desc: '200.000 XP seviyesine ulaş', type: 'diamond', category: 'xp', check: (s) => (s.xp || 0) >= 200000 },
     { id: 'mythic_lord', name: 'Mitik Dil Lordu', icon: '⚜️', desc: '250.000 XP seviyesine ulaş', type: 'legend', category: 'xp', check: (s) => (s.xp || 0) >= 250000 },
     { id: 'universal_genius', name: 'Evrensel Deha', icon: '🌌', desc: '300.000 XP seviyesine ulaş', type: 'cosmic', category: 'xp', check: (s) => (s.xp || 0) >= 300000 },
-    { id: 'supreme_legend', name: 'LexiQ Efsanesi', icon: '🔱', desc: '350.000 XP seviyesine ulaş', type: 'legend', category: 'xp', check: (s) => (s.xp || 0) >= 350000 },
+    { id: 'supreme_legend', name: 'LexiGo Efsanesi', icon: '🔱', desc: '350.000 XP seviyesine ulaş', type: 'legend', category: 'xp', check: (s) => (s.xp || 0) >= 350000 },
 
     // --- 2. KELİME DAĞARCIĞI (8 ROZET) ---
     { id: 'vocab_seed', name: 'İlk Tohum', icon: '🌱', desc: '10 kelimeyi başarıyla öğren', type: 'bronze', category: 'vocab', check: (s) => getLearnedCount(s) >= 10 },
@@ -1564,14 +1564,14 @@
         AndroidTTS.scheduleReminder(now.getHours(), now.getMinutes());
       } else if ('Notification' in window) {
         if (Notification.permission === 'granted') {
-          new Notification('🎯 LexiQ Test Bildirimi!', {
+          new Notification('🎯 LexiGo Test Bildirimi!', {
             body: 'Harika! Günlük çalışma hatırlatıcınız sorunsuz çalışıyor. Başarılar dileriz! 🚀',
             icon: 'school_logo.jpg'
           });
         } else {
           Notification.requestPermission().then(perm => {
             if (perm === 'granted') {
-              new Notification('🎯 LexiQ Test Bildirimi!', {
+              new Notification('🎯 LexiGo Test Bildirimi!', {
                 body: 'Harika! Günlük çalışma hatırlatıcınız sorunsuz çalışıyor. Başarılar dileriz! 🚀'
               });
             }
@@ -2067,7 +2067,7 @@
     // Kayıtlı Hesap Çıkışı
     const confirmed = await showAppConfirm({
       title: 'Hesaptan Çıkış Yap',
-      message: 'LexiQ hesabınızdan güvenle çıkış yapılacak.\n\nTüm XP puanlarınız, serileriniz ve rozetleriniz bulut hesabınızda güvenle saklanmaktadır.',
+      message: 'LexiGo hesabınızdan güvenle çıkış yapılacak.\n\nTüm XP puanlarınız, serileriniz ve rozetleriniz bulut hesabınızda güvenle saklanmaktadır.',
       icon: '👋',
       okText: 'Çıkış Yap',
       cancelText: 'Vazgeç',
@@ -8948,7 +8948,7 @@ let activeAvatarCategory = 'all';
     if (!speakState.targetWord || speakState.isEvaluating || speakState.isRoundCompleted) return;
 
     if (!isSpeechRecognitionAvailable()) {
-      showToast('⚠️ Bu cihazda veya tarayıcıda ses tanıma desteklenmiyor. LexiQ Android uygulamasını veya Google Chrome kullanabilirsiniz.');
+      showToast('⚠️ Bu cihazda veya tarayıcıda ses tanıma desteklenmiyor. LexiGo Android uygulamasını veya Google Chrome kullanabilirsiniz.');
       return;
     }
 
@@ -13262,7 +13262,7 @@ let activeAvatarCategory = 'all';
       bug: 'Karşılaştığınız teknik hatayı veya çökme sorununu açıklayınız...',
       word_fix: 'Hatalı olduğunu düşündüğünüz kelimeyi, ünitesini ve doğru önerinizi yazınız...',
       suggestion: 'Uygulamada görmek istediğiniz yeni özelliği veya iyileştirme fikrinizi paylaşınız...',
-      general: 'LexiQ hakkındaki düşüncelerinizi, deneyiminizi veya önerinizi paylaşınız...'
+      general: 'LexiGo hakkındaki düşüncelerinizi, deneyiminizi veya önerinizi paylaşınız...'
     };
 
     if (feedbackTypeChips) {
@@ -13762,7 +13762,7 @@ let activeAvatarCategory = 'all';
             if (modalIcon) modalIcon.textContent = '🌟';
 
             if (isNativeAndroid) {
-              if (modalTitle) modalTitle.textContent = '✅ Tebrikler! LexiQ Güncel';
+              if (modalTitle) modalTitle.textContent = '✅ Tebrikler! LexiGo Güncel';
               if (applyBtn) {
                 applyBtn.style.display = 'block';
                 applyBtn.style.background = 'linear-gradient(135deg, #0284c7, #0369a1)';
@@ -13786,7 +13786,7 @@ let activeAvatarCategory = 'all';
               }
             } else {
               // iOS, Safari ve Web: Canlı Önbellek Yenileme Butonu Aktif
-              if (modalTitle) modalTitle.textContent = '✅ Tebrikler! LexiQ Güncel';
+              if (modalTitle) modalTitle.textContent = '✅ Tebrikler! LexiGo Güncel';
               if (applyBtn) {
                 applyBtn.style.display = 'block';
                 applyBtn.style.background = 'linear-gradient(135deg, #0284c7, #0369a1)';
@@ -13807,7 +13807,7 @@ let activeAvatarCategory = 'all';
                 `;
               }
             }
-            showToast(`✅ LexiQ en güncel sürümde (${currentVer}).`, 'correct');
+            showToast(`✅ LexiGo en güncel sürümde (${currentVer}).`, 'correct');
           }
 
           if (appUpdateModal) {
@@ -13846,7 +13846,7 @@ let activeAvatarCategory = 'all';
         <div class="ios-update-content">
           <span class="ios-update-icon">🚀</span>
           <div class="ios-update-text">
-            <strong>Yeni LexiQ Sürümü (${remoteVer}) Yayında!</strong>
+            <strong>Yeni LexiGo Sürümü (${remoteVer}) Yayında!</strong>
             <span>Yenilikleri hemen almak için dokunun</span>
           </div>
         </div>
@@ -13874,11 +13874,11 @@ let activeAvatarCategory = 'all';
           if (isRemoteVersionNewer(remoteVer, currentVer, remoteCode, currentCode)) {
             const platform = getAppPlatform();
             if (platform === 'android') {
-              showToast(`🚀 Google Play'de LexiQ ${remoteVer} güncellemesi hazır! Ayarlar'dan güncelleyebilirsiniz.`, 6000);
+              showToast(`🚀 Google Play'de LexiGo ${remoteVer} güncellemesi hazır! Ayarlar'dan güncelleyebilirsiniz.`, 6000);
             } else {
               // iOS, Safari ve Web: Canlı Floating Güncelleme Banner'ını ekrana yerleştir
               showAppUpdateBanner(remoteVer);
-              showToast(`🚀 iOS için yeni LexiQ ${remoteVer} sürümü hazır! Güncellemek için banner'a dokunun.`, 7000);
+              showToast(`🚀 iOS için yeni LexiGo ${remoteVer} sürümü hazır! Güncellemek için banner'a dokunun.`, 7000);
             }
           }
         }
@@ -14569,8 +14569,8 @@ let activeAvatarCategory = 'all';
     const HOME_TOUR_STEPS = [
       {
         targetSelector: '#brandHeaderHomeBtn',
-        title: 'ℹ️ LexiQ Hakkında',
-        desc: 'Uygulama logosuna dokunarak LexiQ hakkında bilgilere, sürüm detaylarına ve geliştirici notlarına ulaşabilirsin.'
+        title: 'ℹ️ LexiGo Hakkında',
+        desc: 'Uygulama logosuna dokunarak LexiGo hakkında bilgilere, sürüm detaylarına ve geliştirici notlarına ulaşabilirsin.'
       },
       {
         targetSelector: '#leaderboardBtn',
@@ -14800,7 +14800,7 @@ let activeAvatarCategory = 'all';
         if (activeTourType === 'cards') {
           showToast('Kart kullanım rehberi tamamlandı! İyi çalışmalar 🃏');
         } else {
-          showToast('LexiQ özellikleri hazır! İyi çalışmalar 🎉');
+          showToast('LexiGo özellikleri hazır! İyi çalışmalar 🎉');
         }
       }
     }
@@ -15018,7 +15018,7 @@ let activeAvatarCategory = 'all';
 
       // Ana sayfadayken çekici çıkış onay ekranı göster
       showAppConfirm({
-        title: "LexiQ'ten Çıkış Yapılsın mı?",
+        title: "LexiGo'dan Çıkış Yapılsın mı?",
         message: "Bugünkü kelime çalışmaların ve kazandığın puanlar güvende! 🎯\nUygulamadan şimdi çıkmak istediğine emin misin?",
         icon: "👋",
         okText: "Uygulamadan Çık",
@@ -15046,7 +15046,7 @@ let activeAvatarCategory = 'all';
     const dynamicIconStageCards = document.querySelectorAll('.dynamic-icon-stage-card');
 
     const stageNames = [
-      'Normal (Mavi LQ • "LexiQ")',
+      'Normal (Mavi LG • "LexiGo")',
       '2 Gün (Hafif Turuncu LQ)',
       '4 Gün (Alev Turuncusu LQ • "Özledik 🥺")',
       '6+ Gün (Kırmızı LQ + ⚠️ • "Geri Dön! ⚠️")'
