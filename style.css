@@ -18966,3 +18966,96 @@ html:not([data-theme="dark"]) .custom-confirm-card .confirm-cancel-btn:hover {
     margin-top: 6px;
   }
 }
+
+/* ==========================================================================
+   LEXIGO ORİJİNAL LOGO (DOĞRUDAN RESİM KULLANIMI & CANLI NABIZ ANİMASYONU)
+   ========================================================================== */
+@keyframes lexigoPulseBadge {
+  0%, 100% {
+    filter: drop-shadow(0 0 5px rgba(255, 94, 0, 0.4));
+    transform: scale(1);
+  }
+  50% {
+    filter: drop-shadow(0 0 14px rgba(255, 94, 0, 0.8)) drop-shadow(0 0 22px rgba(59, 91, 253, 0.4));
+    transform: scale(1.04);
+  }
+}
+
+.brand-header-img {
+  height: 34px;
+  width: auto;
+  max-width: 140px;
+  object-fit: contain;
+  display: block;
+  border-radius: 8px;
+  transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.brand:hover .brand-header-img {
+  transform: scale(1.05);
+}
+
+.brand-logo-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 12px;
+  animation: lexigoPulseBadge 3.2s infinite ease-in-out;
+  transform-origin: center;
+}
+
+[data-theme="light"] .brand-logo-badge,
+:root:not([data-theme="dark"]) .brand-logo-badge {
+  background: #0c1024;
+  padding: 3px 8px;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.15);
+}
+
+.welcome-brand-img {
+  height: clamp(50px, 8vh, 68px);
+  width: auto;
+  object-fit: contain;
+  display: block;
+  border-radius: 14px;
+}
+
+.welcome-logo-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  animation: lexigoPulseBadge 3.2s infinite ease-in-out;
+  transform-origin: center;
+  border-radius: 16px;
+}
+
+.about-brand-img,
+.auth-brand-img {
+  height: 48px;
+  width: auto;
+  object-fit: contain;
+  display: block;
+  border-radius: 12px;
+}
+
+.about-logo-badge,
+.auth-logo-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  animation: lexigoPulseBadge 3.2s infinite ease-in-out;
+  transform-origin: center;
+  border-radius: 14px;
+}
+
+[data-theme="light"] .about-logo-badge,
+[data-theme="light"] .auth-logo-badge,
+[data-theme="light"] .welcome-logo-badge,
+:root:not([data-theme="dark"]) .about-logo-badge,
+:root:not([data-theme="dark"]) .auth-logo-badge,
+:root:not([data-theme="dark"]) .welcome-logo-badge {
+  background: #0c1024;
+  padding: 4px 12px;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.2);
+}
