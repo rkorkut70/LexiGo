@@ -1202,7 +1202,7 @@
             updateModalEl.style.display = 'flex';
             playSoundEffect('celebration');
           } else {
-            showToast(`🎉 LexiQ ${APP_VERSION} sürümüne güncellendi! Yenilikler hazır.`, 'correct');
+            showToast(`🎉 LexiGo ${APP_VERSION} sürümüne güncellendi! Yenilikler hazır.`, 'correct');
           }
         }, 1100);
       }
@@ -13326,7 +13326,7 @@ let activeAvatarCategory = 'all';
 
         // E-posta istemcisini açma seçeneği (Kullanıcı doğrudan mail uygulamasından göndermek isterse)
         const typeLabels = { bug: 'Hata Bildirimi', word_fix: 'Kelime/Çeviri Hatası', suggestion: 'Yeni Fikir & Öneri', general: 'Genel Görüş' };
-        const mailSubject = encodeURIComponent(`[LexiQ ${APP_VERSION}] ${typeLabels[selectedFeedbackType] || 'Geri Bildirim'}`);
+        const mailSubject = encodeURIComponent(`[LexiGo ${APP_VERSION}] ${typeLabels[selectedFeedbackType] || 'Geri Bildirim'}`);
         const mailBody = encodeURIComponent(`Gönderen: ${senderName} (${senderEmail || 'E-posta belirtilmedi'})\nDil / Kur: ${state.activeLanguage} • ${state.userLevel}\nSürüm: ${APP_VERSION}\n\nMesaj:\n${msg}`);
         const mailUrl = `mailto:ridvan.korkut@adu.edu.tr?subject=${mailSubject}&body=${mailBody}`;
 

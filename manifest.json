@@ -1,6 +1,6 @@
 {
-  "name": "LexiQ • Dil & Kelime Kartları",
-  "short_name": "LexiQ",
+  "name": "LexiGo • Dil & Kelime Kartları",
+  "short_name": "LexiGo",
   "description": "Çok dilli akıllı kelime öğrenme ve pratik yapma uygulaması",
   "start_url": "./index.html",
   "display": "standalone",
