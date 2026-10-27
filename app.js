@@ -2718,7 +2718,7 @@
   }
 
     // ==========================================
-  // ZENGİN & KATEGORİLİ AVATAR SİSTEMİ (80 ÖZGÜN AVATAR + EMOJİLER)
+  // ZENGİN & KATEGORİLİ AVATAR SİSTEMİ (92 ÖZGÜN AVATAR + EMOJİLER)
   // ==========================================
   function isCustomAvatar(av) {
     return typeof av === 'string' && av.startsWith('avatar_');
@@ -2848,6 +2848,16 @@
       avatars: [
         'avatar_7_1', 'avatar_7_2', 'avatar_7_3', 'avatar_7_4', 'avatar_7_5',
         'avatar_7_6', 'avatar_7_7', 'avatar_7_8', 'avatar_7_9', 'avatar_7_10'
+      ]
+    },
+    {
+      id: 'career',
+      name: 'Kariyer & Dil Elçileri',
+      icon: '🌐',
+      avatars: [
+        'avatar_9_1', 'avatar_9_2', 'avatar_9_3', 'avatar_9_4',
+        'avatar_9_5', 'avatar_9_6', 'avatar_9_7', 'avatar_9_8',
+        'avatar_9_9', 'avatar_9_10', 'avatar_9_11', 'avatar_9_12'
       ]
     },
     {
