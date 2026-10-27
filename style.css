@@ -6,22 +6,22 @@
 :root {
   --font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
   
-  /* Açık Tema Değişkenleri (3D Soft Mavi/Gökyüzü Degrade & Saf Beyaz 3D Kartlar) */
-  --bg-app: #c6d9f0;
-  --bg-app-gradient: linear-gradient(180deg, #d8e5f7 0%, #c6d9f0 45%, #b5cae6 100%);
-  --bg-surface: #ffffff;
-  --bg-card: #ffffff;
-  --bg-card-header: #ffffff;
-  --bg-card-back: #ffffff;
-  --card-ink-border: #e2e8f0;
+  /* Açık Tema Değişkenleri (Göz Yormayan Soft Slate & Ilık Kağıt Tonu - Parlama Önleyici) */
+  --bg-app: #dfe6ee;
+  --bg-app-gradient: linear-gradient(180deg, #eaeff5 0%, #dfe6ee 45%, #d1dce7 100%);
+  --bg-surface: #f8fafc;
+  --bg-card: #f8fafc;
+  --bg-card-header: #f1f5f9;
+  --bg-card-back: #f8fafc;
+  --card-ink-border: #cbd5e1;
   --border-color: #cbd5e1;
   --border-subtle: #e2e8f0;
   
-  --text-main: #1e293b;
-  --text-muted: #64748b;
-  --text-dim: #94a3b8;
-  --text-color: #1e293b;
-  --bg-muted: #e8f0fb;
+  --text-main: #0f172a;
+  --text-muted: #334155;
+  --text-dim: #64748b;
+  --text-color: #0f172a;
+  --bg-muted: #e8eef5;
   
   --accent: #2563eb;
   --accent-light: #eff6ff;
@@ -235,11 +235,11 @@ html, body {
   outline: none;
 }
 
-/* 3D Header Buttons - Açık Tema */
+/* 3D Header Buttons - Açık Tema (Göz Yormayan Soft Surface) */
 .icon-btn {
   width: 38px;
   height: 38px;
-  background: #ffffff;
+  background: #f8fafc;
   border: 1.5px solid #cbd5e1;
   color: var(--text-main);
   box-shadow: 0 3px 0 #94a3b8, 0 3px 6px rgba(0, 0, 0, 0.05);
@@ -249,7 +249,7 @@ html, body {
   height: 38px;
   padding: 0 10px;
   gap: 5px;
-  background: #ffffff;
+  background: #f8fafc;
   border: 1.5px solid #cbd5e1;
   color: var(--text-main);
   box-shadow: 0 3px 0 #94a3b8, 0 3px 6px rgba(0, 0, 0, 0.05);
@@ -5235,23 +5235,23 @@ body.arena-game-active header {
    KART KAĞIT TEMALARI VE METİN OKUNABİLİRLİĞİ (TÜM TEMALARDA %100 KONTRAST)
    ========================================================================== */
 
-/* 1. Klasik Beyaz Karton */
+/* 1. Klasik Beyaz Karton (Göz Yormayan Doğal Kağıt Tonu) */
 html[data-card-theme="white"] .card-face,
 :root .card-face {
-  --bg-card: #ffffff;
-  --bg-card-header: #f8fafc;
-  --bg-card-back: #ffffff;
-  --card-ink-border: #0f172a;
+  --bg-card: #f8fafc;
+  --bg-card-header: #f1f5f9;
+  --bg-card-back: #f8fafc;
+  --card-ink-border: #64748b;
   --card-text-main: #0f172a;
   --card-text-muted: #334155;
   --card-text-accent: #1d4ed8;
-  --card-badge-bg: #f1f5f9;
+  --card-badge-bg: #e2e8f0;
   --card-badge-border: #cbd5e1;
-  --card-example-bg: #f8fafc;
+  --card-example-bg: #f1f5f9;
   --card-example-border: #cbd5e1;
-  --card-pill-bg: #f8fafc;
+  --card-pill-bg: #f1f5f9;
   --card-pill-text: #0f172a;
-  --card-pill-border: #0f172a;
+  --card-pill-border: #64748b;
 }
 
 /* 2. Sıcak Fildişi / Kitap Kağıdı */
@@ -7664,14 +7664,39 @@ body[data-theme="dark"] .drawer-home-btn,
   box-sizing: border-box !important;
 }
 
-/* Onboarding Modal Kartı (3D Kart Gövdesi) */
+/* ==========================================================================
+   ONBOARDING MODAL & YENİ ADAPTİF WELCOME / KARŞILAMA EKRANI (TAM EKRAN & TABLET UYUMLU)
+   ========================================================================== */
+#onboardingModal.modal-overlay.full-screen-modal {
+  position: fixed !important;
+  inset: 0 !important;
+  width: 100vw !important;
+  height: 100% !important;
+  height: 100dvh !important;
+  z-index: 10000 !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  box-sizing: border-box !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  backdrop-filter: blur(8px) !important;
+  -webkit-backdrop-filter: blur(8px) !important;
+  background: rgba(10, 15, 29, 0.88) !important;
+  transition: opacity 0.25s ease !important;
+}
+
+[data-theme="dark"] #onboardingModal.modal-overlay.full-screen-modal {
+  background: rgba(7, 10, 20, 0.94) !important;
+}
+
+/* Standart Onboarding Kartı (Adım 1-6 için) */
 .onboarding-card {
-  max-width: 440px !important;
+  max-width: 460px !important;
   width: 92% !important;
-  max-height: 96dvh !important;
-  max-height: 96vh !important;
+  max-height: 94dvh !important;
   height: auto !important;
-  padding: clamp(14px, 2.5vh, 22px) clamp(12px, 3vw, 20px) !important;
+  padding: clamp(16px, 3vh, 26px) clamp(14px, 3vw, 24px) !important;
   border-radius: 28px !important;
   background: #ffffff !important;
   border: 1.5px solid #e2e8f0 !important;
@@ -7683,14 +7708,7 @@ body[data-theme="dark"] .drawer-home-btn,
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  transform: none !important;
-  transition: none !important;
-  animation: none !important;
   box-sizing: border-box !important;
-}
-
-[data-theme="dark"] #onboardingModal.modal-overlay.full-screen-modal {
-  background: rgba(9, 10, 26, 0.92) !important;
 }
 
 [data-theme="dark"] .onboarding-card {
@@ -7700,21 +7718,69 @@ body[data-theme="dark"] .drawer-home-btn,
 }
 
 /* ==========================================================================
-   YENİ DİNAMİK VE ÇEKİCİ WELCOME / HOŞ GELDİN EKRANI (3D & YÜKSEK OKUNURLUK)
+   TELEFON: WELCOME EKRANI TAM EKRAN ADAPTİF YERLEŞİM (Dead Space Yok, Safe Area Uyumlu)
    ========================================================================== */
+#onboardingModal.welcome-active,
+#onboardingModal:has(#obStep0.active) {
+  padding: 0 !important;
+  background: #090e1c !important;
+}
+
+#onboardingModal.welcome-active .onboarding-card,
+#onboardingModal:has(#obStep0.active) .onboarding-card {
+  width: 100% !important;
+  max-width: 100% !important;
+  height: 100% !important;
+  height: 100dvh !important;
+  min-height: 100dvh !important;
+  max-height: 100dvh !important;
+  border-radius: 0 !important;
+  border: none !important;
+  box-shadow: none !important;
+  /* Üstte çentik/kamera, altta navigasyon tuşları altına girmeyi önleyen safe-area dolguları */
+  padding-top: calc(env(safe-area-inset-top, 16px) + 14px) !important;
+  padding-bottom: calc(env(safe-area-inset-bottom, 20px) + 16px) !important;
+  padding-left: calc(env(safe-area-inset-left, 16px) + 16px) !important;
+  padding-right: calc(env(safe-area-inset-right, 16px) + 16px) !important;
+  display: flex !important;
+  flex-direction: column !important;
+  justify-content: space-between !important;
+  align-items: center !important;
+  box-sizing: border-box !important;
+  overflow-y: auto !important;
+  -webkit-overflow-scrolling: touch !important;
+  background: radial-gradient(circle at 50% 12%, #1e293b 0%, #090e1c 100%) !important;
+}
+
+[data-theme="light"] #onboardingModal.welcome-active,
+[data-theme="light"] #onboardingModal:has(#obStep0.active),
+:root:not([data-theme="dark"]) #onboardingModal.welcome-active,
+:root:not([data-theme="dark"]) #onboardingModal:has(#obStep0.active) {
+  background: #f1f5f9 !important;
+}
+
+[data-theme="light"] #onboardingModal.welcome-active .onboarding-card,
+[data-theme="light"] #onboardingModal:has(#obStep0.active) .onboarding-card,
+:root:not([data-theme="dark"]) #onboardingModal.welcome-active .onboarding-card,
+:root:not([data-theme="dark"]) #onboardingModal:has(#obStep0.active) .onboarding-card {
+  background: radial-gradient(circle at 50% 12%, #f8fafc 0%, #e2e8f0 100%) !important;
+}
+
+/* Welcome Görünüm Kapsayıcısı */
 .welcome-screen-view {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  text-align: center;
-  width: 100%;
-  max-width: 420px;
-  margin: 0 auto;
-  min-height: 100%;
-  padding: clamp(8px, 1.8vh, 16px) 0;
-  box-sizing: border-box;
-  gap: clamp(12px, 2.4vh, 22px);
+  display: flex !important;
+  flex-direction: column !important;
+  justify-content: space-between !important;
+  align-items: center !important;
+  text-align: center !important;
+  width: 100% !important;
+  max-width: 480px !important;
+  height: 100% !important;
+  min-height: 100% !important;
+  flex: 1 1 auto !important;
+  box-sizing: border-box !important;
+  margin: 0 auto !important;
+  padding: 0 !important;
 }
 
 .welcome-screen-view:not(.active),
@@ -7726,7 +7792,18 @@ body[data-theme="dark"] .drawer-home-btn,
   display: none !important;
 }
 
-/* 1. Okul Üst Rozeti (Kompakt, Kurumsal, 3D ve Net Okunabilir) */
+/* 1. Üst Kısım: Okul Rozeti & LexiGo Hero Logo */
+.welcome-top-group {
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: center !important;
+  gap: clamp(12px, 2.4vh, 22px) !important;
+  width: 100% !important;
+  margin-top: 0 !important;
+  flex-shrink: 0 !important;
+}
+
+/* Okul Rozeti (Kompakt, Kurumsal, 3D) */
 .welcome-school-badge {
   display: inline-flex;
   align-items: center;
@@ -7738,17 +7815,19 @@ body[data-theme="dark"] .drawer-home-btn,
   box-shadow: 0 3px 10px rgba(37, 99, 235, 0.08), inset 0 1px 0 #ffffff;
   max-width: 100%;
   transition: transform 0.2s ease;
+  user-select: none;
+  -webkit-user-select: none;
 }
 
 [data-theme="dark"] .welcome-school-badge {
-  background: linear-gradient(135deg, rgba(30, 41, 59, 0.7) 0%, rgba(15, 23, 42, 0.8) 100%);
-  border-color: rgba(96, 165, 250, 0.35);
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
+  background: linear-gradient(135deg, rgba(30, 41, 59, 0.8) 0%, rgba(15, 23, 42, 0.9) 100%);
+  border-color: rgba(96, 165, 250, 0.4);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.4);
 }
 
 .welcome-school-logo {
-  width: clamp(34px, 4.8vh, 42px);
-  height: clamp(34px, 4.8vh, 42px);
+  width: clamp(36px, 4.8vh, 44px);
+  height: clamp(36px, 4.8vh, 44px);
   border-radius: 50%;
   object-fit: cover;
   border: 2px solid #3b82f6;
@@ -7757,7 +7836,7 @@ body[data-theme="dark"] .drawer-home-btn,
 }
 
 [data-theme="dark"] .welcome-school-logo {
-  border-color: rgba(255, 255, 255, 0.3);
+  border-color: rgba(255, 255, 255, 0.35);
 }
 
 .welcome-school-text {
@@ -7768,7 +7847,7 @@ body[data-theme="dark"] .drawer-home-btn,
 }
 
 .welcome-school-title {
-  font-size: clamp(0.70rem, 1.8vw, 0.78rem);
+  font-size: clamp(0.72rem, 2vw, 0.82rem);
   font-weight: 800;
   color: #1e3a8a;
   letter-spacing: 0.04em;
@@ -7781,7 +7860,7 @@ body[data-theme="dark"] .drawer-home-btn,
 }
 
 .welcome-school-sub {
-  font-size: clamp(0.58rem, 1.4vw, 0.66rem);
+  font-size: clamp(0.58rem, 1.5vw, 0.68rem);
   color: #2563eb;
   font-weight: 700;
   white-space: nowrap;
@@ -7791,11 +7870,12 @@ body[data-theme="dark"] .drawer-home-btn,
   color: #93c5fd;
 }
 
-/* 2. Ana Başlık ve 3D Logo Bölümü */
+/* 2. Ana Logo ve Versiyon Rozeti */
 .welcome-hero-section {
   display: flex;
   flex-direction: column;
   align-items: center;
+  justify-content: center;
   gap: 6px;
   width: 100%;
 }
@@ -7807,56 +7887,16 @@ body[data-theme="dark"] .drawer-home-btn,
   gap: 10px;
 }
 
-.welcome-brand-name {
-  font-size: clamp(2.5rem, 6.4vh, 3.5rem);
-  font-weight: 900;
-  line-height: 1;
-  letter-spacing: -0.035em;
-  color: #3b5bfd;
-  text-shadow: 0 0 16px rgba(59, 91, 253, 0.45);
-  margin: 0;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  font-family: 'Nunito', 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
-}
-
-[data-theme="dark"] .welcome-brand-name {
-  color: #3b5bfd;
-  text-shadow: 0 0 20px rgba(59, 91, 253, 0.55);
-}
-
-[data-theme="light"] .welcome-brand-name,
-:root:not([data-theme="dark"]) .welcome-brand-name {
-  color: #2563eb;
-  text-shadow: 0 2px 8px rgba(37, 99, 235, 0.25);
-}
-
-.welcome-brand-q {
-  color: #ff5e00;
-  display: inline-flex;
-  align-items: center;
-  animation: brandLqPulse 3.2s infinite ease-in-out;
-  transform-origin: center;
-  margin-left: 2px;
-  filter: drop-shadow(0 0 12px rgba(255, 94, 0, 0.6));
-}
-
-[data-theme="dark"] .welcome-brand-q {
-  color: #ff5e00;
-  filter: drop-shadow(0 0 16px rgba(255, 94, 0, 0.8));
-}
-
 .welcome-version-pill {
-  font-size: 0.70rem;
+  font-size: clamp(0.68rem, 1.6vw, 0.78rem);
   font-weight: 800;
-  padding: 3px 9px;
+  padding: 3px 10px;
   background: #eff6ff;
   color: #1d4ed8;
   border: 1.5px solid #bfdbfe;
   border-radius: 999px;
   align-self: flex-start;
-  margin-top: 3px;
+  margin-top: 4px;
   letter-spacing: 0.02em;
   box-shadow: 0 2px 0 #bfdbfe;
 }
@@ -7868,89 +7908,77 @@ body[data-theme="dark"] .drawer-home-btn,
   box-shadow: 0 2px 0 rgba(59, 130, 246, 0.3);
 }
 
-.welcome-hero-tagline {
-  font-size: clamp(0.80rem, 2vw, 0.94rem);
-  font-weight: 700;
-  color: #1e293b;
-  margin: 0;
-  letter-spacing: 0.02em;
-}
-
-[data-theme="dark"] .welcome-hero-tagline {
-  color: #e2e8f0;
-}
-
-/* 3. 3D Temel Başarı Sütunları (Pill Rozetleri) */
+/* 3. Orta Kısım: 3D Temel Başarı Sütunları (Pill Rozetleri) */
 .welcome-pillars-container {
   display: inline-flex;
   align-items: center;
   justify-content: center;
   flex-wrap: wrap;
-  gap: 8px 10px;
-  padding: 10px 18px;
+  gap: clamp(8px, 1.6vh, 12px) clamp(10px, 2.2vw, 16px);
+  padding: clamp(10px, 1.8vh, 14px) clamp(16px, 3.8vw, 24px);
   background: linear-gradient(145deg, #f8fafc 0%, #eff6ff 100%);
   border: 1.5px solid #bfdbfe;
   border-radius: 999px;
   box-shadow: 0 4px 14px rgba(37, 99, 235, 0.08), inset 0 1px 0 #ffffff;
-  margin-top: 4px;
+  margin: auto 0 !important;
   max-width: 100%;
+  flex-shrink: 0;
 }
 
 [data-theme="dark"] .welcome-pillars-container {
   background: linear-gradient(145deg, rgba(30, 41, 59, 0.8) 0%, rgba(15, 23, 42, 0.9) 100%);
-  border-color: rgba(96, 165, 250, 0.35);
-  box-shadow: 0 8px 24px -4px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.1);
+  border-color: rgba(96, 165, 250, 0.38);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.45);
 }
 
 .welcome-pillar-item {
   display: inline-flex;
   align-items: center;
-  gap: 6px;
-  font-size: clamp(0.78rem, 2.2vw, 0.88rem);
-  font-weight: 800;
-  color: #1e3a8a;
-  letter-spacing: -0.01em;
+  gap: 7px;
+  font-size: clamp(0.78rem, 1.8vw, 0.88rem);
+  font-weight: 700;
+  color: #1e293b;
   white-space: nowrap;
 }
 
 [data-theme="dark"] .welcome-pillar-item {
-  color: #f1f5f9;
-  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.4);
+  color: #e2e8f0;
 }
 
 .welcome-pillar-item .wpi-icon {
-  font-size: 1.05rem;
+  font-size: 1.15rem;
   line-height: 1;
-  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.12));
 }
 
 .welcome-pillar-divider {
   color: #93c5fd;
-  font-weight: 900;
-  font-size: 0.9rem;
+  font-size: 0.8rem;
   user-select: none;
 }
 
 [data-theme="dark"] .welcome-pillar-divider {
-  color: #3b82f6;
-  opacity: 0.8;
+  color: rgba(96, 165, 250, 0.5);
 }
 
-/* 4. 3D Taktil Aksiyon Butonları */
+/* 4. Alt Kısım: Aksiyon Butonları */
 .welcome-actions-container {
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-  width: 100%;
-  max-width: 390px;
+  display: flex !important;
+  flex-direction: column !important;
+  width: 100% !important;
+  max-width: 440px !important;
+  gap: clamp(10px, 1.8vh, 14px) !important;
+  margin-top: auto !important;
+  margin-bottom: 0 !important;
+  flex-shrink: 0 !important;
 }
 
+/* Ortak Aksiyon Buton Yapısı */
 .welcome-action-btn {
   display: flex;
   align-items: center;
   gap: 14px;
   width: 100%;
-  padding: 13px 18px;
+  padding: clamp(12px, 2vh, 16px) clamp(16px, 3.5vw, 20px);
   border-radius: 20px;
   cursor: pointer;
   border: none;
@@ -7960,6 +7988,7 @@ body[data-theme="dark"] .drawer-home-btn,
   user-select: none;
   -webkit-user-select: none;
   position: relative;
+  min-height: 60px;
 }
 
 .welcome-action-btn .wab-icon {
@@ -7977,14 +8006,14 @@ body[data-theme="dark"] .drawer-home-btn,
 }
 
 .welcome-action-btn .wab-title {
-  font-size: 0.96rem;
+  font-size: clamp(0.94rem, 2vw, 1.02rem);
   font-weight: 800;
   line-height: 1.25;
   letter-spacing: -0.01em;
 }
 
 .welcome-action-btn .wab-sub {
-  font-size: 0.74rem;
+  font-size: clamp(0.72rem, 1.5vw, 0.78rem);
   font-weight: 500;
   line-height: 1.3;
 }
@@ -7996,7 +8025,7 @@ body[data-theme="dark"] .drawer-home-btn,
   flex-shrink: 0;
 }
 
-/* 1. Birincil Buton: Kayıt Ol (3D Mavi/İndigo Taktil) */
+/* 1. Birincil Buton: Kayıt Ol (3D Mavi/İndigo) */
 .welcome-action-primary {
   background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%) !important;
   color: #ffffff !important;
@@ -8023,7 +8052,7 @@ body[data-theme="dark"] .drawer-home-btn,
   box-shadow: 0 2px 0 #1d4ed8, 0 5px 12px rgba(37, 99, 235, 0.25) !important;
 }
 
-/* 2. İkincil Buton: Giriş Yap (3D Taktil Beyaz/Gri - Açık Modda %100 Okunur) */
+/* 2. İkincil Buton: Giriş Yap (3D Taktil) */
 .welcome-action-secondary {
   background: linear-gradient(145deg, #ffffff 0%, #f8fafc 100%) !important;
   color: #0f172a !important;
@@ -8083,10 +8112,10 @@ body[data-theme="dark"] .drawer-home-btn,
   border: 1.5px solid #bfdbfe !important;
   border-radius: 999px !important;
   color: #1d4ed8 !important;
-  font-size: 0.84rem;
+  font-size: clamp(0.82rem, 1.8vw, 0.90rem);
   font-weight: 700;
   cursor: pointer;
-  padding: 10px 18px;
+  padding: 11px 20px;
   box-shadow: 0 3px 0 #bfdbfe, 0 4px 12px rgba(37, 99, 235, 0.08) !important;
   transition: all 0.15s ease;
   width: 100%;
@@ -8104,21 +8133,187 @@ body[data-theme="dark"] .drawer-home-btn,
 }
 
 [data-theme="dark"] .welcome-action-guest {
-  background: rgba(30, 41, 59, 0.7) !important;
+  background: rgba(30, 41, 59, 0.75) !important;
   border: 1.5px solid rgba(56, 189, 248, 0.35) !important;
   border-radius: 999px !important;
   color: #38bdf8 !important;
-  box-shadow: 0 3px 0 rgba(15, 23, 42, 0.9), 0 4px 14px rgba(0, 0, 0, 0.3) !important;
+  box-shadow: 0 3px 0 rgba(15, 23, 42, 0.9), 0 4px 14px rgba(0, 0, 0, 0.35) !important;
 }
 
 [data-theme="dark"] .welcome-action-guest:hover {
-  background: rgba(30, 41, 59, 0.9) !important;
+  background: rgba(30, 41, 59, 0.95) !important;
   color: #7dd3fc !important;
 }
 
 [data-theme="dark"] .welcome-action-guest:active {
   transform: translateY(2px) !important;
   box-shadow: 0 1px 0 rgba(15, 23, 42, 0.9) !important;
+}
+
+/* ==========================================================================
+   TABLET & GENİŞ EKRAN (>= 768px): Ferah, Büyük ve Görkemli Welcome Görünümü
+   ========================================================================== */
+@media (min-width: 768px) {
+  #onboardingModal.welcome-active,
+  #onboardingModal:has(#obStep0.active) {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    padding: clamp(24px, 4vh, 48px) !important;
+    backdrop-filter: blur(14px) !important;
+    -webkit-backdrop-filter: blur(14px) !important;
+    background: rgba(8, 12, 24, 0.88) !important;
+  }
+
+  #onboardingModal.welcome-active .onboarding-card,
+  #onboardingModal:has(#obStep0.active) .onboarding-card {
+    width: min(92vw, 700px) !important;
+    max-width: 700px !important;
+    height: auto !important;
+    min-height: clamp(660px, 84vh, 880px) !important;
+    max-height: 94vh !important;
+    border-radius: 36px !important;
+    border: 1.5px solid rgba(255, 255, 255, 0.16) !important;
+    box-shadow: 0 35px 80px -15px rgba(0, 0, 0, 0.8), 0 0 50px rgba(59, 130, 246, 0.25) !important;
+    padding: clamp(36px, 5vh, 52px) clamp(32px, 4.5vw, 56px) !important;
+    display: flex !important;
+    flex-direction: column !important;
+    justify-content: space-between !important;
+    align-items: center !important;
+    background: linear-gradient(180deg, #1e293b 0%, #0f172a 100%) !important;
+  }
+
+  [data-theme="light"] #onboardingModal.welcome-active .onboarding-card,
+  [data-theme="light"] #onboardingModal:has(#obStep0.active) .onboarding-card,
+  :root:not([data-theme="dark"]) #onboardingModal.welcome-active .onboarding-card,
+  :root:not([data-theme="dark"]) #onboardingModal:has(#obStep0.active) .onboarding-card {
+    background: linear-gradient(180deg, #ffffff 0%, #f1f5f9 100%) !important;
+    border-color: #cbd5e1 !important;
+    box-shadow: 0 35px 80px -15px rgba(0, 0, 0, 0.2) !important;
+  }
+
+  .welcome-screen-view {
+    max-width: 600px !important;
+  }
+
+  .welcome-top-group {
+    gap: 24px !important;
+  }
+
+  .welcome-school-badge {
+    padding: 8px 22px 8px 10px !important;
+    gap: 14px !important;
+  }
+
+  .welcome-school-logo {
+    width: 48px !important;
+    height: 48px !important;
+  }
+
+  .welcome-school-title {
+    font-size: 0.94rem !important;
+  }
+
+  .welcome-school-sub {
+    font-size: 0.80rem !important;
+  }
+
+  .welcome-brand-img {
+    height: clamp(74px, 11vh, 92px) !important;
+  }
+
+  .welcome-version-pill {
+    font-size: 0.84rem !important;
+    padding: 4px 12px !important;
+  }
+
+  .welcome-pillars-container {
+    padding: 14px 28px !important;
+    gap: 14px 22px !important;
+  }
+
+  .welcome-pillar-item {
+    font-size: 1.05rem !important;
+    gap: 9px !important;
+  }
+
+  .welcome-pillar-item .wpi-icon {
+    font-size: 1.35rem !important;
+  }
+
+  .welcome-actions-container {
+    max-width: 560px !important;
+    gap: 16px !important;
+  }
+
+  .welcome-action-btn {
+    padding: 18px 26px !important;
+    border-radius: 22px !important;
+    min-height: 72px !important;
+  }
+
+  .welcome-action-btn .wab-icon {
+    font-size: 2.1rem !important;
+  }
+
+  .welcome-action-btn .wab-title {
+    font-size: 1.15rem !important;
+  }
+
+  .welcome-action-btn .wab-sub {
+    font-size: 0.88rem !important;
+  }
+
+  .welcome-action-btn .wab-arrow {
+    font-size: 1.45rem !important;
+  }
+
+  .welcome-action-guest {
+    padding: 14px 28px !important;
+    font-size: 0.98rem !important;
+  }
+}
+
+/* ==========================================================================
+   KÜÇÜK YÜKSEKLİK KORUMASI (Landscape veya < 650px telefonlar)
+   ========================================================================== */
+@media (max-height: 650px) {
+  #onboardingModal.welcome-active .onboarding-card,
+  #onboardingModal:has(#obStep0.active) .onboarding-card {
+    justify-content: flex-start !important;
+    padding-top: max(env(safe-area-inset-top, 0px), 12px) !important;
+    padding-bottom: max(env(safe-area-inset-bottom, 0px), 16px) !important;
+    overflow-y: auto !important;
+  }
+
+  .welcome-screen-view {
+    justify-content: flex-start !important;
+    gap: 12px !important;
+    height: auto !important;
+  }
+
+  .welcome-top-group {
+    gap: 8px !important;
+  }
+
+  .welcome-brand-img {
+    height: 52px !important;
+  }
+
+  .welcome-pillars-container {
+    margin: 4px 0 !important;
+    padding: 6px 14px !important;
+  }
+
+  .welcome-actions-container {
+    margin-top: 6px !important;
+    gap: 8px !important;
+  }
+
+  .welcome-action-btn {
+    padding: 9px 14px !important;
+    min-height: 50px !important;
+  }
 }
 
 /* Sihirbaz İlerleme Noktaları */
@@ -11820,19 +12015,14 @@ body[data-theme="dark"] .home-unit-select-btn:hover,
 @media (min-width: 768px) {
   /* Tablet Dikey (Portrait) & Geniş Ekran: Onboarding Kartı Ferahlığı */
   .onboarding-card {
-    max-width: 500px !important;
+    max-width: 540px !important;
     padding: 28px 26px !important;
     border-radius: 32px !important;
   }
 
-  .welcome-screen-view {
-    max-width: 460px !important;
-    gap: 20px !important;
-  }
-
-  .welcome-actions-container {
-    max-width: 440px !important;
-    gap: 14px !important;
+  #onboardingModal.welcome-active .onboarding-card,
+  .onboarding-card:has(.welcome-screen-view.active) {
+    max-width: 700px !important;
   }
 
   .ob-title {
@@ -16807,8 +16997,8 @@ html:not([data-theme="dark"]) #settingsModal .settings-modal-card,
 
 html:not([data-theme="dark"]) #settingsModal .settings-header-compact,
 [data-theme="light"] #settingsModal .settings-header-compact {
-  background: #ffffff !important;
-  border-bottom: 1.5px solid #e2e8f0 !important;
+  background: #f8fafc !important;
+  border-bottom: 1.5px solid #cbd5e1 !important;
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.03) !important;
 }
 
@@ -16841,10 +17031,10 @@ html:not([data-theme="dark"]) #settingsModal .settings-tab-btn.active,
 
 html:not([data-theme="dark"]) #settingsModal .setting-block,
 [data-theme="light"] #settingsModal .setting-block {
-  background: #ffffff !important;
-  border: 1.5px solid #e2e8f0 !important;
+  background: #f8fafc !important;
+  border: 1.5px solid #cbd5e1 !important;
   border-left: 4px solid var(--accent, #2563eb) !important;
-  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.04) !important;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.03) !important;
 }
 
 html:not([data-theme="dark"]) #settingsModal .setting-block-label,
@@ -17052,14 +17242,13 @@ html:not([data-theme="dark"]) .tg-rule-card,
 
 .round-mistakes-container {
   background: rgba(239, 68, 68, 0.08);
-  border: 1.5px solid rgba(239, 68, 68, 0.28);
-  border-radius: 20px;
-  padding: 12px 10px 14px;
-  box-shadow: 0 4px 16px rgba(239, 68, 68, 0.08);
-  margin-top: 4px;
+  border: 1.5px solid rgba(239, 68, 68, 0.35);
+  border-radius: 18px;
+  padding: 14px 12px 16px;
+  box-shadow: 0 4px 18px rgba(239, 68, 68, 0.1);
+  margin: 10px 0 16px 0;
   width: 100%;
   box-sizing: border-box;
-  overflow: hidden;
 }
 
 [data-theme="light"] .round-mistakes-container {
@@ -17080,8 +17269,8 @@ html:not([data-theme="dark"]) .tg-rule-card,
 .round-mistakes-list {
   display: flex;
   flex-direction: column;
-  gap: 7px;
-  max-height: 155px;
+  gap: 8px;
+  max-height: clamp(180px, 32vh, 280px);
   overflow-y: auto;
   padding-right: 4px;
   margin-bottom: 14px;
@@ -17095,7 +17284,7 @@ html:not([data-theme="dark"]) .tg-rule-card,
   background: transparent;
 }
 .round-mistakes-list::-webkit-scrollbar-thumb {
-  background: rgba(239, 68, 68, 0.3);
+  background: rgba(239, 68, 68, 0.4);
   border-radius: 10px;
 }
 
@@ -17103,18 +17292,20 @@ html:not([data-theme="dark"]) .tg-rule-card,
   display: flex;
   align-items: center;
   justify-content: space-between;
-  background: rgba(255, 255, 255, 0.05);
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: rgba(255, 255, 255, 0.06);
+  border: 1.5px solid rgba(255, 255, 255, 0.12);
   border-radius: 12px;
-  padding: 8px 12px;
-  gap: 10px;
+  padding: 10px 12px;
+  gap: 12px;
   transition: transform 0.15s ease, background 0.15s ease;
+  box-sizing: border-box;
+  width: 100%;
 }
 
 [data-theme="light"] .mistake-word-item {
   background: #ffffff;
-  border-color: #fee2e2;
-  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.04);
+  border-color: #fecdd3;
+  box-shadow: 0 2px 6px rgba(225, 29, 72, 0.05);
 }
 
 .mistake-word-item:hover {
@@ -17125,17 +17316,17 @@ html:not([data-theme="dark"]) .tg-rule-card,
   display: flex;
   align-items: center;
   gap: 8px;
+  flex: 1 1 auto;
   min-width: 0;
 }
 
 .mistake-word-text {
   font-weight: 800;
-  font-size: 0.94rem;
+  font-size: 0.95rem;
   color: var(--text-main, #f8fafc);
   letter-spacing: -0.01em;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
+  word-break: break-word;
+  line-height: 1.3;
 }
 
 [data-theme="light"] .mistake-word-text {
@@ -17147,13 +17338,13 @@ html:not([data-theme="dark"]) .tg-rule-card,
   border: 1px solid rgba(59, 130, 246, 0.3);
   color: #60a5fa;
   border-radius: 50%;
-  width: 28px;
-  height: 28px;
+  width: 30px;
+  height: 30px;
   display: inline-flex;
   align-items: center;
   justify-content: center;
   cursor: pointer;
-  font-size: 0.8rem;
+  font-size: 0.85rem;
   flex-shrink: 0;
   transition: transform 0.15s ease, background 0.15s ease;
 }
@@ -17164,14 +17355,32 @@ html:not([data-theme="dark"]) .tg-rule-card,
 }
 
 .mistake-word-meaning {
-  font-size: 0.84rem;
+  font-size: 0.86rem;
   font-weight: 600;
   color: var(--text-muted, #94a3b8);
   text-align: right;
-  flex-shrink: 0;
+  flex: 1 1 auto;
+  word-break: break-word;
+  line-height: 1.3;
 }
 
 [data-theme="light"] .mistake-word-meaning {
+  color: #475569;
+}
+
+.round-mistake-guide-text {
+  font-size: 0.80rem;
+  line-height: 1.45;
+  color: var(--text-muted, #94a3b8);
+  background: rgba(255, 255, 255, 0.04);
+  border-radius: 10px;
+  padding: 8px 10px;
+  margin-bottom: 10px;
+  border-left: 3px solid #ef4444;
+}
+
+[data-theme="light"] .round-mistake-guide-text {
+  background: rgba(239, 68, 68, 0.05);
   color: #475569;
 }
 
@@ -17226,16 +17435,32 @@ html:not([data-theme="dark"]) .tg-rule-card,
   transform: scale(0.98);
 }
 
+/* Alıştırma Özeti Modal Kartı (Tam Görünürlük & Dikey Kaydırma Desteği) */
 .round-completed-modal-card {
-  padding: 22px 16px !important;
-  width: 100%;
-  box-sizing: border-box;
-  max-width: 440px;
-  overflow: hidden;
+  padding: clamp(16px, 2.5vh, 24px) clamp(14px, 3.5vw, 20px) !important;
+  width: 94% !important;
+  max-width: 480px !important;
+  max-height: 90dvh !important;
+  max-height: 90vh !important;
+  overflow-y: auto !important;
+  -webkit-overflow-scrolling: touch !important;
   display: flex !important;
   flex-direction: column !important;
-  align-items: center !important;
+  align-items: stretch !important;
   text-align: center !important;
+  box-sizing: border-box !important;
+  border-radius: 24px !important;
+}
+
+.round-completed-modal-card::-webkit-scrollbar {
+  width: 6px;
+}
+.round-completed-modal-card::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 10px;
+}
+[data-theme="light"] .round-completed-modal-card::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
 }
 
 #roundModalIcon {
@@ -17278,7 +17503,7 @@ html:not([data-theme="dark"]) .tg-rule-card,
 }
 
 [data-theme="light"] .mistake-game-btn {
-  background: #ffffff;
+  background: #f8fafc;
   border-color: #cbd5e1;
   color: #0f172a;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
@@ -17314,7 +17539,7 @@ html:not([data-theme="dark"]) .tg-rule-card,
 
 @media (max-width: 380px) {
   .round-completed-modal-card {
-    padding: 18px 12px !important;
+    padding: 16px 12px !important;
   }
   .round-mistakes-container {
     padding: 10px 8px 12px !important;
@@ -17333,7 +17558,6 @@ html:not([data-theme="dark"]) .tg-rule-card,
     font-size: 0.95rem;
   }
 }
-
 /* ==========================================
    9. SÖYLE VE KAZAN (PRONUNCIATION ARENA) STİLLERİ
    ========================================== */
