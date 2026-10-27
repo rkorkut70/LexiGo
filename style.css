@@ -1375,6 +1375,41 @@ body[data-theme="dark"] .status-learned,
   font-weight: 700;
 }
 
+/* Kart Arka Yüzü Cümleyi Oku Butonu */
+.card-sentence-audio-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 12px;
+  margin: 4px 0 8px 0;
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: var(--accent, #38bdf8);
+  background: rgba(56, 189, 248, 0.1);
+  border: 1px solid rgba(56, 189, 248, 0.28);
+  border-radius: 20px;
+  cursor: pointer;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+}
+
+.card-sentence-audio-btn:hover {
+  background: rgba(56, 189, 248, 0.2);
+  border-color: var(--accent, #38bdf8);
+  transform: translateY(-1px);
+}
+
+.card-sentence-audio-btn:active {
+  transform: scale(0.96);
+}
+
+.card-sentence-audio-btn.speaking {
+  background: var(--accent, #38bdf8);
+  color: #ffffff;
+  border-color: var(--accent, #38bdf8);
+  box-shadow: 0 0 12px rgba(56, 189, 248, 0.4);
+}
+
 .example-translation {
   font-size: 0.85rem;
   line-height: 1.4;
@@ -7690,44 +7725,34 @@ body[data-theme="dark"] .drawer-home-btn,
   background: rgba(7, 10, 20, 0.94) !important;
 }
 
-/* Standart Onboarding Kartı (Adım 1-6 için) */
-.onboarding-card {
-  max-width: 460px !important;
-  width: 92% !important;
-  max-height: 94dvh !important;
-  height: auto !important;
-  padding: clamp(16px, 3vh, 26px) clamp(14px, 3vw, 24px) !important;
-  border-radius: 28px !important;
-  background: #ffffff !important;
-  border: 1.5px solid #e2e8f0 !important;
-  box-shadow: 0 25px 60px -15px rgba(0, 0, 0, 0.4), 0 0 0 1px rgba(255, 255, 255, 0.3) !important;
-  position: relative;
-  overflow-y: auto !important;
-  overflow-x: hidden !important;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  box-sizing: border-box !important;
-}
-
-[data-theme="dark"] .onboarding-card {
-  background: linear-gradient(180deg, #1e293b 0%, #0f172a 100%) !important;
-  border: 1.5px solid rgba(255, 255, 255, 0.14) !important;
-  box-shadow: 0 25px 60px rgba(0, 0, 0, 0.75), 0 0 30px rgba(59, 130, 246, 0.2) !important;
-}
-
 /* ==========================================================================
-   TELEFON: WELCOME EKRANI TAM EKRAN ADAPTİF YERLEŞİM (Dead Space Yok, Safe Area Uyumlu)
+   ONBOARDING MODAL & TÜM ADIMLAR (ADIM 0-6) TAM EKRAN ADAPTİF YERLEŞİM
    ========================================================================== */
-#onboardingModal.welcome-active,
-#onboardingModal:has(#obStep0.active) {
+#onboardingModal.modal-overlay.full-screen-modal {
+  position: fixed !important;
+  inset: 0 !important;
+  width: 100vw !important;
+  height: 100% !important;
+  height: 100dvh !important;
+  z-index: 10000 !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  box-sizing: border-box !important;
+  margin: 0 !important;
   padding: 0 !important;
-  background: #090e1c !important;
+  backdrop-filter: blur(8px) !important;
+  -webkit-backdrop-filter: blur(8px) !important;
+  background: rgba(10, 15, 29, 0.88) !important;
+  transition: opacity 0.25s ease !important;
 }
 
-#onboardingModal.welcome-active .onboarding-card,
-#onboardingModal:has(#obStep0.active) .onboarding-card {
+[data-theme="dark"] #onboardingModal.modal-overlay.full-screen-modal {
+  background: rgba(7, 10, 20, 0.94) !important;
+}
+
+/* Tüm Onboarding Adımları İçin Adaptif Kart Kapsayıcısı */
+#onboardingModal .onboarding-card {
   width: 100% !important;
   max-width: 100% !important;
   height: 100% !important;
@@ -7748,47 +7773,44 @@ body[data-theme="dark"] .drawer-home-btn,
   align-items: center !important;
   box-sizing: border-box !important;
   overflow-y: auto !important;
+  overflow-x: hidden !important;
   -webkit-overflow-scrolling: touch !important;
   background: radial-gradient(circle at 50% 12%, #1e293b 0%, #090e1c 100%) !important;
 }
 
-[data-theme="light"] #onboardingModal.welcome-active,
-[data-theme="light"] #onboardingModal:has(#obStep0.active),
-:root:not([data-theme="dark"]) #onboardingModal.welcome-active,
-:root:not([data-theme="dark"]) #onboardingModal:has(#obStep0.active) {
-  background: #f1f5f9 !important;
-}
-
-[data-theme="light"] #onboardingModal.welcome-active .onboarding-card,
-[data-theme="light"] #onboardingModal:has(#obStep0.active) .onboarding-card,
-:root:not([data-theme="dark"]) #onboardingModal.welcome-active .onboarding-card,
-:root:not([data-theme="dark"]) #onboardingModal:has(#obStep0.active) .onboarding-card {
+[data-theme="light"] #onboardingModal .onboarding-card,
+:root:not([data-theme="dark"]) #onboardingModal .onboarding-card {
   background: radial-gradient(circle at 50% 12%, #f8fafc 0%, #e2e8f0 100%) !important;
+  border: none !important;
 }
 
-/* Welcome Görünüm Kapsayıcısı */
-.welcome-screen-view {
-  display: flex !important;
+/* Her Adım Kesinlikle Ayrı Bir Ekrandır - Yan Yana Gelmeyi %100 Engelleyen Kural */
+.onboarding-step-view {
+  display: none !important;
   flex-direction: column !important;
-  justify-content: space-between !important;
   align-items: center !important;
   text-align: center !important;
   width: 100% !important;
-  max-width: 480px !important;
+  max-width: 520px !important;
   height: 100% !important;
   min-height: 100% !important;
   flex: 1 1 auto !important;
+  justify-content: space-between !important;
   box-sizing: border-box !important;
   margin: 0 auto !important;
   padding: 0 !important;
 }
 
-.welcome-screen-view:not(.active),
-.welcome-screen-view[style*="display: none"],
-.welcome-screen-view[style*="display:none"],
+.onboarding-step-view.active {
+  display: flex !important;
+}
+
 .onboarding-step-view:not(.active),
 .onboarding-step-view[style*="display: none"],
-.onboarding-step-view[style*="display:none"] {
+.onboarding-step-view[style*="display:none"],
+.welcome-screen-view:not(.active),
+.welcome-screen-view[style*="display: none"],
+.welcome-screen-view[style*="display:none"] {
   display: none !important;
 }
 
@@ -8151,11 +8173,10 @@ body[data-theme="dark"] .drawer-home-btn,
 }
 
 /* ==========================================================================
-   TABLET & GENİŞ EKRAN (>= 768px): Ferah, Büyük ve Görkemli Welcome Görünümü
+   TABLET & GENİŞ EKRAN (>= 768px): Ferah, Büyük ve Görkemli Onboarding Düzeni (Adım 0-6)
    ========================================================================== */
 @media (min-width: 768px) {
-  #onboardingModal.welcome-active,
-  #onboardingModal:has(#obStep0.active) {
+  #onboardingModal {
     display: flex !important;
     align-items: center !important;
     justify-content: center !important;
@@ -8165,8 +8186,7 @@ body[data-theme="dark"] .drawer-home-btn,
     background: rgba(8, 12, 24, 0.88) !important;
   }
 
-  #onboardingModal.welcome-active .onboarding-card,
-  #onboardingModal:has(#obStep0.active) .onboarding-card {
+  #onboardingModal .onboarding-card {
     width: min(92vw, 700px) !important;
     max-width: 700px !important;
     height: auto !important;
@@ -8183,10 +8203,8 @@ body[data-theme="dark"] .drawer-home-btn,
     background: linear-gradient(180deg, #1e293b 0%, #0f172a 100%) !important;
   }
 
-  [data-theme="light"] #onboardingModal.welcome-active .onboarding-card,
-  [data-theme="light"] #onboardingModal:has(#obStep0.active) .onboarding-card,
-  :root:not([data-theme="dark"]) #onboardingModal.welcome-active .onboarding-card,
-  :root:not([data-theme="dark"]) #onboardingModal:has(#obStep0.active) .onboarding-card {
+  [data-theme="light"] #onboardingModal .onboarding-card,
+  :root:not([data-theme="dark"]) #onboardingModal .onboarding-card {
     background: linear-gradient(180deg, #ffffff 0%, #f1f5f9 100%) !important;
     border-color: #cbd5e1 !important;
     box-shadow: 0 35px 80px -15px rgba(0, 0, 0, 0.2) !important;
@@ -8341,14 +8359,22 @@ body[data-theme="dark"] .drawer-home-btn,
 
 /* Adım Görünümü */
 .onboarding-step-view {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  text-align: center;
+  display: none !important;
+  flex-direction: column !important;
+  align-items: center !important;
+  text-align: center !important;
   width: 100% !important;
+  max-width: 520px !important;
+  height: 100% !important;
+  min-height: 100% !important;
   flex: 1 1 auto !important;
-  justify-content: space-between;
+  justify-content: space-between !important;
   box-sizing: border-box !important;
+  margin: 0 auto !important;
+}
+
+.onboarding-step-view.active {
+  display: flex !important;
 }
 
 .ob-hero-badge {

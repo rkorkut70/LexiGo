@@ -7,7 +7,7 @@
 (function () {
   'use strict';
 
-  const APP_VERSION = 'v1.8.41';
+  const APP_VERSION = 'v1.8.42';
   const DEFAULT_AVATAR = 'avatar_default';
   const CURRENT_APP_BUILD = 'lexiq_build_19_clean';
 
@@ -704,6 +704,7 @@
     cardMeaningText: document.getElementById('cardMeaningText'),
     cardExampleSentence: document.getElementById('cardExampleSentence'),
     cardSentenceTranslation: document.getElementById('cardSentenceTranslation'),
+    cardSentenceAudioBtn: document.getElementById('cardSentenceAudioBtn'),
     pronounceBtn: document.getElementById('pronounceBtn'),
     markRepeatBtn: document.getElementById('markRepeatBtn'),
     markLearnedBtn: document.getElementById('markLearnedBtn'),
@@ -4050,7 +4051,7 @@ let activeAvatarCategory = 'all';
       obModal.classList.toggle('welcome-active', stepNum === 0);
     }
 
-    const allSteps = (dom.obSteps && dom.obSteps.length) ? dom.obSteps : document.querySelectorAll('.onboarding-step-view');
+    const allSteps = document.querySelectorAll('.onboarding-step-view');
     allSteps.forEach(stepEl => {
       const isCurrent = stepEl.id === `obStep${stepNum}`;
       if (isCurrent) {
@@ -4061,6 +4062,12 @@ let activeAvatarCategory = 'all';
         stepEl.classList.remove('active');
       }
     });
+
+    if (obModal) {
+      obModal.scrollTop = 0;
+      const card = obModal.querySelector('.onboarding-card');
+      if (card) card.scrollTop = 0;
+    }
 
     if (dom.obStepDots) {
       dom.obStepDots.forEach(dot => {
@@ -8170,6 +8177,7 @@ let activeAvatarCategory = 'all';
   function startAnagramRound() {
     state.roundUsedHint = false;
     anagramState.isLocked = false;
+    if (dom.anagramHintBtn) dom.anagramHintBtn.disabled = false;
     resetArenaIdleTimer();
     const pool = getLearnedWordsPool();
     if (pool.length < 3) return;
@@ -11215,6 +11223,18 @@ let activeAvatarCategory = 'all';
         e.preventDefault();
         e.stopPropagation();
         speakCurrentWord();
+      });
+    }
+
+    if (dom.cardSentenceAudioBtn) {
+      dom.cardSentenceAudioBtn.addEventListener('click', (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        if (!state.words || !state.words[state.currentIndex]) return;
+        const currentWord = state.words[state.currentIndex];
+        const sentence = getWordSentence(currentWord);
+        if (!sentence) return;
+        speakWord(sentence, currentWord.dil || state.activeLanguage, dom.cardSentenceAudioBtn);
       });
     }
 
