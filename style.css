@@ -1403,11 +1403,19 @@ body[data-theme="dark"] .status-learned,
   transform: scale(0.96);
 }
 
-.card-sentence-audio-btn.speaking {
+.card-sentence-audio-btn.speaking,
+.card-sentence-audio-btn.playing {
   background: var(--accent, #38bdf8);
   color: #ffffff;
   border-color: var(--accent, #38bdf8);
-  box-shadow: 0 0 12px rgba(56, 189, 248, 0.4);
+  box-shadow: 0 0 14px rgba(56, 189, 248, 0.55);
+  animation: pulseAudioSpeaking 1.2s infinite ease-in-out;
+}
+
+@keyframes pulseAudioSpeaking {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.05); }
+  100% { transform: scale(1); }
 }
 
 .example-translation {
@@ -12164,15 +12172,17 @@ body[data-theme="dark"] .home-unit-select-btn:hover,
   /* Kelime Kartları Tablet Görünümü: Daha geniş ve ergonomik */
   .card-pure-section {
     max-width: 600px !important;
-    padding: 16px 20px calc(30px + env(safe-area-inset-bottom, 0px)) 20px !important;
+    padding: 12px 20px calc(20px + env(safe-area-inset-bottom, 0px)) 20px !important;
   }
 
   .card-action-bar-under {
     max-width: 520px !important;
   }
 
-  .card-face {
-    min-height: 380px !important;
+  @media (orientation: portrait) and (min-height: 850px) {
+    .card-face {
+      min-height: 360px !important;
+    }
   }
 
   /* Arena Oyunları Tablet Vitrini: Ferah 2 Sütunlu Grid */
@@ -12209,9 +12219,56 @@ body[data-theme="dark"] .home-unit-select-btn:hover,
   }
 }
 
-/* ============================================================
-   YAZI TİPİ (FONT AİLESİ) & KART ÇEVİRME HIZI ÖZELLEŞTİRMELERİ
-   ============================================================ */
+/* Tablet & Telefon Yatay (Landscape) Modu İçin Kusursuz Kart & "Öğrendim" Butonu Düzeni */
+@media (orientation: landscape), (max-height: 720px) {
+  .flashcards-pure-view.flashcards-no-scroll {
+    overflow-y: auto !important;
+    -webkit-overflow-scrolling: touch !important;
+  }
+
+  .card-pure-section {
+    height: auto !important;
+    min-height: 100% !important;
+    overflow-y: visible !important;
+    padding-top: 4px !important;
+    padding-bottom: max(env(safe-area-inset-bottom, 12px), 16px) !important;
+    gap: 6px !important;
+  }
+
+  .flashcard-wrapper {
+    min-height: 180px !important;
+    max-height: clamp(190px, 42vh, 290px) !important;
+    margin: 2px auto !important;
+  }
+
+  .card-face {
+    min-height: 180px !important;
+    padding: 10px 16px !important;
+  }
+
+  .card-word {
+    font-size: clamp(1.4rem, 4.2vh, 2.1rem) !important;
+    margin: 2px 0 !important;
+  }
+
+  .card-meaning {
+    font-size: clamp(1.1rem, 3.6vh, 1.45rem) !important;
+    margin: 2px 0 4px 0 !important;
+  }
+
+  .example-box {
+    padding: 6px 12px !important;
+    margin: 2px 0 !important;
+  }
+
+  .card-action-bar-under {
+    margin-top: 4px !important;
+    padding-bottom: 4px !important;
+    flex-shrink: 0 !important;
+    position: relative !important;
+    z-index: 5 !important;
+  }
+}
 html[data-font-family="serif"] body,
 html[data-font-family="serif"] .card-term,
 html[data-font-family="serif"] .card-meaning,
@@ -13027,7 +13084,7 @@ html[data-flip-speed="slow"] .flashcard {
 .tour-overlay {
   position: fixed;
   inset: 0;
-  z-index: 10020;
+  z-index: 999999 !important;
   pointer-events: auto;
   overflow: hidden;
 }
@@ -13037,6 +13094,7 @@ html[data-flip-speed="slow"] .flashcard {
   inset: 0;
   background: transparent;
   pointer-events: auto;
+  z-index: 1;
 }
 
 .tour-spotlight {
@@ -13045,14 +13103,14 @@ html[data-flip-speed="slow"] .flashcard {
   box-shadow: 0 0 0 9999px rgba(10, 15, 29, 0.72);
   border: 2px solid #38bdf8;
   pointer-events: none;
-  z-index: 10022;
+  z-index: 2;
   transition: top 0.22s cubic-bezier(0.16, 1, 0.3, 1), left 0.22s cubic-bezier(0.16, 1, 0.3, 1), width 0.22s ease, height 0.22s ease;
   will-change: top, left, width, height;
 }
 
 .tour-bubble {
   position: fixed;
-  z-index: 10025;
+  z-index: 1000000 !important;
   width: min(340px, calc(100vw - 28px));
   max-width: 360px;
   background: #181b36;
@@ -13073,9 +13131,9 @@ html[data-flip-speed="slow"] .flashcard {
   width: 14px;
   height: 14px;
   background: #181b36;
-  z-index: 10026;
+  z-index: 1000001 !important;
   pointer-events: none;
-  transition: left 0.22s cubic-bezier(0.16, 1, 0.3, 1);
+  transition: left 0.22s cubic-bezier(0.16, 1, 0.3, 1), top 0.22s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .tour-arrow.arrow-top {
@@ -13091,6 +13149,25 @@ html[data-flip-speed="slow"] .flashcard {
   border-right: 1.5px solid rgba(139, 92, 246, 0.45);
   border-bottom: 1.5px solid rgba(139, 92, 246, 0.45);
   transform: rotate(45deg);
+  display: block;
+}
+
+.tour-arrow.arrow-left {
+  left: -8px !important;
+  top: 50% !important;
+  border-left: 1.5px solid rgba(139, 92, 246, 0.45);
+  border-bottom: 1.5px solid rgba(139, 92, 246, 0.45);
+  transform: translateY(-50%) rotate(45deg);
+  display: block;
+}
+
+.tour-arrow.arrow-right {
+  right: -8px !important;
+  left: auto !important;
+  top: 50% !important;
+  border-right: 1.5px solid rgba(139, 92, 246, 0.45);
+  border-top: 1.5px solid rgba(139, 92, 246, 0.45);
+  transform: translateY(-50%) rotate(45deg);
   display: block;
 }
 
@@ -13238,7 +13315,7 @@ html[data-flip-speed="slow"] .flashcard {
 /* Hedef Buton Vurgulama & Nabız Efekti */
 .tour-highlight-target {
   position: relative !important;
-  z-index: 10022 !important;
+  z-index: 9999 !important;
   outline: 3px solid #38bdf8 !important;
   outline-offset: 4px !important;
   box-shadow: 0 0 0 5px rgba(56, 189, 248, 0.4), 0 0 25px rgba(56, 189, 248, 0.65) !important;

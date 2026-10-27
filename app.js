@@ -7,7 +7,7 @@
 (function () {
   'use strict';
 
-  const APP_VERSION = 'v1.8.42';
+  const APP_VERSION = 'v1.8.43';
   const DEFAULT_AVATAR = 'avatar_default';
   const CURRENT_APP_BUILD = 'lexiq_build_19_clean';
 
@@ -5046,6 +5046,24 @@ let activeAvatarCategory = 'all';
   function toggleFlip() {
     setFlipped(!state.isFlipped);
   }
+
+  function playCurrentCardSentenceAudio(e) {
+    if (e) {
+      if (typeof e.preventDefault === 'function') e.preventDefault();
+      if (typeof e.stopPropagation === 'function') e.stopPropagation();
+      if (typeof e.stopImmediatePropagation === 'function') e.stopImmediatePropagation();
+    }
+    if (!state.words || !state.words[state.currentIndex]) return;
+    const curWord = state.words[state.currentIndex];
+    const sentence = getWordSentence(curWord);
+    if (!sentence) {
+      showToast('Bu kelime için örnek cümle bulunamadı.');
+      return;
+    }
+    const btn = dom.cardSentenceAudioBtn || document.getElementById('cardSentenceAudioBtn');
+    speakWord(sentence, curWord.dil || state.activeLanguage, btn);
+  }
+  window.playCurrentCardSentenceAudio = playCurrentCardSentenceAudio;
 
   // Örnek cümlede hedef kelimeyi regex ile güvenle vurgulama
   function highlightWordInSentence(sentence, word) {
@@ -11197,7 +11215,13 @@ let activeAvatarCategory = 'all';
         isSwiping = false;
         return;
       }
-      if (e.target.closest('#pronounceBtn, #pronounceUsBtn, #pronounceUkBtn, .accent-btn, .audio-btn, .accent-btn-group, .audio-controls-row, #prevCardBtn, #nextCardBtn, .card-edge-nav-btn, #markLearnedBtn, #markRepeatBtn, .card-inner-action-btn, #cardNotebookToggleBtn, #cardBackNotebookToggleBtn, .card-notebook-btn, #cardTroubledActionBtn, #cardBackTroubledActionBtn, .card-troubled-pill')) return;
+      if (e.target.closest('#cardSentenceAudioBtn, .card-sentence-audio-btn')) {
+        e.preventDefault();
+        e.stopPropagation();
+        playCurrentCardSentenceAudio(e);
+        return;
+      }
+      if (e.target.closest('#pronounceBtn, #pronounceUsBtn, #pronounceUkBtn, .accent-btn, .audio-btn, .accent-btn-group, .audio-controls-row, #prevCardBtn, #nextCardBtn, .card-edge-nav-btn, #markLearnedBtn, #markRepeatBtn, .card-inner-action-btn, #cardNotebookToggleBtn, #cardBackNotebookToggleBtn, .card-notebook-btn, #cardTroubledActionBtn, #cardBackTroubledActionBtn, .card-troubled-pill, .card-sentence-audio-btn, #cardSentenceAudioBtn')) return;
       toggleFlip();
     });
 
@@ -11228,13 +11252,7 @@ let activeAvatarCategory = 'all';
 
     if (dom.cardSentenceAudioBtn) {
       dom.cardSentenceAudioBtn.addEventListener('click', (e) => {
-        e.preventDefault();
-        e.stopPropagation();
-        if (!state.words || !state.words[state.currentIndex]) return;
-        const currentWord = state.words[state.currentIndex];
-        const sentence = getWordSentence(currentWord);
-        if (!sentence) return;
-        speakWord(sentence, currentWord.dil || state.activeLanguage, dom.cardSentenceAudioBtn);
+        playCurrentCardSentenceAudio(e);
       });
     }
 
@@ -14775,14 +14793,27 @@ let activeAvatarCategory = 'all';
       let bubbleLeft = targetCenterX - bubbleWidth / 2;
       bubbleLeft = Math.max(12, Math.min(bubbleLeft, viewportWidth - bubbleWidth - 12));
 
-      // Dikey konum: Hedefin altına mı üstüne mi yerleştirelim?
+      // Dikey konum: Hedefin altına mı üstüne mi yoksa yanına mı yerleştirelim?
       const safeBottom = 32; // Android gesture / navigation bar alanı için güvenli alt pay
       const spaceBelow = viewportHeight - rect.bottom - safeBottom;
       const spaceAbove = rect.top;
+      const spaceRight = viewportWidth - rect.right;
+      const spaceLeft = rect.left;
       let bubbleTop = 0;
       let arrowMode = 'top';
 
-      if (spaceBelow >= bubbleHeight + 10) {
+      // Geniş ekranlarda (Tablet / Masaüstü browser) ve büyük kart hedeflerinde yan konumlandırma
+      if (viewportWidth >= 768 && rect.height > 180 && (spaceRight >= bubbleWidth + 18 || spaceLeft >= bubbleWidth + 18)) {
+        if (spaceRight >= bubbleWidth + 18) {
+          bubbleLeft = rect.right + 16;
+          bubbleTop = Math.max(16, Math.min(rect.top + (rect.height - bubbleHeight) / 2, viewportHeight - bubbleHeight - safeBottom));
+          arrowMode = 'left';
+        } else {
+          bubbleLeft = rect.left - bubbleWidth - 16;
+          bubbleTop = Math.max(16, Math.min(rect.top + (rect.height - bubbleHeight) / 2, viewportHeight - bubbleHeight - safeBottom));
+          arrowMode = 'right';
+        }
+      } else if (spaceBelow >= bubbleHeight + 10) {
         // Hedefin altında yeterli yer var: hedefin hemen altına yerleştir
         bubbleTop = rect.bottom + 10;
         arrowMode = 'top';
@@ -14802,13 +14833,18 @@ let activeAvatarCategory = 'all';
       bubble.style.left = `${bubbleLeft}px`;
       bubble.style.top = `${bubbleTop}px`;
 
-      // Konuşma balonu okunun yatay konumu (hedefin ortasını göstersin)
+      // Konuşma balonu okunun konumu (hedefin ortasını göstersin)
       if (arrowMode === 'hidden') {
         arrow.className = 'tour-arrow arrow-hidden';
+      } else if (arrowMode === 'left' || arrowMode === 'right') {
+        arrow.className = `tour-arrow arrow-${arrowMode}`;
+        arrow.style.left = '';
+        arrow.style.top = '50%';
       } else {
         let arrowLeft = targetCenterX - bubbleLeft - 7;
         arrowLeft = Math.max(20, Math.min(arrowLeft, bubbleWidth - 30));
         arrow.style.left = `${arrowLeft}px`;
+        arrow.style.top = '';
         arrow.className = `tour-arrow arrow-${arrowMode}`;
       }
     }
