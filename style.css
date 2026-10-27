@@ -170,10 +170,17 @@ html, body {
   font-size: 1.85rem;
   font-weight: 900;
   letter-spacing: -0.04em;
-  color: var(--text-main);
-  display: flex;
+  color: #3b5bfd;
+  display: inline-flex;
   align-items: center;
+  line-height: 1;
+  font-family: 'Nunito', 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
   transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+[data-theme="light"] .brand-name,
+:root:not([data-theme="dark"]) .brand-name {
+  color: #2563eb;
 }
 
 .brand:hover .brand-name {
@@ -181,13 +188,30 @@ html, body {
 }
 
 .brand-highlight {
-  background: linear-gradient(135deg, #2563eb 0%, #7c3aed 100%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  font-weight: 950;
-  font-size: 2.1rem;
-  margin-left: 1px;
-  filter: drop-shadow(0 2px 8px rgba(99, 102, 241, 0.45));
+  color: #ff5e00;
+  display: inline-flex;
+  align-items: center;
+  margin-left: 1.5px;
+  animation: brandLqPulse 3.2s infinite ease-in-out;
+  transform-origin: center;
+  filter: drop-shadow(0 2px 8px rgba(255, 94, 0, 0.45));
+}
+
+.brand-o-arrow {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 0.84em;
+  height: 0.84em;
+  margin-left: 1.5px;
+  vertical-align: middle;
+}
+
+.brand-o-svg {
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+  display: block;
 }
 
 .header-actions {
@@ -7788,29 +7812,39 @@ body[data-theme="dark"] .drawer-home-btn,
   font-weight: 900;
   line-height: 1;
   letter-spacing: -0.035em;
-  color: #2563eb;
-  text-shadow: 0 3px 0 #1e40af, 0 8px 20px rgba(37, 99, 235, 0.3);
+  color: #3b5bfd;
+  text-shadow: 0 0 16px rgba(59, 91, 253, 0.45);
   margin: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-family: 'Nunito', 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
 }
 
 [data-theme="dark"] .welcome-brand-name {
-  color: #60a5fa;
-  text-shadow: 0 3px 0 #1e3a8a, 0 8px 24px rgba(96, 165, 250, 0.45);
+  color: #3b5bfd;
+  text-shadow: 0 0 20px rgba(59, 91, 253, 0.55);
+}
+
+[data-theme="light"] .welcome-brand-name,
+:root:not([data-theme="dark"]) .welcome-brand-name {
+  color: #2563eb;
+  text-shadow: 0 2px 8px rgba(37, 99, 235, 0.25);
 }
 
 .welcome-brand-q {
-  color: #ea580c;
-  background: linear-gradient(135deg, #f97316 0%, #ea580c 100%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  filter: drop-shadow(0 3px 0 rgba(234, 88, 12, 0.4));
+  color: #ff5e00;
+  display: inline-flex;
+  align-items: center;
+  animation: brandLqPulse 3.2s infinite ease-in-out;
+  transform-origin: center;
+  margin-left: 2px;
+  filter: drop-shadow(0 0 12px rgba(255, 94, 0, 0.6));
 }
 
 [data-theme="dark"] .welcome-brand-q {
-  background: linear-gradient(135deg, #fbbf24 0%, #f97316 100%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  filter: drop-shadow(0 3px 0 rgba(249, 115, 22, 0.4));
+  color: #ff5e00;
+  filter: drop-shadow(0 0 16px rgba(255, 94, 0, 0.8));
 }
 
 .welcome-version-pill {
@@ -12640,21 +12674,22 @@ html[data-flip-speed="slow"] .flashcard {
   transform: scale(0.96) !important;
 }
 
-/* Canlı Logo Animasyonu */
+/* Canlı Logo Animasyonu - LexiGO Enerjik Pulse & Glow */
 @keyframes brandLqPulse {
   0%, 100% {
-    text-shadow: 0 0 10px rgba(56, 189, 248, 0.4);
+    filter: drop-shadow(0 0 6px rgba(255, 94, 0, 0.45));
     transform: scale(1);
   }
   50% {
-    text-shadow: 0 0 18px rgba(249, 115, 22, 0.6), 0 0 30px rgba(249, 115, 22, 0.3);
+    filter: drop-shadow(0 0 16px rgba(255, 94, 0, 0.85)) drop-shadow(0 0 26px rgba(255, 94, 0, 0.4));
     transform: scale(1.05);
   }
 }
 
 .brand-highlight {
-  display: inline-block;
-  animation: brandLqPulse 3.5s infinite ease-in-out;
+  display: inline-flex;
+  align-items: center;
+  animation: brandLqPulse 3.2s infinite ease-in-out;
 }
 
 .confirm-actions-row {

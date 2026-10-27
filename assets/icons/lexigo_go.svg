@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 130 90" width="130" height="90" style="overflow:visible;">
+  <defs>
+    <filter id="lexigoOnlyGlowOrange" x="-30%" y="-30%" width="160%" height="160%">
+      <feDropShadow dx="0" dy="2" stdDeviation="4" flood-color="#ff5e00" flood-opacity="0.65"/>
+    </filter>
+    <mask id="lexigoOnlyArrowMask">
+      <rect width="100" height="100" fill="white" />
+      <path d="M -5,64 C 14,64 26,56 42,46 L 40,34 C 40,30 45,28 48,31 L 82,53 C 85,55 85,59 82,62 L 52,83 C 49,85 44,83 44,79 L 45,68 C 30,73 16,80 -5,84 Z" fill="black" />
+    </mask>
+  </defs>
+
+  <g filter="url(#lexigoOnlyGlowOrange)">
+    <!-- G -->
+    <text x="6" y="66" font-family="'Nunito', 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif" font-weight="900" font-size="64" fill="#ff5e00" letter-spacing="-1px">G</text>
+
+    <!-- O with arrow cutout -->
+    <g transform="translate(60, 21) scale(0.58)">
+      <ellipse cx="50" cy="50" rx="46" ry="46" fill="#ff5e00" mask="url(#lexigoOnlyArrowMask)" transform="rotate(4 50 50)" />
+    </g>
+  </g>
+</svg>
