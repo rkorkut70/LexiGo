@@ -1,13 +1,11 @@
 {
-  "version": "v1.8.38",
-  "versionCode": 98,
-  "releaseDate": "2026-10-20",
+  "version": "v1.8.46",
+  "versionCode": 107,
+  "releaseDate": "2026-10-28",
   "notes": [
-    "🛠️ Arena Oyun Başlatma Hatası Giderildi: 'stopAllGames()' fonksiyonunda tanımlanmamış değişken kaynaklı oyunların başlamasını engelleyen hata düzeltildi",
-    "🛠️ Açılışta Hareketsizlik Uyarısı Engeli Düzeltildi: Arena hareketsizlik penceresinin açılışta kilitli kalmasına neden olan CSS kuralı düzeltildi",
-    "⏰ Arena Hareketsizlik Hatırlatıcısı & Teşvik: 10 saniye işlem yapılmadığında oyuna başlama ve devam etmeyi teşvik eden 40 farklı eğlenceli cümle ve uyarı penceresi eklendi",
-    "🎙️ Aksan Butonları Düzeni: 6 arenada aksan butonları alt satıra alınıp ortalandı, ipucu butonlarıyla çakışması önlendi; dinle ve söyle oyunlarındaki küçük butonlar temizlendi",
-    "🃏 Kart Eşleştirme Sayacı: 'Eşleşen' ve '0 / 4' sayaçları iki satır halinde dikey olarak düzenlendi",
-    "🔖 Kelime Defterim & Zorlandıklarım: Oyun hataları zorlandıklarım listesine aktarılıp arenadan izole edildi, 'Listem'deki kelimeler arenaya dahil edildi"
+    "Kart arka yüzündeki örnek cümle okuma altyapısı çapraz platform ve çok dilli (İngilizce, Almanca, Fransızca) olarak tamamen yenilendi.",
+    "Web Speech API ve HD Çevrimiçi Doğal Ses akışı doğrudan entegre edildi; ses paketi bulunmayan cihazlarda kesintisiz ses sağlandı.",
+    "Welcome karşılama ekranındaki 'Kelime Öğrenme Platformu' ifadesi kaldırıldı, kurumsal başlık sadeleştirildi.",
+    "3D kart döndürme sırasında ön/arka yüz dokunmatik ve tıklama yalıtımı güçlendirildi."
   ]
 }

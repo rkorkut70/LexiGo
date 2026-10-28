@@ -1059,6 +1059,22 @@ body[data-theme="dark"] .pure-action-btn.btn-repeat,
   -webkit-transform: rotateY(180deg) translate3d(0, 0, 0);
 }
 
+/* 3D Yüz Tıklama Yalıtımı (Arka yüz çevrildiğinde ön yüzün tıklamaları bloke etmesini %100 önler) */
+.flashcard.is-flipped .card-front {
+  pointer-events: none !important;
+}
+.flashcard.is-flipped .card-back {
+  pointer-events: auto !important;
+  z-index: 2 !important;
+}
+.flashcard:not(.is-flipped) .card-back {
+  pointer-events: none !important;
+}
+.flashcard:not(.is-flipped) .card-front {
+  pointer-events: auto !important;
+  z-index: 2 !important;
+}
+
 /* Şablondaki belirgin üst başlık bölmesi ve yatay ayırıcı siyah/füme çizgi */
 .card-top {
   display: flex;
@@ -1412,6 +1428,13 @@ body[data-theme="dark"] .status-learned,
   line-height: 1.2;
   touch-action: manipulation;
   user-select: none;
+  pointer-events: auto !important;
+  position: relative !important;
+  z-index: 5 !important;
+}
+
+.card-sentence-audio-btn > * {
+  pointer-events: none !important;
 }
 
 .card-sentence-audio-btn:hover {

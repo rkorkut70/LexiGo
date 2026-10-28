@@ -7,7 +7,7 @@
 (function () {
   'use strict';
 
-  const APP_VERSION = 'v1.8.45';
+  const APP_VERSION = 'v1.8.46';
   const DEFAULT_AVATAR = 'avatar_default';
   const CURRENT_APP_BUILD = 'lexiq_build_19_clean';
 
@@ -5061,15 +5061,30 @@ let activeAvatarCategory = 'all';
   }
 
   let isSpeakingSentenceAudio = false;
+  let sentenceAudioSafetyTimer = null;
   function playCurrentCardSentenceAudio(e) {
     if (e) {
       if (typeof e.preventDefault === 'function') e.preventDefault();
       if (typeof e.stopPropagation === 'function') e.stopPropagation();
       if (typeof e.stopImmediatePropagation === 'function') e.stopImmediatePropagation();
     }
+    const btn = dom.cardSentenceAudioBtn || document.getElementById('cardSentenceAudioBtn');
+
+    // Eğer halihazırda çalıyorsa durdur ve temizle (toggle mantığı)
     if (isSpeakingSentenceAudio) {
+      isSpeakingSentenceAudio = false;
+      if (sentenceAudioSafetyTimer) clearTimeout(sentenceAudioSafetyTimer);
+      if (btn) btn.classList.remove('playing');
+      try {
+        if (typeof window !== 'undefined' && 'speechSynthesis' in window) window.speechSynthesis.cancel();
+        if (typeof fallbackAudioPlayer !== 'undefined' && fallbackAudioPlayer) {
+          fallbackAudioPlayer.pause();
+          fallbackAudioPlayer.currentTime = 0;
+        }
+      } catch (err) {}
       return;
     }
+
     if (!state.words || !state.words[state.currentIndex]) return;
     const curWord = state.words[state.currentIndex];
     const sentence = getWordSentence(curWord);
@@ -5077,15 +5092,20 @@ let activeAvatarCategory = 'all';
       showToast('Bu kelime için örnek cümle bulunamadı.');
       return;
     }
-    const btn = dom.cardSentenceAudioBtn || document.getElementById('cardSentenceAudioBtn');
+
     isSpeakingSentenceAudio = true;
     if (btn) btn.classList.add('playing');
     triggerHapticFeedback('light');
 
     const onSentenceFinish = () => {
       isSpeakingSentenceAudio = false;
+      if (sentenceAudioSafetyTimer) clearTimeout(sentenceAudioSafetyTimer);
       if (btn) btn.classList.remove('playing');
     };
+
+    // Emniyet zaman aşımı (Herhangi bir tarayıcı/cihaz kilitlenmesinde butonun takılı kalmasını önler)
+    const safetyMs = Math.max(4000, sentence.length * 130);
+    sentenceAudioSafetyTimer = setTimeout(onSentenceFinish, safetyMs);
 
     speakWord(sentence, curWord.dil || state.activeLanguage, btn, null, onSentenceFinish);
   }
@@ -5419,8 +5439,9 @@ let activeAvatarCategory = 'all';
           fallbackAudioPlayer.currentTime = 0;
         } catch (e) {}
       }
+      try { fallbackAudioPlayer.referrerPolicy = 'no-referrer'; } catch (e) {}
 
-      const cleanText = text.trim();
+      const cleanText = text.replace(/<[^>]*>/g, '').replace(/[\r\n\t]+/g, ' ').trim();
       const lower = (targetLangCode || 'en-us').toLowerCase();
       const isUk = lower.includes('gb') || lower.includes('uk');
       const isSentence = cleanText.includes(' ') || cleanText.length > 25;
@@ -5438,6 +5459,7 @@ let activeAvatarCategory = 'all';
 
       fallbackAudioPlayer.src = audioUrl;
       fallbackAudioPlayer.playbackRate = (state && state.speechSpeed) ? state.speechSpeed : 1.0;
+      try { fallbackAudioPlayer.load(); } catch (e) {}
 
       let finished = false;
       const handleFinish = () => {
@@ -5450,6 +5472,14 @@ let activeAvatarCategory = 'all';
       fallbackAudioPlayer.onended = handleFinish;
       fallbackAudioPlayer.onerror = (e) => {
         console.warn('Native audio fallback player error:', e);
+        // İkinci bir yedek: Eğer Google TTS engellenirse ve İngilizce cümle ise Youdao ile dene
+        if (lower.startsWith('en') && audioUrl.includes('google')) {
+          const altUrl = `https://dict.youdao.com/dictvoice?audio=${encodeURIComponent(cleanText)}&type=${isUk ? 1 : 2}`;
+          fallbackAudioPlayer.src = altUrl;
+          try { fallbackAudioPlayer.load(); } catch (loadErr) {}
+          fallbackAudioPlayer.play().catch(handleFinish);
+          return;
+        }
         handleFinish();
         if (typeof onError === 'function') onError(e);
       };
@@ -5463,7 +5493,7 @@ let activeAvatarCategory = 'all';
       }
 
       // Emniyet zaman aşımı
-      setTimeout(handleFinish, Math.max(3000, cleanText.length * 150));
+      setTimeout(handleFinish, Math.max(3500, cleanText.length * 150));
     } catch (err) {
       console.warn('playNativeAudioFallback genel hata:', err);
       if (typeof onEnd === 'function') onEnd();
@@ -5556,16 +5586,17 @@ let activeAvatarCategory = 'all';
         const accentPref = (dil === 'EN-TR') ? (forcedAccent || state.activeEnAccent) : null;
         let nativeVoice = findNativeVoice(targetLangCode, accentPref);
 
+        // Eğer cihazda/sistemde o dil için yüklü yerel ses motoru yoksa (özellikle Windows'ta Almanca/Fransızca eksikse),
+        // Web Speech API'nin sessizliğe gömülmesini kesinlikle önleyip doğrudan kesintisiz HD Çevrimiçi Doğal Ses Akışına geç
+        if (!nativeVoice) {
+          playNativeAudioFallback(text, targetLangCode, finish, finish);
+          return;
+        }
+
         const utterance = new SpeechSynthesisUtterance(text.trim());
         activeUtterance = utterance; // Garbage Collector tarafından silinmesini önle
-
-        if (nativeVoice) {
-          utterance.voice = nativeVoice;
-          utterance.lang = nativeVoice.lang || targetLangCode;
-        } else {
-          // Ses listesi henüz yüklenmemiş olsa bile işletim sisteminin varsayılan dil motorunu tetikle
-          utterance.lang = targetLangCode;
-        }
+        utterance.voice = nativeVoice;
+        utterance.lang = nativeVoice.lang || targetLangCode;
 
         // UK aksan tonlaması
         if (dil === 'EN-TR' && accentPref === 'UK') {
@@ -11248,9 +11279,11 @@ let activeAvatarCategory = 'all';
         isSwiping = false;
         return;
       }
-      if (e.target.closest('#cardSentenceAudioBtn, .card-sentence-audio-btn')) {
+      const sentenceBtn = e.target.closest('#cardSentenceAudioBtn, .card-sentence-audio-btn');
+      if (sentenceBtn) {
         e.preventDefault();
         e.stopPropagation();
+        playCurrentCardSentenceAudio(e);
         return;
       }
       if (e.target.closest('#pronounceBtn, #pronounceUsBtn, #pronounceUkBtn, .accent-btn, .audio-btn, .accent-btn-group, .audio-controls-row, #prevCardBtn, #nextCardBtn, .card-edge-nav-btn, #markLearnedBtn, #markRepeatBtn, .card-inner-action-btn, #cardNotebookToggleBtn, #cardBackNotebookToggleBtn, .card-notebook-btn, #cardTroubledActionBtn, #cardBackTroubledActionBtn, .card-troubled-pill, .card-sentence-audio-btn, #cardSentenceAudioBtn')) return;
