@@ -15,7 +15,7 @@
   <meta http-equiv="Expires" content="0">
   <title>LexiGo • Çok Dilli Akıllı Kelime Kartları</title>
   <link rel="icon" type="image/jpeg" href="logo.jpg">
-  <link rel="stylesheet" href="style.css?v=1.8.44">
+  <link rel="stylesheet" href="style.css?v=1.8.45">
 </head>
 <body>
   <div class="app-container">
@@ -422,14 +422,17 @@
               <div class="card-center">
                 <h2 class="card-meaning" id="cardMeaningText">Anlamı</h2>
                 <div class="example-box">
+                  <div class="example-box-header">
+                    <span class="example-box-label">ÖRNEK KULLANIM</span>
+                    <button type="button" id="cardSentenceAudioBtn" class="card-sentence-audio-btn" title="Cümleyi Dinle" aria-label="Cümleyi Dinle">
+                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                        <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon>
+                        <path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"></path>
+                      </svg>
+                      <span>Cümleyi Dinle</span>
+                    </button>
+                  </div>
                   <p class="example-sentence" id="cardExampleSentence">Örnek cümle...</p>
-                  <button type="button" id="cardSentenceAudioBtn" class="card-sentence-audio-btn" onclick="playCurrentCardSentenceAudio(event)" title="Cümleyi Dinle" aria-label="Cümleyi Oku">
-                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-                      <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon>
-                      <path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"></path>
-                    </svg>
-                    <span>Cümleyi Oku</span>
-                  </button>
                   <p class="example-translation" id="cardSentenceTranslation">Cümle çevirisi...</p>
                 </div>
               </div>
@@ -1408,7 +1411,7 @@
               <div class="welcome-logo-badge">
                 <img src="assets/icons/lexigo_brand_logo.png" alt="LexiGo" class="welcome-brand-img" />
               </div>
-              <span class="welcome-version-pill">v1.8.44</span>
+              <span class="welcome-version-pill">v1.8.45</span>
             </div>
           </div>
         </div>
@@ -2172,7 +2175,7 @@
             <div class="about-logo-badge">
               <img src="assets/icons/lexigo_brand_logo.png" alt="LexiGo" class="about-brand-img" />
             </div>
-            <span class="about-version-pill" id="aboutAppVersion">v1.8.44</span>
+            <span class="about-version-pill" id="aboutAppVersion">v1.8.45</span>
             <span class="about-platform-badge" id="aboutPlatformBadge" style="display: none; font-size: 0.72rem; font-weight: 700; padding: 3px 9px; border-radius: 12px; background: rgba(59,130,246,0.15); color: #3b82f6; border: 1px solid rgba(59,130,246,0.3);"></span>
           </div>
           <p class="about-tagline">Müfredat Tabanlı Çok Dilli Kelime Arenası</p>
@@ -3767,17 +3770,16 @@
       <div class="confirm-icon-wrap" style="font-size: 2.8rem; margin-bottom: 8px;">🎉</div>
       <h3 class="confirm-title" style="font-size: 1.3rem; font-weight: 800; margin: 0 0 6px 0;">LexiGo Güncellendi!</h3>
       <div class="app-update-version-badge" style="display: inline-block; padding: 4px 14px; border-radius: 20px; font-size: 0.84rem; font-weight: 800; margin-bottom: 14px;">
-        Sürüm <span id="appUpdateVersionText">v1.8.44</span>
+        Sürüm <span id="appUpdateVersionText">v1.8.45</span>
       </div>
       <div class="update-notes-box" style="text-align: left; border-radius: 16px; padding: 14px 16px; font-size: 0.88rem; line-height: 1.6; margin-bottom: 18px; max-height: 280px; overflow-y: auto;">
         <div class="update-notes-title" style="font-weight: 800; margin-bottom: 8px; display: flex; align-items: center; gap: 6px;">
           <span>✨</span><span>Bu Sürümdeki Yenilikler</span>
         </div>
         <ul style="margin: 0; padding-left: 20px; display: flex; flex-direction: column; gap: 8px;">
-          <li><strong>⏰ Arena Hareketsizlik Hatırlatıcısı & Teşvik:</strong> Arenada 10 saniye işlem yapılmadığında oyuna başlama veya oyuna devam etmeyi motive eden 40 farklı eğlenceli cümle ve uyarı kutusu eklendi.</li>
-          <li><strong>🎙️ Aksan Butonları Düzeni:</strong> Oyun başlıklarındaki aksan seçim butonları alt satıra alınıp ortalandı, ipucu butonlarıyla çakışması önlendi.</li>
-          <li><strong>🃏 Kart Eşleştirme Sayacı:</strong> "Eşleşen" ve "0 / 4" sayaçları iki satır halinde dikey olarak düzenlendi.</li>
-          <li><strong>🔖 Kelime Defterim & Zorlandıklarım:</strong> Zorlandıklarım havuzundaki kelimeler kartlarda tekrar öğrenilene kadar arenadan izole edildi, "Listem"deki kelimeler ise doğrudan arenada pratik edilebilir kılındı.</li>
+          <li><strong>🔊 Cümle Seslendirme & Telaffuz Çözümü:</strong> Kart arka yüzündeki "Cümleyi Dinle" butonundaki çakışma giderildi; İngilizce, Almanca ve Fransızca dillerinde kesintisiz ve yüksek kaliteli online doğal ses akışı entegre edildi.</li>
+          <li><strong>🇩🇪 🇫🇷 Almanca & Fransızca Cümle Butonu:</strong> Örnek kullanım kutusunun üst başlığına entegre edilerek tüm dillerde ve ekran boyutlarında %100 görünür ve kaydırılabilir hale getirildi.</li>
+          <li><strong>✨ Dokunmatik Geri Bildirim:</strong> Cümle dinleme butonuna hafif haptik titreşim ve görsel ses dalgası animasyonu eklendi.</li>
         </ul>
       </div>
       <div style="display: flex; flex-direction: column; gap: 8px; width: 100%;">
@@ -3840,11 +3842,11 @@
   <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-storage-compat.js"></script>
-  <script src="firebase_backend.js?v=1.8.44"></script>
+  <script src="firebase_backend.js?v=1.8.45"></script>
 
   <!-- Kelime Verisi ve Uygulama Mantığı (Sadece Standart Vanilla JS) -->
-  <script src="words_data.js?v=1.8.44"></script>
-  <script src="app.js?v=1.8.44"></script>
+  <script src="words_data.js?v=1.8.45"></script>
+  <script src="app.js?v=1.8.45"></script>
 
   </body>
 </html>

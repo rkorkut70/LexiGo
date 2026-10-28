@@ -7,22 +7,26 @@
 (function () {
   'use strict';
 
-  const APP_VERSION = 'v1.8.44';
+  const APP_VERSION = 'v1.8.45';
   const DEFAULT_AVATAR = 'avatar_default';
   const CURRENT_APP_BUILD = 'lexiq_build_19_clean';
 
   // Build 13 temiz kurulum / sıfırlama güvencesi (Kullanıcı verilerini sıfırla, Hoş Geldin ekranını garantile)
-  if (!localStorage.getItem(CURRENT_APP_BUILD)) {
-    try {
-      localStorage.clear();
-      sessionStorage.clear();
-      localStorage.setItem(CURRENT_APP_BUILD, 'true');
-      if (window.firebase && window.firebase.auth) {
-        window.firebase.auth().signOut().catch(() => {});
+  try {
+    if (!localStorage.getItem(CURRENT_APP_BUILD)) {
+      try {
+        localStorage.clear();
+        sessionStorage.clear();
+        localStorage.setItem(CURRENT_APP_BUILD, 'true');
+        if (window.firebase && window.firebase.auth) {
+          window.firebase.auth().signOut().catch(() => {});
+        }
+      } catch (e) {
+        console.warn('Build clean reset error:', e);
       }
-    } catch (e) {
-      console.warn('Build clean reset error:', e);
     }
+  } catch (storageErr) {
+    console.warn('LocalStorage erişim kısıtı veya hata:', storageErr);
   }
 
   // Manuel test için URL reset parametresi kontrolü (?reset=1)
@@ -1236,6 +1240,8 @@
     }
   }
 
+  window.toggleTheme = toggleTheme;
+  window.applyTheme = applyTheme;
   function toggleTheme() {
     const nextTheme = state.activeTheme === 'dark' ? 'light' : 'dark';
     applyTheme(nextTheme);
@@ -3035,6 +3041,7 @@ let activeAvatarCategory = 'all';
   // ==========================================
   // DİL & MÜFREDAT TARİH HESAPLAMA (KURAL 1 & KURAL 4)
   // ==========================================
+  window.setLanguage = setLanguage;
   function setLanguage(langCode, isUserSelection) {
     if (!LANG_META[langCode]) return;
 
@@ -4930,6 +4937,9 @@ let activeAvatarCategory = 'all';
       dom.cardSentenceTranslation.textContent = getWordSentenceTranslation(currentWord);
       const exampleSentence = getWordSentence(currentWord);
       dom.cardExampleSentence.innerHTML = highlightWordInSentence(exampleSentence, currentWord.kelime);
+      if (dom.cardSentenceAudioBtn) {
+        dom.cardSentenceAudioBtn.style.display = exampleSentence ? 'inline-flex' : 'none';
+      }
     } else {
       // STANDART MOD: Ön yüzde Yabancı Kelime, Arka yüzde Türkçe Anlam
       const currentUnitObj = getUnitsData().find(u => u.dil === currentWord.dil && u.unite_no === currentWord.unite_no);
@@ -4992,6 +5002,9 @@ let activeAvatarCategory = 'all';
       dom.cardSentenceTranslation.textContent = getWordSentenceTranslation(currentWord);
       const exampleSentence = getWordSentence(currentWord);
       dom.cardExampleSentence.innerHTML = highlightWordInSentence(exampleSentence, currentWord.kelime);
+      if (dom.cardSentenceAudioBtn) {
+        dom.cardSentenceAudioBtn.style.display = exampleSentence ? 'inline-flex' : 'none';
+      }
     }
 
     // Durum Rozeti
@@ -5047,11 +5060,15 @@ let activeAvatarCategory = 'all';
     setFlipped(!state.isFlipped);
   }
 
+  let isSpeakingSentenceAudio = false;
   function playCurrentCardSentenceAudio(e) {
     if (e) {
       if (typeof e.preventDefault === 'function') e.preventDefault();
       if (typeof e.stopPropagation === 'function') e.stopPropagation();
       if (typeof e.stopImmediatePropagation === 'function') e.stopImmediatePropagation();
+    }
+    if (isSpeakingSentenceAudio) {
+      return;
     }
     if (!state.words || !state.words[state.currentIndex]) return;
     const curWord = state.words[state.currentIndex];
@@ -5061,7 +5078,16 @@ let activeAvatarCategory = 'all';
       return;
     }
     const btn = dom.cardSentenceAudioBtn || document.getElementById('cardSentenceAudioBtn');
-    speakWord(sentence, curWord.dil || state.activeLanguage, btn);
+    isSpeakingSentenceAudio = true;
+    if (btn) btn.classList.add('playing');
+    triggerHapticFeedback('light');
+
+    const onSentenceFinish = () => {
+      isSpeakingSentenceAudio = false;
+      if (btn) btn.classList.remove('playing');
+    };
+
+    speakWord(sentence, curWord.dil || state.activeLanguage, btn, null, onSentenceFinish);
   }
   window.playCurrentCardSentenceAudio = playCurrentCardSentenceAudio;
 
@@ -5397,14 +5423,16 @@ let activeAvatarCategory = 'all';
       const cleanText = text.trim();
       const lower = (targetLangCode || 'en-us').toLowerCase();
       const isUk = lower.includes('gb') || lower.includes('uk');
+      const isSentence = cleanText.includes(' ') || cleanText.length > 25;
 
       // Çoklu güvenilir ses kaynakları (CORS ve 403 hatasız çalışan doğrudan ses CDN'leri)
       let audioUrl = '';
-      if (lower.startsWith('en')) {
+      if (lower.startsWith('en') && !isSentence) {
+        // Tek kelime İngilizce için Youdao aksanlı telaffuz CDN'i
         audioUrl = `https://dict.youdao.com/dictvoice?audio=${encodeURIComponent(cleanText)}&type=${isUk ? 1 : 2}`;
       } else {
-        // Fransızca / Almanca için Google Translate TTS (client=gtx CORS destekli)
-        const ttsLang = lower.startsWith('de') ? 'de' : 'fr';
+        // Cümleler (İngilizce/Almanca/Fransızca) ve Almanca/Fransızca metinler için Google Translate TTS (client=gtx CORS destekli)
+        const ttsLang = lower.startsWith('de') ? 'de' : (lower.startsWith('fr') ? 'fr' : (isUk ? 'en-GB' : 'en'));
         audioUrl = `https://translate.googleapis.com/translate_tts?client=gtx&ie=UTF-8&tl=${encodeURIComponent(ttsLang)}&q=${encodeURIComponent(cleanText)}`;
       }
 
@@ -5449,7 +5477,7 @@ let activeAvatarCategory = 'all';
    * %100 çalışma güvencesine sahiptir.
    */
   window.speakWord = speakWord;
-  function speakWord(text, dil, buttonEl = null, forcedAccent = null) {
+  function speakWord(text, dil, buttonEl = null, forcedAccent = null, onFinishCallback = null) {
     if (!text) return;
 
     ensureSpeechSynthesisReady();
@@ -5489,6 +5517,9 @@ let activeAvatarCategory = 'all';
         finished = true;
         activeUtterance = null;
         setBtnPlaying(false);
+        if (typeof onFinishCallback === 'function') {
+          try { onFinishCallback(); } catch (e) {}
+        }
       }
     };
 
@@ -5496,10 +5527,12 @@ let activeAvatarCategory = 'all';
     if (window.AndroidTTS && typeof window.AndroidTTS.speak === 'function' && state.speechEngine !== 'cloud') {
       try {
         const rate = (state.speechSpeed || 1.0);
-        window.AndroidTTS.speak(text, targetLangCode, rate);
-        const estDuration = Math.max(800, Math.min(3000, text.length * 110));
-        setTimeout(finish, estDuration);
-        return;
+        const nativeRes = window.AndroidTTS.speak(text, targetLangCode, rate);
+        if (nativeRes !== false) {
+          const estDuration = Math.max(800, Math.min(8000, text.length * 110));
+          setTimeout(finish, estDuration);
+          return;
+        }
       } catch (err) {
         console.warn('AndroidTTS köprüsü çağrı hatası, Web Speech API deneniyor:', err);
       }
@@ -11218,7 +11251,6 @@ let activeAvatarCategory = 'all';
       if (e.target.closest('#cardSentenceAudioBtn, .card-sentence-audio-btn')) {
         e.preventDefault();
         e.stopPropagation();
-        playCurrentCardSentenceAudio(e);
         return;
       }
       if (e.target.closest('#pronounceBtn, #pronounceUsBtn, #pronounceUkBtn, .accent-btn, .audio-btn, .accent-btn-group, .audio-controls-row, #prevCardBtn, #nextCardBtn, .card-edge-nav-btn, #markLearnedBtn, #markRepeatBtn, .card-inner-action-btn, #cardNotebookToggleBtn, #cardBackNotebookToggleBtn, .card-notebook-btn, #cardTroubledActionBtn, #cardBackTroubledActionBtn, .card-troubled-pill, .card-sentence-audio-btn, #cardSentenceAudioBtn')) return;
@@ -11252,6 +11284,9 @@ let activeAvatarCategory = 'all';
 
     if (dom.cardSentenceAudioBtn) {
       dom.cardSentenceAudioBtn.addEventListener('click', (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        if (typeof e.stopImmediatePropagation === 'function') e.stopImmediatePropagation();
         playCurrentCardSentenceAudio(e);
       });
     }
