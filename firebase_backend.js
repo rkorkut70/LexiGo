@@ -830,8 +830,25 @@ window.fetchClassDuels = async function(lang) {
       totalBranches: branchList.length
     };
   } catch (e) {
-    console.error("Şubeler arası düello tablosu alınamadı:", e);
-    return { branches: [], curWeek: '2026-W42', totalBranches: 0 };
+    console.warn("Şubeler arası düello tablosu Firestore'dan alınamadı (Kurallar veya bağlantı kontrol edilmeli):", e);
+    // Hata durumunda bile resmi şubeleri boş ekran yerine göster
+    const targetLang = lang || localStorage.getItem('kelime_active_lang') || 'EN-TR';
+    const curWeek = window.getCurrentWeekId ? window.getCurrentWeekId() : '2026-W42';
+    const fallbackBranches = (window.SCHOOL_BRANCHES || [])
+      .filter(b => b.lang === targetLang)
+      .map(b => ({
+        code: b.code,
+        name: b.name,
+        track: b.track,
+        level: b.level,
+        trackName: b.trackName,
+        studentCount: 0,
+        totalWeeklyXp: 0,
+        totalCumulativeXp: 0,
+        avgWeeklyXp: 0,
+        topStudent: null
+      }));
+    return { branches: fallbackBranches, curWeek: curWeek, totalBranches: fallbackBranches.length };
   }
 };
 
@@ -990,31 +1007,41 @@ window.fetchPodiumMonthlyArchive = async function(lang) {
         duelBranches = (window.SCHOOL_BRANCHES || []).filter(b => b.lang === targetLang);
       }
 
+      // Eğer arşiv henüz yoksa, canlı düello sıralamasına göre adil puanları bağla (1.ye 10p, 2.ye 6p, 3.ye 4p)
       const sortedBranches = duelBranches.map((b, idx) => {
-        const pts = Math.max(4, Math.round((duelBranches.length - idx) * 3.5));
-        const avg = b.avgWeeklyXp || Math.max(450, 1450 - (idx * 85));
+        const hasScore = (b.totalWeeklyXp > 0 || b.avgWeeklyXp > 0);
+        let pts = 0;
+        if (hasScore) {
+          if (idx === 0) pts = 10;
+          else if (idx === 1) pts = 6;
+          else if (idx === 2) pts = 4;
+        }
         return {
           code: b.code,
           name: b.name || b.trackName || '',
           trackName: b.trackName || b.name || '',
           points: pts,
-          totalAvg: avg
+          totalAvg: b.avgWeeklyXp || 0
         };
       }).sort((a, b) => (b.points - a.points) || (b.totalAvg - a.totalAvg));
+
+      const b1 = sortedBranches[0] || {};
+      const b2 = sortedBranches[1] || {};
+      const b3 = sortedBranches[2] || {};
 
       return [{
         monthKey: curMonthKey,
         monthLabel: curMonthLabel,
-        weeksCount: 4,
-        firstBranch: sortedBranches[0]?.code || '',
-        firstPoints: sortedBranches[0]?.points || 36,
-        firstAvg: sortedBranches[0]?.totalAvg || 1450,
-        secondBranch: sortedBranches[1]?.code || '',
-        secondPoints: sortedBranches[1]?.points || 24,
-        secondAvg: sortedBranches[1]?.totalAvg || 1200,
-        thirdBranch: sortedBranches[2]?.code || '',
-        thirdPoints: sortedBranches[2]?.points || 16,
-        thirdAvg: sortedBranches[2]?.totalAvg || 950,
+        weeksCount: 1,
+        firstBranch: b1.code || '',
+        firstPoints: b1.points || 0,
+        firstAvg: b1.totalAvg || 0,
+        secondBranch: b2.code || '',
+        secondPoints: b2.points || 0,
+        secondAvg: b2.totalAvg || 0,
+        thirdBranch: b3.code || '',
+        thirdPoints: b3.points || 0,
+        thirdAvg: b3.totalAvg || 0,
         topBranches: sortedBranches
       }];
     }

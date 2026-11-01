@@ -18987,30 +18987,73 @@ html:not([data-theme="dark"]) .tg-rule-card,
   text-shadow: 0 1px 0 rgba(255, 255, 255, 0.6);
 }
 
-/* 3D Şampiyon Rozet İkonu & Görseli */
+/* 3D Şampiyon ve Derece (İlk 3) Rozet İkonu & Görseli */
+.lb-top3-badge-slot {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  margin-right: 6px;
+  flex-shrink: 0;
+}
+
 .lb-champion-3d-badge {
   display: inline-flex;
   align-items: center;
   justify-content: center;
   position: relative;
-  width: 36px;
-  height: 36px;
+  width: 34px;
+  height: 34px;
   flex-shrink: 0;
-  border-radius: 12px;
-  background: linear-gradient(145deg, rgba(254, 240, 138, 0.25), rgba(245, 158, 11, 0.15));
-  border: 1.5px solid rgba(251, 191, 36, 0.7);
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.25),
-              0 0 15px rgba(245, 158, 11, 0.45),
-              inset 0 1px 1px rgba(255, 255, 255, 0.5);
+  border-radius: 11px;
+  transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.lb-champion-3d-badge:hover {
+  transform: scale(1.08);
+}
+
+/* 1. Sıra (Altın Şampiyon Rozeti) */
+.lb-champion-3d-badge.rank-1-badge {
+  background: linear-gradient(145deg, rgba(254, 240, 138, 0.35), rgba(245, 158, 11, 0.22));
+  border: 1.5px solid rgba(251, 191, 36, 0.85);
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.22),
+              0 0 14px rgba(245, 158, 11, 0.45),
+              inset 0 1px 1px rgba(255, 255, 255, 0.6);
   animation: championNeonGlow 2.4s ease-in-out infinite;
 }
 
+/* 2. Sıra (Gümüş Derece Rozeti) */
+.lb-champion-3d-badge.rank-2-badge {
+  background: linear-gradient(145deg, rgba(248, 250, 252, 0.35), rgba(148, 163, 184, 0.22));
+  border: 1.5px solid rgba(203, 213, 225, 0.85);
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2),
+              0 0 12px rgba(148, 163, 184, 0.4),
+              inset 0 1px 1px rgba(255, 255, 255, 0.7);
+}
+
+/* 3. Sıra (Bronz Derece Rozeti) */
+.lb-champion-3d-badge.rank-3-badge {
+  background: linear-gradient(145deg, rgba(254, 215, 170, 0.3), rgba(180, 83, 9, 0.22));
+  border: 1.5px solid rgba(217, 119, 6, 0.85);
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2),
+              0 0 12px rgba(180, 83, 9, 0.35),
+              inset 0 1px 1px rgba(255, 255, 255, 0.5);
+}
+
 .lb-champion-3d-badge img {
-  width: 26px;
-  height: 26px;
+  width: 24px;
+  height: 24px;
   object-fit: contain;
   filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.4));
   transform: translateZ(0);
+}
+
+.lb-champion-3d-badge img.trophy-silver {
+  filter: grayscale(100%) brightness(1.25) contrast(1.1) drop-shadow(0 2px 4px rgba(0, 0, 0, 0.35));
+}
+
+.lb-champion-3d-badge img.trophy-bronze {
+  filter: sepia(90%) saturate(280%) hue-rotate(330deg) brightness(0.9) contrast(1.05) drop-shadow(0 2px 4px rgba(0, 0, 0, 0.35));
 }
 
 /* 2. Şeref Kürsüsü (Podium) 1. Şube / Şampiyon Podyum Rozeti */

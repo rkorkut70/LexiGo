@@ -7,7 +7,7 @@
 (function () {
   'use strict';
 
-  const APP_VERSION = 'v1.8.46';
+  const APP_VERSION = 'v1.8.47';
   const DEFAULT_AVATAR = 'avatar_default';
   const CURRENT_APP_BUILD = 'lexiq_build_19_clean';
 
@@ -11468,6 +11468,25 @@ let activeAvatarCategory = 'all';
     window.switchLeaderboardTab = switchLeaderboardTab;
 
     // 1. Sınıfım Sıralamasını Getir & Çiz
+    function getTop3BadgeHtml(rank, isBranch = false, isGlobal = false) {
+      if (rank === 1) {
+        const iconSrc = isGlobal ? 'assets/icons/icon_3d_crown.png' : 'assets/icons/icon_3d_trophy.png';
+        const title = isBranch ? '1. Şube (Lig Şampiyonu Altın Rozeti)' : (isGlobal ? 'Tüm Zamanlar Okul Şampiyonu' : '1.lik (Sınıf Şampiyonu Altın Rozeti)');
+        return `<div class="lb-top3-badge-slot"><span class="lb-champion-3d-badge rank-1-badge" title="${title}"><img src="${iconSrc}" alt="1."></span></div>`;
+      }
+      if (rank === 2) {
+        const iconSrc = 'assets/icons/icon_3d_trophy.png';
+        const title = isBranch ? '2. Şube (Lig İkincisi Gümüş Rozeti)' : (isGlobal ? 'Okul 2.si Gümüş Rozeti' : '2.lik (Sınıf İkincisi Gümüş Rozeti)');
+        return `<div class="lb-top3-badge-slot"><span class="lb-champion-3d-badge rank-2-badge" title="${title}"><img src="${iconSrc}" class="trophy-silver" alt="2."></span></div>`;
+      }
+      if (rank === 3) {
+        const iconSrc = 'assets/icons/icon_3d_trophy.png';
+        const title = isBranch ? '3. Şube (Lig Üçüncüsü Bronz Rozeti)' : (isGlobal ? 'Okul 3.sü Bronz Rozeti' : '3.lük (Sınıf Üçüncüsü Bronz Rozeti)');
+        return `<div class="lb-top3-badge-slot"><span class="lb-champion-3d-badge rank-3-badge" title="${title}"><img src="${iconSrc}" class="trophy-bronze" alt="3."></span></div>`;
+      }
+      return '';
+    }
+
     async function renderClassLeaderboard() {
       const listContainer = document.getElementById('classLeaderboardList');
       const branchBadge = document.getElementById('lbClassBranchBadge');
@@ -11535,7 +11554,7 @@ let activeAvatarCategory = 'all';
               const rankDisplayHtml = rank === 1 
                 ? `<div class="lb-rank" title="Şampiyon">1</div>`
                 : `<div class="lb-rank">${rank}</div>`;
-              const championBadgeTag = rank === 1 ? `<span class="lb-champion-3d-badge" title="Sınıf Şampiyonu"><img src="assets/icons/icon_3d_trophy.png" alt="Şampiyon"></span>` : '';
+              const topBadgeHtml = getTop3BadgeHtml(rank, false, false);
 
               listContainer.innerHTML += `
                 <div class="leaderboard-item ${rankClass}" style="${highlightStyle}">
@@ -11544,11 +11563,11 @@ let activeAvatarCategory = 'all';
                   <div class="lb-info">
                     <div style="display:flex; align-items:center; gap:6px;">
                       <div class="lb-name">${user.displayName || 'Öğrenci'}</div>
-                      ${championBadgeTag}
                       ${isMe ? '<span style="font-size:0.72rem; font-weight:800; color:var(--accent);">(Sen)</span>' : ''}
                     </div>
                     <div class="lb-badge" style="color: var(--text-muted); font-size: 0.72rem;">Toplam: ${(user.totalXp || 0).toLocaleString()} XP</div>
                   </div>
+                  ${topBadgeHtml}
                   <div class="lb-score" style="color: #10b981; font-weight: 800;">⚡ ${(user.weeklyXp || 0).toLocaleString()} XP</div>
                 </div>
               `;
@@ -11643,18 +11662,16 @@ let activeAvatarCategory = 'all';
               `;
             }
 
-            let rank = 1;
             branches.forEach((b, idx) => {
+              const rankNum = idx + 1;
               const isMyBranch = (state.userBranch && b.code === state.userBranch);
-              const rankClass = rank === 1 ? 'rank-1' : (rank === 2 ? 'rank-2' : (rank === 3 ? 'rank-3' : ''));
+              const rankClass = rankNum === 1 ? 'rank-1' : (rankNum === 2 ? 'rank-2' : (rankNum === 3 ? 'rank-3' : ''));
               const highlightStyle = isMyBranch ? 'background: rgba(59, 130, 246, 0.16); border: 2px solid var(--accent);' : '';
               const branchDetail = (b.trackName && b.level) ? `(${b.trackName} • ${b.level})` : (b.name && b.name !== b.code ? `(${b.name})` : '');
               const rankDisplayHtml = (idx === 0) 
                 ? `<div class="lb-rank" title="Lig Şampiyonu">1</div>` 
                 : `<div class="lb-rank">${idx + 1}</div>`;
-              const championBadgeTag = (idx === 0) 
-                ? `<span class="lb-champion-3d-badge" title="Haftalık Şube Ligi Şampiyonu"><img src="assets/icons/icon_3d_trophy.png" alt="Şampiyon"></span>` 
-                : '';
+              const topBadgeHtml = getTop3BadgeHtml(rankNum, true, false);
 
               listContainer.innerHTML += `
                 <div class="leaderboard-item ${rankClass}" style="${highlightStyle}">
@@ -11665,16 +11682,16 @@ let activeAvatarCategory = 'all';
                   <div class="lb-info">
                     <div style="display:flex; align-items:center; gap:6px;">
                       <div class="lb-name" style="font-weight: 800;">${b.code} ${branchDetail ? `<span style="font-size:0.75rem; font-weight:600; color:var(--text-muted); margin-left:4px;">${branchDetail}</span>` : ''}</div>
-                      ${championBadgeTag}
                       ${isMyBranch ? '<span style="font-size:0.72rem; font-weight:800; color:var(--accent);">(Şuben)</span>' : ''}
                     </div>
                     <div class="lb-badge" style="font-size: 0.72rem; color: var(--text-muted);">
                       👥 ${b.studentCount} Öğrenci • Toplam: ${(b.totalWeeklyXp || 0).toLocaleString()} XP
                     </div>
                   </div>
-                  <div style="text-align: right;">
-                    <div class="lb-score" style="color: #ef4444; font-size: 0.95rem; font-weight: 900;">Ø ${b.avgWeeklyXp}</div>
-                    <span style="font-size: 0.68rem; color: var(--text-muted);">ort. puan</span>
+                  ${topBadgeHtml}
+                  <div style="text-align: right; flex-shrink: 0;">
+                    <div class="lb-score" style="color: #ef4444; font-size: 0.95rem; font-weight: 900;">Ø ${(b.avgWeeklyXp || 0).toLocaleString()} XP</div>
+                    <span style="font-size: 0.68rem; color: var(--text-muted);">Haftalık Ort. XP</span>
                   </div>
                 </div>
               `;
@@ -11887,13 +11904,13 @@ let activeAvatarCategory = 'all';
             const baseAvg = Math.max(rawA1, rawA2, rawA3, 350);
 
             archives = [{
-              weekId: '12 - 18 Ekim Haftası',
+              weekId: 'Güncel Hafta Sıralaması',
               firstBranch: b1.code,
-              firstAvg: Math.max(rawA1, baseAvg + 240, 1420),
+              firstAvg: rawA1,
               secondBranch: b2.code,
-              secondAvg: Math.max(rawA2, baseAvg + 80, 1180),
+              secondAvg: rawA2,
               thirdBranch: b3.code,
-              thirdAvg: Math.max(rawA3, baseAvg - 60, 950),
+              thirdAvg: rawA3,
               timestamp: new Date()
             }];
           }
@@ -12273,14 +12290,26 @@ let activeAvatarCategory = 'all';
 
           // Eğer veri yoksa veya boşsa, genel lig sıralamasını şubelerden türet
           if (!honors || honors.length === 0) {
-            honors = langBranches.map((b, idx) => ({
+            let activeBranches = [];
+            if (typeof window.fetchClassDuels === 'function') {
+              try {
+                const duelRes = await window.fetchClassDuels(targetLang);
+                if (duelRes && duelRes.branches && duelRes.branches.length > 0) {
+                  activeBranches = duelRes.branches;
+                }
+              } catch(e) {}
+            }
+            if (!activeBranches || activeBranches.length === 0) {
+              activeBranches = langBranches;
+            }
+            honors = activeBranches.map((b, idx) => ({
               code: b.code,
               name: b.name || '',
               trackName: b.trackName || '',
-              leaguePoints: Math.max(4, Math.round((langBranches.length - idx) * 4.5)),
-              goldCount: idx === 0 ? 3 : (idx < 3 ? 1 : 0),
-              silverCount: idx === 1 ? 2 : (idx < 4 ? 1 : 0),
-              bronzeCount: idx === 2 ? 2 : (idx < 5 ? 1 : 0)
+              leaguePoints: idx === 0 ? 10 : (idx === 1 ? 6 : (idx === 2 ? 4 : 0)),
+              goldCount: idx === 0 ? 1 : 0,
+              silverCount: idx === 1 ? 1 : 0,
+              bronzeCount: idx === 2 ? 1 : 0
             })).sort((a, b) => b.leaguePoints - a.leaguePoints);
           }
 
@@ -12373,6 +12402,7 @@ let activeAvatarCategory = 'all';
               const highlightStyle = isMyBranch ? 'background: rgba(245, 158, 11, 0.15); border: 2px solid #f59e0b;' : '';
               const hMeta = getBranchMeta(h.code);
               const honorBranchDetail = hMeta.trackName || h.trackName || '';
+              const topBadgeHtml = getTop3BadgeHtml(idx + 1, true, false);
 
               listContainer.innerHTML += `
                 <div class="leaderboard-item ${rankStyle}" style="${highlightStyle}">
@@ -12391,6 +12421,7 @@ let activeAvatarCategory = 'all';
                       🥇 ${h.goldCount || 0} Birincilik • 🥈 ${h.silverCount || 0} İkincilik • 🥉 ${h.bronzeCount || 0} Üçüncülük
                     </div>
                   </div>
+                  ${topBadgeHtml}
                   <div style="text-align: right; flex-shrink: 0;">
                     <div class="lb-score" style="color: #f59e0b; font-size: 0.95rem; font-weight: 900;">${h.leaguePoints} Puan</div>
                     <span style="font-size: 0.65rem; color: var(--text-muted);">Lig Derecesi</span>
@@ -12418,11 +12449,22 @@ let activeAvatarCategory = 'all';
 
       if (typeof window.fetchLeaderboard === 'function') {
         try {
-          const leaders = await window.fetchLeaderboard();
+          let leaders = await window.fetchLeaderboard();
           if (listContainer) {
             listContainer.innerHTML = '';
             if (!leaders || leaders.length === 0) {
-              listContainer.innerHTML = '<div style="text-align:center; padding: 20px; color: var(--text-muted);">Henüz lider tablosunda kimse yok.</div>';
+              if (state.xp > 0) {
+                leaders = [{
+                  displayName: state.userName || 'Öğrenci',
+                  avatar: state.userAvatar || 'avatar_default',
+                  xp: state.xp,
+                  lang: state.activeLanguage || 'EN-TR'
+                }];
+              }
+            }
+
+            if (!leaders || leaders.length === 0) {
+              listContainer.innerHTML = '<div style="text-align:center; padding: 25px 15px; color: var(--text-muted);"><div style="font-size:2rem; margin-bottom:8px;">🏆</div><strong>Henüz Liderlik Tablosunda Kayıt Yok</strong><p style="font-size:0.78rem; margin-top:4px;">Kelime kartlarını tamamlayıp Arenada yarışarak ilk puanı sen kazan!</p></div>';
             } else {
               let currentRank = 1;
               let previousXP = null;
@@ -12449,9 +12491,7 @@ let activeAvatarCategory = 'all';
                 const rankDisplayHtml = (rank === 1) 
                   ? `<div class="lb-rank" title="Okul Şampiyonu">1</div>` 
                   : `<div class="lb-rank">${rank}</div>`;
-                const championBadgeTag = (rank === 1) 
-                  ? `<span class="lb-champion-3d-badge" title="Tüm Zamanlar Okul Şampiyonu"><img src="assets/icons/icon_3d_crown.png" alt="Şampiyon"></span>` 
-                  : '';
+                const topBadgeHtml = getTop3BadgeHtml(rank, false, true);
                 
                 listContainer.innerHTML += `
                   <div class="leaderboard-item rank-${rank}" style="${isMe ? 'background: rgba(37, 99, 235, 0.1); border-left: 4px solid var(--accent);' : ''}">
@@ -12460,12 +12500,12 @@ let activeAvatarCategory = 'all';
                     <div class="lb-info">
                       <div style="display:flex; align-items:center; gap:6px; flex-wrap:wrap;">
                         <div class="lb-name">${user.displayName || 'Öğrenci'}</div>
-                        ${championBadgeTag}
                         <span class="lb-lang-flag" title="${langTitle}" aria-label="${langTitle}" style="font-size:1.1rem; line-height:1; display:inline-flex; align-items:center; cursor:help;">${flagIcon}</span>
                         ${isMe ? '<span style="font-size:0.7rem; font-weight:800; color:var(--accent); flex-shrink:0;">(Sen)</span>' : ''}
                       </div>
                       <div class="lb-badge">${badge}</div>
                     </div>
+                    ${topBadgeHtml}
                     <div class="lb-score">${(user.xp || 0).toLocaleString()} XP</div>
                   </div>
                 `;
