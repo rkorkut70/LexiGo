@@ -736,8 +736,15 @@ window.fetchClassLeaderboard = async function(branchCode) {
     snapshot.forEach(doc => {
       const data = doc.data() || {};
       const weeklyWeek = data.weeklyWeekId || '';
-      // Eğer haftalık ID uyuşuyorsa haftalık XP'yi, uyuşmuyorsa 0 kabul et
-      const weeklyXp = (weeklyWeek === curWeek && typeof data.weeklyXp === 'number') ? data.weeklyXp : 0;
+      // Haftalık XP: Geçerli haftada veya test döneminde toplanan aktif puan
+      let weeklyXp = 0;
+      if (weeklyWeek === curWeek && typeof data.weeklyXp === 'number' && data.weeklyXp > 0) {
+        weeklyXp = data.weeklyXp;
+      } else if (typeof data.weeklyXp === 'number' && data.weeklyXp > 0) {
+        weeklyXp = data.weeklyXp;
+      } else if (typeof data.xp === 'number' && data.xp > 0) {
+        weeklyXp = data.xp;
+      }
       members.push({
         uid: doc.id,
         displayName: data.displayName || 'Öğrenci',
@@ -796,9 +803,19 @@ window.fetchClassDuels = async function(lang) {
       const bCode = data.branch;
       if (bCode && branchStats[bCode]) {
         const weeklyWeek = data.weeklyWeekId || '';
-        const userWeeklyXp = (weeklyWeek === curWeek && typeof data.weeklyXp === 'number') ? data.weeklyXp : 0;
+        let userWeeklyXp = 0;
+        if (weeklyWeek === curWeek && typeof data.weeklyXp === 'number' && data.weeklyXp > 0) {
+          userWeeklyXp = data.weeklyXp;
+        } else if (typeof data.weeklyXp === 'number' && data.weeklyXp > 0) {
+          userWeeklyXp = data.weeklyXp;
+        } else if (typeof data.xp === 'number' && data.xp > 0) {
+          userWeeklyXp = data.xp;
+        }
         
         branchStats[bCode].studentCount += 1;
+        if (userWeeklyXp > 0) {
+          branchStats[bCode].activeStudentCount = (branchStats[bCode].activeStudentCount || 0) + 1;
+        }
         branchStats[bCode].totalWeeklyXp += userWeeklyXp;
         branchStats[bCode].totalCumulativeXp += (data.xp || 0);
 
@@ -812,9 +829,10 @@ window.fetchClassDuels = async function(lang) {
       }
     });
 
-    // Ortalama puanı (Adil Düello Metriği) ve başarı oranını hesapla
+    // Ortalama puanı (Adil Düello Metriği: Aktif Öğrenci Sayısına Göre) ve başarı oranını hesapla
     const branchList = Object.values(branchStats).map(b => {
-      const avgWeeklyXp = b.studentCount > 0 ? Math.round(b.totalWeeklyXp / b.studentCount) : 0;
+      const divisor = (b.activeStudentCount && b.activeStudentCount > 0) ? b.activeStudentCount : (b.studentCount > 0 ? b.studentCount : 1);
+      const avgWeeklyXp = b.totalWeeklyXp > 0 ? Math.round(b.totalWeeklyXp / divisor) : 0;
       return {
         ...b,
         avgWeeklyXp: avgWeeklyXp

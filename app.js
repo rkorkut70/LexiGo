@@ -11685,7 +11685,7 @@ let activeAvatarCategory = 'all';
                       ${isMyBranch ? '<span style="font-size:0.72rem; font-weight:800; color:var(--accent);">(Şuben)</span>' : ''}
                     </div>
                     <div class="lb-badge" style="font-size: 0.72rem; color: var(--text-muted);">
-                      👥 ${b.studentCount} Öğrenci • Toplam: ${(b.totalWeeklyXp || 0).toLocaleString()} XP
+                      👥 ${(b.activeStudentCount || b.studentCount || 0)} Öğrenci • Toplam: ${(b.totalWeeklyXp || 0).toLocaleString()} XP
                     </div>
                   </div>
                   ${topBadgeHtml}
