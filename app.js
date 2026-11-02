@@ -7,7 +7,7 @@
 (function () {
   'use strict';
 
-  const APP_VERSION = 'v1.8.59';
+  const APP_VERSION = 'v1.8.60';
   const DEFAULT_AVATAR = 'avatar_default';
   const CURRENT_APP_BUILD = 'lexiq_build_19_clean';
 
@@ -6814,7 +6814,7 @@ let activeAvatarCategory = 'all';
   }
 
   let toastTimer = null;
-  function showToast(msg, type = '') {
+  function showToast(msg, type = '', duration = 2400) {
     if (!dom.toast) return;
     dom.toast.textContent = msg;
     dom.toast.className = 'toast';
@@ -6829,7 +6829,7 @@ let activeAvatarCategory = 'all';
     clearTimeout(toastTimer);
     toastTimer = setTimeout(() => {
       dom.toast.classList.remove('show');
-    }, 2200);
+    }, duration);
   }
 
   function formatDate(dateStr) {
@@ -15773,6 +15773,15 @@ let activeAvatarCategory = 'all';
       bubble.style.transform = 'none';
 
       const rect = targetEl.getBoundingClientRect();
+      if (rect.width === 0 && rect.height === 0) {
+        if (spotlight) spotlight.style.display = 'none';
+        bubble.style.top = '50%';
+        bubble.style.left = '50%';
+        bubble.style.transform = 'translate(-50%, -50%)';
+        arrow.className = 'tour-arrow arrow-hidden';
+        return;
+      }
+
       const bubbleWidth = bubble.offsetWidth || 340;
       const bubbleHeight = bubble.offsetHeight || 160;
       const viewportWidth = window.innerWidth;
@@ -15980,6 +15989,27 @@ let activeAvatarCategory = 'all';
       }, 350);
     }
 
+    function isCardsTourAvailable() {
+      // Günlük hedef tamamlandı kutusu görünür veya aktif mi?
+      if (dom.flashcardGoalCompletedView) {
+        const isGoalCompleted = dom.flashcardGoalCompletedView.classList.contains('active') ||
+          (dom.flashcardGoalCompletedView.style.display !== 'none' && !dom.flashcardGoalCompletedView.classList.contains('is-hidden'));
+        if (isGoalCompleted) return false;
+      }
+
+      // Kart sarmalayıcısı gizli mi?
+      if (dom.flashcardWrapper && dom.flashcardWrapper.style.display === 'none') {
+        return false;
+      }
+
+      // Kart listesi boş mu?
+      if (!state.words || state.words.length === 0) {
+        return false;
+      }
+
+      return true;
+    }
+
     function startCardsTour(force = false) {
       if (!force && localStorage.getItem('lexiq_cards_tour_completed') === 'true') {
         return;
@@ -15989,14 +16019,19 @@ let activeAvatarCategory = 'all';
         return;
       }
 
-      if (dom.flashcardGoalCompletedView && dom.flashcardGoalCompletedView.style.display !== 'none' && !force) {
-        return;
-      }
-
       if (state.activeMode !== 'flashcards') {
         if (typeof switchAppMode === 'function') {
           switchAppMode('flashcards');
         }
+      }
+
+      // Kartlar ekranı aktif değilse (örneğin günlük hedef tamamlandı ekranı varsa veya kart yoksa)
+      if (!isCardsTourAvailable()) {
+        endTour(true);
+        if (typeof showToast === 'function') {
+          showToast('⚠️ Kart rehberi yalnızca kartlar ekranı aktifken kullanılabilir. Günlük hedef tamamlandığı için kartlar görünmüyor.', 'warning', 3800);
+        }
+        return;
       }
 
       activeTourType = 'cards';
@@ -16004,6 +16039,10 @@ let activeAvatarCategory = 'all';
 
       setTimeout(() => {
         if (!force && typeof isTourBlocked === 'function' && isTourBlocked()) return;
+        if (!isCardsTourAvailable()) {
+          endTour(true);
+          return;
+        }
         showTourStep(0);
       }, 350);
     }
@@ -16080,6 +16119,13 @@ let activeAvatarCategory = 'all';
           switchAppMode('flashcards');
         }
         setTimeout(() => {
+          if (!isCardsTourAvailable()) {
+            endTour(true);
+            if (typeof showToast === 'function') {
+              showToast('⚠️ Kart rehberi yalnızca kartlar ekranı aktifken kullanılabilir. Günlük hedef tamamlandığı için kartlar görünmüyor.', 'warning', 3800);
+            }
+            return;
+          }
           startCardsTour(true);
         }, 350);
       });

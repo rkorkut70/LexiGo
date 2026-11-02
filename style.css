@@ -13719,9 +13719,7 @@ html[data-flip-speed="slow"] .flashcard {
 .tour-backdrop {
   position: absolute;
   inset: 0;
-  background: rgba(10, 15, 30, 0.25);
-  backdrop-filter: blur(1.5px);
-  -webkit-backdrop-filter: blur(1.5px);
+  background: transparent;
   pointer-events: auto;
   z-index: 1;
   transition: opacity 0.25s ease;
@@ -13730,8 +13728,8 @@ html[data-flip-speed="slow"] .flashcard {
 .tour-spotlight {
   position: fixed;
   border-radius: 16px;
-  box-shadow: 0 0 0 9999px rgba(8, 12, 28, 0.76), 0 0 28px rgba(56, 189, 248, 0.55);
-  border: 2px solid #38bdf8;
+  box-shadow: 0 0 0 9999px rgba(8, 12, 28, 0.78), 0 0 0 2px #38bdf8;
+  border: none;
   pointer-events: none;
   z-index: 2;
   transition: top 0.22s cubic-bezier(0.16, 1, 0.3, 1), left 0.22s cubic-bezier(0.16, 1, 0.3, 1), width 0.22s ease, height 0.22s ease;
@@ -13974,13 +13972,13 @@ html[data-flip-speed="slow"] .flashcard {
   transform: scale(0.96);
 }
 
-/* Hedef Buton Vurgulama & Nabız Efekti */
+/* Hedef Buton Vurgulama & Nabız Efekti - Net ve Bulanıklıksız */
 .tour-highlight-target {
   position: relative !important;
   z-index: 9999 !important;
-  outline: 3px solid #38bdf8 !important;
-  outline-offset: 4px !important;
-  box-shadow: 0 0 0 5px rgba(56, 189, 248, 0.4), 0 0 25px rgba(56, 189, 248, 0.65) !important;
+  outline: 2.5px solid #38bdf8 !important;
+  outline-offset: 3px !important;
+  box-shadow: 0 0 0 2px rgba(56, 189, 248, 0.25) !important;
   animation: tourPulseHighlight 1.8s infinite ease-in-out !important;
   pointer-events: auto !important;
 }
@@ -13988,22 +13986,22 @@ html[data-flip-speed="slow"] .flashcard {
 @keyframes tourPulseHighlight {
   0%, 100% {
     outline-color: #38bdf8;
-    box-shadow: 0 0 0 4px rgba(56, 189, 248, 0.35), 0 0 20px rgba(56, 189, 248, 0.55);
+    box-shadow: 0 0 0 2px rgba(56, 189, 248, 0.2);
   }
   50% {
     outline-color: #818cf8;
-    box-shadow: 0 0 0 7px rgba(129, 140, 248, 0.45), 0 0 32px rgba(129, 140, 248, 0.75);
+    box-shadow: 0 0 0 4px rgba(129, 140, 248, 0.3);
   }
 }
 
 /* Aydınlık Mod Uyumluluğu */
 [data-theme="light"] .tour-backdrop {
-  background: rgba(15, 23, 42, 0.35);
+  background: transparent;
 }
 
 [data-theme="light"] .tour-spotlight {
-  box-shadow: 0 0 0 9999px rgba(15, 23, 42, 0.55), 0 0 24px rgba(14, 165, 233, 0.45);
-  border-color: #0284c7;
+  box-shadow: 0 0 0 9999px rgba(15, 23, 42, 0.58), 0 0 0 2px #0284c7;
+  border: none;
 }
 
 [data-theme="light"] .tour-bubble {

@@ -1,11 +1,10 @@
 {
-  "version": "v1.8.59",
-  "versionCode": 120,
+  "version": "v1.8.60",
+  "versionCode": 121,
   "releaseDate": "2026-11-03",
   "notes": [
-    "📊 Yeni Öğrenme Özeti Paneli: Ana ekranda Günlük Hedef, Mevcut Ünite, Kelime Defterim ve Zorlandıklarım metriklerini bir arada sunan interaktif kontrol paneli geliştirildi.",
-    "🇫🇷 Fransızca Müfredat Güncellemesi: A1 ve A2 seviyelerindeki ders kitabı serisi resmi 'Mon Alter Ego' serisiyle güncellendi.",
-    "💡 Hızlı Navigasyon: Öğrenme özeti paneli üzerinden Kelime Defterim ve Zorlananlar sekmelerine tek dokunuşla geçiş desteği sağlandı.",
-    "⚡ Performans & Kararlılık: Veri senkronizasyonu ve arayüz tepkiselliği optimize edildi."
+    "🔍 Kristal Netliğinde Yardım Balonları: Yardım turları sırasında hedef buton ve kartların üzerindeki aşırı bulanıklık tamamen giderildi; alanlar %100 net ve okunur hale getirildi.",
+    "🛡️ Akıllı Kart Rehberi Koruması: Günlük hedef tamamlandığında kartlar kapalı olduğu için rehber balonlarının yanlış yerlerde açılması önlendi; kullanıcıya bilgilendirici uyarı eklendi.",
+    "🎯 Gelişmiş Hedef Tespiti: Konuşma balonları kapalı veya sıfır boyutlu öğeler yerine her zaman ekranda en ergonomik ve doğru konumda gösterilir."
   ]
 }
