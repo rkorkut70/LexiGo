@@ -7,7 +7,7 @@
 (function () {
   'use strict';
 
-  const APP_VERSION = 'v1.8.48';
+  const APP_VERSION = 'v1.8.49';
   const DEFAULT_AVATAR = 'avatar_default';
   const CURRENT_APP_BUILD = 'lexiq_build_19_clean';
 
@@ -4354,16 +4354,22 @@ let activeAvatarCategory = 'all';
       dom.onboardingModal.style.display = 'none';
     }
     switchAppMode('home');
+    showToast(`Hoş geldin, ${state.userName}! ${state.userAvatar} Öğrenme yolculuğun başlıyor.`);
+
     if (obState.streakPledgeDays) {
+      // 5 Günlük Seri Sözü modalını aç.
+      // Yardım baloncukları (tur), kullanıcı bu günlük söz ekranını kapattıktan sonra devreye girecektir.
       setTimeout(() => {
         startStreakPledge(obState.streakPledgeDays);
-      }, 600);
-    }
-    showToast(`Hoş geldin, ${state.userName}! ${state.userAvatar} Öğrenme yolculuğun başlıyor.`);
-    if (!localStorage.getItem('lexiq_tour_completed')) {
-      setTimeout(() => {
-        if (typeof startFeatureTour === 'function') startFeatureTour(false);
-      }, 800);
+      }, 500);
+    } else {
+      // Seri sözü seçilmediyse veya atlandıysa, doğrudan yardım turunu başlat
+      if (!localStorage.getItem('lexiq_tour_completed')) {
+        setTimeout(() => {
+          const tourFn = (typeof startFeatureTour === 'function') ? startFeatureTour : window.startFeatureTour;
+          if (typeof tourFn === 'function') tourFn(false);
+        }, 700);
+      }
     }
   }
 
@@ -6463,6 +6469,16 @@ let activeAvatarCategory = 'all';
       modalEl.classList.remove('active');
       setTimeout(() => { modalEl.style.display = 'none'; }, 200);
     }
+
+    // Kurulum ve Günlük Söz ekranı geçildikten sonra yardım baloncukları (tur) başlasın
+    if (!localStorage.getItem('lexiq_tour_completed')) {
+      setTimeout(() => {
+        if (state.activeMode === 'home') {
+          const tourFn = (typeof startFeatureTour === 'function') ? startFeatureTour : window.startFeatureTour;
+          if (typeof tourFn === 'function') tourFn(false);
+        }
+      }, 450);
+    }
   }
 
   function updateStreakPledgeSettingsUI() {
@@ -7407,6 +7423,22 @@ let activeAvatarCategory = 'all';
       window.scrollTo(0, 0);
       updateHomeScreenUI();
       updateUserProfileUI();
+
+      // Ana sayfaya dönüldüğünde eğer yardım turu henüz tamamlanmadıysa ve açık modal yoksa başlat
+      if (!localStorage.getItem('lexiq_tour_completed')) {
+        const streakModal = document.getElementById('streakPledgeModal');
+        const isStreakOpen = streakModal && (streakModal.classList.contains('active') || (streakModal.style.display && streakModal.style.display !== 'none'));
+        const obModal = (dom && dom.onboardingModal) || document.getElementById('onboardingModal');
+        const isObOpen = obModal && (obModal.classList.contains('active') || (obModal.style.display && obModal.style.display !== 'none'));
+        if (!isStreakOpen && !isObOpen) {
+          setTimeout(() => {
+            if (state.activeMode === 'home' && !localStorage.getItem('lexiq_tour_completed')) {
+              const tourFn = (typeof startFeatureTour === 'function') ? startFeatureTour : window.startFeatureTour;
+              if (typeof tourFn === 'function') tourFn(false);
+            }
+          }, 450);
+        }
+      }
     } else if (mode === 'flashcards') {
       if (dom.tabFlashcards) dom.tabFlashcards.classList.add('active');
       if (dom.tabArena) dom.tabArena.classList.remove('active');
@@ -15088,6 +15120,12 @@ let activeAvatarCategory = 'all';
         return;
       }
 
+      const streakModal = document.getElementById('streakPledgeModal');
+      const isStreakOpen = streakModal && (streakModal.classList.contains('active') || (streakModal.style.display && streakModal.style.display !== 'none'));
+      if (isStreakOpen && !force) {
+        return;
+      }
+
       if (typeof switchAppMode === 'function') {
         switchAppMode('home');
       }
@@ -15106,6 +15144,12 @@ let activeAvatarCategory = 'all';
       }
 
       if (dom.onboardingModal && dom.onboardingModal.classList.contains('active')) {
+        return;
+      }
+
+      const streakModal = document.getElementById('streakPledgeModal');
+      const isStreakOpen = streakModal && (streakModal.classList.contains('active') || (streakModal.style.display && streakModal.style.display !== 'none'));
+      if (isStreakOpen && !force) {
         return;
       }
 
