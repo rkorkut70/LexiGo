@@ -7,7 +7,7 @@
 (function () {
   'use strict';
 
-  const APP_VERSION = 'v1.8.50';
+  const APP_VERSION = 'v1.8.51';
   const DEFAULT_AVATAR = 'avatar_default';
   const CURRENT_APP_BUILD = 'lexiq_build_19_clean';
 
@@ -8493,17 +8493,57 @@ let activeAvatarCategory = 'all';
   }
 
   function giveAnagramHint() {
-    useHintWithPenalty(5);
-    if (anagramState.isLocked) return;
-    const nextEmptyIdx = anagramState.userSlots.indexOf(null);
-    if (nextEmptyIdx === -1) return;
-    const neededChar = anagramState.solutionLetters[nextEmptyIdx];
-    const bankItem = anagramState.bankItems.find(i => !i.used && i.letter === neededChar);
-    if (!bankItem) return;
-    bankItem.used = true;
-    anagramState.userSlots[nextEmptyIdx] = bankItem;
+    if (anagramState.isLocked || !anagramState.targetWord || !anagramState.solutionLetters) return;
+
+    // 1. Zaten tüm harfler doğru mu kontrol et
+    const isAlreadyFullyCorrect = anagramState.userSlots.every((s, i) => s && s.letter === anagramState.solutionLetters[i]);
+    if (isAlreadyFullyCorrect) {
+      showToast('Kelime zaten doğru tamamlandı! 🎉');
+      return;
+    }
+
+    // 2. Düzeltilmesi veya doldurulması gereken ilk sırayı bul (boş veya yanlış olan)
+    let targetIdx = -1;
+    for (let i = 0; i < anagramState.solutionLetters.length; i++) {
+      const current = anagramState.userSlots[i];
+      if (!current || current.letter !== anagramState.solutionLetters[i]) {
+        targetIdx = i;
+        break;
+      }
+    }
+    if (targetIdx === -1) return;
+
+    const neededChar = anagramState.solutionLetters[targetIdx];
+
+    // 3. Eğer hedef yuvada yanlış bir harf varsa, onu havuza geri gönder
+    if (anagramState.userSlots[targetIdx]) {
+      anagramState.userSlots[targetIdx].used = false;
+      anagramState.userSlots[targetIdx] = null;
+    }
+
+    // 4. İhtiyaç duyulan harfi havuzdan ara (kullanılmamış olan)
+    let availableItem = anagramState.bankItems.find(item => !item.used && item.letter === neededChar);
+
+    // Eğer havuzda boşta yoksa, öğrenci bu harfi daha sonraki bir yuvaya yanlış yerleştirmiş demektir; oradan al
+    if (!availableItem) {
+      const misplacedIdx = anagramState.userSlots.findIndex((s, idx) => idx > targetIdx && s && s.letter === neededChar);
+      if (misplacedIdx !== -1) {
+        availableItem = anagramState.userSlots[misplacedIdx];
+        anagramState.userSlots[misplacedIdx] = null;
+      }
+    }
+
+    if (!availableItem) return;
+
+    // 5. Harfi doğru yuvaya yerleştir ve XP cezasını uygula
+    availableItem.used = true;
+    anagramState.userSlots[targetIdx] = availableItem;
+
+    useHintWithPenalty(5, `💡 İpucu: '${neededChar}' harfi yerleştirildi! (-5 XP)`);
+    triggerHapticFeedback('light');
     renderAnagramUI();
-    showToast(`💡 İpucu: '${neededChar}' harfi yerleştirildi!`);
+
+    // Eğer tüm yuvalar dolduysa otomatik kontrol et
     if (!anagramState.userSlots.includes(null)) {
       checkAnagramAnswer();
     }
@@ -10076,22 +10116,54 @@ let activeAvatarCategory = 'all';
   }
 
   function giveListenHint() {
-    useHintWithPenalty(5);
-    if (!listenState.targetWord) return;
-    const emptyIdx = listenState.userSlots.indexOf(null);
-    if (emptyIdx === -1) return;
+    if (listenState.isLocked || !listenState.targetWord || !listenState.solutionLetters) return;
 
-    const neededChar = listenState.solutionLetters[emptyIdx];
+    // 1. Zaten tüm harfler doğru mu kontrol et
+    const isAlreadyFullyCorrect = listenState.userSlots.every((s, i) => s && s.letter === listenState.solutionLetters[i]);
+    if (isAlreadyFullyCorrect) {
+      showToast('Kelime zaten doğru tamamlandı! 🎉');
+      return;
+    }
+
+    // 2. Düzeltilmesi veya doldurulması gereken ilk sırayı bul
+    let targetIdx = -1;
+    for (let i = 0; i < listenState.solutionLetters.length; i++) {
+      const current = listenState.userSlots[i];
+      if (!current || current.letter !== listenState.solutionLetters[i]) {
+        targetIdx = i;
+        break;
+      }
+    }
+    if (targetIdx === -1) return;
+
+    const neededChar = listenState.solutionLetters[targetIdx];
+
+    // 3. Eğer hedef yuvada yanlış bir harf varsa, onu havuza geri gönder
+    if (listenState.userSlots[targetIdx]) {
+      listenState.userSlots[targetIdx].used = false;
+      listenState.userSlots[targetIdx] = null;
+    }
+
+    // 4. Havuzdan harfi ara
     let availableItem = listenState.bankItems.find(i => !i.used && i.letter === neededChar && !i.isDistractor);
     if (!availableItem) {
       availableItem = listenState.bankItems.find(i => !i.used && i.letter === neededChar);
     }
+    if (!availableItem) {
+      const misplacedIdx = listenState.userSlots.findIndex((s, idx) => idx > targetIdx && s && s.letter === neededChar);
+      if (misplacedIdx !== -1) {
+        availableItem = listenState.userSlots[misplacedIdx];
+        listenState.userSlots[misplacedIdx] = null;
+      }
+    }
     if (!availableItem) return;
 
     availableItem.used = true;
-    listenState.userSlots[emptyIdx] = availableItem;
+    listenState.userSlots[targetIdx] = availableItem;
+
+    useHintWithPenalty(5, `💡 İpucu: '${neededChar}' harfi yerleştirildi! (-5 XP)`);
+    triggerHapticFeedback('light');
     renderListenUI();
-    showToast(`💡 İpucu: '${neededChar}' harfi yerleştirildi!`);
 
     if (!listenState.userSlots.includes(null)) {
       checkListenAnswer();
