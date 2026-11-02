@@ -1008,8 +1008,18 @@ window.fetchPodiumMonthlyArchive = async function(lang) {
 
     const curDate = new Date();
     const monthNames = ["Ocak", "Şubat", "Mart", "Nisan", "Mayıs", "Haziran", "Temmuz", "Ağustos", "Eylül", "Ekim", "Kasım", "Aralık"];
-    const curMonthKey = `${curDate.getFullYear()}-${String(curDate.getMonth() + 1).padStart(2, '0')}`;
-    const curMonthLabel = `${monthNames[curDate.getMonth()]} ${curDate.getFullYear()}`;
+    // Ayın ilk günlerinde (örneğin 1-7 Kasım) aylık şampiyonluk henüz tamamlanan önceki aya (Ekim) aittir:
+    let targetMonthIdx = curDate.getMonth();
+    let targetYear = curDate.getFullYear();
+    if (curDate.getDate() <= 7) {
+      targetMonthIdx -= 1;
+      if (targetMonthIdx < 0) {
+        targetMonthIdx = 11;
+        targetYear -= 1;
+      }
+    }
+    const curMonthKey = `${targetYear}-${String(targetMonthIdx + 1).padStart(2, '0')}`;
+    const curMonthLabel = `${monthNames[targetMonthIdx]} ${targetYear}`;
 
     // Eğer haftalık arşiv henüz Firestore'da yoksa veya boşsa, geçerli düellolardan ay tablosunu dinamik oluştur
     if (!weeklyArchives || weeklyArchives.length === 0) {
@@ -1069,8 +1079,15 @@ window.fetchPodiumMonthlyArchive = async function(lang) {
 
     weeklyArchives.forEach(w => {
       const d = w.timestamp instanceof Date ? w.timestamp : new Date();
-      const monthKey = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`;
-      const monthLabel = `${monthNames[d.getMonth()]} ${d.getFullYear()}`;
+      let mIdx = d.getMonth();
+      let mYear = d.getFullYear();
+      if ((w.weekId && w.weekId.includes('Ekim')) || (d.getDate() <= 3 && mIdx > 0 && w.weekId && !w.weekId.includes('Kasım'))) {
+        if (w.weekId && w.weekId.includes('Ekim')) {
+          mIdx = 9; // Ekim
+        }
+      }
+      const monthKey = `${mYear}-${String(mIdx + 1).padStart(2, '0')}`;
+      const monthLabel = `${monthNames[mIdx]} ${mYear}`;
 
       if (!monthMap[monthKey]) {
         monthMap[monthKey] = {

@@ -12086,7 +12086,17 @@ let activeAvatarCategory = 'all';
           if (!monthlyData || monthlyData.length === 0 || !monthlyData[0].firstBranch) {
             const curDate = new Date();
             const monthNames = ["Ocak", "Şubat", "Mart", "Nisan", "Mayıs", "Haziran", "Temmuz", "Ağustos", "Eylül", "Ekim", "Kasım", "Aralık"];
-            const curMonthLabel = `${monthNames[curDate.getMonth()]} ${curDate.getFullYear()}`;
+            // Ayın henüz başında (örneğin 1-7 Kasım) aylık şampiyonluk tamamlanan önceki aya (Ekim) aittir:
+            let targetMonthIdx = curDate.getMonth();
+            let targetYear = curDate.getFullYear();
+            if (curDate.getDate() <= 7) {
+              targetMonthIdx -= 1;
+              if (targetMonthIdx < 0) {
+                targetMonthIdx = 11;
+                targetYear -= 1;
+              }
+            }
+            const curMonthLabel = `${monthNames[targetMonthIdx]} ${targetYear}`;
             const sorted = langBranches.map((b, idx) => ({
               code: b.code,
               name: b.name || '',
