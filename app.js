@@ -7,7 +7,7 @@
 (function () {
   'use strict';
 
-  const APP_VERSION = 'v1.8.58';
+  const APP_VERSION = 'v1.8.59';
   const DEFAULT_AVATAR = 'avatar_default';
   const CURRENT_APP_BUILD = 'lexiq_build_19_clean';
 
@@ -2583,8 +2583,8 @@
       else if (level === 'B1') { title = 'Gateway to the World B1'; icon = '📗'; }
       else if (level === 'B1+') { title = 'Gateway to the World B1+'; icon = '📙'; }
     } else if (langCode === 'FR-TR') {
-      if (level === 'A1') { title = 'Édito A1 - Méthode de français'; icon = '📘'; }
-      else if (level === 'A2') { title = 'Édito A2 - Méthode de français'; icon = '📗'; }
+      if (level === 'A1') { title = 'Mon Alter Ego A1 - Méthode de français'; icon = '📘'; }
+      else if (level === 'A2') { title = 'Mon Alter Ego A2 - Méthode de français'; icon = '📗'; }
       else if (level === 'B1') { title = 'Mon Alter Ego - Méthode de Français - B1'; icon = '📙'; }
     } else if (langCode === 'DE-TR') {
       if (level === 'A1') { title = 'Netzwerk neu A1'; icon = '📘'; }
@@ -7893,7 +7893,7 @@ let activeAvatarCategory = 'all';
     const remainingCount = Math.max(0, targetCount - learnedCount);
     const percent = targetCount > 0 ? Math.min(100, Math.round((learnedCount / targetCount) * 100)) : 0;
 
-    // Günlük Öğrenilen Kelime Bilgileri
+    // Günlük ve Genel Öğrenme Özeti Bilgileri
     if (dom.homeTodayLearnedText) {
       dom.homeTodayLearnedText.textContent = learnedCount;
     }
@@ -7901,14 +7901,48 @@ let activeAvatarCategory = 'all';
       dom.homeDailyTargetText.textContent = `/ ${targetCount}`;
     }
     if (dom.dailyGoalSubtext) {
-      dom.dailyGoalSubtext.textContent = isFullUnitMode ? 'Hedef: Tüm Ünite' : `Günlük Hedef: ${targetCount} Kelime`;
+      dom.dailyGoalSubtext.textContent = isFullUnitMode ? 'Hedef: Tüm Ünite' : 'Günlük hedef ve çalışma durumu';
     }
     if (dom.homeRemainingText) {
-      dom.homeRemainingText.textContent = remainingCount === 0 ? '✨ Hedef Tamamlandı!' : `⏳ ${remainingCount} Kalan`;
+      dom.homeRemainingText.textContent = remainingCount === 0 ? '✨ Tamamlandı!' : `${remainingCount} Kalan`;
     }
 
+    // 1. Ünite İlerleme Metrikleri
+    let unitLearnedCount = 0;
+    unitWords.forEach(w => {
+      if (state.learnedMap[w.id] && state.learnedMap[w.id].learned) {
+        unitLearnedCount++;
+      }
+    });
+    const unitTotalCount = unitWords.length;
+    const unitPercent = unitTotalCount > 0 ? Math.round((unitLearnedCount / unitTotalCount) * 100) : 0;
+
+    const elUnitLearned = document.getElementById('homeUnitLearnedCountText');
+    if (elUnitLearned) elUnitLearned.textContent = unitLearnedCount;
+    const elUnitTotal = document.getElementById('homeUnitTotalWordsText');
+    if (elUnitTotal) elUnitTotal.textContent = `/ ${unitTotalCount}`;
+    const elUnitPercent = document.getElementById('homeUnitPercentText');
+    if (elUnitPercent) elUnitPercent.textContent = `%${unitPercent} Bitti`;
+
+    // 2. Kelime Defterim & Zorlandıklarım Metrikleri
+    const notebookCount = allWords.filter(w => state.notebookMap && state.notebookMap[w.id]).length;
+    const troubledCount = allWords.filter(w => state.troubledMap && state.troubledMap[w.id]).length;
+
+    const elNotebook = document.getElementById('homeNotebookCountText');
+    if (elNotebook) elNotebook.textContent = notebookCount;
+
+    const elTroubled = document.getElementById('homeTroubledCountText');
+    if (elTroubled) elTroubled.textContent = troubledCount;
+    const elTroubledSub = document.getElementById('homeTroubledSubText');
+    if (elTroubledSub) {
+      elTroubledSub.textContent = troubledCount > 0 ? 'Pekiştir →' : 'Temiz ✓';
+      if (troubledCount === 0) elTroubledSub.style.color = '#34d399';
+      else elTroubledSub.style.color = '';
+    }
+
+    // 3. Genel İlerleme ve Yüzde
     if (dom.homeProgressPercent) {
-      dom.homeProgressPercent.textContent = `%${percent}`;
+      dom.homeProgressPercent.textContent = `%${percent} Tamamlandı`;
     }
     if (dom.homeProgressFill) {
       dom.homeProgressFill.style.width = `${percent}%`;
@@ -7923,15 +7957,21 @@ let activeAvatarCategory = 'all';
     }
 
     // Seri Bilgisi (Günlük Çalışma Serisi)
+    const dStreak = (typeof state.dayStreak === 'number' && state.dayStreak > 0) ? state.dayStreak : 1;
     if (dom.homeStatStreak) {
-      const dStreak = (typeof state.dayStreak === 'number' && state.dayStreak > 0) ? state.dayStreak : 1;
-      dom.homeStatStreak.textContent = `🔥 ${dStreak} Gün Seri`;
+      dom.homeStatStreak.innerHTML = `<img src="assets/icons/icon_3d_streak.png" class="pill-3d-icon" alt="Seri"> <span id="homeStatStreakText">${dStreak} Gün Seri</span>`;
     }
+    const elStreakText = document.getElementById('homeStatStreakText');
+    if (elStreakText) elStreakText.textContent = `${dStreak} Gün Seri`;
 
     // Toplam Öğrenilen Kelime Bilgisi
     const totalLearnedAll = Object.values(state.learnedMap).filter(item => item && item.learned).length;
     if (dom.homeStatLearned) {
       dom.homeStatLearned.textContent = totalLearnedAll;
+    }
+    const elTotalAll = document.getElementById('homeTotalLearnedAllText');
+    if (elTotalAll) {
+      elTotalAll.textContent = `Toplam: ${totalLearnedAll} Kelime`;
     }
     if (dom.homeArenaSubtext) {
       dom.homeArenaSubtext.textContent = totalLearnedAll > 0 
@@ -8078,6 +8118,15 @@ let activeAvatarCategory = 'all';
       }
     }
   }
+
+  window.navigateToCardsWithFilter = function(filter) {
+    state.activeFilter = filter || 'pending';
+    localStorage.setItem('kelime_active_filter', state.activeFilter);
+    state.currentIndex = 0;
+    switchAppMode('flashcards');
+    if (typeof updateCardTabsUI === 'function') updateCardTabsUI();
+    if (typeof refreshWordsList === 'function') refreshWordsList();
+  };
 
   const GAME_CONFIG = {
     match: {

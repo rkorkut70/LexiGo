@@ -16,7 +16,7 @@
   <meta name="referrer" content="no-referrer">
   <title>LexiGo • Çok Dilli Akıllı Kelime Kartları</title>
   <link rel="icon" type="image/jpeg" href="logo.jpg">
-  <link rel="stylesheet" href="style.css?v=1.8.58">
+  <link rel="stylesheet" href="style.css?v=1.8.59">
 </head>
 <body>
   <div class="app-container">
@@ -166,33 +166,89 @@
           </button>
         </section>
 
-        <!-- 3. GÜN ÖĞRENİLEN KELİME BİLGİSİ (TODAY'S LEARNED WORDS CARD) -->
-        <section class="home-daily-progress-card">
+        <!-- 3. ÖĞRENME ÖZETİ (LEARNING SUMMARY DASHBOARD CARD) -->
+        <section class="home-daily-progress-card home-summary-dashboard-card" id="homeSummaryDashboardCard">
           <div class="daily-progress-header">
             <div class="daily-progress-title-wrap">
-              <img src="assets/icons/icon_3d_streak.png" class="stat-3d-icon" alt="Hedef">
+              <img src="assets/icons/icon_3d_streak.png" class="stat-3d-icon" alt="Öğrenme Özeti">
               <div>
-                <h3 class="daily-card-title">Bugün Öğrenilen Kelimeler</h3>
-                <span class="daily-card-subtitle" id="dailyGoalSubtext">Günlük Hedef: 15 Kelime</span>
+                <h3 class="daily-card-title">📊 Öğrenme Özeti</h3>
+                <span class="daily-card-subtitle" id="dailyGoalSubtext">Günlük hedef ve çalışma durumu</span>
               </div>
             </div>
-            <span class="daily-percent-badge" id="homeProgressPercent">%0</span>
+            <span class="daily-percent-badge" id="homeProgressPercent">%0 Tamamlandı</span>
           </div>
 
-          <div class="daily-metric-row">
-            <div class="daily-count-display">
-              <span class="daily-learned-val" id="homeTodayLearnedText">0</span>
-              <span class="daily-target-val" id="homeDailyTargetText">/ 15</span>
-              <span class="daily-unit-label">Kelime</span>
+          <!-- 4'lü Kompakt Metrik Özeti Izgarası -->
+          <div class="home-summary-grid">
+            <!-- 1. Bugünün Hedefi -->
+            <div class="summary-metric-card sm-interactive" id="summaryCardToday" onclick="if(window.navigateToCardsWithFilter) window.navigateToCardsWithFilter('pending');" title="Bugünün Hedef Kelimelerine Git">
+              <div class="sm-card-top">
+                <span class="sm-icon">🎯</span>
+                <span class="sm-label">Bugün</span>
+              </div>
+              <div class="sm-card-val">
+                <strong id="homeTodayLearnedText">0</strong>
+                <span id="homeDailyTargetText" class="sm-target">/ 15</span>
+              </div>
+              <div class="sm-card-sub" id="homeRemainingText">15 Kalan</div>
             </div>
-            <div class="daily-pills-col">
-              <span class="daily-pill streak-pill" id="homeStatStreak"><img src="assets/icons/icon_3d_streak.png" class="pill-3d-icon" alt="Seri"> 1 Gün Seri</span>
-              <span class="daily-pill remaining-pill" id="homeRemainingText">⏳ 15 Kalan</span>
+
+            <!-- 2. Mevcut Ünite -->
+            <div class="summary-metric-card sm-interactive" id="summaryCardUnit" onclick="if(window.navigateToCardsWithFilter) window.navigateToCardsWithFilter('pending');" title="Ünite Kelimelerini Çalış">
+              <div class="sm-card-top">
+                <span class="sm-icon">📚</span>
+                <span class="sm-label">Mevcut Ünite</span>
+              </div>
+              <div class="sm-card-val">
+                <strong id="homeUnitLearnedCountText">0</strong>
+                <span id="homeUnitTotalWordsText" class="sm-target">/ 0</span>
+              </div>
+              <div class="sm-card-sub" id="homeUnitPercentText">%0 Bitti</div>
+            </div>
+
+            <!-- 3. Kelime Defterim -->
+            <div class="summary-metric-card sm-interactive" id="summaryCardNotebook" onclick="if(window.navigateToCardsWithFilter) window.navigateToCardsWithFilter('mylist');" title="Kelime Defterimi Aç">
+              <div class="sm-card-top">
+                <span class="sm-icon">🔖</span>
+                <span class="sm-label">Defterim</span>
+              </div>
+              <div class="sm-card-val">
+                <strong id="homeNotebookCountText">0</strong>
+                <span class="sm-target">Kelime</span>
+              </div>
+              <div class="sm-card-sub sm-link-sub">İncele →</div>
+            </div>
+
+            <!-- 4. Zorlandıklarım -->
+            <div class="summary-metric-card sm-interactive" id="summaryCardTroubled" onclick="if(window.navigateToCardsWithFilter) window.navigateToCardsWithFilter('troubled');" title="Zorlandığım Kelimeleri Pekiştir">
+              <div class="sm-card-top">
+                <span class="sm-icon">⚠️</span>
+                <span class="sm-label">Zorlanan</span>
+              </div>
+              <div class="sm-card-val">
+                <strong id="homeTroubledCountText">0</strong>
+                <span class="sm-target">Hatalı</span>
+              </div>
+              <div class="sm-card-sub sm-link-sub" id="homeTroubledSubText">Pekiştir →</div>
             </div>
           </div>
 
+          <!-- İlerleme Çubuğu -->
           <div class="home-progress-track">
             <div id="homeProgressFill" class="home-progress-fill" style="width: 0%;"></div>
+          </div>
+
+          <!-- Alt Rozetler Satırı -->
+          <div class="summary-footer-row">
+            <span class="daily-pill streak-pill" id="homeStatStreak">
+              <img src="assets/icons/icon_3d_streak.png" class="pill-3d-icon" alt="Seri">
+              <span id="homeStatStreakText">1 Gün Seri</span>
+            </span>
+            <span class="daily-pill total-learned-pill" id="homeStatTotalLearnedPill">
+              <span class="pill-icon">⭐</span>
+              <span id="homeTotalLearnedAllText">Toplam: 0 Kelime</span>
+            </span>
           </div>
         </section>
       </div>
@@ -1412,7 +1468,7 @@
               <div class="welcome-logo-badge">
                 <img src="assets/icons/lexigo_brand_logo.png" alt="LexiGo" class="welcome-brand-img" />
               </div>
-              <span class="welcome-version-pill">v1.8.58</span>
+              <span class="welcome-version-pill">v1.8.59</span>
             </div>
           </div>
         </div>
@@ -2176,7 +2232,7 @@
             <div class="about-logo-badge">
               <img src="assets/icons/lexigo_brand_logo.png" alt="LexiGo" class="about-brand-img" />
             </div>
-            <span class="about-version-pill" id="aboutAppVersion">v1.8.58</span>
+            <span class="about-version-pill" id="aboutAppVersion">v1.8.59</span>
             <span class="about-platform-badge" id="aboutPlatformBadge" style="display: none; font-size: 0.72rem; font-weight: 700; padding: 3px 9px; border-radius: 12px; background: rgba(59,130,246,0.15); color: #3b82f6; border: 1px solid rgba(59,130,246,0.3);"></span>
           </div>
           <p class="about-tagline">Müfredat Tabanlı Çok Dilli Kelime Arenası</p>
@@ -3833,17 +3889,16 @@
       <div class="confirm-icon-wrap" style="font-size: 2.8rem; margin-bottom: 8px;">🎉</div>
       <h3 class="confirm-title" style="font-size: 1.3rem; font-weight: 800; margin: 0 0 6px 0;">LexiGo Güncellendi!</h3>
       <div class="app-update-version-badge" style="display: inline-block; padding: 4px 14px; border-radius: 20px; font-size: 0.84rem; font-weight: 800; margin-bottom: 14px;">
-        Sürüm <span id="appUpdateVersionText">v1.8.58</span>
+        Sürüm <span id="appUpdateVersionText">v1.8.59</span>
       </div>
       <div class="update-notes-box" style="text-align: left; border-radius: 16px; padding: 14px 16px; font-size: 0.88rem; line-height: 1.6; margin-bottom: 18px; max-height: 280px; overflow-y: auto;">
         <div class="update-notes-title" style="font-weight: 800; margin-bottom: 8px; display: flex; align-items: center; gap: 6px;">
           <span>✨</span><span>Bu Sürümdeki Yenilikler</span>
         </div>
         <ul style="margin: 0; padding-left: 20px; display: flex; flex-direction: column; gap: 8px;">
-          <li><strong>💡 Yenilenen Akıllı Yardım Balonları:</strong> Ana ekran, kelime kartları ve arena turları baştan sona yeniden tasarlandı. Ekranda sırayla, atlamadan rehberlik sunar.</li>
-          <li><strong>⚔️ 9 Arena Oyunu & Kelime Defteri Tanıtımı:</strong> Yeni 9 oyunluk arena mimarisi, kişisel Kelime Defterim ve Zorlandıklarım özellikleri tanıtım turuna eklendi.</li>
-          <li><strong>🗣️ Aksan ve Ses Ayarları Rehberi:</strong> Sesli telaffuz aksanı ve otomatik seslendirme ayarlarının nereden ve nasıl değiştirileceği yardım balonlarıyla vurgulandı.</li>
-          <li><strong>🛡️ Kesintisiz Tur Deneyimi:</strong> Kullanıcı ekrana veya karta dokunduğunda tur kazara kapanmaz; sadece "Turu Atla" seçilirse sonlanır.</li>
+          <li><strong>📊 Yeni Öğrenme Özeti Paneli:</strong> Ana ekrandaki dar alan yerine Günlük Hedef, Mevcut Ünite, Kelime Defterim ve Zorlandıklarım metriklerini bir arada sunan interaktif kontrol paneli eklendi.</li>
+          <li><strong>🇫🇷 Fransızca Müfredat Güncellemesi:</strong> Fransızca A1 ve A2 seviyelerindeki ders kitabı serisi resmi "Mon Alter Ego" standartlarına güncellendi.</li>
+          <li><strong>💡 Gelişmiş Navigasyon:</strong> Defterim ve Zorlananlar kartlarına dokunarak doğrudan ilgili kart listelerine ve alıştırmalara hızlı erişim sağlandı.</li>
         </ul>
       </div>
       <div style="display: flex; flex-direction: column; gap: 8px; width: 100%;">
@@ -3906,11 +3961,11 @@
   <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-storage-compat.js"></script>
-  <script src="firebase_backend.js?v=1.8.58"></script>
+  <script src="firebase_backend.js?v=1.8.59"></script>
 
   <!-- Kelime Verisi ve Uygulama Mantığı (Sadece Standart Vanilla JS) -->
-  <script src="words_data.js?v=1.8.58"></script>
-  <script src="app.js?v=1.8.58"></script>
+  <script src="words_data.js?v=1.8.59"></script>
+  <script src="app.js?v=1.8.59"></script>
 
   </body>
 </html>

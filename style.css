@@ -7472,6 +7472,112 @@ html:not([data-theme="dark"])[data-card-theme="dark"] .card-face {
   border-color: rgba(255, 255, 255, 0.25);
 }
 
+/* ============================================================
+   ÖĞRENME ÖZETİ (LEARNING SUMMARY DASHBOARD CARD)
+   ============================================================ */
+.home-summary-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 8px;
+  margin: 4px 0 6px 0;
+}
+
+.summary-metric-card {
+  background: rgba(15, 23, 42, 0.28);
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  border-radius: 14px;
+  padding: 8px 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  position: relative;
+  transition: transform 0.18s ease, background 0.18s ease, border-color 0.18s ease, box-shadow 0.18s ease;
+  user-select: none;
+}
+
+.summary-metric-card.sm-interactive {
+  cursor: pointer;
+}
+
+.summary-metric-card.sm-interactive:hover {
+  background: rgba(255, 255, 255, 0.16);
+  border-color: rgba(255, 255, 255, 0.35);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+.summary-metric-card.sm-interactive:active {
+  transform: scale(0.97);
+}
+
+.sm-card-top {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.sm-icon {
+  font-size: 0.92rem;
+  line-height: 1;
+}
+
+.sm-label {
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: rgba(255, 255, 255, 0.85);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.sm-card-val {
+  display: flex;
+  align-items: baseline;
+  gap: 3px;
+}
+
+.sm-card-val strong {
+  font-size: 1.28rem;
+  font-weight: 900;
+  color: #ffffff;
+  line-height: 1.1;
+  letter-spacing: -0.01em;
+}
+
+.sm-target {
+  font-size: 0.76rem;
+  font-weight: 700;
+  color: rgba(255, 255, 255, 0.72);
+}
+
+.sm-card-sub {
+  font-size: 0.68rem;
+  font-weight: 700;
+  color: rgba(255, 255, 255, 0.78);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.sm-link-sub {
+  color: #38bdf8;
+  font-weight: 800;
+}
+
+.summary-footer-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-top: 2px;
+}
+
+.home-summary-dashboard-card .daily-card-subtitle {
+  font-size: 0.75rem;
+  color: rgba(255, 255, 255, 0.85);
+}
+
 .home-progress-track {
   width: 100%;
   height: 8px;
@@ -7485,10 +7591,98 @@ html:not([data-theme="dark"])[data-card-theme="dark"] .card-face {
 
 .home-progress-fill {
   height: 100%;
-  background: linear-gradient(90deg, #38bdf8, #ffffff);
+  background: linear-gradient(90deg, #38bdf8, #818cf8, #ffffff);
   border-radius: var(--radius-full);
   transition: width 0.4s ease;
   box-shadow: 0 0 10px rgba(255, 255, 255, 0.7), inset 0 1px 0.5px #ffffff;
+}
+
+/* Koyu Mod Özelleştirmeleri */
+[data-theme="dark"] .summary-metric-card {
+  background: rgba(15, 23, 42, 0.55);
+  border-color: rgba(129, 140, 248, 0.22);
+}
+
+[data-theme="dark"] .summary-metric-card.sm-interactive:hover {
+  background: rgba(99, 102, 241, 0.25);
+  border-color: rgba(129, 140, 248, 0.45);
+}
+
+[data-theme="dark"] .sm-link-sub {
+  color: #818cf8;
+}
+
+/* Aydınlık Mod Uyumluluğu */
+[data-theme="light"] .home-daily-progress-card {
+  background: linear-gradient(145deg, #eff6ff 0%, #dbeafe 60%, #bfdbfe 100%) !important;
+  border-color: rgba(37, 99, 235, 0.3) !important;
+  border-bottom: 3.5px solid #1d4ed8 !important;
+  color: #0f172a !important;
+  box-shadow:
+    0 4px 0 #1d4ed8,
+    0 12px 24px -4px rgba(37, 99, 235, 0.2),
+    inset 0 1.5px 0.5px rgba(255, 255, 255, 0.8) !important;
+}
+
+[data-theme="light"] .home-daily-progress-card .daily-card-title {
+  color: #1e3a8a !important;
+  text-shadow: none !important;
+}
+
+[data-theme="light"] .home-daily-progress-card .daily-card-subtitle {
+  color: #2563eb !important;
+}
+
+[data-theme="light"] .home-daily-progress-card .daily-percent-badge {
+  background: #2563eb !important;
+  color: #ffffff !important;
+  border-color: #1d4ed8 !important;
+}
+
+[data-theme="light"] .summary-metric-card {
+  background: rgba(255, 255, 255, 0.8) !important;
+  border-color: rgba(37, 99, 235, 0.2) !important;
+  box-shadow: 0 2px 6px rgba(37, 99, 235, 0.08) !important;
+}
+
+[data-theme="light"] .summary-metric-card.sm-interactive:hover {
+  background: #ffffff !important;
+  border-color: #2563eb !important;
+}
+
+[data-theme="light"] .sm-label {
+  color: #475569 !important;
+}
+
+[data-theme="light"] .sm-card-val strong {
+  color: #1e3a8a !important;
+}
+
+[data-theme="light"] .sm-target {
+  color: #64748b !important;
+}
+
+[data-theme="light"] .sm-card-sub {
+  color: #64748b !important;
+}
+
+[data-theme="light"] .sm-link-sub {
+  color: #2563eb !important;
+}
+
+[data-theme="light"] .summary-footer-row .daily-pill {
+  background: rgba(255, 255, 255, 0.88) !important;
+  border-color: rgba(37, 99, 235, 0.25) !important;
+  color: #1e3a8a !important;
+}
+
+[data-theme="light"] .home-progress-track {
+  background: rgba(147, 197, 253, 0.45) !important;
+  border-color: rgba(37, 99, 235, 0.25) !important;
+}
+
+[data-theme="light"] .home-progress-fill {
+  background: linear-gradient(90deg, #3b82f6, #1d4ed8) !important;
 }
 
 /* ============================================================
