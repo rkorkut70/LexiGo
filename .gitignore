@@ -1,0 +1,19 @@
+# Development & Scratch
+*.xlsx
+*.csv
+*.py
+*.ps1
+__pycache__/
+scratch/
+docs/
+store_assets/
+avatarlar/
+test_index.html
+words_data_german_a1.js
+.antigravityrules.txt
+YAPILACAKLAR.md
+package.json
+package-lock.json
+server.js
+.DS_Store
+Thumbs.db

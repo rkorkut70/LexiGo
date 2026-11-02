@@ -16,7 +16,7 @@
   <meta name="referrer" content="no-referrer">
   <title>LexiGo • Çok Dilli Akıllı Kelime Kartları</title>
   <link rel="icon" type="image/jpeg" href="logo.jpg">
-  <link rel="stylesheet" href="style.css?v=1.8.51">
+  <link rel="stylesheet" href="style.css?v=1.8.52">
 </head>
 <body>
   <div class="app-container">
@@ -240,7 +240,7 @@
             </div>
             <div class="card-tab-row secondary-tab-row">
               <button class="card-tab-btn" data-filter="mylist" id="cardTabMyListBtn">
-                <span>🔖 Listem</span> <span class="tab-badge" id="myListTabCount">(0)</span>
+                <span>🔖 Kelime Defterim</span> <span class="tab-badge" id="myListTabCount">(0)</span>
               </button>
               <button class="card-tab-btn" data-filter="troubled" id="cardTabTroubledBtn">
                 <span>⚠️ Zorlandıklarım</span> <span class="tab-badge" id="troubledTabCount">(0)</span>
@@ -325,6 +325,10 @@
                   <button type="button" id="cardTroubledActionBtn" class="card-notebook-btn card-troubled-pill" style="display: none;" title="Zorlandıklarımdan Kaldır" aria-label="Zorlandıklarımdan Kaldır">
                     <span class="notebook-btn-icon">✅</span>
                     <span class="notebook-btn-text">Pekiştirildi</span>
+                  </button>
+                  <button type="button" id="cardUnlearnBtn" class="card-notebook-btn card-unlearn-pill" style="display: none;" title="Öğrenilenler'den çıkar ve Öğrenilecekler havuzuna geri al" aria-label="Öğrenilecekler'e Al">
+                    <span class="notebook-btn-icon">↺</span>
+                    <span class="notebook-btn-text">Yeniden Öğren</span>
                   </button>
                   <span class="card-status-badge status-pending" id="cardStatusBadge">
                     Bekliyor
@@ -414,6 +418,10 @@
                     <span class="notebook-btn-icon">✅</span>
                     <span class="notebook-btn-text">Pekiştirildi</span>
                   </button>
+                  <button type="button" id="cardBackUnlearnBtn" class="card-notebook-btn card-unlearn-pill" style="display: none;" title="Öğrenilenler'den çıkar ve Öğrenilecekler havuzuna geri al" aria-label="Öğrenilecekler'e Al">
+                    <span class="notebook-btn-icon">↺</span>
+                    <span class="notebook-btn-text">Yeniden Öğren</span>
+                  </button>
                   <span class="card-status-badge status-pending" id="cardBackStatusBadge">
                     Türkçe Çeviri
                   </span>
@@ -425,13 +433,6 @@
                 <div class="example-box">
                   <div class="example-box-header">
                     <span class="example-box-label">ÖRNEK KULLANIM</span>
-                    <button type="button" id="cardSentenceAudioBtn" class="card-sentence-audio-btn" title="Cümleyi Dinle" aria-label="Cümleyi Dinle">
-                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-                        <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon>
-                        <path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"></path>
-                      </svg>
-                      <span>Cümleyi Dinle</span>
-                    </button>
                   </div>
                   <p class="example-sentence" id="cardExampleSentence">Örnek cümle...</p>
                   <p class="example-translation" id="cardSentenceTranslation">Cümle çevirisi...</p>
@@ -445,12 +446,12 @@
                   </svg>
                   <span>Ön Yüz</span>
                 </div>
-                <button type="button" id="markRepeatBtn" class="card-flip-pill repeat-pill" title="Tekrar Öğrenilecek">
+                <button type="button" id="markRepeatBtn" class="card-flip-pill repeat-pill" title="Bu kelimeyi Öğrenilenler'den çıkar ve Öğrenilecekler havuzuna geri al">
                   <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
                     <polyline points="23 4 23 10 17 10"></polyline>
                     <path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"></path>
                   </svg>
-                  <span>Tekrar Et</span>
+                  <span>Tekrar Öğren</span>
                 </button>
               </div>
             </div>
@@ -577,7 +578,7 @@
         <div class="empty-trophy-icon">🏆</div>
         <h2 class="empty-title">Arenaya Giriş Kilitli!</h2>
         <p class="empty-desc">
-          Arenada kartlarda <strong>"Öğrendim"</strong> dediğin ve <strong>"Listem"</strong>e eklediğin kelimeler yarışır (Zorlandıkların hariç). Başlamak için en az <strong>3 kelimeye</strong> ihtiyacın var!
+          Arenada kartlarda <strong>"Öğrendim"</strong> dediğin ve <strong>"Kelime Defterim"</strong>e eklediğin kelimeler yarışır (Zorlandıkların hariç). Başlamak için en az <strong>3 kelimeye</strong> ihtiyacın var!
         </p>
         <div class="empty-progress-box">
           <div class="empty-progress-text">Hazır Kelimeler: <span id="arenaReadyCount">0</span> / 3</div>
@@ -1411,7 +1412,7 @@
               <div class="welcome-logo-badge">
                 <img src="assets/icons/lexigo_brand_logo.png" alt="LexiGo" class="welcome-brand-img" />
               </div>
-              <span class="welcome-version-pill">v1.8.51</span>
+              <span class="welcome-version-pill">v1.8.52</span>
             </div>
           </div>
         </div>
@@ -2175,7 +2176,7 @@
             <div class="about-logo-badge">
               <img src="assets/icons/lexigo_brand_logo.png" alt="LexiGo" class="about-brand-img" />
             </div>
-            <span class="about-version-pill" id="aboutAppVersion">v1.8.51</span>
+            <span class="about-version-pill" id="aboutAppVersion">v1.8.52</span>
             <span class="about-platform-badge" id="aboutPlatformBadge" style="display: none; font-size: 0.72rem; font-weight: 700; padding: 3px 9px; border-radius: 12px; background: rgba(59,130,246,0.15); color: #3b82f6; border: 1px solid rgba(59,130,246,0.3);"></span>
           </div>
           <p class="about-tagline">Müfredat Tabanlı Çok Dilli Kelime Arenası</p>
@@ -2230,6 +2231,17 @@
             <span>💬</span>
             <span>Geri Bildirim & Hata Bildir</span>
           </button>
+        </div>
+
+        <!-- Fikri Mülkiyet & Telif Bildirimi Kartı -->
+        <div class="about-disclaimer-card">
+          <div class="about-disclaimer-header">
+            <span class="about-disclaimer-icon">⚖️</span>
+            <span class="about-disclaimer-title">Fikri Mülkiyet & Müfredat Referansı</span>
+          </div>
+          <p class="about-disclaimer-text">
+            Uygulama içerisinde adı geçen kitaplar ve yayınlar (<em>Gateway to the World</em>, <em>Netzwerk neu</em>, <em>Édito</em>, <em>Mon Alter Ego</em> vb.) ilgili yayıncılarının (Macmillan Education, Klett, Didier, Hachette FLE) tescilli ticari markaları ve telifli eserleridir. Bu adlar yalnızca öğrencilerin takip ettiği akademik müfredatı tanımlamak ve eğitim içeriğini referans vermek amacıyla (<em>nominative fair use</em>) kullanılmıştır. LexiGo'nun bu yayınevleriyle doğrudan bir ortaklığı veya ticari bağı bulunmamaktadır.
+          </p>
         </div>
 
         <div class="about-footer-note">
@@ -2821,6 +2833,11 @@
             <span class="up-rule-badge">%80 Kuralı</span>
           </div>
 
+          <!-- Seviye / Kitap Filtreleme Sekmeleri -->
+          <div class="prof-unit-level-tabs" id="profUnitLevelTabs">
+            <!-- JS ile dinamik oluşturulacak -->
+          </div>
+
           <!-- Üniteler Listesi -->
           <div class="student-unit-progress-list" id="profUnitsProgressList">
             <!-- JS ile doldurulacak -->
@@ -2991,7 +3008,7 @@
                   <span class="setting-row-desc">Kart değiştikçe kelimeyi otomatik oku</span>
                 </div>
                 <label class="toggle-switch">
-                  <input type="checkbox" id="settingAutoplayAudio">
+                  <input type="checkbox" id="settingAutoplayAudio" checked>
                   <span class="toggle-slider"></span>
                 </label>
               </div>
@@ -3002,7 +3019,7 @@
                   <span class="setting-row-desc">Kart çevrildiğinde örnek cümleyi telaffuz eder</span>
                 </div>
                 <label class="toggle-switch">
-                  <input type="checkbox" id="settingReadExampleAudio">
+                  <input type="checkbox" id="settingReadExampleAudio" checked>
                   <span class="toggle-slider"></span>
                 </label>
               </div>
@@ -3035,7 +3052,7 @@
                   <span class="setting-row-desc">Sık hata yapılan veya pekişmemiş kelimeleri öne alır</span>
                 </div>
                 <label class="toggle-switch">
-                  <input type="checkbox" id="settingSrsPriority">
+                  <input type="checkbox" id="settingSrsPriority" checked>
                   <span class="toggle-slider"></span>
                 </label>
               </div>
@@ -3071,7 +3088,7 @@
                   <span class="setting-row-desc">Kart çevirme, geçiş ve buton dokunuşlarında hafif titreşim</span>
                 </div>
                 <label class="toggle-switch">
-                  <input type="checkbox" id="settingCardHaptic" checked>
+                  <input type="checkbox" id="settingCardHaptic">
                   <span class="toggle-slider"></span>
                 </label>
               </div>
@@ -3770,7 +3787,7 @@
       <div class="confirm-icon-wrap" style="font-size: 2.8rem; margin-bottom: 8px;">🎉</div>
       <h3 class="confirm-title" style="font-size: 1.3rem; font-weight: 800; margin: 0 0 6px 0;">LexiGo Güncellendi!</h3>
       <div class="app-update-version-badge" style="display: inline-block; padding: 4px 14px; border-radius: 20px; font-size: 0.84rem; font-weight: 800; margin-bottom: 14px;">
-        Sürüm <span id="appUpdateVersionText">v1.8.51</span>
+        Sürüm <span id="appUpdateVersionText">v1.8.52</span>
       </div>
       <div class="update-notes-box" style="text-align: left; border-radius: 16px; padding: 14px 16px; font-size: 0.88rem; line-height: 1.6; margin-bottom: 18px; max-height: 280px; overflow-y: auto;">
         <div class="update-notes-title" style="font-weight: 800; margin-bottom: 8px; display: flex; align-items: center; gap: 6px;">
@@ -3842,11 +3859,11 @@
   <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-storage-compat.js"></script>
-  <script src="firebase_backend.js?v=1.8.51"></script>
+  <script src="firebase_backend.js?v=1.8.52"></script>
 
   <!-- Kelime Verisi ve Uygulama Mantığı (Sadece Standart Vanilla JS) -->
-  <script src="words_data.js?v=1.8.51"></script>
-  <script src="app.js?v=1.8.51"></script>
+  <script src="words_data.js?v=1.8.52"></script>
+  <script src="app.js?v=1.8.52"></script>
 
   </body>
 </html>

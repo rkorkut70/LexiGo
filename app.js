@@ -7,7 +7,7 @@
 (function () {
   'use strict';
 
-  const APP_VERSION = 'v1.8.51';
+  const APP_VERSION = 'v1.8.52';
   const DEFAULT_AVATAR = 'avatar_default';
   const CURRENT_APP_BUILD = 'lexiq_build_19_clean';
 
@@ -45,21 +45,21 @@
     cardTheme: localStorage.getItem('kelime_card_theme') || 'white',
     cardFont: localStorage.getItem('kelime_card_font') || 'normal',
     gameFont: localStorage.getItem('kelime_game_font') || 'normal',
-    cardHaptic: localStorage.getItem('kelime_card_haptic') !== 'false',
+    cardHaptic: localStorage.getItem('kelime_card_haptic') === 'true',
     gameHaptic: localStorage.getItem('kelime_game_haptic') !== 'false',
     fontFamily: localStorage.getItem('kelime_font_family') || 'system',
     flipSpeed: localStorage.getItem('kelime_flip_speed') || 'normal',
     screenFit: localStorage.getItem('lexiq_screen_fit') || 'auto', // 'auto' | 'fit' | 'standard'
     linedPaper: localStorage.getItem('kelime_lined_paper') === 'true',
     reverseMode: localStorage.getItem('kelime_reverse_mode') === 'true',
-    autoplayAudio: localStorage.getItem('kelime_autoplay_audio') === 'true',
+    autoplayAudio: localStorage.getItem('kelime_autoplay_audio') !== 'false',
     studyReminder: localStorage.getItem('kelime_study_reminder') === 'true',
     studyReminderDays: JSON.parse(localStorage.getItem('kelime_study_reminder_days') || '[1,2,3,4,5,6,0]'), // 1=Pzt, ..., 0=Paz
     studyReminderTimes: JSON.parse(localStorage.getItem('kelime_study_reminder_times') || '["20:00"]'),
     speechSpeed: parseFloat(localStorage.getItem('kelime_speech_speed') || '1.0'),
     isShuffled: localStorage.getItem('kelime_shuffle') === 'true',
-    srsPriority: localStorage.getItem('kelime_srs_priority') === 'true',
-    readExampleAudio: localStorage.getItem('kelime_read_example_audio') === 'true',
+    srsPriority: localStorage.getItem('kelime_srs_priority') !== 'false',
+    readExampleAudio: localStorage.getItem('kelime_read_example_audio') !== 'false',
     slideshowActive: false,
     slideshowTimer: null,
     cardAutoAccent: localStorage.getItem('lexiq_card_auto_accent') || 'US', // 'US' | 'UK'
@@ -70,6 +70,7 @@
     dailyGoalExtra: 0,
     sessionLearnedIds: new Set(),
     activeUnitNo: null,
+    profileUnitLevelFilter: 'ALL',
     activeFilter: (function() {
       const f = localStorage.getItem('kelime_active_filter');
       if (['pending', 'learned', 'mylist', 'troubled'].includes(f)) return f;
@@ -688,6 +689,8 @@
     cardBackNotebookBtnText: document.getElementById('cardBackNotebookBtnText'),
     cardTroubledActionBtn: document.getElementById('cardTroubledActionBtn'),
     cardBackTroubledActionBtn: document.getElementById('cardBackTroubledActionBtn'),
+    cardUnlearnBtn: document.getElementById('cardUnlearnBtn'),
+    cardBackUnlearnBtn: document.getElementById('cardBackUnlearnBtn'),
     inlineDailyGoalSelect: document.getElementById('inlineDailyGoalSelect'),
     inlineUnitTotalBadge: document.getElementById('inlineUnitTotalBadge'),
     filterTabs: document.querySelectorAll('.filter-tab'),
@@ -2553,64 +2556,191 @@
   }
 
   /**
-   * Öğrenci Profilinde Kitaptaki Üniteleri, İlerleme Yüzdelerini ve %75 Açılma Kuralını Gösterir
+   * Seviye bazlı kitap başlığı ve ikonu döndürür.
+   */
+  function getBookMetaForLevel(langCode, level, units = []) {
+    let title = '';
+    let icon = '📘';
+    if (langCode === 'EN-TR') {
+      if (level === 'A2') { title = 'Gateway to the World A2'; icon = '📘'; }
+      else if (level === 'B1') { title = 'Gateway to the World B1'; icon = '📗'; }
+      else if (level === 'B1+') { title = 'Gateway to the World B1+'; icon = '📙'; }
+    } else if (langCode === 'FR-TR') {
+      if (level === 'A1') { title = 'Édito A1 - Méthode de français'; icon = '📘'; }
+      else if (level === 'A2') { title = 'Édito A2 - Méthode de français'; icon = '📗'; }
+      else if (level === 'B1') { title = 'Mon Alter Ego - Méthode de Français - B1'; icon = '📙'; }
+    } else if (langCode === 'DE-TR') {
+      if (level === 'A1') { title = 'Netzwerk neu A1'; icon = '📘'; }
+      else if (level === 'A2') { title = 'Netzwerk neu A2'; icon = '📗'; }
+      else if (level === 'B1') { title = 'Netzwerk neu B1'; icon = '📙'; }
+    }
+    if (!title) {
+      const found = units.find(u => u.kitap && u.kitap !== 'Deutscher Wortschatz');
+      title = found ? found.kitap : (units[0]?.kitap || `${level} Müfredatı`);
+    }
+    return { title, icon, level };
+  }
+
+  /**
+   * Öğrenci Profilinde Tüm Kitaplardaki Üniteleri, İlerleme Yüzdelerini ve %80 Açılma Kuralını Gösterir
+   * EN-TR (A2, B1, B1+), FR-TR (A1, A2, B1), DE-TR (A1, A2, B1) dillerinin tüm kitaplarını eksiksiz listeler.
    */
   function renderStudentUnitProgressUI() {
     const listEl = document.getElementById('profUnitsProgressList');
+    const tabsEl = document.getElementById('profUnitLevelTabs');
     if (!listEl) return;
 
-    const langCode = state.activeLanguage;
-    const targetLevel = state.userLevel || getLevelForTrack(langCode, state.userTrack);
-    const units = getUnitsData().filter(u => u.dil === langCode && (!targetLevel || u.seviye === targetLevel));
+    const langCode = state.activeLanguage || 'EN-TR';
+    const allUnits = getUnitsData().filter(u => u.dil === langCode);
 
-    if (!units || units.length === 0) {
+    if (!allUnits || allUnits.length === 0) {
       listEl.innerHTML = '<div class="unit-duration-empty">Müfredat ünite bilgisi bulunamadı.</div>';
+      if (tabsEl) tabsEl.innerHTML = '';
       return;
     }
 
-    const lockMap = getUnitLockStatusMap(langCode, targetLevel);
+    const levels = getLevelsForLanguage(langCode);
+    if (!state.profileUnitLevelFilter || (state.profileUnitLevelFilter !== 'ALL' && !levels.includes(state.profileUnitLevelFilter))) {
+      state.profileUnitLevelFilter = 'ALL';
+    }
+
+    // Seviye / Kitap Filtre Sekmelerini Oluştur
+    if (tabsEl) {
+      tabsEl.innerHTML = '';
+
+      // "Tüm Kitaplar" Sekmesi
+      const allBtn = document.createElement('button');
+      allBtn.type = 'button';
+      allBtn.className = `prof-level-tab-btn ${state.profileUnitLevelFilter === 'ALL' ? 'active' : ''}`;
+      allBtn.innerHTML = `<span>📚</span><span>Tüm Kitaplar (${levels.length})</span>`;
+      allBtn.onclick = () => {
+        state.profileUnitLevelFilter = 'ALL';
+        renderStudentUnitProgressUI();
+      };
+      tabsEl.appendChild(allBtn);
+
+      // Her Seviye / Kitap İçin Ayrı Sekme
+      levels.forEach(lvl => {
+        const lvlUnits = allUnits.filter(u => u.seviye === lvl);
+        const meta = getBookMetaForLevel(langCode, lvl, lvlUnits);
+        const btn = document.createElement('button');
+        btn.type = 'button';
+        btn.className = `prof-level-tab-btn ${state.profileUnitLevelFilter === lvl ? 'active' : ''}`;
+        const shortTitle = meta.title.split(' - ')[0].replace('Gateway to the World', 'Gateway');
+        btn.innerHTML = `<span>${meta.icon}</span><span>${lvl} • ${shortTitle}</span>`;
+        btn.onclick = () => {
+          state.profileUnitLevelFilter = lvl;
+          renderStudentUnitProgressUI();
+        };
+        tabsEl.appendChild(btn);
+      });
+    }
+
     listEl.innerHTML = '';
 
-    units.forEach((unit, idx) => {
-      const lockInfo = lockMap[unit.unite_no] || { isUnlocked: idx === 0, progress: { percent: 0, isPassed80: false, isPassed75: false, learned: 0, total: 0 } };
-      const prog = lockInfo.progress || getUnitProgress(unit, langCode);
-      const isUnlocked = lockInfo.isUnlocked;
-      const isPassed = prog.isPassed80 || prog.isPassed75;
-      const isComplete = prog.total > 0 && prog.learned >= prog.total;
+    const displayLevels = state.profileUnitLevelFilter === 'ALL' ? levels : [state.profileUnitLevelFilter];
 
-      const itemEl = document.createElement('div');
-      itemEl.className = `prof-unit-progress-item ${!isUnlocked ? 'is-locked' : ''} ${isComplete ? 'is-complete' : ''}`;
+    displayLevels.forEach(lvl => {
+      const levelUnits = allUnits.filter(u => u.seviye === lvl);
+      if (!levelUnits.length) return;
 
-      // Durum Rozeti
-      let badgeHtml = '';
-      if (!isUnlocked) {
-        badgeHtml = '<span class="pup-badge pup-locked">🔒 Kilitli</span>';
-      } else if (isComplete) {
-        badgeHtml = '<span class="pup-badge pup-completed">🏆 %100 Tamamlandı</span>';
-      } else if (isPassed) {
-        badgeHtml = `<span class="pup-badge pup-passed">✅ %${prog.percent} (Açıldı)</span>`;
-      } else {
-        badgeHtml = `<span class="pup-badge pup-progress">%${prog.percent} (Hedef %80)</span>`;
-      }
+      const meta = getBookMetaForLevel(langCode, lvl, levelUnits);
+      const lockMap = getUnitLockStatusMap(langCode, lvl);
 
-      itemEl.innerHTML = `
-        <div class="pup-header">
-          <div class="pup-title-wrap">
-            <span class="pup-unit-num">${idx + 1}</span>
-            <div class="pup-names">
-              <span class="pup-title">${unit.baslik || `Ünite ${unit.unite_no}`}</span>
-              <span class="pup-counts">${prog.learned} / ${prog.total} kelime öğrenildi</span>
+      // Kitap geneli istatistiklerini hesapla
+      let bookTotalWords = 0;
+      let bookLearnedWords = 0;
+      let completedUnitsCount = 0;
+
+      const unitProgressData = levelUnits.map((unit, idx) => {
+        const lockInfo = lockMap[unit.unite_no] || { isUnlocked: idx === 0, progress: { percent: 0, isPassed80: false, isPassed75: false, learned: 0, total: 0 } };
+        const prog = lockInfo.progress || getUnitProgress(unit, langCode);
+        bookTotalWords += prog.total;
+        bookLearnedWords += prog.learned;
+        if (prog.isPassed80 || prog.isPassed75) completedUnitsCount++;
+        return {
+          unit,
+          idx,
+          lockInfo,
+          prog,
+          isUnlocked: lockInfo.isUnlocked,
+          isPassed: prog.isPassed80 || prog.isPassed75,
+          isComplete: prog.total > 0 && prog.learned >= prog.total
+        };
+      });
+
+      const bookPct = bookTotalWords > 0 ? Math.round((bookLearnedWords / bookTotalWords) * 100) : 0;
+      const isBookCompleted = bookPct >= 80;
+
+      // Kitap Bölüm Kartı
+      const sectionEl = document.createElement('div');
+      sectionEl.className = 'prof-book-section';
+      sectionEl.setAttribute('data-level', lvl);
+
+      sectionEl.innerHTML = `
+        <div class="prof-book-section-header">
+          <div class="prof-book-header-left">
+            <span class="prof-book-icon">${meta.icon}</span>
+            <div class="prof-book-info">
+              <div class="prof-book-title-row">
+                <span class="prof-book-title">${meta.title}</span>
+                <span class="prof-book-level-badge">${lvl}</span>
+              </div>
+              <div class="prof-book-meta">${levelUnits.length} Ünite • ${bookLearnedWords} / ${bookTotalWords} kelime öğrenildi (${completedUnitsCount}/${levelUnits.length} ünite tamamlandı)</div>
             </div>
           </div>
-          ${badgeHtml}
+          <div class="prof-book-header-right">
+            <span class="prof-book-pct-badge ${isBookCompleted ? 'is-complete' : ''}">%${bookPct}</span>
+          </div>
         </div>
-        <div class="pup-bar-track" title="%${prog.percent} tamamlandı (Baraj: %80)">
-          <div class="pup-bar-fill" style="width: ${Math.min(100, prog.percent)}%;"></div>
-          <div class="pup-bar-threshold" title="%80 Kuralı Eşiği" style="left: 80%;"></div>
+        <div class="prof-book-progress-mini" title="${meta.title}: %${bookPct} tamamlandı">
+          <div class="prof-book-mini-fill" style="width: ${Math.min(100, bookPct)}%;"></div>
         </div>
+        <div class="prof-book-units-list"></div>
       `;
 
-      listEl.appendChild(itemEl);
+      const unitsContainer = sectionEl.querySelector('.prof-book-units-list');
+
+      unitProgressData.forEach(({ unit, idx, prog, isUnlocked, isPassed, isComplete }) => {
+        const itemEl = document.createElement('div');
+        itemEl.className = `prof-unit-progress-item ${!isUnlocked ? 'is-locked' : ''} ${isComplete ? 'is-complete' : ''}`;
+
+        // Durum Rozeti
+        let badgeHtml = '';
+        if (!isUnlocked) {
+          badgeHtml = '<span class="pup-badge pup-locked">🔒 Kilitli</span>';
+        } else if (isComplete) {
+          badgeHtml = '<span class="pup-badge pup-completed">🏆 %100 Tamamlandı</span>';
+        } else if (isPassed) {
+          badgeHtml = `<span class="pup-badge pup-passed">✅ %${prog.percent} (Açıldı)</span>`;
+        } else {
+          badgeHtml = `<span class="pup-badge pup-progress">%${prog.percent} (Hedef %80)</span>`;
+        }
+
+        const displayUnitNum = getDisplayUnitNumber(unit, idx);
+        const cleanUnitTitle = unit.unite_adi || unit.baslik || `Ünite ${displayUnitNum}`;
+
+        itemEl.innerHTML = `
+          <div class="pup-header">
+            <div class="pup-title-wrap">
+              <span class="pup-unit-num">${displayUnitNum}</span>
+              <div class="pup-names">
+                <span class="pup-title">${cleanUnitTitle}</span>
+                <span class="pup-counts">${prog.learned} / ${prog.total} kelime öğrenildi</span>
+              </div>
+            </div>
+            ${badgeHtml}
+          </div>
+          <div class="pup-bar-track" title="%${prog.percent} tamamlandı (Baraj: %80)">
+            <div class="pup-bar-fill" style="width: ${Math.min(100, prog.percent)}%;"></div>
+            <div class="pup-bar-threshold" title="%80 Kuralı Eşiği" style="left: 80%;"></div>
+          </div>
+        `;
+
+        unitsContainer.appendChild(itemEl);
+      });
+
+      listEl.appendChild(sectionEl);
     });
   }
 
@@ -3096,6 +3226,14 @@ let activeAvatarCategory = 'all';
           baslik: `${w.seviye ? w.seviye + ' • ' : ''}${cleanTitle}`,
           aciklama: `${w.kitap || ''} Ünite ${w.unite_no} kelimeleri`
         });
+      } else {
+        // Generic (örn. UNIT 1) başlık yerine gerçek ünite/bölüm adını (örn. Guten Tag!) tercih et
+        const existing = unitsMap.get(key);
+        if (w.unite_adi && (existing.unite_adi === 'UNIT 1' || existing.unite_adi.startsWith('Ünite ')) && w.unite_adi !== 'UNIT 1') {
+          existing.unite_adi = w.unite_adi;
+          existing.baslik = `${existing.seviye ? existing.seviye + ' • ' : ''}${w.unite_adi}`;
+          if (w.kitap && w.kitap !== 'Deutscher Wortschatz') existing.kitap = w.kitap;
+        }
       }
     }
     const list = Array.from(unitsMap.values()).sort((a, b) => a.unite_no - b.unite_no);
@@ -3984,8 +4122,30 @@ let activeAvatarCategory = 'all';
     }
   }
 
+  // Yardım turu (Help bubbles / Tour) engelleme kontrolü
+  function isTourBlocked() {
+    if (window.isStreakPledgePending) return true;
+    if (window.isOnboardingFlowActive) return true;
+    const streakModal = document.getElementById('streakPledgeModal');
+    if (streakModal && (streakModal.classList.contains('active') || (streakModal.style.display && streakModal.style.display !== 'none'))) {
+      return true;
+    }
+    const obModal = (dom && dom.onboardingModal) || document.getElementById('onboardingModal');
+    if (obModal && (obModal.classList.contains('active') || (obModal.style.display && obModal.style.display !== 'none'))) {
+      return true;
+    }
+    return false;
+  }
+  window.isTourBlocked = isTourBlocked;
+
   function startOnboardingFlow() {
     window.startOnboardingFlow = startOnboardingFlow;
+    window.isOnboardingFlowActive = true;
+    window.isStreakPledgePending = false;
+    localStorage.removeItem('lexiq_tour_completed');
+    localStorage.removeItem('lexiq_cards_tour_completed');
+    if (typeof endTour === 'function') endTour(false);
+
     obState.step = 0;
     obState.name = (state.userName && state.userName !== 'Öğrenci') ? state.userName : '';
     obState.avatar = (state.userAvatar && state.userAvatar !== '🦊' && state.userAvatar !== 'avatar_1_1') ? state.userAvatar : DEFAULT_AVATAR;
@@ -4353,21 +4513,28 @@ let activeAvatarCategory = 'all';
       dom.onboardingModal.classList.remove('active');
       dom.onboardingModal.style.display = 'none';
     }
-    switchAppMode('home');
-    showToast(`Hoş geldin, ${state.userName}! ${state.userAvatar} Öğrenme yolculuğun başlıyor.`);
+    window.isOnboardingFlowActive = false;
 
     if (obState.streakPledgeDays) {
       // 5 Günlük Seri Sözü modalını aç.
-      // Yardım baloncukları (tur), kullanıcı bu günlük söz ekranını kapattıktan sonra devreye girecektir.
+      // DİKKAT: Yardım baloncukları (tur), kullanıcı bu günlük söz ekranını kapattıktan SONRA devreye girecektir.
+      window.isStreakPledgePending = true;
+      switchAppMode('home');
+      showToast(`Hoş geldin, ${state.userName}! ${state.userAvatar} Öğrenme yolculuğun başlıyor.`);
       setTimeout(() => {
         startStreakPledge(obState.streakPledgeDays);
-      }, 500);
+      }, 300);
     } else {
+      window.isStreakPledgePending = false;
+      switchAppMode('home');
+      showToast(`Hoş geldin, ${state.userName}! ${state.userAvatar} Öğrenme yolculuğun başlıyor.`);
       // Seri sözü seçilmediyse veya atlandıysa, doğrudan yardım turunu başlat
       if (!localStorage.getItem('lexiq_tour_completed')) {
         setTimeout(() => {
-          const tourFn = (typeof startFeatureTour === 'function') ? startFeatureTour : window.startFeatureTour;
-          if (typeof tourFn === 'function') tourFn(false);
+          if (!isTourBlocked()) {
+            const tourFn = (typeof startFeatureTour === 'function') ? startFeatureTour : window.startFeatureTour;
+            if (typeof tourFn === 'function') tourFn(false);
+          }
         }, 700);
       }
     }
@@ -4382,14 +4549,16 @@ let activeAvatarCategory = 'all';
   }
 
   function toggleWordInNotebook(wordObj) {
-    if (!wordObj || !wordObj.id) return;
+    if (!wordObj || !wordObj.id) return false;
     const wordId = wordObj.id;
     if (!state.notebookMap) state.notebookMap = {};
 
+    let isAdded = false;
     if (state.notebookMap[wordId]) {
       delete state.notebookMap[wordId];
       localStorage.setItem('lexiq_notebook_words', JSON.stringify(state.notebookMap));
       showToast(`"${wordObj.kelime}" Kelime Defterim'den çıkarıldı.`);
+      isAdded = false;
     } else {
       state.notebookMap[wordId] = {
         addedAt: Date.now(),
@@ -4397,6 +4566,7 @@ let activeAvatarCategory = 'all';
       };
       localStorage.setItem('lexiq_notebook_words', JSON.stringify(state.notebookMap));
       showToast(`🔖 "${wordObj.kelime}" Kelime Defterim'e eklendi!`);
+      isAdded = true;
     }
 
     if (typeof window.syncProgressToFirebase === 'function') {
@@ -4410,6 +4580,7 @@ let activeAvatarCategory = 'all';
     } else {
       updateCardCategoryCounters();
     }
+    return isAdded;
   }
 
   function updateNotebookCardButtonUI(wordObj) {
@@ -4757,6 +4928,8 @@ let activeAvatarCategory = 'all';
         if (dom.cardBackNotebookToggleBtn) dom.cardBackNotebookToggleBtn.style.display = 'none';
         if (dom.cardTroubledActionBtn) dom.cardTroubledActionBtn.style.display = 'none';
         if (dom.cardBackTroubledActionBtn) dom.cardBackTroubledActionBtn.style.display = 'none';
+        if (dom.cardUnlearnBtn) dom.cardUnlearnBtn.style.display = 'none';
+        if (dom.cardBackUnlearnBtn) dom.cardBackUnlearnBtn.style.display = 'none';
         if (dom.cardPhonetic) dom.cardPhonetic.style.display = 'none';
         if (dom.cardPos) dom.cardPos.style.display = 'none';
         if (dom.enAccentGroup) {
@@ -4798,6 +4971,8 @@ let activeAvatarCategory = 'all';
         if (dom.cardBackNotebookToggleBtn) dom.cardBackNotebookToggleBtn.style.display = 'none';
         if (dom.cardTroubledActionBtn) dom.cardTroubledActionBtn.style.display = 'none';
         if (dom.cardBackTroubledActionBtn) dom.cardBackTroubledActionBtn.style.display = 'none';
+        if (dom.cardUnlearnBtn) dom.cardUnlearnBtn.style.display = 'none';
+        if (dom.cardBackUnlearnBtn) dom.cardBackUnlearnBtn.style.display = 'none';
         if (dom.cardPhonetic) dom.cardPhonetic.style.display = 'none';
         if (dom.cardPos) dom.cardPos.style.display = 'none';
         if (dom.enAccentGroup) {
@@ -4839,6 +5014,8 @@ let activeAvatarCategory = 'all';
         if (dom.cardBackNotebookToggleBtn) dom.cardBackNotebookToggleBtn.style.display = 'none';
         if (dom.cardTroubledActionBtn) dom.cardTroubledActionBtn.style.display = 'none';
         if (dom.cardBackTroubledActionBtn) dom.cardBackTroubledActionBtn.style.display = 'none';
+        if (dom.cardUnlearnBtn) dom.cardUnlearnBtn.style.display = 'none';
+        if (dom.cardBackUnlearnBtn) dom.cardBackUnlearnBtn.style.display = 'none';
         if (dom.cardPhonetic) dom.cardPhonetic.style.display = 'none';
         if (dom.cardPos) dom.cardPos.style.display = 'none';
         if (dom.enAccentGroup) {
@@ -4910,10 +5087,19 @@ let activeAvatarCategory = 'all';
 
     if (isLearned) {
       if (dom.markLearnedBtn) {
-        dom.markLearnedBtn.disabled = true;
-        dom.markLearnedBtn.classList.add('is-already-learned');
-        if (dom.markLearnedBtnText) {
-          dom.markLearnedBtnText.textContent = 'Öğrenildi';
+        dom.markLearnedBtn.disabled = false;
+        dom.markLearnedBtn.classList.remove('is-already-learned');
+        dom.markLearnedBtn.classList.add('is-unlearn-btn');
+        if (state.activeFilter === 'learned') {
+          dom.markLearnedBtn.title = "Bu kelimeyi Öğrenilenler'den çıkar ve Öğrenilecekler havuzuna geri al";
+          if (dom.markLearnedBtnText) {
+            dom.markLearnedBtnText.innerHTML = '↺ Öğrenilecekler\'e Al';
+          }
+        } else {
+          dom.markLearnedBtn.title = "Bu kelimeyi Öğrenilenler'den çıkar ve Öğrenilecekler havuzuna geri al";
+          if (dom.markLearnedBtnText) {
+            dom.markLearnedBtnText.innerHTML = '↺ Tekrar Öğren';
+          }
         }
       }
       if (dom.cardStatusBadge) {
@@ -4923,7 +5109,8 @@ let activeAvatarCategory = 'all';
     } else {
       if (dom.markLearnedBtn) {
         dom.markLearnedBtn.disabled = false;
-        dom.markLearnedBtn.classList.remove('is-already-learned');
+        dom.markLearnedBtn.classList.remove('is-already-learned', 'is-unlearn-btn');
+        dom.markLearnedBtn.title = "Öğrenildi Olarak İşaretle";
         if (dom.markLearnedBtnText) {
           dom.markLearnedBtnText.textContent = isTroubled ? 'Öğrendim ✓' : 'Öğrendim';
         }
@@ -4931,7 +5118,7 @@ let activeAvatarCategory = 'all';
       if (dom.cardStatusBadge) {
         if (isTroubled) {
           dom.cardStatusBadge.textContent = '⚠️ Zorlandın';
-          dom.cardStatusBadge.className = 'card-status-badge status-pending';
+          dom.cardStatusBadge.className = 'card-status-badge status-troubled';
         } else {
           dom.cardStatusBadge.textContent = 'Bekliyor';
           dom.cardStatusBadge.className = 'card-status-badge status-pending';
@@ -4966,9 +5153,6 @@ let activeAvatarCategory = 'all';
       dom.cardSentenceTranslation.textContent = getWordSentenceTranslation(currentWord);
       const exampleSentence = getWordSentence(currentWord);
       dom.cardExampleSentence.innerHTML = highlightWordInSentence(exampleSentence, currentWord.kelime);
-      if (dom.cardSentenceAudioBtn) {
-        dom.cardSentenceAudioBtn.style.display = exampleSentence ? 'inline-flex' : 'none';
-      }
     } else {
       // STANDART MOD: Ön yüzde Yabancı Kelime, Arka yüzde Türkçe Anlam
       const currentUnitObj = getUnitsData().find(u => u.dil === currentWord.dil && u.unite_no === currentWord.unite_no);
@@ -5031,9 +5215,6 @@ let activeAvatarCategory = 'all';
       dom.cardSentenceTranslation.textContent = getWordSentenceTranslation(currentWord);
       const exampleSentence = getWordSentence(currentWord);
       dom.cardExampleSentence.innerHTML = highlightWordInSentence(exampleSentence, currentWord.kelime);
-      if (dom.cardSentenceAudioBtn) {
-        dom.cardSentenceAudioBtn.style.display = exampleSentence ? 'inline-flex' : 'none';
-      }
     }
 
     // Durum Rozeti
@@ -5058,30 +5239,133 @@ let activeAvatarCategory = 'all';
       dom.cardBackTroubledActionBtn.style.display = showTroubledBtn ? 'inline-flex' : 'none';
     }
 
+    // Yeniden Öğren (Öğrenilenler'den Çıkar) Pill Butonları
+    const showUnlearnPill = isLearned;
+    if (dom.cardUnlearnBtn) {
+      dom.cardUnlearnBtn.style.display = showUnlearnPill ? 'inline-flex' : 'none';
+    }
+    if (dom.cardBackUnlearnBtn) {
+      dom.cardBackUnlearnBtn.style.display = showUnlearnPill ? 'inline-flex' : 'none';
+    }
+
     // Gezinme Durumu
     dom.cardIndexCounter.textContent = `${state.currentIndex + 1} / ${state.words.length}`;
     dom.prevCardBtn.disabled = state.currentIndex === 0;
     dom.nextCardBtn.disabled = state.currentIndex === state.words.length - 1;
   }
 
+  let currentSpeechToken = 0;
+  let cardSentenceAudioTimer = null;
+  let cardWordAudioTimer = null;
+  let speakTimeoutTimer = null;
+  let isSpeakingSentenceAudio = false;
+  let sentenceAudioSafetyTimer = null;
+  let lastSentenceAudioClickTime = 0;
+
+  /**
+   * Tüm seslendirmeleri (TTS, Web Speech, Fallback Audio ve bekleyen zamanlayıcıları) derhal durdurur.
+   * Kartlar hızlıca çevrildiğinde veya yeni karta geçildiğinde seslerin birbirine girmesini kesin olarak önler.
+   */
+  function stopAllSpeech() {
+    // 1. Ses istek jetonunu artırarak önceki tüm bekleyen asenkron işlemleri ve callback'leri geçersiz kıl
+    currentSpeechToken++;
+
+    // 2. Bekleyen gecikmeli seslendirme sayaçlarını iptal et
+    if (cardSentenceAudioTimer) {
+      clearTimeout(cardSentenceAudioTimer);
+      cardSentenceAudioTimer = null;
+    }
+    if (cardWordAudioTimer) {
+      clearTimeout(cardWordAudioTimer);
+      cardWordAudioTimer = null;
+    }
+    if (sentenceAudioSafetyTimer) {
+      clearTimeout(sentenceAudioSafetyTimer);
+      sentenceAudioSafetyTimer = null;
+    }
+    if (speakTimeoutTimer) {
+      clearTimeout(speakTimeoutTimer);
+      speakTimeoutTimer = null;
+    }
+
+    // 3. Aktif SpeechSynthesis Utterance olaylarını ve referansını temizle (cancel sonrası fallback tetiklenmesini önle)
+    if (activeUtterance) {
+      try {
+        activeUtterance.onend = null;
+        activeUtterance.onerror = null;
+      } catch (e) {}
+      activeUtterance = null;
+    }
+
+    // 4. Android Native TTS motorunu durdur
+    try {
+      if (window.AndroidTTS && typeof window.AndroidTTS.stop === 'function') {
+        window.AndroidTTS.stop();
+      }
+    } catch (e) {}
+
+    // 5. Web Speech API (speechSynthesis) durdur (Mobil Chromium güvencesi: önce pause sonra cancel)
+    try {
+      if (typeof window !== 'undefined' && 'speechSynthesis' in window) {
+        window.speechSynthesis.pause();
+        window.speechSynthesis.cancel();
+      }
+    } catch (e) {}
+
+    // 6. Fallback Audio Player akışını derhal kes ve nesneyi sıfırla (Mobil Opera arka plan sızıntısını önler)
+    try {
+      if (typeof fallbackAudioPlayer !== 'undefined' && fallbackAudioPlayer) {
+        fallbackAudioPlayer.onended = null;
+        fallbackAudioPlayer.onerror = null;
+        fallbackAudioPlayer.pause();
+        fallbackAudioPlayer.currentTime = 0;
+        fallbackAudioPlayer.removeAttribute('src');
+        fallbackAudioPlayer.load();
+      }
+    } catch (e) {}
+    fallbackAudioPlayer = null;
+
+    // 7. Ses çalan butonların 'playing' sınıflarını temizle
+    isSpeakingSentenceAudio = false;
+    if (dom.pronounceBtn) dom.pronounceBtn.classList.remove('playing');
+    if (dom.pronounceUsBtn) dom.pronounceUsBtn.classList.remove('playing');
+    if (dom.pronounceUkBtn) dom.pronounceUkBtn.classList.remove('playing');
+    const sentBtn = dom.cardSentenceAudioBtn || document.getElementById('cardSentenceAudioBtn');
+    if (sentBtn) sentBtn.classList.remove('playing');
+  }
+  window.stopAllSpeech = stopAllSpeech;
+
   function setFlipped(flipped) {
+    // Kart hangi yöne çevrilirse çevrilsin hemen önceki çalan/kuyruktaki sesleri derhal kes
+    stopAllSpeech();
+
     if (state.isFlipped !== flipped) {
       triggerHapticFeedback('medium');
     }
     state.isFlipped = flipped;
     if (flipped) {
       dom.flashcard.classList.add('is-flipped');
+      // Kartın arka yüzü açıldı: Kullanıcı kartın arka yüzünde kaldığı sürece cümleyi dinleyebilir
       if (state.readExampleAudio && state.words && state.words[state.currentIndex]) {
         const curWord = state.words[state.currentIndex];
         const sentence = getWordSentence(curWord);
         if (sentence) {
-          setTimeout(() => {
-            speakWord(sentence, curWord.dil || state.activeLanguage);
+          const token = currentSpeechToken;
+          cardSentenceAudioTimer = setTimeout(() => {
+            cardSentenceAudioTimer = null;
+            // SIKI KURAL: Kullanıcı hala kartın arka yüzünde, hala bu oturumda ve aynı kelimedeyse seslendir
+            if (state.isFlipped && token === currentSpeechToken && state.words[state.currentIndex]?.id === curWord.id) {
+              speakWord(sentence, curWord.dil || state.activeLanguage);
+            }
           }, 320);
         }
       }
     } else {
+      // Kartın ön yüzüne geri dönüldü:
       dom.flashcard.classList.remove('is-flipped');
+      // KESİN KURAL: Cümle okuması stopAllSpeech() ile anında kesildi.
+      // Kullanıcı cümlenin tümünü dinlemek için kartın arka yüzünde kalmalıdır.
+      // Ön yüze dönüldüğünde kelimeyi otomatik tekrar okuma; tam sessizlik ve pürüzsüz geçiş sağla.
     }
   }
 
@@ -5089,9 +5373,6 @@ let activeAvatarCategory = 'all';
     setFlipped(!state.isFlipped);
   }
 
-  let isSpeakingSentenceAudio = false;
-  let sentenceAudioSafetyTimer = null;
-  let lastSentenceAudioClickTime = 0;
   function playCurrentCardSentenceAudio(e) {
     if (e) {
       if (typeof e.preventDefault === 'function') e.preventDefault();
@@ -5099,24 +5380,15 @@ let activeAvatarCategory = 'all';
       if (typeof e.stopImmediatePropagation === 'function') e.stopImmediatePropagation();
     }
     const now = Date.now();
-    if (now - lastSentenceAudioClickTime < 450) {
+    if (now - lastSentenceAudioClickTime < 350) {
       return;
     }
     lastSentenceAudioClickTime = now;
     const btn = dom.cardSentenceAudioBtn || document.getElementById('cardSentenceAudioBtn');
 
-    // Eğer halihazırda çalıyorsa durdur ve temizle (toggle mantığı)
+    // Eğer halihazırda çalıyorsa durdur ve çık (toggle mantığı)
     if (isSpeakingSentenceAudio) {
-      isSpeakingSentenceAudio = false;
-      if (sentenceAudioSafetyTimer) clearTimeout(sentenceAudioSafetyTimer);
-      if (btn) btn.classList.remove('playing');
-      try {
-        if (typeof window !== 'undefined' && 'speechSynthesis' in window) window.speechSynthesis.cancel();
-        if (typeof fallbackAudioPlayer !== 'undefined' && fallbackAudioPlayer) {
-          fallbackAudioPlayer.pause();
-          fallbackAudioPlayer.currentTime = 0;
-        }
-      } catch (err) {}
+      stopAllSpeech();
       return;
     }
 
@@ -5128,6 +5400,7 @@ let activeAvatarCategory = 'all';
       return;
     }
 
+    stopAllSpeech();
     isSpeakingSentenceAudio = true;
     if (btn) btn.classList.add('playing');
     triggerHapticFeedback('light');
@@ -5138,7 +5411,7 @@ let activeAvatarCategory = 'all';
       if (btn) btn.classList.remove('playing');
     };
 
-    // Emniyet zaman aşımı (Herhangi bir tarayıcı/cihaz kilitlenmesinde butonun takılı kalmasını önler)
+    // Emniyet zaman aşımı
     const safetyMs = Math.max(4000, sentence.length * 130);
     sentenceAudioSafetyTimer = setTimeout(onSentenceFinish, safetyMs);
 
@@ -5203,10 +5476,17 @@ let activeAvatarCategory = 'all';
       }
     } else {
       triggerHapticFeedback('warning');
-      // Tekrar öğrenilecekler havuzuna al
+      // Tekrar öğrenilecekler havuzuna al (Öğrenilenler grubundan çıkart)
+      currentWord.ogrenilme_durumu = 0;
       delete state.learnedMap[wordId];
-      if (state.sessionLearnedIds) state.sessionLearnedIds.delete(wordId);
-      showToast('Kelime tekrar havuzuna alındı');
+      delete state.learnedMap[String(wordId)];
+      delete state.learnedMap[Number(wordId)];
+      if (state.sessionLearnedIds) {
+        state.sessionLearnedIds.delete(wordId);
+        state.sessionLearnedIds.delete(String(wordId));
+        state.sessionLearnedIds.delete(Number(wordId));
+      }
+      showToast(`🔄 "${currentWord.kelime}" yeniden Öğrenilecekler havuzuna eklendi.`);
     }
 
     // LocalStorage'a kaydet (Kural 6)
@@ -5247,7 +5527,13 @@ let activeAvatarCategory = 'all';
     }
 
     if (state.autoplayAudio && !state.reverseMode && state.words.length > 0) {
-      setTimeout(() => speakCurrentWord(state.cardAutoAccent || state.activeEnAccent || 'US'), 280);
+      if (cardWordAudioTimer) clearTimeout(cardWordAudioTimer);
+      cardWordAudioTimer = setTimeout(() => {
+        cardWordAudioTimer = null;
+        if (!state.isFlipped) {
+          speakCurrentWord(state.cardAutoAccent || state.activeEnAccent || 'US');
+        }
+      }, 280);
     }
   }
 
@@ -5291,26 +5577,22 @@ let activeAvatarCategory = 'all';
   function prevCard() {
     if (state.currentIndex > 0) {
       triggerHapticFeedback('light');
+      stopAllSpeech();
       setFlipped(false);
       state.currentIndex--;
       triggerCardAnimation('prev');
       renderCard();
-      if (state.autoplayAudio && !state.reverseMode) {
-        setTimeout(() => speakCurrentWord(state.cardAutoAccent || state.activeEnAccent || 'US'), 280);
-      }
     }
   }
 
   function nextCard() {
     if (state.currentIndex < state.words.length - 1) {
       triggerHapticFeedback('light');
+      stopAllSpeech();
       setFlipped(false);
       state.currentIndex++;
       triggerCardAnimation('next');
       renderCard();
-      if (state.autoplayAudio && !state.reverseMode) {
-        setTimeout(() => speakCurrentWord(state.cardAutoAccent || state.activeEnAccent || 'US'), 280);
-      }
     }
   }
 
@@ -5465,15 +5747,18 @@ let activeAvatarCategory = 'all';
       if (typeof onEnd === 'function') onEnd();
       return;
     }
+    const token = currentSpeechToken;
     try {
-      if (!fallbackAudioPlayer) {
-        fallbackAudioPlayer = new Audio();
-      } else {
+      if (fallbackAudioPlayer) {
         try {
+          fallbackAudioPlayer.onended = null;
+          fallbackAudioPlayer.onerror = null;
           fallbackAudioPlayer.pause();
           fallbackAudioPlayer.currentTime = 0;
+          fallbackAudioPlayer.removeAttribute('src');
         } catch (e) {}
       }
+      fallbackAudioPlayer = new Audio();
       try { fallbackAudioPlayer.referrerPolicy = 'no-referrer'; } catch (e) {}
 
       const cleanText = text.replace(/<[^>]*>/g, '').replace(/[\r\n\t]+/g, ' ').trim();
@@ -5500,20 +5785,25 @@ let activeAvatarCategory = 'all';
       const handleFinish = () => {
         if (!finished) {
           finished = true;
-          if (typeof onEnd === 'function') onEnd();
+          if (token === currentSpeechToken && typeof onEnd === 'function') {
+            onEnd();
+          }
         }
       };
 
       fallbackAudioPlayer.onended = handleFinish;
       fallbackAudioPlayer.onerror = (e) => {
+        if (token !== currentSpeechToken) return;
         console.warn('Native audio fallback player error:', e);
         // İkinci bir yedek: Eğer Google TTS engellenirse ve İngilizce cümle ise Youdao ile dene
         if (lower.startsWith('en') && audioUrl.includes('google')) {
           const altUrl = `https://dict.youdao.com/dictvoice?audio=${encodeURIComponent(cleanText)}&type=${isUk ? 1 : 2}`;
-          fallbackAudioPlayer.src = altUrl;
-          try { fallbackAudioPlayer.load(); } catch (loadErr) {}
-          fallbackAudioPlayer.play().catch(handleFinish);
-          return;
+          if (fallbackAudioPlayer && token === currentSpeechToken) {
+            fallbackAudioPlayer.src = altUrl;
+            try { fallbackAudioPlayer.load(); } catch (loadErr) {}
+            fallbackAudioPlayer.play().catch(handleFinish);
+            return;
+          }
         }
         handleFinish();
         if (typeof onError === 'function') onError(e);
@@ -5522,28 +5812,44 @@ let activeAvatarCategory = 'all';
       const playPromise = fallbackAudioPlayer.play();
       if (playPromise !== undefined) {
         playPromise.catch(err => {
+          if (token !== currentSpeechToken) return;
           console.warn('Fallback audio playback catch:', err);
           handleFinish();
         });
       }
 
       // Emniyet zaman aşımı
-      setTimeout(handleFinish, Math.max(3500, cleanText.length * 150));
+      setTimeout(() => {
+        if (token === currentSpeechToken) handleFinish();
+      }, Math.max(3500, cleanText.length * 150));
     } catch (err) {
       console.warn('playNativeAudioFallback genel hata:', err);
-      if (typeof onEnd === 'function') onEnd();
+      if (token === currentSpeechToken && typeof onEnd === 'function') onEnd();
     }
   }
 
-  /**
-   * Kelimeyi veya cümleyi seçilen dilde veya aksanda (US / UK)
-   * Web Speech API veya Akıllı Doğal Ses akışı ile net seslendirir.
-   * Bilgisayar, tablet ve cep telefonlarındaki tüm modern tarayıcılarda (Chrome, Safari, Edge, Firefox, iOS)
-   * %100 çalışma güvencesine sahiptir.
-   */
   window.speakWord = speakWord;
   function speakWord(text, dil, buttonEl = null, forcedAccent = null, onFinishCallback = null) {
     if (!text) return;
+
+    // Önceki ses akışlarını durdur (Android TTS, Web Speech, Fallback Audio)
+    try {
+      if (window.AndroidTTS && typeof window.AndroidTTS.stop === 'function') {
+        window.AndroidTTS.stop();
+      }
+    } catch (e) {}
+    try {
+      if (typeof window !== 'undefined' && 'speechSynthesis' in window) {
+        window.speechSynthesis.cancel();
+      }
+    } catch (e) {}
+    try {
+      if (typeof fallbackAudioPlayer !== 'undefined' && fallbackAudioPlayer) {
+        fallbackAudioPlayer.pause();
+        fallbackAudioPlayer.currentTime = 0;
+        fallbackAudioPlayer.src = '';
+      }
+    } catch (e) {}
 
     ensureSpeechSynthesisReady();
 
@@ -5621,14 +5927,24 @@ let activeAvatarCategory = 'all';
         const accentPref = (dil === 'EN-TR') ? (forcedAccent || state.activeEnAccent) : null;
         let nativeVoice = findNativeVoice(targetLangCode, accentPref);
 
-        // Eğer cihazda/sistemde o dil için yüklü yerel ses motoru yoksa (özellikle Windows'ta Almanca/Fransızca eksikse),
-        // Web Speech API'nin sessizliğe gömülmesini kesinlikle önleyip doğrudan kesintisiz HD Çevrimiçi Doğal Ses Akışına geç
+        // KRİTİK KONTROL (Opera & Türkçe Windows Koruması):
+        // Eğer sistemde hedef yabancı dile ait (İngilizce/Almanca/Fransızca) yerel bir ses YOKSA,
+        // KESİNLİKLE speechSynthesis'e devam etme! Çünkü devam edilirse Opera/Chromium sistemdeki
+        // varsayılan Türkçe sesi (Microsoft Tolga/Emel) kullanarak yabancı kelimeyi Türkçe telaffuzla okur!
+        // Bunun yerine doğrudan kaliteli ve doğal çevrimiçi ses akışına (Fallback) geç.
         if (!nativeVoice) {
           playNativeAudioFallback(text, targetLangCode, finish, finish);
           return;
         }
 
-        const utterance = new SpeechSynthesisUtterance(text.trim());
+        const cleanSpeakText = String(text || '')
+          .replace(/<[^>]*>/g, '')
+          .replace(/\?ts/g, "'s")
+          .replace(/[’‘]/g, "'")
+          .replace(/[“”]/g, '"')
+          .trim();
+
+        const utterance = new SpeechSynthesisUtterance(cleanSpeakText);
         activeUtterance = utterance; // Garbage Collector tarafından silinmesini önle
         utterance.voice = nativeVoice;
         utterance.lang = nativeVoice.lang || targetLangCode;
@@ -5649,6 +5965,11 @@ let activeAvatarCategory = 'all';
 
         utterance.onend = finish;
         utterance.onerror = (e) => {
+          // İptal edilen veya durdurulan seslerde fallback tetikleme (seslerin üst üste binmesini önler)
+          if (e && (e.error === 'canceled' || e.error === 'interrupted' || !activeUtterance || activeUtterance !== utterance)) {
+            finish();
+            return;
+          }
           console.warn('SpeechSynthesis hata, çevrimiçi ses akışına geçiliyor:', e);
           if (state.speechEngine !== 'device') {
             playNativeAudioFallback(text, targetLangCode, finish, finish);
@@ -5666,7 +5987,9 @@ let activeAvatarCategory = 'all';
         }, timeoutMs);
 
         // Kısa gecikme ile seslendir (cancel sonrası hemen speak çağrıldığında oluşan Chrome hatasını önler)
-        setTimeout(() => {
+        if (speakTimeoutTimer) clearTimeout(speakTimeoutTimer);
+        speakTimeoutTimer = setTimeout(() => {
+          speakTimeoutTimer = null;
           try {
             if (window.speechSynthesis.paused) window.speechSynthesis.resume();
             window.speechSynthesis.speak(utterance);
@@ -5823,7 +6146,12 @@ let activeAvatarCategory = 'all';
       if (cleanTitle.includes('•')) {
         cleanTitle = cleanTitle.split('•')[1].trim();
       }
-      dom.headerUnitLabel.textContent = cleanTitle;
+      if (unitObj.dil === 'DE-TR' && !cleanTitle.toLowerCase().startsWith('kapitel')) {
+        const uIdx = units.indexOf(unitObj);
+        cleanTitle = `Kapitel ${uIdx >= 0 ? uIdx + 1 : unitObj.unite_no}: ${cleanTitle}`;
+      }
+      const lvl = unitObj.seviye || targetLevel || '';
+      dom.headerUnitLabel.textContent = lvl ? `${lvl} - ${cleanTitle}` : cleanTitle;
     }
   }
 
@@ -5873,10 +6201,13 @@ let activeAvatarCategory = 'all';
       const percent = totalTarget > 0 ? Math.round((learnedCount / totalTarget) * 100) : 0;
       const isCompleted = totalTarget > 0 && learnedCount === totalTarget;
 
-      const displayNo = getDisplayUnitNumber(u, idx);
-      let cleanTitle = u.baslik || `Ünite ${displayNo}`;
+      const levelCode = u.seviye || targetLevel || '';
+      let cleanTitle = u.unite_adi || u.baslik || `Ünite ${u.unite_no}`;
       if (cleanTitle.includes('•')) {
         cleanTitle = cleanTitle.split('•')[1].trim();
+      }
+      if (u.dil === 'DE-TR' && !cleanTitle.toLowerCase().startsWith('kapitel')) {
+        cleanTitle = `Kapitel ${idx + 1}: ${cleanTitle}`;
       }
 
       let statBadgeHtml = '';
@@ -5893,7 +6224,7 @@ let activeAvatarCategory = 'all';
       card.innerHTML = `
         <div class="unit-option-header">
           <div class="unit-option-title-wrap">
-            <span class="unit-num-badge">Ünite ${displayNo}</span>
+            <span class="unit-num-badge">${levelCode}</span>
             <strong class="unit-option-title" ${isEnglish ? 'lang="en"' : ''}>${cleanTitle}</strong>
             ${isActive ? '<span class="unit-active-pill">Mevcut Ünite</span>' : ''}
           </div>
@@ -5924,7 +6255,7 @@ let activeAvatarCategory = 'all';
         refreshWordsList();
         updateHeaderUnitDisplay();
         closeUnitModal();
-        showToast(`📚 ${cleanTitle} seçildi`);
+        showToast(`📚 ${levelCode ? levelCode + ' - ' : ''}${cleanTitle} seçildi`);
       });
 
       dom.unitOptionsList.appendChild(card);
@@ -6403,6 +6734,7 @@ let activeAvatarCategory = 'all';
   }
 
   function openStreakPledgeModal() {
+    window.isStreakPledgePending = false;
     evaluateStreakPledge();
     const modalEl = document.getElementById('streakPledgeModal');
     if (!modalEl) return;
@@ -6464,16 +6796,17 @@ let activeAvatarCategory = 'all';
   }
 
   function closeStreakPledgeModal() {
+    window.isStreakPledgePending = false;
     const modalEl = document.getElementById('streakPledgeModal');
     if (modalEl) {
       modalEl.classList.remove('active');
       setTimeout(() => { modalEl.style.display = 'none'; }, 200);
     }
 
-    // Kurulum ve Günlük Söz ekranı geçildikten sonra yardım baloncukları (tur) başlasın
+    // Kurulum ve Günlük Söz ekranı tamamen geçildikten sonra yardım baloncukları (tur) başlasın
     if (!localStorage.getItem('lexiq_tour_completed')) {
       setTimeout(() => {
-        if (state.activeMode === 'home') {
+        if (state.activeMode === 'home' && !isTourBlocked()) {
           const tourFn = (typeof startFeatureTour === 'function') ? startFeatureTour : window.startFeatureTour;
           if (typeof tourFn === 'function') tourFn(false);
         }
@@ -7424,19 +7757,15 @@ let activeAvatarCategory = 'all';
       updateHomeScreenUI();
       updateUserProfileUI();
 
-      // Ana sayfaya dönüldüğünde eğer yardım turu henüz tamamlanmadıysa ve açık modal yoksa başlat
+      // Ana sayfaya dönüldüğünde eğer yardım turu henüz tamamlanmadıysa ve açık modal veya bekleyen seri sözü yoksa başlat
       if (!localStorage.getItem('lexiq_tour_completed')) {
-        const streakModal = document.getElementById('streakPledgeModal');
-        const isStreakOpen = streakModal && (streakModal.classList.contains('active') || (streakModal.style.display && streakModal.style.display !== 'none'));
-        const obModal = (dom && dom.onboardingModal) || document.getElementById('onboardingModal');
-        const isObOpen = obModal && (obModal.classList.contains('active') || (obModal.style.display && obModal.style.display !== 'none'));
-        if (!isStreakOpen && !isObOpen) {
+        if (!isTourBlocked()) {
           setTimeout(() => {
-            if (state.activeMode === 'home' && !localStorage.getItem('lexiq_tour_completed')) {
+            if (state.activeMode === 'home' && !localStorage.getItem('lexiq_tour_completed') && !isTourBlocked()) {
               const tourFn = (typeof startFeatureTour === 'function') ? startFeatureTour : window.startFeatureTour;
               if (typeof tourFn === 'function') tourFn(false);
             }
-          }, 450);
+          }, 500);
         }
       }
     } else if (mode === 'flashcards') {
@@ -8325,11 +8654,19 @@ let activeAvatarCategory = 'all';
     const pool = getLearnedWordsPool();
     if (pool.length < 3) return;
 
+    // Anagram için öncelikle tek kelimelik ve 3-12 harf arası kelimeleri tercih et
+    const cleanWordPool = pool.filter(w => {
+      const clean = (w.kelime || '').replace(/\(.*?\)/g, '').trim();
+      const raw = clean.replace(/[^a-zA-ZçğıöşüÇĞİÖŞÜàâäéèêëîïôöùûüÿçÀÂÄÉÈÊËÎÏÔÖÙÛÜŸÇ]/g, '');
+      return raw.length >= 3 && raw.length <= 12 && !clean.includes(' ');
+    });
+    const candidatePool = cleanWordPool.length >= 3 ? cleanWordPool : pool;
+
     let candidate = getNextMistakeRetryCandidate();
     if (!candidate) {
-      candidate = pool[Math.floor(Math.random() * pool.length)];
-      if (pool.length > 1 && state.currentAnagramWord && candidate.id === state.currentAnagramWord.id) {
-        candidate = pool.find(w => w.id !== state.currentAnagramWord.id) || candidate;
+      candidate = candidatePool[Math.floor(Math.random() * candidatePool.length)];
+      if (candidatePool.length > 1 && state.currentAnagramWord && candidate.id === state.currentAnagramWord.id) {
+        candidate = candidatePool.find(w => w.id !== state.currentAnagramWord.id) || candidate;
       }
     }
     state.currentAnagramWord = candidate;
@@ -8362,8 +8699,8 @@ let activeAvatarCategory = 'all';
     anagramState.bankItems = shuffled;
 
     dom.anagramMeaningText.textContent = getWordMeaning(candidate);
-    const wordType = candidate.kelime_turu ? candidate.kelime_turu.toLowerCase() : '';
-    dom.anagramHintText.textContent = `${letters.length} harf ${wordType ? '• ' + wordType : ''}`;
+    const wordType = candidate.tur || candidate.kelime_turu || '';
+    dom.anagramHintText.textContent = `${letters.length} harf • İlk harf: "${letters[0]}"${wordType ? ' • ' + wordType.toLowerCase() : ''}`;
 
     renderAnagramUI();
   }
@@ -8502,7 +8839,7 @@ let activeAvatarCategory = 'all';
       return;
     }
 
-    // 2. Düzeltilmesi veya doldurulması gereken ilk sırayı bul (boş veya yanlış olan)
+    // 2. Sıradaki doğru harfin konumunu bul (0'dan başlayarak eşleşmeyen ilk yuva)
     let targetIdx = -1;
     for (let i = 0; i < anagramState.solutionLetters.length; i++) {
       const current = anagramState.userSlots[i];
@@ -8515,27 +8852,23 @@ let activeAvatarCategory = 'all';
 
     const neededChar = anagramState.solutionLetters[targetIdx];
 
-    // 3. Eğer hedef yuvada yanlış bir harf varsa, onu havuza geri gönder
-    if (anagramState.userSlots[targetIdx]) {
-      anagramState.userSlots[targetIdx].used = false;
-      anagramState.userSlots[targetIdx] = null;
-    }
-
-    // 4. İhtiyaç duyulan harfi havuzdan ara (kullanılmamış olan)
-    let availableItem = anagramState.bankItems.find(item => !item.used && item.letter === neededChar);
-
-    // Eğer havuzda boşta yoksa, öğrenci bu harfi daha sonraki bir yuvaya yanlış yerleştirmiş demektir; oradan al
-    if (!availableItem) {
-      const misplacedIdx = anagramState.userSlots.findIndex((s, idx) => idx > targetIdx && s && s.letter === neededChar);
-      if (misplacedIdx !== -1) {
-        availableItem = anagramState.userSlots[misplacedIdx];
-        anagramState.userSlots[misplacedIdx] = null;
+    // 3. Hedef yuvada ve sonraki yuvalarda yanlış/boş duran harfleri havuza geri gönder
+    // Bu sayede havuzda hiçbir zaman harf kaybolmaz ve aranan harf daima bankta boşa çıkar!
+    for (let i = targetIdx; i < anagramState.userSlots.length; i++) {
+      if (anagramState.userSlots[i]) {
+        anagramState.userSlots[i].used = false;
+        anagramState.userSlots[i] = null;
       }
     }
 
-    if (!availableItem) return;
+    // 4. İhtiyaç duyulan harfi havuzdan bul
+    const availableItem = anagramState.bankItems.find(item => !item.used && item.letter === neededChar);
+    if (!availableItem) {
+      console.warn('Anagram ipucu harfi bulunamadı:', neededChar);
+      return;
+    }
 
-    // 5. Harfi doğru yuvaya yerleştir ve XP cezasını uygula
+    // 5. Harfi doğru yuvaya yerleştir ve UI güncelle
     availableItem.used = true;
     anagramState.userSlots[targetIdx] = availableItem;
 
@@ -8543,7 +8876,7 @@ let activeAvatarCategory = 'all';
     triggerHapticFeedback('light');
     renderAnagramUI();
 
-    // Eğer tüm yuvalar dolduysa otomatik kontrol et
+    // 6. Eğer tüm yuvalar dolduysa otomatik kontrol et
     if (!anagramState.userSlots.includes(null)) {
       checkAnagramAnswer();
     }
@@ -11293,17 +11626,7 @@ let activeAvatarCategory = 'all';
       if (!state.words || state.words.length === 0) return;
       const currentWord = state.words[state.currentIndex];
       if (!currentWord) return;
-      const added = toggleWordInNotebook(currentWord);
-      updateNotebookCardButtonUI(currentWord);
-      updateCardCategoryCounters();
-      if (added) {
-        showToast(`🔖 "${currentWord.kelime}" Kelime Defterim'e eklendi!`);
-      } else {
-        showToast(`"${currentWord.kelime}" listenden çıkarıldı.`);
-        if (state.activeFilter === 'mylist') {
-          refreshWordsList();
-        }
-      }
+      toggleWordInNotebook(currentWord);
     };
 
     if (dom.cardNotebookToggleBtn) {
@@ -11416,7 +11739,7 @@ let activeAvatarCategory = 'all';
       if (sentenceBtn) {
         return;
       }
-      if (e.target.closest('#pronounceBtn, #pronounceUsBtn, #pronounceUkBtn, .accent-btn, .audio-btn, .accent-btn-group, .audio-controls-row, #prevCardBtn, #nextCardBtn, .card-edge-nav-btn, #markLearnedBtn, #markRepeatBtn, .card-inner-action-btn, #cardNotebookToggleBtn, #cardBackNotebookToggleBtn, .card-notebook-btn, #cardTroubledActionBtn, #cardBackTroubledActionBtn, .card-troubled-pill, .card-sentence-audio-btn, #cardSentenceAudioBtn')) return;
+      if (e.target.closest('#pronounceBtn, #pronounceUsBtn, #pronounceUkBtn, .accent-btn, .audio-btn, .accent-btn-group, .audio-controls-row, #prevCardBtn, #nextCardBtn, .card-edge-nav-btn, #markLearnedBtn, #markRepeatBtn, .card-inner-action-btn, #cardNotebookToggleBtn, #cardBackNotebookToggleBtn, .card-notebook-btn, #cardTroubledActionBtn, #cardBackTroubledActionBtn, .card-troubled-pill, #cardUnlearnBtn, #cardBackUnlearnBtn, .card-unlearn-pill, .card-sentence-audio-btn, #cardSentenceAudioBtn')) return;
       toggleFlip();
     });
 
@@ -11461,8 +11784,32 @@ let activeAvatarCategory = 'all';
     });
     dom.markLearnedBtn.addEventListener('click', (e) => {
       e.stopPropagation();
-      markWordStatus(1);
+      if (!state.words || state.words.length === 0) return;
+      const currentWord = state.words[state.currentIndex];
+      if (!currentWord) return;
+      const isTroubled = isWordInTroubled(currentWord);
+      const isLearned = !isTroubled && (currentWord.ogrenilme_durumu === 1 || Boolean(state.learnedMap[currentWord.id] && state.learnedMap[currentWord.id].learned));
+
+      if (isLearned) {
+        markWordStatus(0);
+      } else {
+        markWordStatus(1);
+      }
     });
+
+    if (dom.cardUnlearnBtn) {
+      dom.cardUnlearnBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        markWordStatus(0);
+      });
+    }
+
+    if (dom.cardBackUnlearnBtn) {
+      dom.cardBackUnlearnBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        markWordStatus(0);
+      });
+    }
 
     if (dom.cardReviewGoArenaBtn) {
       dom.cardReviewGoArenaBtn.addEventListener('click', (e) => {
@@ -13080,8 +13427,13 @@ let activeAvatarCategory = 'all';
         localStorage.setItem('lexiq_unit_durations', '{}');
         localStorage.setItem('lexiq_unit_start_times', '{}');
 
-        state.isOnboarded = true;
-        localStorage.setItem('lexiq_user_onboarded', 'true');
+        state.isOnboarded = false;
+        localStorage.removeItem('lexiq_user_onboarded');
+        localStorage.removeItem('lexiq_tour_completed');
+        localStorage.removeItem('lexiq_cards_tour_completed');
+        window.isOnboardingFlowActive = true;
+        window.isStreakPledgePending = false;
+        if (typeof endTour === 'function') endTour(false);
 
         updateUserProfileUI();
         updateArenaHeaderAndStats();
@@ -13185,6 +13537,11 @@ let activeAvatarCategory = 'all';
             // Yeni kayıt olan kullanıcı için onboarding henüz tamamlanmadı: Kesinlikle Dil ve Kur seçimine yönlendir
             state.isOnboarded = false;
             localStorage.removeItem('lexiq_user_onboarded');
+            localStorage.removeItem('lexiq_tour_completed');
+            localStorage.removeItem('lexiq_cards_tour_completed');
+            window.isOnboardingFlowActive = true;
+            window.isStreakPledgePending = false;
+            if (typeof endTour === 'function') endTour(false);
 
             if (obModal) {
               obModal.style.display = 'flex';
@@ -15188,17 +15545,11 @@ let activeAvatarCategory = 'all';
         return;
       }
 
-      if (dom.onboardingModal && dom.onboardingModal.classList.contains('active')) {
+      if (!force && typeof isTourBlocked === 'function' && isTourBlocked()) {
         return;
       }
 
-      const streakModal = document.getElementById('streakPledgeModal');
-      const isStreakOpen = streakModal && (streakModal.classList.contains('active') || (streakModal.style.display && streakModal.style.display !== 'none'));
-      if (isStreakOpen && !force) {
-        return;
-      }
-
-      if (typeof switchAppMode === 'function') {
+      if (state.activeMode !== 'home' && typeof switchAppMode === 'function') {
         switchAppMode('home');
       }
 
@@ -15206,6 +15557,7 @@ let activeAvatarCategory = 'all';
       currentTourSteps = HOME_TOUR_STEPS;
 
       setTimeout(() => {
+        if (!force && typeof isTourBlocked === 'function' && isTourBlocked()) return;
         showTourStep(0);
       }, 350);
     }
@@ -15215,13 +15567,7 @@ let activeAvatarCategory = 'all';
         return;
       }
 
-      if (dom.onboardingModal && dom.onboardingModal.classList.contains('active')) {
-        return;
-      }
-
-      const streakModal = document.getElementById('streakPledgeModal');
-      const isStreakOpen = streakModal && (streakModal.classList.contains('active') || (streakModal.style.display && streakModal.style.display !== 'none'));
-      if (isStreakOpen && !force) {
+      if (!force && typeof isTourBlocked === 'function' && isTourBlocked()) {
         return;
       }
 
@@ -15239,6 +15585,7 @@ let activeAvatarCategory = 'all';
       currentTourSteps = getCardsTourSteps();
 
       setTimeout(() => {
+        if (!force && typeof isTourBlocked === 'function' && isTourBlocked()) return;
         showTourStep(0);
       }, 350);
     }
