@@ -7,7 +7,7 @@
 (function () {
   'use strict';
 
-  const APP_VERSION = 'v1.8.57';
+  const APP_VERSION = 'v1.8.58';
   const DEFAULT_AVATAR = 'avatar_default';
   const CURRENT_APP_BUILD = 'lexiq_build_19_clean';
 
@@ -1007,6 +1007,8 @@
     tourNextBtn: document.getElementById('tourNextBtn'),
     restartTourBtn: document.getElementById('restartTourBtn'),
     restartCardsTourBtn: document.getElementById('restartCardsTourBtn'),
+    restartArenaTourBtn: document.getElementById('restartArenaTourBtn'),
+    tourProgressBar: document.getElementById('tourProgressBar'),
 
     // Günlük Pratik Tamamlandı Modalı
     dailyPracticeCompletedModal: document.getElementById('dailyPracticeCompletedModal'),
@@ -8069,6 +8071,11 @@ let activeAvatarCategory = 'all';
       resetArenaIdleTimer();
       updateArenaHeaderAndStats();
       checkArenaEligibility();
+      if (typeof startArenaTour === 'function' && localStorage.getItem('lexiq_arena_tour_completed') !== 'true') {
+        setTimeout(() => {
+          startArenaTour(false);
+        }, 500);
+      }
     }
   }
 
@@ -15544,22 +15551,28 @@ let activeAvatarCategory = 'all';
       {
         targetSelector: '#brandHeaderHomeBtn',
         title: 'ℹ️ LexiGo Hakkında',
-        desc: 'Uygulama logosuna dokunarak LexiGo hakkında bilgilere, sürüm detaylarına ve geliştirici notlarına ulaşabilirsin.'
+        desc: 'Uygulama logosuna dokunarak LexiGo hakkında bilgilere, sürüm detaylarına ve proje notlarına ulaşabilirsin.'
       },
       {
         targetSelector: '#leaderboardBtn',
-        title: '🏆 Sıralama Tablosu',
-        desc: 'Sıralama butonuna tıklayarak okulundaki ve genel listedeki yerini, en çok çalışan öğrencileri inceleyebilirsin.'
-      },
-      {
-        targetSelector: '#badgesBtn',
-        title: '⭐ XP ve Rozetler',
-        desc: 'Kelime öğrendikçe ve oyunları tamamladıkça kazandığın toplam XP ve başarı rozetlerini buradan görebilirsin.'
+        title: '🏆 Turnuva & Sıralama',
+        desc: 'Turnuva butonuna tıklayarak okulundaki ve genel listedeki yerini, lig dereceni ve en çok kelime öğrenenleri inceleyebilirsin.'
       },
       {
         targetSelector: '#userProfileBtn',
-        title: '👤 Profil ve Ayarlar',
-        desc: 'İsmin, sınıfın ve avatarın burada yer alır. Tıklayarak profilini düzenleyebilir ve tüm ayarlara erişebilirsin.'
+        title: '👤 Öğrenci Profili',
+        desc: 'İsmin, sınıfın ve avatarın burada yer alır. Tıklayarak profil detaylarını ve genel istatistiklerini görüntüleyebilirsin.'
+      },
+      {
+        targetSelector: '#badgesBtn',
+        title: '⭐ XP & Başarı Rozetleri',
+        desc: 'Kelime öğrendikçe ve oyunları tamamladıkça kazandığın toplam puanı (XP) ve açtığın özel rozetleri buradan inceleyebilirsin.'
+      },
+      {
+        targetSelector: '#settingsBtn',
+        fallbackSelector: '#userProfileBtn',
+        title: '⚙️ Uygulama Ayarları',
+        desc: 'İngilizce telaffuz aksanını (Amerikan / İngiliz), otomatik seslendirmeyi ve konuşma hızını buradan dilediğin gibi ayarlayabilirsin!'
       },
       {
         targetSelector: '#headerUnitSelectBtn',
@@ -15569,40 +15582,22 @@ let activeAvatarCategory = 'all';
       {
         targetSelector: '#homeStartBtn',
         title: '🃏 Kelime Öğren (Kartlar)',
-        desc: 'Seçili ünitenin kelimelerini sesli telaffuzlar, Türkçe karşılıklar ve örnek cümlelerle çalışmak için kartları başlat.'
+        desc: 'Seçili ünitenin kelimelerini sesli telaffuzlar, örnek cümleler ve kelime defterinle çalışmak için kartları başlat.'
       },
       {
         targetSelector: '#homeArenaBannerCard',
-        title: '🎮 Kelime Arenası',
-        desc: 'Öğrendiğin kelimeleri test et! Eşleştirme, Dinle & Yaz, Hızlı Test gibi 8 eğlenceli oyun seni bekliyor.'
+        title: '🎮 Kelime Arenası (9 Oyun)',
+        desc: 'Öğrendiğin kelimelerle meydan oku! Eşleştirme, Dinle & Yaz, Harf Tetrisi ve Boşluk Doldurma dahil 9 eğlenceli oyun seni bekliyor.'
       }
     ];
 
     function getCardsTourSteps() {
       const lang = state.activeLanguage || 'EN-TR';
-      let audioStep;
-
+      let audioDesc = 'Hoparlör butonlarına dokunarak kelimenin anadili telaffuzunu dinleyebilirsin. Telaffuz aksanını (Amerikan / İngiliz) ve otomatik seslendirmeyi Ayarlar menüsünden dilediğin gibi değiştirebilirsin!';
       if (lang === 'FR-TR') {
-        audioStep = {
-          targetSelector: '#pronounceBtn',
-          fallbackSelector: '.audio-controls-row',
-          title: '🔊 Fransızca Telaffuz Dinle',
-          desc: 'Mavi 3D hoparlör butonuna dokunarak kelimenin anadili Fransızca sesli telaffuzunu dinleyebilirsin.'
-        };
+        audioDesc = 'Mavi 3D hoparlör butonuna dokunarak kelimenin anadili Fransızca sesli telaffuzunu dinleyebilirsin. Otomatik seslendirmeyi Ayarlar menüsünden yönetebilirsin.';
       } else if (lang === 'DE-TR') {
-        audioStep = {
-          targetSelector: '#pronounceBtn',
-          fallbackSelector: '.audio-controls-row',
-          title: '🔊 Almanca Telaffuz Dinle',
-          desc: 'Mavi 3D hoparlör butonuna dokunarak kelimenin anadili Almanca sesli telaffuzunu dinleyebilirsin.'
-        };
-      } else {
-        audioStep = {
-          targetSelector: '#enAccentGroup',
-          fallbackSelector: '.audio-controls-row',
-          title: '🔊 Sesli Telaffuz Dinle',
-          desc: 'US (Amerikan) veya UK (İngiliz) bayraklı butonlara dokunarak kelimenin anadili telaffuzunu dinleyebilirsin.'
-        };
+        audioDesc = 'Mavi 3D hoparlör butonuna dokunarak kelimenin anadili Almanca sesli telaffuzunu dinleyebilirsin. Otomatik seslendirmeyi Ayarlar menüsünden yönetebilirsin.';
       }
 
       return [
@@ -15614,16 +15609,66 @@ let activeAvatarCategory = 'all';
         {
           targetSelector: '#markLearnedBtn',
           title: '✅ "Öğrendim" Olarak İşaretle',
-          desc: 'Kelimeyi iyice öğrendiğinde bu yeşil butona dokun. Kelime günlük hedefine eklenir ve hafızana kaydedilir.'
+          desc: 'Kelimeyi iyice öğrendiğinde bu yeşil butona dokun. Kelime günlük hedefine ve Arena oyun havuzuna eklenir.'
         },
-        audioStep,
+        {
+          targetSelector: '#cardNotebookToggleBtn',
+          fallbackSelector: '.card-top-actions',
+          title: '🔖 Kelime Defterim',
+          desc: 'Özel olarak odaklanmak veya favorilere almak istediğin kelimeleri bu butona dokunarak kişisel Kelime Defterine kaydedebilirsin.'
+        },
+        {
+          targetSelector: lang === 'EN-TR' ? '#enAccentGroup' : '#pronounceBtn',
+          fallbackSelector: '.audio-controls-row',
+          title: '🔊 Sesli Telaffuz & Aksan',
+          desc: audioDesc
+        },
         {
           targetSelector: '.card-filter-tabs-container',
-          title: '🎯 Hedef & Öğrenilenler',
-          desc: 'Öğrenilecekler ve Öğrenilenler sekmeleri arasında geçiş yapabilir, günlük çalışma hedefini buradan ayarlayabilirsin.'
+          fallbackSelector: '.card-tab-buttons',
+          title: '🎯 4 Farklı Çalışma Listesi',
+          desc: 'Öğrenilecekler ve Öğrenilenler dışında; özel seçtiğin "Kelime Defterim" ve oyunlarda hata yaptığın "Zorlandıklarım" listelerine buradan tek dokunuşla ulaşabilirsin.'
+        },
+        {
+          targetSelector: '#settingsBtn',
+          fallbackSelector: '#userProfileBtn',
+          title: '⚙️ Ayarlardan Kişiselleştir',
+          desc: 'Otomatik seslendirme, telaffuz aksanı (US/UK), ses hızı ve kart kağıt rengini üst bardaki Ayarlar ⚙️ butonundan kolayca değiştirebilirsin!'
         }
       ];
     }
+
+    const ARENA_TOUR_STEPS = [
+      {
+        targetSelector: '#arenaHeroBanner',
+        title: '⚔️ Kelime Arenası (9 Oyun)',
+        desc: 'Burası öğrendiğin kelimelerle pratik yapıp hafızanı güçlendireceğin oyun merkezidir! 9 farklı eğlenceli oyun seni bekliyor.'
+      },
+      {
+        targetSelector: '#arenaLearnedPoolPill',
+        fallbackSelector: '#arenaHeroBanner',
+        title: '📚 Hazır Kelime Havuzu',
+        desc: 'Arenadaki oyunlarda sadece kartlarda "Öğrendim" dediğin ve "Kelime Defterim"e eklediğin kelimeler yarışır (en az 3 kelime gerekir).'
+      },
+      {
+        targetSelector: '.arena-quick-stats',
+        fallbackSelector: '#arenaHeroBanner',
+        title: '🔥 Seri & XP Çarpanı',
+        desc: 'Oyunlarda soruları ardı ardına doğru yanıtladıkça serin ve XP çarpanın artar, sıralama tablosunda zirveye tırmanırsın.'
+      },
+      {
+        targetSelector: '#gamesHubGrid',
+        fallbackSelector: '.game-hub-card',
+        title: '🎮 9 Farklı Oyun Modu',
+        desc: 'Kart Eşleştirme, Dinle & Yaz, Harf Tetrisi, Boşluk Doldurma, Söyle & Kazan ve fazlası! Her oyun farklı bir dil becerini pekiştirir.'
+      },
+      {
+        targetSelector: '#settingsBtn',
+        fallbackSelector: '#userProfileBtn',
+        title: '⚙️ Aksan ve Ses Ayarları',
+        desc: 'Dinleme ve telaffuz oyunlarındaki aksanı (US/UK), konuşma hızını ve arena ses efektlerini üst bardaki Ayarlar butonundan dilediğin zaman değiştirebilirsin!'
+      }
+    ];
 
     let activeTourType = 'home';
     let currentTourSteps = HOME_TOUR_STEPS;
@@ -15661,7 +15706,7 @@ let activeAvatarCategory = 'all';
       bubble.style.transform = 'none';
 
       const rect = targetEl.getBoundingClientRect();
-      const bubbleWidth = bubble.offsetWidth || 320;
+      const bubbleWidth = bubble.offsetWidth || 340;
       const bubbleHeight = bubble.offsetHeight || 160;
       const viewportWidth = window.innerWidth;
       const viewportHeight = window.innerHeight;
@@ -15674,6 +15719,15 @@ let activeAvatarCategory = 'all';
         spotlight.style.left = `${Math.max(0, rect.left - pad)}px`;
         spotlight.style.width = `${rect.width + pad * 2}px`;
         spotlight.style.height = `${rect.height + pad * 2}px`;
+
+        // 1/4 Karta Dokun ve Çevir adımında spotlight'a tıklanabilirlik ver
+        if (activeTourType === 'cards' && currentTourIndex === 0) {
+          spotlight.style.pointerEvents = 'auto';
+          spotlight.style.cursor = 'pointer';
+        } else {
+          spotlight.style.pointerEvents = 'none';
+          spotlight.style.cursor = 'default';
+        }
       }
 
       // Yatay konumu hesapla (ekran dışına taşmaması için clamp)
@@ -15766,6 +15820,11 @@ let activeAvatarCategory = 'all';
       if (dom.tourTitle) dom.tourTitle.textContent = step.title;
       if (dom.tourDesc) dom.tourDesc.textContent = step.desc;
 
+      if (dom.tourProgressBar) {
+        const pct = Math.max(8, Math.round(((index + 1) / currentTourSteps.length) * 100));
+        dom.tourProgressBar.style.width = `${pct}%`;
+      }
+
       if (dom.tourPrevBtn) {
         dom.tourPrevBtn.style.display = index === 0 ? 'none' : 'inline-block';
       }
@@ -15795,6 +15854,8 @@ let activeAvatarCategory = 'all';
         endTour(true);
         if (activeTourType === 'cards') {
           showToast('Kart kullanım rehberi tamamlandı! İyi çalışmalar 🃏');
+        } else if (activeTourType === 'arena') {
+          showToast('Arena rehberi tamamlandı! 9 oyun seni bekliyor ⚔️');
         } else {
           showToast('LexiGo özellikleri hazır! İyi çalışmalar 🎉');
         }
@@ -15814,6 +15875,7 @@ let activeAvatarCategory = 'all';
       }
       if (dom.tourSpotlight) {
         dom.tourSpotlight.style.display = 'none';
+        dom.tourSpotlight.style.pointerEvents = 'none';
       }
       if (dom.lexiqTourOverlay) {
         dom.lexiqTourOverlay.style.display = 'none';
@@ -15821,6 +15883,8 @@ let activeAvatarCategory = 'all';
       if (completed) {
         if (activeTourType === 'cards') {
           localStorage.setItem('lexiq_cards_tour_completed', 'true');
+        } else if (activeTourType === 'arena') {
+          localStorage.setItem('lexiq_arena_tour_completed', 'true');
         } else {
           localStorage.setItem('lexiq_tour_completed', 'true');
         }
@@ -15877,14 +15941,63 @@ let activeAvatarCategory = 'all';
       }, 350);
     }
 
+    function startArenaTour(force = false) {
+      if (!force && localStorage.getItem('lexiq_arena_tour_completed') === 'true') {
+        return;
+      }
+
+      if (!force && typeof isTourBlocked === 'function' && isTourBlocked()) {
+        return;
+      }
+
+      if (state.activeMode !== 'arena') {
+        if (typeof switchAppMode === 'function') {
+          switchAppMode('arena');
+        }
+      }
+
+      activeTourType = 'arena';
+      currentTourSteps = ARENA_TOUR_STEPS;
+
+      setTimeout(() => {
+        if (!force && typeof isTourBlocked === 'function' && isTourBlocked()) return;
+        showTourStep(0);
+      }, 350);
+    }
+
     window.startFeatureTour = startFeatureTour;
     window.startCardsTour = startCardsTour;
+    window.startArenaTour = startArenaTour;
 
     if (dom.tourNextBtn) dom.tourNextBtn.addEventListener('click', nextTourStep);
     if (dom.tourPrevBtn) dom.tourPrevBtn.addEventListener('click', prevTourStep);
     if (dom.tourSkipBtn) dom.tourSkipBtn.addEventListener('click', () => endTour(true));
     if (dom.tourCloseBtn) dom.tourCloseBtn.addEventListener('click', () => endTour(true));
-    if (dom.tourBackdrop) dom.tourBackdrop.addEventListener('click', () => endTour(true));
+
+    // Kullanıcı ekranın başka yerine tıkladığında yardım turu sonlanmasın (sadece 'Turu Atla' ile bitsin)
+    if (dom.tourBackdrop) {
+      dom.tourBackdrop.addEventListener('click', (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        if (dom.tourBubble) {
+          dom.tourBubble.classList.remove('tour-nudge-anim');
+          void dom.tourBubble.offsetWidth; // reflow tetikle
+          dom.tourBubble.classList.add('tour-nudge-anim');
+        }
+      });
+    }
+
+    // Kart turunun 1/4 adımında karta veya spotlight'a tıklandığında kart çevrilsin, tur kapanmasın
+    if (dom.tourSpotlight) {
+      dom.tourSpotlight.addEventListener('click', (e) => {
+        if (activeTourType === 'cards' && currentTourIndex === 0) {
+          e.stopPropagation();
+          if (typeof toggleFlip === 'function') {
+            toggleFlip();
+          }
+        }
+      });
+    }
 
     if (dom.restartTourBtn) {
       dom.restartTourBtn.addEventListener('click', () => {
@@ -15901,6 +16014,18 @@ let activeAvatarCategory = 'all';
         }
         setTimeout(() => {
           startCardsTour(true);
+        }, 350);
+      });
+    }
+
+    if (dom.restartArenaTourBtn) {
+      dom.restartArenaTourBtn.addEventListener('click', () => {
+        closeSettingsModal(true);
+        if (typeof switchAppMode === 'function') {
+          switchAppMode('arena');
+        }
+        setTimeout(() => {
+          startArenaTour(true);
         }, 350);
       });
     }

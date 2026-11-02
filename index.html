@@ -16,7 +16,7 @@
   <meta name="referrer" content="no-referrer">
   <title>LexiGo • Çok Dilli Akıllı Kelime Kartları</title>
   <link rel="icon" type="image/jpeg" href="logo.jpg">
-  <link rel="stylesheet" href="style.css?v=1.8.57">
+  <link rel="stylesheet" href="style.css?v=1.8.58">
 </head>
 <body>
   <div class="app-container">
@@ -1412,7 +1412,7 @@
               <div class="welcome-logo-badge">
                 <img src="assets/icons/lexigo_brand_logo.png" alt="LexiGo" class="welcome-brand-img" />
               </div>
-              <span class="welcome-version-pill">v1.8.57</span>
+              <span class="welcome-version-pill">v1.8.58</span>
             </div>
           </div>
         </div>
@@ -2176,7 +2176,7 @@
             <div class="about-logo-badge">
               <img src="assets/icons/lexigo_brand_logo.png" alt="LexiGo" class="about-brand-img" />
             </div>
-            <span class="about-version-pill" id="aboutAppVersion">v1.8.57</span>
+            <span class="about-version-pill" id="aboutAppVersion">v1.8.58</span>
             <span class="about-platform-badge" id="aboutPlatformBadge" style="display: none; font-size: 0.72rem; font-weight: 700; padding: 3px 9px; border-radius: 12px; background: rgba(59,130,246,0.15); color: #3b82f6; border: 1px solid rgba(59,130,246,0.3);"></span>
           </div>
           <p class="about-tagline">Müfredat Tabanlı Çok Dilli Kelime Arenası</p>
@@ -3218,7 +3218,7 @@
             </div>
 
             <!-- Boşluk Doldurma Türkçe Çeviri Ayarı -->
-            <div class="setting-block no-border">
+            <div class="setting-block">
               <div class="setting-compact-row">
                 <div class="setting-row-info">
                   <span class="setting-row-text">🇹🇷 Boşluk Doldurmada Türkçe Çeviriyi Göster</span>
@@ -3228,6 +3228,19 @@
                   <input type="checkbox" id="settingClozeAutoTranslate">
                   <span class="toggle-slider"></span>
                 </label>
+              </div>
+            </div>
+
+            <!-- Arena Tanıtım Rehberi (İpuçları) -->
+            <div class="setting-block no-border">
+              <div class="setting-compact-row" style="align-items: center;">
+                <div class="setting-row-info">
+                  <span class="setting-row-text">💡 Arena Tanıtım Rehberi</span>
+                  <span class="setting-row-desc">9 oyun modu, kelime havuzu ve seslendirme tercihlerini anlatan rehberi göster</span>
+                </div>
+                <button type="button" class="btn btn-secondary btn-sm" id="restartArenaTourBtn" style="white-space: nowrap; font-size: 0.8rem; padding: 6px 12px; border-radius: 8px;">
+                  Rehberi Başlat
+                </button>
               </div>
             </div>
           </div>
@@ -3627,6 +3640,9 @@
         </div>
         <button type="button" class="tour-close-btn" id="tourCloseBtn" aria-label="Turu Kapat" title="Kapat">✕</button>
       </div>
+      <div class="tour-progress-track">
+        <div class="tour-progress-bar" id="tourProgressBar" style="width: 12.5%;"></div>
+      </div>
       <div class="tour-body">
         <p class="tour-desc" id="tourDesc">Açıklama metni burada görüntülenecektir.</p>
       </div>
@@ -3817,16 +3833,17 @@
       <div class="confirm-icon-wrap" style="font-size: 2.8rem; margin-bottom: 8px;">🎉</div>
       <h3 class="confirm-title" style="font-size: 1.3rem; font-weight: 800; margin: 0 0 6px 0;">LexiGo Güncellendi!</h3>
       <div class="app-update-version-badge" style="display: inline-block; padding: 4px 14px; border-radius: 20px; font-size: 0.84rem; font-weight: 800; margin-bottom: 14px;">
-        Sürüm <span id="appUpdateVersionText">v1.8.57</span>
+        Sürüm <span id="appUpdateVersionText">v1.8.58</span>
       </div>
       <div class="update-notes-box" style="text-align: left; border-radius: 16px; padding: 14px 16px; font-size: 0.88rem; line-height: 1.6; margin-bottom: 18px; max-height: 280px; overflow-y: auto;">
         <div class="update-notes-title" style="font-weight: 800; margin-bottom: 8px; display: flex; align-items: center; gap: 6px;">
           <span>✨</span><span>Bu Sürümdeki Yenilikler</span>
         </div>
         <ul style="margin: 0; padding-left: 20px; display: flex; flex-direction: column; gap: 8px;">
-          <li><strong>🎨 Yeni 3D LexiGo Marka Simgesi:</strong> Uygulama simgesi tüm platformlarda (Web, PWA ve Android) yeni 3D LexiGo marka kimliğiyle güncellendi.</li>
-          <li><strong>🔊 Cümle Seslendirme & Okuma İyileştirmeleri:</strong> Kartlar arasında geçiş yapıldığında ve kart çevrildiğinde ses çakışması tamamen giderildi.</li>
-          <li><strong>⚡ Performans & Bellek:</strong> R8 optimizasyonu ve adaptif simge desteği geliştirildi.</li>
+          <li><strong>💡 Yenilenen Akıllı Yardım Balonları:</strong> Ana ekran, kelime kartları ve arena turları baştan sona yeniden tasarlandı. Ekranda sırayla, atlamadan rehberlik sunar.</li>
+          <li><strong>⚔️ 9 Arena Oyunu & Kelime Defteri Tanıtımı:</strong> Yeni 9 oyunluk arena mimarisi, kişisel Kelime Defterim ve Zorlandıklarım özellikleri tanıtım turuna eklendi.</li>
+          <li><strong>🗣️ Aksan ve Ses Ayarları Rehberi:</strong> Sesli telaffuz aksanı ve otomatik seslendirme ayarlarının nereden ve nasıl değiştirileceği yardım balonlarıyla vurgulandı.</li>
+          <li><strong>🛡️ Kesintisiz Tur Deneyimi:</strong> Kullanıcı ekrana veya karta dokunduğunda tur kazara kapanmaz; sadece "Turu Atla" seçilirse sonlanır.</li>
         </ul>
       </div>
       <div style="display: flex; flex-direction: column; gap: 8px; width: 100%;">
@@ -3889,11 +3906,11 @@
   <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-storage-compat.js"></script>
-  <script src="firebase_backend.js?v=1.8.57"></script>
+  <script src="firebase_backend.js?v=1.8.58"></script>
 
   <!-- Kelime Verisi ve Uygulama Mantığı (Sadece Standart Vanilla JS) -->
-  <script src="words_data.js?v=1.8.57"></script>
-  <script src="app.js?v=1.8.57"></script>
+  <script src="words_data.js?v=1.8.58"></script>
+  <script src="app.js?v=1.8.58"></script>
 
   </body>
 </html>

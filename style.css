@@ -13525,15 +13525,18 @@ html[data-flip-speed="slow"] .flashcard {
 .tour-backdrop {
   position: absolute;
   inset: 0;
-  background: transparent;
+  background: rgba(10, 15, 30, 0.25);
+  backdrop-filter: blur(1.5px);
+  -webkit-backdrop-filter: blur(1.5px);
   pointer-events: auto;
   z-index: 1;
+  transition: opacity 0.25s ease;
 }
 
 .tour-spotlight {
   position: fixed;
-  border-radius: 14px;
-  box-shadow: 0 0 0 9999px rgba(10, 15, 29, 0.72);
+  border-radius: 16px;
+  box-shadow: 0 0 0 9999px rgba(8, 12, 28, 0.76), 0 0 28px rgba(56, 189, 248, 0.55);
   border: 2px solid #38bdf8;
   pointer-events: none;
   z-index: 2;
@@ -13544,26 +13547,37 @@ html[data-flip-speed="slow"] .flashcard {
 .tour-bubble {
   position: fixed;
   z-index: 1000000 !important;
-  width: min(340px, calc(100vw - 28px));
-  max-width: 360px;
-  background: #181b36;
+  width: min(350px, calc(100vw - 28px));
+  max-width: 370px;
+  background: linear-gradient(150deg, #181d3d 0%, #0e1227 100%);
   color: #f8fafc;
-  border-radius: 18px;
-  padding: 12px 16px !important;
-  border: 1.5px solid rgba(139, 92, 246, 0.45);
-  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.65), 0 0 25px rgba(99, 102, 241, 0.3);
-  transition: top 0.22s cubic-bezier(0.16, 1, 0.3, 1), left 0.22s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.2s ease;
+  border-radius: 20px;
+  padding: 16px 18px !important;
+  border: 1.5px solid rgba(129, 140, 248, 0.38);
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.7), 0 0 30px rgba(99, 102, 241, 0.25), inset 0 1px 1px rgba(255, 255, 255, 0.12);
+  transition: top 0.22s cubic-bezier(0.16, 1, 0.3, 1), left 0.22s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.2s ease, transform 0.2s ease;
   will-change: top, left;
   user-select: none;
   box-sizing: border-box;
   max-height: calc(100vh - 48px) !important;
 }
 
+/* Dikkat Çekme Titreşimi (Kullanıcı dışarı tıkladığında) */
+@keyframes tourBubbleNudge {
+  0%, 100% { transform: scale(1); }
+  25% { transform: scale(1.03) rotate(-1.2deg); }
+  75% { transform: scale(1.03) rotate(1.2deg); }
+}
+
+.tour-bubble.tour-nudge-anim {
+  animation: tourBubbleNudge 0.32s cubic-bezier(0.36, 0.07, 0.19, 0.97) !important;
+}
+
 .tour-arrow {
   position: absolute;
   width: 14px;
   height: 14px;
-  background: #181b36;
+  background: #181d3d;
   z-index: 1000001 !important;
   pointer-events: none;
   transition: left 0.22s cubic-bezier(0.16, 1, 0.3, 1), top 0.22s cubic-bezier(0.16, 1, 0.3, 1);
@@ -13571,16 +13585,16 @@ html[data-flip-speed="slow"] .flashcard {
 
 .tour-arrow.arrow-top {
   top: -8px;
-  border-left: 1.5px solid rgba(139, 92, 246, 0.45);
-  border-top: 1.5px solid rgba(139, 92, 246, 0.45);
+  border-left: 1.5px solid rgba(129, 140, 248, 0.38);
+  border-top: 1.5px solid rgba(129, 140, 248, 0.38);
   transform: rotate(45deg);
   display: block;
 }
 
 .tour-arrow.arrow-bottom {
   bottom: -8px;
-  border-right: 1.5px solid rgba(139, 92, 246, 0.45);
-  border-bottom: 1.5px solid rgba(139, 92, 246, 0.45);
+  border-right: 1.5px solid rgba(129, 140, 248, 0.38);
+  border-bottom: 1.5px solid rgba(129, 140, 248, 0.38);
   transform: rotate(45deg);
   display: block;
 }
@@ -13588,8 +13602,8 @@ html[data-flip-speed="slow"] .flashcard {
 .tour-arrow.arrow-left {
   left: -8px !important;
   top: 50% !important;
-  border-left: 1.5px solid rgba(139, 92, 246, 0.45);
-  border-bottom: 1.5px solid rgba(139, 92, 246, 0.45);
+  border-left: 1.5px solid rgba(129, 140, 248, 0.38);
+  border-bottom: 1.5px solid rgba(129, 140, 248, 0.38);
   transform: translateY(-50%) rotate(45deg);
   display: block;
 }
@@ -13598,8 +13612,8 @@ html[data-flip-speed="slow"] .flashcard {
   right: -8px !important;
   left: auto !important;
   top: 50% !important;
-  border-right: 1.5px solid rgba(139, 92, 246, 0.45);
-  border-top: 1.5px solid rgba(139, 92, 246, 0.45);
+  border-right: 1.5px solid rgba(129, 140, 248, 0.38);
+  border-top: 1.5px solid rgba(129, 140, 248, 0.38);
   transform: translateY(-50%) rotate(45deg);
   display: block;
 }
@@ -13625,18 +13639,19 @@ html[data-flip-speed="slow"] .flashcard {
 }
 
 .tour-step-badge {
-  font-size: 0.72rem;
+  font-size: 0.74rem;
   font-weight: 800;
-  background: rgba(56, 189, 248, 0.16);
+  background: linear-gradient(135deg, rgba(56, 189, 248, 0.2), rgba(99, 102, 241, 0.2));
   color: #38bdf8;
-  padding: 2px 8px;
-  border-radius: 12px;
-  border: 1px solid rgba(56, 189, 248, 0.35);
+  padding: 3px 10px;
+  border-radius: 14px;
+  border: 1px solid rgba(56, 189, 248, 0.4);
   white-space: nowrap;
+  letter-spacing: 0.3px;
 }
 
 .tour-title {
-  font-size: 0.96rem;
+  font-size: 1.02rem;
   font-weight: 800;
   color: #f8fafc;
   margin: 0;
@@ -13645,24 +13660,44 @@ html[data-flip-speed="slow"] .flashcard {
   text-overflow: ellipsis;
 }
 
+.tour-progress-track {
+  width: 100%;
+  height: 4px;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 4px;
+  margin: 2px 0 12px 0;
+  overflow: hidden;
+}
+
+.tour-progress-bar {
+  height: 100%;
+  background: linear-gradient(90deg, #38bdf8, #818cf8);
+  border-radius: 4px;
+  transition: width 0.25s ease;
+}
+
 .tour-close-btn {
-  background: transparent;
+  background: rgba(255, 255, 255, 0.08);
   border: none;
   color: #94a3b8;
-  font-size: 1.15rem;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  font-size: 0.95rem;
   line-height: 1;
-  padding: 4px;
+  padding: 0;
   cursor: pointer;
-  border-radius: 6px;
   display: flex;
   align-items: center;
   justify-content: center;
-  transition: color 0.15s ease, background 0.15s ease;
+  transition: color 0.15s ease, background 0.15s ease, transform 0.15s ease;
+  flex-shrink: 0;
 }
 
 .tour-close-btn:hover {
   color: #ffffff;
-  background: rgba(255, 255, 255, 0.1);
+  background: rgba(255, 255, 255, 0.18);
+  transform: scale(1.08);
 }
 
 .tour-body {
@@ -13670,8 +13705,8 @@ html[data-flip-speed="slow"] .flashcard {
 }
 
 .tour-desc {
-  font-size: 0.84rem !important;
-  line-height: 1.45 !important;
+  font-size: 0.88rem !important;
+  line-height: 1.55 !important;
   color: #cbd5e1;
   margin: 0;
 }
@@ -13681,7 +13716,7 @@ html[data-flip-speed="slow"] .flashcard {
   align-items: center;
   justify-content: space-between;
   gap: 8px;
-  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
   padding-top: 12px;
 }
 
@@ -13689,9 +13724,9 @@ html[data-flip-speed="slow"] .flashcard {
   background: transparent;
   border: none;
   color: #94a3b8;
-  font-size: 0.8rem;
-  font-weight: 600;
-  padding: 6px 8px;
+  font-size: 0.82rem;
+  font-weight: 700;
+  padding: 6px 10px;
   cursor: pointer;
   border-radius: 8px;
   transition: color 0.15s ease;
@@ -13709,18 +13744,18 @@ html[data-flip-speed="slow"] .flashcard {
 
 .tour-prev-btn {
   background: rgba(255, 255, 255, 0.08);
-  border: 1px solid rgba(255, 255, 255, 0.14);
+  border: 1px solid rgba(255, 255, 255, 0.16);
   color: #cbd5e1;
-  font-size: 0.82rem;
+  font-size: 0.84rem;
   font-weight: 700;
-  padding: 6px 12px;
-  border-radius: 10px;
+  padding: 7px 14px;
+  border-radius: 12px;
   cursor: pointer;
   transition: all 0.15s ease;
 }
 
 .tour-prev-btn:hover {
-  background: rgba(255, 255, 255, 0.15);
+  background: rgba(255, 255, 255, 0.16);
   color: #ffffff;
 }
 
@@ -13728,17 +13763,17 @@ html[data-flip-speed="slow"] .flashcard {
   background: linear-gradient(135deg, #38bdf8, #2563eb);
   border: none;
   color: #ffffff;
-  font-size: 0.84rem;
+  font-size: 0.86rem;
   font-weight: 800;
-  padding: 7px 16px;
-  border-radius: 10px;
+  padding: 8px 18px;
+  border-radius: 12px;
   cursor: pointer;
-  box-shadow: 0 3px 12px rgba(37, 99, 235, 0.4);
+  box-shadow: 0 4px 14px rgba(37, 99, 235, 0.45);
   transition: transform 0.15s ease, box-shadow 0.15s ease;
 }
 
 .tour-next-btn:hover {
-  box-shadow: 0 4px 16px rgba(37, 99, 235, 0.6);
+  box-shadow: 0 5px 18px rgba(37, 99, 235, 0.65);
 }
 
 .tour-next-btn:active {
@@ -13769,19 +13804,75 @@ html[data-flip-speed="slow"] .flashcard {
 
 /* Aydınlık Mod Uyumluluğu */
 [data-theme="light"] .tour-backdrop {
-  background: rgba(15, 23, 42, 0.55);
+  background: rgba(15, 23, 42, 0.35);
+}
+
+[data-theme="light"] .tour-spotlight {
+  box-shadow: 0 0 0 9999px rgba(15, 23, 42, 0.55), 0 0 24px rgba(14, 165, 233, 0.45);
+  border-color: #0284c7;
 }
 
 [data-theme="light"] .tour-bubble {
   background: #ffffff;
   color: #0f172a;
-  border-color: rgba(14, 165, 233, 0.5);
-  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.18), 0 0 24px rgba(14, 165, 233, 0.25);
+  border-color: rgba(14, 165, 233, 0.45);
+  box-shadow: 0 20px 48px rgba(15, 23, 42, 0.18), 0 0 24px rgba(14, 165, 233, 0.2);
 }
 
 [data-theme="light"] .tour-arrow {
   background: #ffffff;
-  border-color: rgba(14, 165, 233, 0.5);
+  border-color: rgba(14, 165, 233, 0.45);
+}
+
+[data-theme="light"] .tour-title {
+  color: #0f172a;
+}
+
+[data-theme="light"] .tour-desc {
+  color: #334155 !important;
+}
+
+[data-theme="light"] .tour-step-badge {
+  background: rgba(14, 165, 233, 0.12);
+  color: #0284c7;
+  border-color: rgba(14, 165, 233, 0.3);
+}
+
+[data-theme="light"] .tour-progress-track {
+  background: rgba(15, 23, 42, 0.08);
+}
+
+[data-theme="light"] .tour-close-btn {
+  background: rgba(15, 23, 42, 0.06);
+  color: #64748b;
+}
+
+[data-theme="light"] .tour-close-btn:hover {
+  background: rgba(15, 23, 42, 0.12);
+  color: #0f172a;
+}
+
+[data-theme="light"] .tour-footer {
+  border-top-color: rgba(15, 23, 42, 0.08);
+}
+
+[data-theme="light"] .tour-skip-btn {
+  color: #64748b;
+}
+
+[data-theme="light"] .tour-skip-btn:hover {
+  color: #0f172a;
+}
+
+[data-theme="light"] .tour-prev-btn {
+  background: #f1f5f9;
+  border-color: #cbd5e1;
+  color: #475569;
+}
+
+[data-theme="light"] .tour-prev-btn:hover {
+  background: #e2e8f0;
+  color: #0f172a;
 }
 
 [data-theme="light"] .tour-title {
