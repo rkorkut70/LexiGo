@@ -1,11 +1,13 @@
 {
-  "version": "v1.8.46",
-  "versionCode": 107,
-  "releaseDate": "2026-10-28",
+  "version": "v1.8.58",
+  "versionCode": 119,
+  "releaseDate": "2026-11-03",
   "notes": [
-    "Kart arka yüzündeki örnek cümle okuma altyapısı çapraz platform ve çok dilli (İngilizce, Almanca, Fransızca) olarak tamamen yenilendi.",
-    "Web Speech API ve HD Çevrimiçi Doğal Ses akışı doğrudan entegre edildi; ses paketi bulunmayan cihazlarda kesintisiz ses sağlandı.",
-    "Welcome karşılama ekranındaki 'Kelime Öğrenme Platformu' ifadesi kaldırıldı, kurumsal başlık sadeleştirildi.",
-    "3D kart döndürme sırasında ön/arka yüz dokunmatik ve tıklama yalıtımı güçlendirildi."
+    "🎨 Yeni 3D LexiGo Marka Simgesi: Uygulama simgesi tüm platformlarda (Web, PWA ve Android) yeni 3D LexiGo marka kimliğiyle güncellendi.",
+    "💡 Yenilenen Akıllı Yardım Balonları: Ana ekran, kelime kartları ve arena turları baştan sona yeniden tasarlandı. Ekranda sırayla, atlamadan rehberlik sunar.",
+    "⚔️ 9 Arena Oyunu & Kelime Defteri Tanıtımı: Yeni 9 oyunluk arena mimarisi, kişisel Kelime Defterim ve Zorlandıklarım özellikleri tanıtım turuna eklendi.",
+    "🗣️ Aksan ve Ses Ayarları Rehberi: Sesli telaffuz aksanı ve otomatik seslendirme ayarlarının nereden ve nasıl değiştirileceği yardım balonlarıyla vurgulandı.",
+    "🛡️ Kesintisiz Tur Deneyimi: Kullanıcı ekrana veya karta dokunduğunda tur kazara kapanmaz; sadece 'Turu Atla' seçilirse sonlanır.",
+    "⚡ Performans & Bellek: R8 optimizasyonu ve adaptif simge desteği geliştirildi."
   ]
 }

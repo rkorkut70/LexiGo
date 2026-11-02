@@ -14512,8 +14512,8 @@ let activeAvatarCategory = 'all';
     // GÜNCELLEME KONTROL SİSTEMİ (UPDATE CHECK)
     // ==========================================
     const REMOTE_VERSION_ENDPOINTS = [
+      'https://raw.githubusercontent.com/rkorkut70/LexiGo/main/version.json',
       'https://raw.githubusercontent.com/rkorkut70/lexiq/main/version.json',
-      'https://rkorkut70.github.io/lexiq/version.json',
       'version.json'
     ];
 
