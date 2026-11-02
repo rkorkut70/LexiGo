@@ -8,6 +8,7 @@
   
   /* Açık Tema Değişkenleri (Göz Yormayan Soft Slate & Ilık Kağıt / Mat Zemin - Parlama Önleyici) */
   --bg-app: #dbe4ee;
+  --bg-main: #dbe4ee;
   --bg-app-gradient: linear-gradient(180deg, #e4edf6 0%, #dbe4ee 50%, #cad6e3 100%);
   --bg-surface: #f1f5f9;
   --bg-card: #f8fafc;
@@ -47,6 +48,7 @@
 /* Karanlık Tema (Derin Gece İndigo-Neon, 3D Kartlar & Mor/Neon Aura) */
 [data-theme="dark"] {
   --bg-app: #101229;
+  --bg-main: #101229;
   --bg-app-gradient: linear-gradient(180deg, #090a1a 0%, #101229 45%, #151736 100%);
   --bg-surface: #181b36;
   --bg-card: #181b36;
@@ -338,7 +340,7 @@ html, body {
   stroke-width: 2.5;
 }
 
-body[data-theme="dark"] .unit-header-btn,
+[data-theme="dark"] .unit-header-btn,
 .dark-theme .unit-header-btn {
   background: rgba(37, 99, 235, 0.18);
   border-color: rgba(37, 99, 235, 0.4);
@@ -521,7 +523,7 @@ body[data-theme="dark"] .unit-header-btn,
   transition: all 0.25s ease;
 }
 
-body[data-theme="dark"] .card-today-learned-bar,
+[data-theme="dark"] .card-today-learned-bar,
 .dark-theme .card-today-learned-bar {
   background: rgba(30, 41, 59, 0.7);
   border-color: rgba(255, 255, 255, 0.08);
@@ -599,7 +601,7 @@ body[data-theme="dark"] .card-today-learned-bar,
   overflow: hidden;
 }
 
-body[data-theme="dark"] .today-bar-track,
+[data-theme="dark"] .today-bar-track,
 .dark-theme .today-bar-track {
   background: rgba(255, 255, 255, 0.06);
 }
@@ -781,7 +783,7 @@ body[data-theme="dark"] .today-bar-track,
   filter: none !important;
 }
 
-body[data-theme="dark"] .card-main-learned-btn.is-already-learned,
+[data-theme="dark"] .card-main-learned-btn.is-already-learned,
 .dark-theme .card-main-learned-btn.is-already-learned {
   background: rgba(16, 185, 129, 0.2) !important;
   color: #34d399 !important;
@@ -832,7 +834,7 @@ body[data-theme="dark"] .card-main-learned-btn.is-already-learned,
   background: rgba(245, 158, 11, 0.08) !important;
 }
 
-body[data-theme="dark"] .repeat-pill {
+[data-theme="dark"] .repeat-pill {
   color: #fbbf24 !important;
   border-color: rgba(245, 158, 11, 0.45) !important;
   background: rgba(245, 158, 11, 0.15) !important;
@@ -924,7 +926,7 @@ body[data-theme="dark"] .repeat-pill {
   border: 1.5px solid rgba(245, 158, 11, 0.35);
 }
 
-body[data-theme="dark"] .pure-action-btn.btn-repeat,
+[data-theme="dark"] .pure-action-btn.btn-repeat,
 .dark-theme .pure-action-btn.btn-repeat {
   background: rgba(245, 158, 11, 0.22);
   color: #fbbf24;
@@ -1157,32 +1159,47 @@ body[data-theme="dark"] .pure-action-btn.btn-repeat,
   gap: 4px;
   padding: 3px 8px;
   border-radius: var(--radius-full);
-  font-size: 0.7rem;
-  font-weight: 600;
+  font-size: 0.72rem;
+  font-weight: 700;
 }
 
 .status-pending {
-  background: rgba(245, 158, 11, 0.2);
-  color: #b45309; /* Darker amber for contrast */
-  border: 1px solid rgba(245, 158, 11, 0.4);
+  background: rgba(245, 158, 11, 0.16);
+  color: #b45309;
+  border: 1px solid rgba(245, 158, 11, 0.45);
 }
 
-body[data-theme="dark"] .status-pending,
+[data-theme="dark"] .status-pending,
 .dark-theme .status-pending {
   background: rgba(251, 191, 36, 0.2);
   color: #fbbf24;
+  border-color: rgba(251, 191, 36, 0.5);
 }
 
 .status-learned {
-  background: rgba(16, 185, 129, 0.2);
-  color: #047857; /* Darker emerald for contrast */
-  border: 1px solid rgba(16, 185, 129, 0.4);
+  background: rgba(16, 185, 129, 0.16);
+  color: #047857;
+  border: 1px solid rgba(16, 185, 129, 0.45);
 }
 
-body[data-theme="dark"] .status-learned,
+[data-theme="dark"] .status-learned,
 .dark-theme .status-learned {
   background: rgba(52, 211, 153, 0.2);
   color: #34d399;
+  border-color: rgba(52, 211, 153, 0.5);
+}
+
+.status-troubled {
+  background: rgba(239, 68, 68, 0.16);
+  color: #b91c1c;
+  border: 1px solid rgba(239, 68, 68, 0.45);
+}
+
+[data-theme="dark"] .status-troubled,
+.dark-theme .status-troubled {
+  background: rgba(239, 68, 68, 0.25);
+  color: #fca5a5;
+  border-color: rgba(239, 68, 68, 0.5);
 }
 
 .card-center {
@@ -1561,10 +1578,14 @@ body[data-theme="dark"] .status-learned,
 
 .card-cat-badge {
   font-size: 0.72rem;
-  font-weight: 600;
-  color: var(--text-dim);
+  font-weight: 700;
+  color: var(--card-text-muted);
   text-transform: uppercase;
   letter-spacing: 0.05em;
+  padding: 3px 8px;
+  border-radius: var(--radius-sm);
+  background: var(--card-badge-bg);
+  border: 1px solid var(--card-badge-border);
 }
 
 /* Kartın Hemen Altındaki Gezinme & Sayaç Çubuğu (Taşmayı Önleyen Esnek Yapı) */
@@ -5358,23 +5379,23 @@ body.arena-game-active header {
    KART KAĞIT TEMALARI VE METİN OKUNABİLİRLİĞİ (TÜM TEMALARDA %100 KONTRAST)
    ========================================================================== */
 
-/* 1. Klasik Beyaz Karton (Göz Yormayan Doğal Kağıt Tonu) */
+/* 1. Klasik Beyaz Karton (Göz Yormayan Doğal Kağıt Tonu - Açık Mod) */
 html[data-card-theme="white"] .card-face,
 :root .card-face {
-  --bg-card: #f8fafc;
-  --bg-card-header: #f1f5f9;
-  --bg-card-back: #f8fafc;
-  --card-ink-border: #64748b;
-  --card-text-main: #0f172a;
+  --bg-card: #ffffff;
+  --bg-card-header: #f8fafc;
+  --bg-card-back: #ffffff;
+  --card-ink-border: #94a3b8;
+  --card-text-main: #090d16;
   --card-text-muted: #334155;
   --card-text-accent: #1d4ed8;
-  --card-badge-bg: #e2e8f0;
+  --card-badge-bg: #f1f5f9;
   --card-badge-border: #cbd5e1;
-  --card-example-bg: #f1f5f9;
+  --card-example-bg: #f8fafc;
   --card-example-border: #cbd5e1;
-  --card-pill-bg: #f1f5f9;
-  --card-pill-text: #0f172a;
-  --card-pill-border: #64748b;
+  --card-pill-bg: #f8fafc;
+  --card-pill-text: #090d16;
+  --card-pill-border: #94a3b8;
 }
 
 /* 2. Sıcak Fildişi / Kitap Kağıdı */
@@ -5449,23 +5470,24 @@ html[data-card-theme="green"] .card-face {
   --card-pill-border: #14532d;
 }
 
-/* 6. Koyu Gece Kartonu (Yalnızca Karanlık Modda veya Açık Modda da okunaklı zemin) */
+/* 6. Koyu Gece Kartonu (Karanlık Modda %100 Yüksek Kontrast ve Net Okunabilirlik) */
+html[data-theme="dark"] .card-face,
 html[data-theme="dark"][data-card-theme="dark"] .card-face,
 html[data-card-theme="dark"] .card-face {
-  --bg-card: #1e293b;
-  --bg-card-header: #0f172a;
-  --bg-card-back: #1e293b;
-  --card-ink-border: #475569;
-  --card-text-main: #f8fafc;
+  --bg-card: #151833;
+  --bg-card-header: #101229;
+  --bg-card-back: #151833;
+  --card-ink-border: rgba(139, 92, 246, 0.4);
+  --card-text-main: #ffffff;
   --card-text-muted: #cbd5e1;
   --card-text-accent: #38bdf8;
-  --card-badge-bg: #0f172a;
-  --card-badge-border: #334155;
-  --card-example-bg: #0f172a;
-  --card-example-border: #334155;
-  --card-pill-bg: #0f172a;
-  --card-pill-text: #f8fafc;
-  --card-pill-border: #475569;
+  --card-badge-bg: #1e2246;
+  --card-badge-border: rgba(139, 92, 246, 0.3);
+  --card-example-bg: #0f1126;
+  --card-example-border: rgba(139, 92, 246, 0.35);
+  --card-pill-bg: #1e2246;
+  --card-pill-text: #ffffff;
+  --card-pill-border: rgba(139, 92, 246, 0.45);
 }
 
 /* Açık Modda Gece Kartı Seçilmişse Dahi Kartın Arka Planı ve Yazıları Açık Mod Standartlarına Uygun Kalır */
@@ -5521,31 +5543,58 @@ html:not([data-theme="dark"])[data-card-theme="dark"] .card-face {
 .card-face h1,
 .card-face h2 {
   color: var(--card-text-main) !important;
+  font-weight: 800 !important;
+  letter-spacing: -0.02em !important;
+  line-height: 1.15 !important;
+}
+
+[data-theme="dark"] .card-face .card-target-word,
+[data-theme="dark"] .card-face .card-word,
+[data-theme="dark"] .card-face h1,
+[data-theme="dark"] .card-face h2 {
+  text-shadow: 0 0 16px rgba(255, 255, 255, 0.2) !important;
 }
 
 .card-face .card-meaning {
-  color: var(--card-text-main) !important;
+  color: var(--card-text-accent) !important;
+  font-weight: 800 !important;
+  letter-spacing: -0.01em !important;
+  line-height: 1.25 !important;
+}
+
+[data-theme="dark"] .card-face .card-meaning {
+  color: #38bdf8 !important;
+  text-shadow: 0 0 14px rgba(56, 189, 248, 0.3) !important;
 }
 
 .card-face .card-unit-label {
   color: var(--card-text-accent) !important;
+  font-weight: 800 !important;
+  letter-spacing: 0.05em !important;
 }
 
 .card-face .card-cat-badge {
   color: var(--card-text-muted) !important;
+  background: var(--card-badge-bg) !important;
+  border: 1px solid var(--card-badge-border) !important;
+  font-weight: 700 !important;
 }
 
 /* Rozetler ve Telaffuz Alanı */
 .card-face .phonetic-badge {
-  color: var(--card-text-muted) !important;
+  color: var(--card-text-main) !important;
   background: var(--card-badge-bg) !important;
   border: 1px solid var(--card-badge-border) !important;
+  font-weight: 700 !important;
+  letter-spacing: 0.03em !important;
 }
 
 .card-face .pos-badge {
   color: var(--card-text-accent) !important;
   background: var(--card-badge-bg) !important;
   border: 1px solid var(--card-badge-border) !important;
+  font-weight: 800 !important;
+  letter-spacing: 0.05em !important;
 }
 
 .card-face .accent-btn-group {
@@ -5555,41 +5604,88 @@ html:not([data-theme="dark"])[data-card-theme="dark"] .card-face {
 
 .card-face .accent-btn {
   color: var(--card-text-muted) !important;
+  font-weight: 700 !important;
 }
 
 .card-face .accent-btn.active {
   background: var(--bg-card) !important;
   color: var(--card-text-accent) !important;
-  border: 1px solid var(--card-badge-border) !important;
-  box-shadow: none !important;
+  border: 1.5px solid var(--card-text-accent) !important;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08) !important;
+  font-weight: 800 !important;
+}
+
+[data-theme="dark"] .card-face .accent-btn.active {
+  border-color: #38bdf8 !important;
+  color: #38bdf8 !important;
+  box-shadow: 0 0 12px rgba(56, 189, 248, 0.35) !important;
 }
 
 /* Örnek Cümle ve Çeviri */
 .card-face .example-box {
   background: var(--card-example-bg) !important;
   border: 1.5px solid var(--card-example-border) !important;
+  border-left: 4px solid var(--card-text-accent) !important;
+}
+
+[data-theme="dark"] .card-face .example-box {
+  border-left-color: #38bdf8 !important;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3) !important;
+}
+
+.card-face .example-box-label {
+  color: var(--card-text-muted) !important;
+  font-weight: 800 !important;
+  letter-spacing: 0.05em !important;
+  font-size: 0.68rem !important;
+}
+
+.card-face .card-sentence-audio-btn {
+  background: var(--card-badge-bg) !important;
+  border: 1px solid var(--card-badge-border) !important;
+  color: var(--card-text-accent) !important;
+  font-weight: 800 !important;
+}
+
+[data-theme="dark"] .card-face .card-sentence-audio-btn {
+  color: #38bdf8 !important;
+  border-color: rgba(56, 189, 248, 0.45) !important;
+  background: rgba(56, 189, 248, 0.16) !important;
 }
 
 .card-face .example-sentence {
   color: var(--card-text-main) !important;
+  font-weight: 600 !important;
+  line-height: 1.45 !important;
 }
 
 .card-face .example-sentence mark {
-  background: rgba(234, 179, 8, 0.35) !important;
-  color: var(--card-text-main) !important;
-  padding: 1px 4px;
-  border-radius: 4px;
+  background: rgba(254, 240, 138, 0.7) !important;
+  color: #713f12 !important;
+  font-weight: 800 !important;
+  padding: 1px 5px !important;
+  border-radius: 4px !important;
+}
+
+[data-theme="dark"] .card-face .example-sentence mark {
+  background: rgba(234, 179, 8, 0.28) !important;
+  color: #fde047 !important;
+  border: 1px solid rgba(250, 204, 21, 0.45) !important;
 }
 
 .card-face .example-translation {
   color: var(--card-text-muted) !important;
+  font-weight: 500 !important;
+  font-style: italic !important;
+  line-height: 1.4 !important;
 }
 
-/* Kart Çevir Butonu (Pill) */
+/* Kart Çevir Butonları (Pill) */
 .card-face .card-flip-pill {
   background: var(--card-pill-bg) !important;
   border: 1.5px solid var(--card-pill-border) !important;
   color: var(--card-pill-text) !important;
+  font-weight: 700 !important;
 }
 
 .card-face .card-flip-pill svg {
@@ -5604,6 +5700,28 @@ html:not([data-theme="dark"])[data-card-theme="dark"] .card-face {
 
 .card-face .card-flip-pill:hover svg {
   stroke: var(--bg-card) !important;
+}
+
+/* Tekrar Öğren Butonu */
+.card-face .card-flip-pill.repeat-pill {
+  background: rgba(245, 158, 11, 0.1) !important;
+  border: 1.5px solid rgba(245, 158, 11, 0.45) !important;
+  color: #d97706 !important;
+  font-weight: 700 !important;
+}
+
+.card-face .card-flip-pill.repeat-pill svg {
+  stroke: #d97706 !important;
+}
+
+[data-theme="dark"] .card-face .card-flip-pill.repeat-pill {
+  background: rgba(245, 158, 11, 0.2) !important;
+  border-color: rgba(251, 191, 36, 0.6) !important;
+  color: #fbbf24 !important;
+}
+
+[data-theme="dark"] .card-face .card-flip-pill.repeat-pill svg {
+  stroke: #fbbf24 !important;
 }
 
 /* ==========================================================================
@@ -7488,7 +7606,7 @@ body.arena-game-active .drawer-peek-tab {
   -webkit-tap-highlight-color: transparent !important;
 }
 
-body[data-theme="dark"] .drawer-peek-tab,
+[data-theme="dark"] .drawer-peek-tab,
 .dark-theme .drawer-peek-tab {
   background: rgba(30, 41, 59, 0.45) !important;
   border-color: rgba(255, 255, 255, 0.08) !important;
@@ -7504,9 +7622,9 @@ body[data-theme="dark"] .drawer-peek-tab,
   box-shadow: 0 -4px 14px rgba(0, 0, 0, 0.12) !important;
 }
 
-body[data-theme="dark"] .drawer-peek-tab:hover,
-body[data-theme="dark"] .drawer-peek-tab:focus-visible,
-body[data-theme="dark"] .drawer-peek-tab:active,
+[data-theme="dark"] .drawer-peek-tab:hover,
+[data-theme="dark"] .drawer-peek-tab:focus-visible,
+[data-theme="dark"] .drawer-peek-tab:active,
 .dark-theme .drawer-peek-tab:hover,
 .dark-theme .drawer-peek-tab:focus-visible,
 .dark-theme .drawer-peek-tab:active {
@@ -7661,7 +7779,7 @@ body[data-theme="dark"] .drawer-peek-tab:active,
   border-color: rgba(37, 99, 235, 0.2);
 }
 
-body[data-theme="dark"] .drawer-home-btn,
+[data-theme="dark"] .drawer-home-btn,
 .dark-theme .drawer-home-btn {
   background: rgba(37, 99, 235, 0.12);
   border-color: rgba(37, 99, 235, 0.3);
@@ -9403,7 +9521,7 @@ body[data-theme="dark"] .drawer-home-btn,
   border-radius: var(--radius-full);
 }
 
-body[data-theme="dark"] .home-unit-select-btn,
+[data-theme="dark"] .home-unit-select-btn,
 .dark-theme .home-unit-select-btn {
   background: var(--bg-surface);
   border-color: var(--border-color);
@@ -9463,8 +9581,8 @@ body[data-theme="dark"] .home-unit-select-btn,
 .card-tab-btn {
   flex: 1;
   height: 100% !important;
-  background: rgba(0, 0, 0, 0.04);
-  border: 1px solid rgba(0, 0, 0, 0.06);
+  background: #ffffff;
+  border: 1px solid #cbd5e1;
   border-radius: 9999px;
   padding: 0 8px;
   display: flex;
@@ -9472,8 +9590,9 @@ body[data-theme="dark"] .home-unit-select-btn,
   justify-content: center;
   font-size: 0.81rem;
   font-weight: 700;
-  color: var(--text-muted);
+  color: #1e293b;
   cursor: pointer;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
   transition: all 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
   position: relative;
   outline: none !important;
@@ -9482,9 +9601,21 @@ body[data-theme="dark"] .home-unit-select-btn,
   -webkit-tap-highlight-color: transparent !important;
 }
 
+.card-tab-btn .tab-badge {
+  font-weight: 800;
+  color: #475569;
+  margin-left: 3px;
+}
+
 [data-theme="dark"] .card-tab-btn {
-  background: rgba(255, 255, 255, 0.05);
-  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: rgba(255, 255, 255, 0.07);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  color: #f1f5f9;
+  box-shadow: none;
+}
+
+[data-theme="dark"] .card-tab-btn .tab-badge {
+  color: #94a3b8;
 }
 
 .card-tab-btn::after {
@@ -9578,8 +9709,8 @@ body[data-theme="dark"] .home-unit-select-btn,
   font-weight: 800;
   border-radius: 10px;
   background: rgba(99, 102, 241, 0.12);
-  color: #6366f1;
-  border: 1px solid rgba(99, 102, 241, 0.28);
+  color: #4338ca;
+  border: 1px solid rgba(99, 102, 241, 0.35);
   cursor: pointer;
   transition: all 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
   user-select: none;
@@ -9692,7 +9823,7 @@ html:not([data-theme="dark"]) .card-unlearn-pill {
   font-weight: 800;
   letter-spacing: 0.04em;
   text-transform: uppercase;
-  color: var(--text-muted);
+  color: #1e293b;
   white-space: nowrap;
 }
 
@@ -9703,16 +9834,16 @@ html:not([data-theme="dark"]) .card-unlearn-pill {
   font-size: 0.86rem !important;
   font-weight: 800 !important;
   background: #ffffff !important;
-  color: var(--text-main) !important;
-  border: 1.5px solid #cbd5e1 !important;
-  box-shadow: 0 2px 0 #94a3b8 !important;
+  color: #090d16 !important;
+  border: 1.5px solid #94a3b8 !important;
+  box-shadow: 0 2px 0 #64748b !important;
   cursor: pointer !important;
   outline: none !important;
   transition: all 0.2s ease !important;
   text-align: center !important;
 }
 
-/* Karanlık Modda Canlı Neon Camgöbeği/Turkuaz Hedef Seçici (Görsel 2) */
+/* Karanlık Modda Canlı Neon Camgöbeği/Turkuaz Hedef Seçici */
 [data-theme="dark"] .inline-select,
 [data-theme="dark"] .setting-select-box.inline-select {
   background: #181b36 !important;
@@ -9722,18 +9853,24 @@ html:not([data-theme="dark"]) .card-unlearn-pill {
 }
 
 [data-theme="dark"] .inline-goal-label {
-  color: #94a3b8;
+  color: #f1f5f9;
 }
 
 .inline-unit-total {
   font-size: 0.78rem;
-  font-weight: 700;
+  font-weight: 800;
   padding: 3px 10px;
   border-radius: 9999px;
-  background: rgba(148, 163, 184, 0.15);
-  color: var(--text-muted);
-  border: 1px solid rgba(148, 163, 184, 0.25);
+  background: #f1f5f9;
+  color: #1e293b;
+  border: 1px solid #cbd5e1;
   white-space: nowrap;
+}
+
+[data-theme="dark"] .inline-unit-total {
+  background: rgba(30, 41, 59, 0.8);
+  color: #e2e8f0;
+  border: 1px solid rgba(255, 255, 255, 0.15);
 }
 
 [data-theme="dark"] .inline-unit-total {
@@ -9742,13 +9879,13 @@ html:not([data-theme="dark"]) .card-unlearn-pill {
   border: 1px solid rgba(255, 255, 255, 0.1);
 }
 
-body[data-theme="dark"] .card-filter-tabs-container,
+[data-theme="dark"] .card-filter-tabs-container,
 .dark-theme .card-filter-tabs-container {
   background: rgba(30, 41, 59, 0.7);
   border-color: rgba(255, 255, 255, 0.08);
 }
 
-body[data-theme="dark"] .home-unit-select-btn:hover,
+[data-theme="dark"] .home-unit-select-btn:hover,
 .dark-theme .home-unit-select-btn:hover {
   background: rgba(37, 99, 235, 0.15);
   border-color: var(--accent);
@@ -12359,7 +12496,7 @@ body[data-theme="dark"] .home-unit-select-btn:hover,
     box-shadow: 0 0 50px rgba(0, 0, 0, 0.12);
   }
 
-  body[data-theme="dark"] .app-container {
+  [data-theme="dark"] .app-container {
     box-shadow: 0 0 50px rgba(0, 0, 0, 0.45);
   }
 

@@ -7,7 +7,7 @@
 (function () {
   'use strict';
 
-  const APP_VERSION = 'v1.8.54';
+  const APP_VERSION = 'v1.8.55';
   const DEFAULT_AVATAR = 'avatar_default';
   const CURRENT_APP_BUILD = 'lexiq_build_19_clean';
 
@@ -1244,6 +1244,9 @@
     if (theme === 'dark') {
       dom.moonIcon.style.display = 'block';
       dom.sunIcon.style.display = 'none';
+      if (state.cardTheme === 'white') {
+        applyCardTheme('dark');
+      }
     } else {
       dom.moonIcon.style.display = 'none';
       dom.sunIcon.style.display = 'block';
@@ -5698,15 +5701,19 @@ let activeAvatarCategory = 'all';
       }
     }
 
-    if (state.autoplayAudio && !state.reverseMode && state.words.length > 0) {
-      if (cardWordAudioTimer) clearTimeout(cardWordAudioTimer);
-      cardWordAudioTimer = setTimeout(() => {
-        cardWordAudioTimer = null;
-        if (!state.isFlipped) {
-          speakCurrentWord(state.cardAutoAccent || state.activeEnAccent || 'US');
-        }
-      }, 280);
-    }
+    triggerAutoWordPronounce();
+  }
+
+  function triggerAutoWordPronounce() {
+    if (!state.autoplayAudio || state.reverseMode || !state.words || state.words.length === 0) return;
+    if (state.activeMode !== 'flashcards') return;
+    if (cardWordAudioTimer) clearTimeout(cardWordAudioTimer);
+    cardWordAudioTimer = setTimeout(() => {
+      cardWordAudioTimer = null;
+      if (!state.isFlipped && state.activeMode === 'flashcards' && state.words && state.words[state.currentIndex]) {
+        speakCurrentWord(state.cardAutoAccent || state.activeEnAccent || 'US');
+      }
+    }, 280);
   }
 
   function showDailyGoalCompleteModal() {
@@ -5754,6 +5761,7 @@ let activeAvatarCategory = 'all';
       state.currentIndex--;
       triggerCardAnimation('prev');
       renderCard();
+      triggerAutoWordPronounce();
     }
   }
 
@@ -5765,6 +5773,7 @@ let activeAvatarCategory = 'all';
       state.currentIndex++;
       triggerCardAnimation('next');
       renderCard();
+      triggerAutoWordPronounce();
     }
   }
 
