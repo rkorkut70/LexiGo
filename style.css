@@ -1059,6 +1059,24 @@ html, body {
   will-change: transform;
 }
 
+/* Sınır / Son Kelime Yaylanma & Titreşim Animasyonu */
+@keyframes cardBoundaryShake {
+  0% { transform: translateX(0); }
+  25% { transform: translateX(-14px); }
+  50% { transform: translateX(10px); }
+  75% { transform: translateX(-5px); }
+  100% { transform: translateX(0); }
+}
+
+.flashcard-wrapper.card-boundary-shake {
+  animation: cardBoundaryShake 0.35s cubic-bezier(0.36, 0.07, 0.19, 0.97) !important;
+}
+
+.card-nav-action-btn.is-edge-btn {
+  opacity: 0.55 !important;
+  transition: opacity 0.2s ease;
+}
+
 /* Gerçekçi Kağıt Kart Ön ve Arka Yüzü (Yüklenen Şablona Birebir Uyum) */
 .card-face {
   position: absolute;

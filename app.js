@@ -7,7 +7,7 @@
 (function () {
   'use strict';
 
-  const APP_VERSION = 'v1.8.60';
+  const APP_VERSION = 'v1.8.61';
   const DEFAULT_AVATAR = 'avatar_default';
   const CURRENT_APP_BUILD = 'lexiq_build_19_clean';
 
@@ -5230,8 +5230,14 @@ let activeAvatarCategory = 'all';
     }
 
     if (dom.cardBottomControls) dom.cardBottomControls.style.display = 'flex';
-    if (dom.prevCardBtn) dom.prevCardBtn.disabled = (state.currentIndex <= 0);
-    if (dom.nextCardBtn) dom.nextCardBtn.disabled = (state.currentIndex >= state.words.length - 1);
+    if (dom.prevCardBtn) {
+      dom.prevCardBtn.disabled = false;
+      dom.prevCardBtn.classList.toggle('is-edge-btn', state.currentIndex <= 0);
+    }
+    if (dom.nextCardBtn) {
+      dom.nextCardBtn.disabled = false;
+      dom.nextCardBtn.classList.toggle('is-edge-btn', state.currentIndex >= state.words.length - 1);
+    }
     if (dom.markRepeatBtn) dom.markRepeatBtn.disabled = false;
 
     const currentWord = state.words[state.currentIndex];
@@ -5407,8 +5413,10 @@ let activeAvatarCategory = 'all';
 
     // Gezinme Durumu
     dom.cardIndexCounter.textContent = `${state.currentIndex + 1} / ${state.words.length}`;
-    dom.prevCardBtn.disabled = state.currentIndex === 0;
-    dom.nextCardBtn.disabled = state.currentIndex === state.words.length - 1;
+    dom.prevCardBtn.disabled = false;
+    dom.prevCardBtn.classList.toggle('is-edge-btn', state.currentIndex === 0);
+    dom.nextCardBtn.disabled = false;
+    dom.nextCardBtn.classList.toggle('is-edge-btn', state.currentIndex >= state.words.length - 1);
   }
 
   let currentSpeechToken = 0;
@@ -5813,6 +5821,8 @@ let activeAvatarCategory = 'all';
     }, 320);
   }
 
+  let lastCardBoundaryWarnTime = 0;
+
   function prevCard() {
     if (state.currentIndex > 0) {
       triggerHapticFeedback('light');
@@ -5822,6 +5832,21 @@ let activeAvatarCategory = 'all';
       triggerCardAnimation('prev');
       renderCard();
       triggerAutoWordPronounce();
+    } else if (state.words && state.words.length > 0) {
+      const now = Date.now();
+      if (now - lastCardBoundaryWarnTime > 1200) {
+        lastCardBoundaryWarnTime = now;
+        triggerHapticFeedback('light');
+        if (dom.flashcardWrapper) {
+          dom.flashcardWrapper.classList.remove('card-boundary-shake');
+          void dom.flashcardWrapper.offsetWidth;
+          dom.flashcardWrapper.classList.add('card-boundary-shake');
+          setTimeout(() => {
+            if (dom.flashcardWrapper) dom.flashcardWrapper.classList.remove('card-boundary-shake');
+          }, 360);
+        }
+        showToast('📌 Listenin ilk kelimesindesiniz. Sonraki kelimelere geçmek için sola kaydırabilirsiniz.', '', 2200);
+      }
     }
   }
 
@@ -5834,6 +5859,34 @@ let activeAvatarCategory = 'all';
       triggerCardAnimation('next');
       renderCard();
       triggerAutoWordPronounce();
+    } else if (state.words && state.words.length > 0) {
+      const now = Date.now();
+      if (now - lastCardBoundaryWarnTime > 1200) {
+        lastCardBoundaryWarnTime = now;
+        triggerHapticFeedback('medium');
+        if (dom.flashcardWrapper) {
+          dom.flashcardWrapper.classList.remove('card-boundary-shake');
+          void dom.flashcardWrapper.offsetWidth;
+          dom.flashcardWrapper.classList.add('card-boundary-shake');
+          setTimeout(() => {
+            if (dom.flashcardWrapper) dom.flashcardWrapper.classList.remove('card-boundary-shake');
+          }, 360);
+        }
+
+        const filter = state.activeFilter || 'pending';
+        let msg = '📌 Listedeki son kelimedesiniz. Geri dönüp önceki kelimeleri gözden geçirebilirsiniz.';
+        if (filter === 'pending') {
+          msg = '📌 Öğrenilecek kelimelerin sonuna geldiniz. Geri dönüp henüz öğrenmediğiniz kelimeleri tekrar inceleyebilirsiniz!';
+        } else if (filter === 'learned') {
+          msg = '⭐ Öğrenilen kelimelerin sonuna geldiniz. Geri dönerek kelimelerinizi tekrar edebilirsiniz.';
+        } else if (filter === 'mylist') {
+          msg = '🔖 Kelime defterinizdeki son kelimedesiniz. Geri dönüp listenizi inceleyebilirsiniz.';
+        } else if (filter === 'troubled') {
+          msg = '⚠️ Zorlandığınız kelimelerin sonuna ulaştınız. Geri dönüp kelimelerinizi pekiştirebilirsiniz.';
+        }
+
+        showToast(msg, 'warning', 3600);
+      }
     }
   }
 

@@ -1,10 +1,10 @@
 {
-  "version": "v1.8.60",
-  "versionCode": 121,
+  "version": "v1.8.61",
+  "versionCode": 122,
   "releaseDate": "2026-11-03",
   "notes": [
-    "🔍 Kristal Netliğinde Yardım Balonları: Yardım turları sırasında hedef buton ve kartların üzerindeki aşırı bulanıklık tamamen giderildi; alanlar %100 net ve okunur hale getirildi.",
-    "🛡️ Akıllı Kart Rehberi Koruması: Günlük hedef tamamlandığında kartlar kapalı olduğu için rehber balonlarının yanlış yerlerde açılması önlendi; kullanıcıya bilgilendirici uyarı eklendi.",
-    "🎯 Gelişmiş Hedef Tespiti: Konuşma balonları kapalı veya sıfır boyutlu öğeler yerine her zaman ekranda en ergonomik ve doğru konumda gösterilir."
+    "⚡ %82 Boyut Optimizasyonu: Geliştirme PDF dokümanları ve ham görseller APK paketinden temizlendi. Dosya boyutu 66 MB'tan tekrar ~11.5 MB'a düşürüldü.",
+    "🛑 Son Kelime Kaydırma Uyarısı: Öğrenilecek kelimelerin sonuna gelindiğinde sola kaydırma direnci, titreşim ve geri dönüp tekrar etmeyi hatırlatan bildirim eklendi.",
+    "🔍 Kristal Netliğinde Yardım Balonları: Yardım balonları hedef üzerindeki bulanıklıklar giderilerek %100 net ve keskin hale getirildi."
   ]
 }
