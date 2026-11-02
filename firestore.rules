@@ -1,0 +1,267 @@
+rules_version = '2';
+
+// ===============================================================
+// Assumed Data Model & Architecture
+// ===============================================================
+//
+// 1. Collection: users
+//    Document ID: {userId} (Must strictly match authenticated user's request.auth.uid)
+//    Description: Stores individual student profile, study progress, XP, streak, and branch assignment.
+//    Fields:
+//      - uid: string (optional, must match request.auth.uid) [IMMUTABLE]
+//      - displayName: string (optional, max 80 chars)
+//      - email: string (optional, max 120 chars)
+//      - avatar: string (optional, max 1500 chars, supports emoji, asset token, or Storage URL)
+//      - track: string (optional, max 30 chars, e.g., '4A', '4B')
+//      - level: string (optional, max 30 chars, e.g., 'A1', 'A2', 'B1')
+//      - lang: string (optional, max 30 chars, e.g., 'EN-TR', 'FR-TR', 'DE-TR')
+//      - branch: string (optional, max 60 chars, official ADÜ YDYO branch code e.g. 'İHS 101')
+//      - branchLocked: bool (optional, locked flag)
+//      - weeklyXp: number (optional, >= 0, weekly tournament counter)
+//      - weeklyWeekId: string (optional, max 40 chars, e.g., '2026-W42')
+//      - xp: number (optional, >= 0, lifetime XP)
+//      - learnedMap: map (optional, dictionary of word IDs to learning status)
+//      - unlockedBadges: list (optional, max 150 items)
+//      - maxStreak: number (optional, >= 0)
+//      - dayStreak: number (optional, >= 0)
+//      - maxDayStreak: number (optional, >= 0)
+//      - lastStudyDate: string (optional, max 40 chars)
+//      - arenaWordsSolved: number (optional, >= 0)
+//      - gameStats: map (optional, game category play metrics)
+//      - cleanWins: number (optional, >= 0)
+//      - timeTracking: map (optional, duration tracking metrics)
+//      - createdAt: timestamp | number (optional, creation time) [IMMUTABLE]
+//      - lastActive: timestamp (optional, presence heartbeat/timestamp)
+//      - lastLoginAt: timestamp (optional, session start timestamp)
+//      - isOnline: bool (optional, presence indicator)
+//      - onboarded: bool (optional, onboarding completion flag)
+//
+// 2. Collection: tournament_archive
+//    Document ID: {docId} (e.g., '2026-W42_EN-TR')
+//    Description: Archived weekly/monthly branch duels and tournament podiums.
+//    Fields:
+//      - weekId: string (required, max 40 chars)
+//      - lang: string (required, max 30 chars)
+//      - firstBranch: string (required, max 60 chars)
+//      - firstAvg: number (required, >= 0)
+//      - secondBranch: string | null (optional, max 60 chars)
+//      - secondAvg: number (optional, >= 0)
+//      - thirdBranch: string | null (optional, max 60 chars)
+//      - thirdAvg: number (optional, >= 0)
+//      - timestamp: timestamp (optional)
+//      - archivedAt: timestamp (optional)
+//      - rankings: list | map (optional)
+//      - branchRankings: list | map (optional)
+//
+// 3. Collection: feedbacks
+//    Document ID: {feedbackId} (Auto-generated)
+//    Description: User feedback submissions and bug reports.
+//    Fields:
+//      - type: string (required, enum: 'bug', 'word_fix', 'suggestion', 'general')
+//      - message: string (required, 1-3000 chars)
+//      - name: string (optional, max 100 chars)
+//      - email: string (optional, max 150 chars)
+//      - appVersion: string (optional, max 50 chars)
+//      - language: string (optional, max 30 chars)
+//      - track: string (optional, max 30 chars)
+//      - level: string (optional, max 30 chars)
+//      - date: string (optional, max 50 chars)
+//      - createdAt: timestamp (optional)
+//
+// ===============================================================
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // ===============================================================
+    // Global Helper Functions
+    // ===============================================================
+
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+
+    function isOwner(userId) {
+      return isAuthenticated() && request.auth.uid == userId;
+    }
+
+    function uidUnchanged() {
+      return !('uid' in request.resource.data) ||
+             request.resource.data.uid == request.auth.uid;
+    }
+
+    function uidNotModified() {
+      return !('uid' in request.resource.data) ||
+             !('uid' in resource.data) ||
+             request.resource.data.uid == resource.data.uid;
+    }
+
+    function hasRequiredFields(data, fields) {
+      return data.keys().hasAll(fields);
+    }
+
+    // ===============================================================
+    // Domain Validator: users
+    // ===============================================================
+
+    function hasOnlyAllowedUserFields(data) {
+      return data.keys().hasOnly([
+        'uid', 'displayName', 'email', 'avatar', 'track', 'level', 'lang',
+        'branch', 'branchLocked', 'weeklyXp', 'weeklyWeekId', 'xp',
+        'learnedMap', 'unlockedBadges', 'maxStreak', 'dayStreak', 'maxDayStreak',
+        'lastStudyDate', 'arenaWordsSolved', 'gameStats', 'cleanWins',
+        'timeTracking', 'createdAt', 'lastActive', 'lastLoginAt', 'isOnline', 'onboarded'
+      ]);
+    }
+
+    function isValidUser(data) {
+      return hasOnlyAllowedUserFields(data) &&
+        (!('uid' in data) || (data.uid is string && data.uid == request.auth.uid)) &&
+        (!('displayName' in data) || (data.displayName is string && data.displayName.size() <= 80)) &&
+        (!('email' in data) || (data.email is string && data.email.size() <= 120)) &&
+        (!('avatar' in data) || (data.avatar is string && data.avatar.size() <= 1500)) &&
+        (!('track' in data) || (data.track is string && data.track.size() <= 30)) &&
+        (!('level' in data) || (data.level is string && data.level.size() <= 30)) &&
+        (!('lang' in data) || (data.lang is string && data.lang.size() <= 30)) &&
+        (!('branch' in data) || (data.branch is string && data.branch.size() <= 60)) &&
+        (!('branchLocked' in data) || data.branchLocked is bool) &&
+        (!('weeklyXp' in data) || (data.weeklyXp is number && data.weeklyXp >= 0)) &&
+        (!('weeklyWeekId' in data) || (data.weeklyWeekId is string && data.weeklyWeekId.size() <= 40)) &&
+        (!('xp' in data) || (data.xp is number && data.xp >= 0)) &&
+        (!('learnedMap' in data) || data.learnedMap is map) &&
+        (!('unlockedBadges' in data) || (data.unlockedBadges is list && data.unlockedBadges.size() <= 150)) &&
+        (!('maxStreak' in data) || (data.maxStreak is number && data.maxStreak >= 0)) &&
+        (!('dayStreak' in data) || (data.dayStreak is number && data.dayStreak >= 0)) &&
+        (!('maxDayStreak' in data) || (data.maxDayStreak is number && data.maxDayStreak >= 0)) &&
+        (!('lastStudyDate' in data) || (data.lastStudyDate is string && data.lastStudyDate.size() <= 40)) &&
+        (!('arenaWordsSolved' in data) || (data.arenaWordsSolved is number && data.arenaWordsSolved >= 0)) &&
+        (!('gameStats' in data) || data.gameStats is map) &&
+        (!('cleanWins' in data) || (data.cleanWins is number && data.cleanWins >= 0)) &&
+        (!('timeTracking' in data) || data.timeTracking is map) &&
+        (!('createdAt' in data) || data.createdAt is timestamp || data.createdAt is number) &&
+        (!('lastActive' in data) || data.lastActive is timestamp) &&
+        (!('lastLoginAt' in data) || data.lastLoginAt is timestamp) &&
+        (!('isOnline' in data) || data.isOnline is bool) &&
+        (!('onboarded' in data) || data.onboarded is bool);
+    }
+
+    function areImmutableUserFieldsUnchanged() {
+      return (!('createdAt' in resource.data) || !('createdAt' in request.resource.data) || request.resource.data.createdAt == resource.data.createdAt) &&
+             (!('uid' in resource.data) || !('uid' in request.resource.data) || request.resource.data.uid == resource.data.uid);
+    }
+
+    // ===============================================================
+    // Domain Validator: tournament_archive
+    // ===============================================================
+
+    function hasOnlyAllowedArchiveFields(data) {
+      return data.keys().hasOnly([
+        'weekId', 'lang', 'firstBranch', 'firstAvg',
+        'secondBranch', 'secondAvg', 'thirdBranch', 'thirdAvg',
+        'timestamp', 'archivedAt', 'rankings', 'branchRankings'
+      ]);
+    }
+
+    function isValidTournamentArchive(data) {
+      return hasOnlyAllowedArchiveFields(data) &&
+        hasRequiredFields(data, ['weekId', 'lang', 'firstBranch', 'firstAvg']) &&
+        data.weekId is string && data.weekId.size() > 0 && data.weekId.size() <= 40 &&
+        data.lang is string && data.lang.size() > 0 && data.lang.size() <= 30 &&
+        data.firstBranch is string && data.firstBranch.size() > 0 && data.firstBranch.size() <= 60 &&
+        data.firstAvg is number && data.firstAvg >= 0 &&
+        (!('secondBranch' in data) || data.secondBranch == null || (data.secondBranch is string && data.secondBranch.size() <= 60)) &&
+        (!('secondAvg' in data) || (data.secondAvg is number && data.secondAvg >= 0)) &&
+        (!('thirdBranch' in data) || data.thirdBranch == null || (data.thirdBranch is string && data.thirdBranch.size() <= 60)) &&
+        (!('thirdAvg' in data) || (data.thirdAvg is number && data.thirdAvg >= 0)) &&
+        (!('timestamp' in data) || data.timestamp is timestamp) &&
+        (!('archivedAt' in data) || data.archivedAt is timestamp) &&
+        (!('rankings' in data) || data.rankings is list || data.rankings is map) &&
+        (!('branchRankings' in data) || data.branchRankings is list || data.branchRankings is map);
+    }
+
+    // ===============================================================
+    // Domain Validator: feedbacks
+    // ===============================================================
+
+    function hasOnlyAllowedFeedbackFields(data) {
+      return data.keys().hasOnly([
+        'type', 'name', 'email', 'message', 'appVersion',
+        'language', 'track', 'level', 'date', 'createdAt'
+      ]);
+    }
+
+    function isValidFeedback(data) {
+      return hasOnlyAllowedFeedbackFields(data) &&
+        hasRequiredFields(data, ['type', 'message']) &&
+        data.type in ['bug', 'word_fix', 'suggestion', 'general'] &&
+        data.message is string && data.message.size() > 0 && data.message.size() <= 3000 &&
+        (!('name' in data) || (data.name is string && data.name.size() <= 100)) &&
+        (!('email' in data) || (data.email is string && data.email.size() <= 150)) &&
+        (!('appVersion' in data) || (data.appVersion is string && data.appVersion.size() <= 50)) &&
+        (!('language' in data) || (data.language is string && data.language.size() <= 30)) &&
+        (!('track' in data) || (data.track is string && data.track.size() <= 30)) &&
+        (!('level' in data) || (data.level is string && data.level.size() <= 30)) &&
+        (!('date' in data) || (data.date is string && data.date.size() <= 50)) &&
+        (!('createdAt' in data) || data.createdAt is timestamp);
+    }
+
+    // ===============================================================
+    // Rules: users Collection
+    // ===============================================================
+
+    match /users/{userId} {
+      // Authenticated users can get single profiles or query leaderboards/rankings
+      allow get, list: if isAuthenticated();
+
+      // Users can only create their own document matching request.auth.uid
+      allow create: if isOwner(userId) &&
+                       uidUnchanged() &&
+                       isValidUser(request.resource.data);
+
+      // Users can only update their own document, preserving immutable identifiers
+      allow update: if isOwner(userId) &&
+                       uidNotModified() &&
+                       areImmutableUserFieldsUnchanged() &&
+                       isValidUser(request.resource.data);
+
+      // Users can delete their own account/profile
+      allow delete: if isOwner(userId);
+    }
+
+    // ===============================================================
+    // Rules: tournament_archive Collection
+    // ===============================================================
+
+    match /tournament_archive/{docId} {
+      // Authenticated users can read archive podiums and rankings
+      allow get, list: if isAuthenticated();
+
+      // Authenticated users can record/update weekly tournament results
+      allow create, update: if isAuthenticated() &&
+                               isValidTournamentArchive(request.resource.data);
+
+      // Archives must never be deleted by clients
+      allow delete: if false;
+    }
+
+    // ===============================================================
+    // Rules: feedbacks Collection
+    // ===============================================================
+
+    match /feedbacks/{feedbackId} {
+      // Anyone can submit bug reports/feedback with strict schema validation
+      allow create: if isValidFeedback(request.resource.data);
+
+      // Prevent unauthorized reading, updating, or deleting of feedback submissions
+      allow read, update, delete: if false;
+    }
+
+    // ===============================================================
+    // Default Rule: Deny All Other Collections
+    // ===============================================================
+
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}
