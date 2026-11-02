@@ -7,7 +7,7 @@
 (function () {
   'use strict';
 
-  const APP_VERSION = 'v1.8.53';
+  const APP_VERSION = 'v1.8.54';
   const DEFAULT_AVATAR = 'avatar_default';
   const CURRENT_APP_BUILD = 'lexiq_build_19_clean';
 
@@ -1203,7 +1203,9 @@
       switchAppMode(state.activeMode || 'home');
       if (!localStorage.getItem('lexiq_tour_completed')) {
         setTimeout(() => {
-          if (typeof startFeatureTour === 'function') startFeatureTour(false);
+          if (!isTourBlocked()) {
+            if (typeof startFeatureTour === 'function') startFeatureTour(false);
+          }
         }, 700);
       }
     }
@@ -4256,14 +4258,27 @@ let activeAvatarCategory = 'all';
   // Yardım turu (Help bubbles / Tour) engelleme kontrolü
   function isTourBlocked() {
     if (window.isStreakPledgePending) return true;
+    if (window.isStreakPledgeActive) return true;
     if (window.isOnboardingFlowActive) return true;
     const streakModal = document.getElementById('streakPledgeModal');
-    if (streakModal && (streakModal.classList.contains('active') || (streakModal.style.display && streakModal.style.display !== 'none'))) {
-      return true;
+    if (streakModal) {
+      if (streakModal.classList.contains('active') || (streakModal.style.display && streakModal.style.display !== 'none')) {
+        return true;
+      }
+      try {
+        const cs = window.getComputedStyle(streakModal);
+        if (cs && cs.display !== 'none' && cs.visibility !== 'hidden' && cs.opacity !== '0') return true;
+      } catch (e) {}
     }
     const obModal = (dom && dom.onboardingModal) || document.getElementById('onboardingModal');
-    if (obModal && (obModal.classList.contains('active') || (obModal.style.display && obModal.style.display !== 'none'))) {
-      return true;
+    if (obModal) {
+      if (obModal.classList.contains('active') || (obModal.style.display && obModal.style.display !== 'none')) {
+        return true;
+      }
+      try {
+        const cs = window.getComputedStyle(obModal);
+        if (cs && cs.display !== 'none' && cs.visibility !== 'hidden' && cs.opacity !== '0') return true;
+      } catch (e) {}
     }
     return false;
   }
@@ -4273,11 +4288,13 @@ let activeAvatarCategory = 'all';
     window.startOnboardingFlow = startOnboardingFlow;
     window.isOnboardingFlowActive = true;
     window.isStreakPledgePending = false;
+    window.isStreakPledgeActive = false;
     localStorage.removeItem('lexiq_tour_completed');
     localStorage.removeItem('lexiq_cards_tour_completed');
     if (typeof endTour === 'function') endTour(false);
 
     obState.step = 0;
+    obState.streakPledgeDays = 5;
     obState.name = (state.userName && state.userName !== 'Öğrenci') ? state.userName : '';
     obState.avatar = (state.userAvatar && state.userAvatar !== '🦊' && state.userAvatar !== 'avatar_1_1') ? state.userAvatar : DEFAULT_AVATAR;
     obState.lang = state.activeLanguage || 'EN-TR';
@@ -4650,13 +4667,16 @@ let activeAvatarCategory = 'all';
       // 5 Günlük Seri Sözü modalını aç.
       // DİKKAT: Yardım baloncukları (tur), kullanıcı bu günlük söz ekranını kapattıktan SONRA devreye girecektir.
       window.isStreakPledgePending = true;
+      window.isStreakPledgeActive = true;
+      if (typeof endTour === 'function') endTour(false);
       switchAppMode('home');
       showToast(`Hoş geldin, ${state.userName}! ${state.userAvatar} Öğrenme yolculuğun başlıyor.`);
       setTimeout(() => {
         startStreakPledge(obState.streakPledgeDays);
-      }, 300);
+      }, 150);
     } else {
       window.isStreakPledgePending = false;
+      window.isStreakPledgeActive = false;
       switchAppMode('home');
       showToast(`Hoş geldin, ${state.userName}! ${state.userAvatar} Öğrenme yolculuğun başlıyor.`);
       // Seri sözü seçilmediyse veya atlandıysa, doğrudan yardım turunu başlat
@@ -6917,6 +6937,8 @@ let activeAvatarCategory = 'all';
 
   function openStreakPledgeModal() {
     window.isStreakPledgePending = false;
+    window.isStreakPledgeActive = true;
+    if (typeof endTour === 'function') endTour(false);
     evaluateStreakPledge();
     const modalEl = document.getElementById('streakPledgeModal');
     if (!modalEl) return;
@@ -6979,10 +7001,11 @@ let activeAvatarCategory = 'all';
 
   function closeStreakPledgeModal() {
     window.isStreakPledgePending = false;
+    window.isStreakPledgeActive = false;
     const modalEl = document.getElementById('streakPledgeModal');
     if (modalEl) {
       modalEl.classList.remove('active');
-      setTimeout(() => { modalEl.style.display = 'none'; }, 200);
+      modalEl.style.display = 'none';
     }
 
     // Kurulum ve Günlük Söz ekranı tamamen geçildikten sonra yardım baloncukları (tur) başlasın
@@ -13615,6 +13638,7 @@ let activeAvatarCategory = 'all';
         localStorage.removeItem('lexiq_cards_tour_completed');
         window.isOnboardingFlowActive = true;
         window.isStreakPledgePending = false;
+        window.isStreakPledgeActive = false;
         if (typeof endTour === 'function') endTour(false);
 
         updateUserProfileUI();
@@ -13723,6 +13747,7 @@ let activeAvatarCategory = 'all';
             localStorage.removeItem('lexiq_cards_tour_completed');
             window.isOnboardingFlowActive = true;
             window.isStreakPledgePending = false;
+            window.isStreakPledgeActive = false;
             if (typeof endTour === 'function') endTour(false);
 
             if (obModal) {
@@ -15644,6 +15669,10 @@ let activeAvatarCategory = 'all';
     }
 
     function showTourStep(index) {
+      if (typeof isTourBlocked === 'function' && isTourBlocked()) {
+        endTour(false);
+        return;
+      }
       if (!currentTourSteps || index < 0 || index >= currentTourSteps.length) {
         endTour(true);
         return;
