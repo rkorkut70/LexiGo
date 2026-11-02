@@ -7,7 +7,7 @@
 (function () {
   'use strict';
 
-  const APP_VERSION = 'v1.8.52';
+  const APP_VERSION = 'v1.8.53';
   const DEFAULT_AVATAR = 'avatar_default';
   const CURRENT_APP_BUILD = 'lexiq_build_19_clean';
 
@@ -941,6 +941,16 @@
     // Öğrenci Profili Modalı
     studentProfileModal: document.getElementById('studentProfileModal'),
     closeStudentProfileModalBtn: document.getElementById('closeStudentProfileModalBtn'),
+    // Seviye Terfi ve Tamamlama Modalı
+    levelCompleteModal: document.getElementById('levelCompleteModal'),
+    levelCompleteTitle: document.getElementById('levelCompleteTitle'),
+    levelCompleteMessage: document.getElementById('levelCompleteMessage'),
+    levelCompleteBadge: document.getElementById('levelCompleteBadge'),
+    nextLevelBookIcon: document.getElementById('nextLevelBookIcon'),
+    nextLevelBookTitle: document.getElementById('nextLevelBookTitle'),
+    nextLevelUnitsCount: document.getElementById('nextLevelUnitsCount'),
+    confirmNextLevelBtn: document.getElementById('confirmNextLevelBtn'),
+    stayCurrentLevelBtn: document.getElementById('stayCurrentLevelBtn'),
 
     // Ayarlar & Kart Rengi Modalı
     settingsBtn: document.getElementById('settingsBtn'),
@@ -2671,6 +2681,9 @@
 
       const bookPct = bookTotalWords > 0 ? Math.round((bookLearnedWords / bookTotalWords) * 100) : 0;
       const isBookCompleted = bookPct >= 80;
+      const nxtLevel = getNextLevel(langCode, lvl);
+      const isCurrentActiveLevel = lvl === (state.userLevel || getLevelForTrack(langCode, state.userTrack));
+      const showPromotionBtn = (isBookCompleted || completedUnitsCount === levelUnits.length) && nxtLevel && isCurrentActiveLevel;
 
       // Kitap Bölüm Kartı
       const sectionEl = document.createElement('div');
@@ -2689,8 +2702,9 @@
               <div class="prof-book-meta">${levelUnits.length} Ünite • ${bookLearnedWords} / ${bookTotalWords} kelime öğrenildi (${completedUnitsCount}/${levelUnits.length} ünite tamamlandı)</div>
             </div>
           </div>
-          <div class="prof-book-header-right">
+          <div class="prof-book-header-right" style="display: flex; flex-direction: column; align-items: flex-end; gap: 4px;">
             <span class="prof-book-pct-badge ${isBookCompleted ? 'is-complete' : ''}">%${bookPct}</span>
+            ${showPromotionBtn ? `<button type="button" class="prof-promote-next-btn" onclick="if(window.showLevelCompleteModal) window.showLevelCompleteModal('${langCode}', '${lvl}', '${nxtLevel}')">${nxtLevel}'e Geç 🚀</button>` : ''}
           </div>
         </div>
         <div class="prof-book-progress-mini" title="${meta.title}: %${bookPct} tamamlandı">
@@ -3325,6 +3339,123 @@ let activeAvatarCategory = 'all';
     });
     return levels.length ? levels : ['A1', 'A2', 'B1'];
   }
+
+  /**
+   * Seçili dilde bir sonraki CEFR seviyesini döner (örneğin A2 -> B1 -> B1+ veya A1 -> A2 -> B1).
+   */
+  function getNextLevel(langCode, currentLevel) {
+    const levels = getLevelsForLanguage(langCode);
+    const idx = levels.indexOf(currentLevel);
+    if (idx !== -1 && idx < levels.length - 1) {
+      return levels[idx + 1];
+    }
+    return null;
+  }
+
+  /**
+   * Seviye / Kur Tamamlama ve Terfi Modalı
+   */
+  function showLevelCompleteModal(langCode = state.activeLanguage, currentLevel = null, nextLevel = null) {
+    const curLvl = currentLevel || state.userLevel || getLevelForTrack(langCode, state.userTrack);
+    const nxtLvl = nextLevel || getNextLevel(langCode, curLvl);
+    if (!nxtLvl) return;
+
+    const modal = document.getElementById('levelCompleteModal');
+    if (!modal) return;
+
+    const currentUnits = getUnitsData().filter(u => u.dil === langCode && u.seviye === curLvl);
+    const currentMeta = getBookMetaForLevel(langCode, curLvl, currentUnits);
+    const nextUnits = getUnitsData().filter(u => u.dil === langCode && u.seviye === nxtLvl);
+    const nextMeta = getBookMetaForLevel(langCode, nxtLvl, nextUnits);
+
+    const titleEl = document.getElementById('levelCompleteTitle');
+    const msgEl = document.getElementById('levelCompleteMessage');
+    const badgeEl = document.getElementById('levelCompleteBadge');
+    const nextIconEl = document.getElementById('nextLevelBookIcon');
+    const nextTitleEl = document.getElementById('nextLevelBookTitle');
+    const nextUnitsEl = document.getElementById('nextLevelUnitsCount');
+    const confirmBtn = document.getElementById('confirmNextLevelBtn');
+    const stayBtn = document.getElementById('stayCurrentLevelBtn');
+
+    if (badgeEl) badgeEl.textContent = `${curLvl} TAMAMLANDI`;
+    if (titleEl) titleEl.textContent = `Tebrikler! ${curLvl} Seviyesini Tamamladın! 🎉`;
+    if (msgEl) {
+      msgEl.innerHTML = `<strong>${currentMeta.title}</strong> kitabındaki tüm üniteleri başarıyla bitirdin.<br>Artık bir sonraki seviye olan <strong>${nxtLvl}</strong> müfredatına geçmeye hazırsın!`;
+    }
+    if (nextIconEl) nextIconEl.textContent = nextMeta.icon || '📘';
+    if (nextTitleEl) nextTitleEl.textContent = nextMeta.title;
+    if (nextUnitsEl) nextUnitsEl.textContent = `${nextUnits.length} Yeni Ünite seni bekliyor`;
+
+    if (confirmBtn) {
+      confirmBtn.innerHTML = `<span>${nxtLvl} Seviyesine Geç 🚀</span>`;
+      confirmBtn.onclick = (e) => {
+        if (e) { e.preventDefault(); e.stopPropagation(); }
+        applyNextLevelPromotion(langCode, nxtLvl, nextUnits);
+        closeLevelCompleteModal();
+      };
+    }
+
+    if (stayBtn) {
+      stayBtn.onclick = (e) => {
+        if (e) { e.preventDefault(); e.stopPropagation(); }
+        const promptKey = `lexigo_level_completed_prompted_${langCode}_${curLvl}`;
+        localStorage.setItem(promptKey, 'dismissed');
+        closeLevelCompleteModal();
+        showToast(`Şimdilik ${curLvl} seviyesinde kaldın. İstediğin zaman ünite menüsünden geçebilirsin.`);
+      };
+    }
+
+    modal.style.display = 'flex';
+    triggerConfettiFx();
+    try {
+      playAudioFeedback('success');
+    } catch (e) {}
+  }
+
+  function closeLevelCompleteModal() {
+    const modal = document.getElementById('levelCompleteModal');
+    if (modal) modal.style.display = 'none';
+  }
+
+  /**
+   * Bir sonraki seviyeye geçişi uygular, profili ve üniteleri günceller.
+   */
+  function applyNextLevelPromotion(langCode, nextLevel, nextUnits) {
+    const firstUnitNo = (nextUnits && nextUnits.length > 0) ? nextUnits[0].unite_no : 1;
+
+    let newTrack = state.userTrack;
+    if (langCode === 'EN-TR') {
+      newTrack = (nextLevel === 'B1' || nextLevel === 'B1+') ? '4B' : '4A';
+    } else if (langCode === 'DE-TR') {
+      newTrack = (nextLevel === 'A2' || nextLevel === 'B1') ? '4B' : '4A';
+    } else if (langCode === 'FR-TR') {
+      newTrack = (nextLevel === 'B1') ? '4B' : '4A';
+    }
+
+    state.userLevel = nextLevel;
+    state.userTrack = newTrack;
+    state.activeUnitNo = firstUnitNo;
+    state.currentIndex = 0;
+
+    localStorage.setItem('lexiq_user_level', state.userLevel);
+    localStorage.setItem('lexiq_user_track', state.userTrack);
+    localStorage.setItem('lexiq_active_unit', String(state.activeUnitNo));
+
+    const promptKey = `lexigo_level_completed_prompted_${langCode}_${nextLevel}`;
+    localStorage.removeItem(promptKey);
+
+    if (typeof window.updateFirebaseProfile === 'function') {
+      window.updateFirebaseProfile(state.userName, state.userAvatar, state.userTrack, state.userLevel, state.activeLanguage);
+    }
+
+    updateUserProfileUI();
+    refreshWordsList();
+    triggerConfettiFx();
+    showToast(`🚀 Harika! ${nextLevel} seviyesine başarıyla geçiş yaptın. İyi çalışmalar!`, 'correct');
+  }
+
+  window.showLevelCompleteModal = showLevelCompleteModal;
+  window.closeLevelCompleteModal = closeLevelCompleteModal;
 
   function getUnitsForLanguageAndLevel(langCode, level) {
     const units = getUnitsData().filter(u => u.dil === langCode);
@@ -5523,6 +5654,27 @@ let activeAvatarCategory = 'all';
         if (prog.total > 0 && prog.learned >= prog.total) {
           noteUnitCompleted(curUnit);
         }
+
+        // Seviye Terfi ve Tamamlama Kontrolü:
+        // Eğer bu seviyedeki TÜM üniteler en az %80 tamamlandıysa tebrik ve üst kura geçiş modalını sun
+        const lvlUnits = getUnitsData().filter(u => u.dil === state.activeLanguage && u.seviye === targetLevel);
+        if (lvlUnits.length > 0) {
+          const allLvlPassed = lvlUnits.every(u => {
+            const p = getUnitProgress(u, state.activeLanguage);
+            return p.isPassed80 || p.isPassed75;
+          });
+          if (allLvlPassed) {
+            const nextLvl = getNextLevel(state.activeLanguage, targetLevel);
+            if (nextLvl) {
+              const promptKey = `lexigo_level_completed_prompted_${state.activeLanguage}_${targetLevel}`;
+              if (!localStorage.getItem(promptKey)) {
+                setTimeout(() => {
+                  showLevelCompleteModal(state.activeLanguage, targetLevel, nextLvl);
+                }, 850);
+              }
+            }
+          }
+        }
       }
     }
 
@@ -6182,6 +6334,36 @@ let activeAvatarCategory = 'all';
     const allWords = getWordsData();
     const lockMap = getUnitLockStatusMap(state.activeLanguage, targetLevel);
     dom.unitOptionsList.innerHTML = '';
+
+    const nextLevel = getNextLevel(state.activeLanguage, targetLevel);
+    const allUnitsPassed = units.length > 0 && units.every(u => {
+      const p = getUnitProgress(u, state.activeLanguage);
+      return p.isPassed80 || p.isPassed75;
+    });
+
+    if (allUnitsPassed && nextLevel) {
+      const nextUnits = getUnitsData().filter(u => u.dil === state.activeLanguage && u.seviye === nextLevel);
+      const nextMeta = getBookMetaForLevel(state.activeLanguage, nextLevel, nextUnits);
+      const promoBanner = document.createElement('div');
+      promoBanner.className = 'level-promotion-banner';
+      promoBanner.innerHTML = `
+        <div style="font-size: 2.2rem; flex-shrink: 0;">🎓</div>
+        <div style="flex: 1; min-width: 0;">
+          <div style="font-weight: 800; font-size: 0.95rem; color: #10b981;">Tebrikler! ${targetLevel} Seviyesini Tamamladın! 🎉</div>
+          <div style="font-size: 0.82rem; color: var(--text-muted); margin-top: 2px;">Sonraki kitap: <strong>${nextMeta.title}</strong></div>
+        </div>
+        <button type="button" class="pill-btn primary-action-btn" id="modalPromoNextBtn" style="padding: 9px 14px; font-size: 0.85rem; font-weight: 800; background: linear-gradient(135deg, #10b981, #059669); color: #fff; border: none; border-radius: 12px; white-space: nowrap; cursor: pointer;">${nextLevel}'e Geç 🚀</button>
+      `;
+      const promoBtn = promoBanner.querySelector('#modalPromoNextBtn');
+      if (promoBtn) {
+        promoBtn.addEventListener('click', (e) => {
+          e.stopPropagation();
+          closeUnitModal();
+          showLevelCompleteModal(state.activeLanguage, targetLevel, nextLevel);
+        });
+      }
+      dom.unitOptionsList.appendChild(promoBanner);
+    }
 
     units.forEach((u, idx) => {
       const card = document.createElement('div');
@@ -14709,6 +14891,13 @@ let activeAvatarCategory = 'all';
     dom.badgeCelebrationModal.addEventListener('click', (e) => {
       if (e.target === dom.badgeCelebrationModal) closeBadgeCelebration();
     });
+
+    // Seviye Terfi Modalı Dış Tıklama ile Kapatma
+    if (dom.levelCompleteModal) {
+      dom.levelCompleteModal.addEventListener('click', (e) => {
+        if (e.target === dom.levelCompleteModal) closeLevelCompleteModal();
+      });
+    }
 
     // Arena Oyun Menüsü Seçimi (Games Hub)
     if (dom.gamesHubGrid) {

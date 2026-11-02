@@ -16,7 +16,7 @@
   <meta name="referrer" content="no-referrer">
   <title>LexiGo • Çok Dilli Akıllı Kelime Kartları</title>
   <link rel="icon" type="image/jpeg" href="logo.jpg">
-  <link rel="stylesheet" href="style.css?v=1.8.52">
+  <link rel="stylesheet" href="style.css?v=1.8.53">
 </head>
 <body>
   <div class="app-container">
@@ -1412,7 +1412,7 @@
               <div class="welcome-logo-badge">
                 <img src="assets/icons/lexigo_brand_logo.png" alt="LexiGo" class="welcome-brand-img" />
               </div>
-              <span class="welcome-version-pill">v1.8.52</span>
+              <span class="welcome-version-pill">v1.8.53</span>
             </div>
           </div>
         </div>
@@ -2176,7 +2176,7 @@
             <div class="about-logo-badge">
               <img src="assets/icons/lexigo_brand_logo.png" alt="LexiGo" class="about-brand-img" />
             </div>
-            <span class="about-version-pill" id="aboutAppVersion">v1.8.52</span>
+            <span class="about-version-pill" id="aboutAppVersion">v1.8.53</span>
             <span class="about-platform-badge" id="aboutPlatformBadge" style="display: none; font-size: 0.72rem; font-weight: 700; padding: 3px 9px; border-radius: 12px; background: rgba(59,130,246,0.15); color: #3b82f6; border: 1px solid rgba(59,130,246,0.3);"></span>
           </div>
           <p class="about-tagline">Müfredat Tabanlı Çok Dilli Kelime Arenası</p>
@@ -3664,6 +3664,36 @@
     </div>
   </div>
 
+  <!-- SEVİYE TAMAMLAMA VE BİR SONRAKİ KURA GEÇİŞ MODALI -->
+  <div id="levelCompleteModal" class="modal-overlay full-screen-modal" style="display: none; z-index: 10065;">
+    <div class="modal-card celebration-modal-card" style="max-width: 440px; text-align: center; padding: 28px 22px;">
+      <div class="confirm-icon-wrap" style="font-size: 3.5rem; margin-bottom: 8px;">🎓</div>
+      <span class="pill-badge" id="levelCompleteBadge" style="display: inline-block; padding: 4px 14px; border-radius: 999px; background: rgba(16, 185, 129, 0.15); color: #10b981; font-weight: 800; font-size: 0.84rem; margin-bottom: 12px; border: 1px solid rgba(16, 185, 129, 0.3);">SEVİYE TAMAMLANDI</span>
+      <h3 class="confirm-title" id="levelCompleteTitle" style="font-size: 1.35rem; font-weight: 800; margin: 0 0 10px 0;">Tebrikler! Seviyeyi Tamamladın! 🎉</h3>
+      <p class="confirm-message" id="levelCompleteMessage" style="font-size: 0.92rem; line-height: 1.6; color: var(--text-muted); margin: 0 0 18px 0;">
+        Bu seviyedeki tüm üniteleri başarıyla bitirdin. Artık bir sonraki seviye müfredatına geçmeye hazırsın!
+      </p>
+
+      <div class="level-complete-info-card" id="levelCompleteInfoCard">
+        <div style="font-size: 2.2rem; flex-shrink: 0;" id="nextLevelBookIcon">📘</div>
+        <div style="flex: 1; min-width: 0;">
+          <div style="font-size: 0.78rem; font-weight: 700; color: var(--accent); text-transform: uppercase;" id="nextLevelSubtitle">Sonraki Kitap / Seviye</div>
+          <div style="font-size: 0.98rem; font-weight: 800; color: var(--text-main); white-space: nowrap; overflow: hidden; text-overflow: ellipsis;" id="nextLevelBookTitle">Gateway to the World B1</div>
+          <div style="font-size: 0.82rem; color: var(--text-muted); margin-top: 2px;" id="nextLevelUnitsCount">10 Yeni Ünite seni bekliyor</div>
+        </div>
+      </div>
+
+      <div class="confirm-actions-row" style="display: flex; flex-direction: column; gap: 10px; width: 100%;">
+        <button type="button" class="pill-btn primary-action-btn" id="confirmNextLevelBtn" style="width: 100%; padding: 13px 18px; font-size: 0.96rem; font-weight: 800; background: linear-gradient(135deg, #10b981, #059669); color: #fff; border: none; border-radius: 14px; box-shadow: 0 4px 16px rgba(16, 185, 129, 0.4); cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px;">
+          <span>Sonraki Seviyeye Geç 🚀</span>
+        </button>
+        <button type="button" class="pill-btn secondary-btn" id="stayCurrentLevelBtn" style="width: 100%; padding: 11px 16px; font-size: 0.88rem; font-weight: 700; border-radius: 14px; cursor: pointer;">
+          Şimdilik Bu Seviyede Kalıp Tekrar Yap
+        </button>
+      </div>
+    </div>
+  </div>
+
   <!-- ARENA HAREKETSİZLİK (IDLE) HATIRLATICI / TEŞVİK PENCERESİ -->
   <div id="arenaIdlePromptOverlay" class="arena-idle-overlay" style="display: none;">
     <div class="arena-idle-box">
@@ -3787,7 +3817,7 @@
       <div class="confirm-icon-wrap" style="font-size: 2.8rem; margin-bottom: 8px;">🎉</div>
       <h3 class="confirm-title" style="font-size: 1.3rem; font-weight: 800; margin: 0 0 6px 0;">LexiGo Güncellendi!</h3>
       <div class="app-update-version-badge" style="display: inline-block; padding: 4px 14px; border-radius: 20px; font-size: 0.84rem; font-weight: 800; margin-bottom: 14px;">
-        Sürüm <span id="appUpdateVersionText">v1.8.52</span>
+        Sürüm <span id="appUpdateVersionText">v1.8.53</span>
       </div>
       <div class="update-notes-box" style="text-align: left; border-radius: 16px; padding: 14px 16px; font-size: 0.88rem; line-height: 1.6; margin-bottom: 18px; max-height: 280px; overflow-y: auto;">
         <div class="update-notes-title" style="font-weight: 800; margin-bottom: 8px; display: flex; align-items: center; gap: 6px;">
@@ -3859,11 +3889,11 @@
   <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-storage-compat.js"></script>
-  <script src="firebase_backend.js?v=1.8.52"></script>
+  <script src="firebase_backend.js?v=1.8.53"></script>
 
   <!-- Kelime Verisi ve Uygulama Mantığı (Sadece Standart Vanilla JS) -->
-  <script src="words_data.js?v=1.8.52"></script>
-  <script src="app.js?v=1.8.52"></script>
+  <script src="words_data.js?v=1.8.53"></script>
+  <script src="app.js?v=1.8.53"></script>
 
   </body>
 </html>

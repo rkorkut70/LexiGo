@@ -19858,3 +19858,69 @@ html:not([data-theme="dark"]) .custom-confirm-card .confirm-cancel-btn:hover {
   border: 1px solid rgba(255, 255, 255, 0.15);
   box-shadow: 0 6px 18px rgba(0, 0, 0, 0.2);
 }
+
+/* ==========================================================
+   SEVİYE TAMAMLAMA & BİR SONRAKİ KURA TERFİ BİLEŞENLERİ
+   ========================================================== */
+.level-promotion-banner {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background: linear-gradient(135deg, rgba(16, 185, 129, 0.12), rgba(56, 189, 248, 0.12));
+  border: 1.5px solid rgba(16, 185, 129, 0.4);
+  border-radius: 16px;
+  padding: 14px 16px;
+  margin-bottom: 16px;
+  box-shadow: 0 4px 18px rgba(16, 185, 129, 0.15);
+  animation: levelPromoPulse 2.8s infinite ease-in-out;
+}
+
+@keyframes levelPromoPulse {
+  0%, 100% { transform: scale(1); box-shadow: 0 4px 18px rgba(16, 185, 129, 0.15); }
+  50% { transform: scale(1.01); box-shadow: 0 6px 24px rgba(16, 185, 129, 0.3); }
+}
+
+[data-theme="dark"] .level-promotion-banner {
+  background: linear-gradient(135deg, rgba(16, 185, 129, 0.2), rgba(56, 189, 248, 0.2));
+  border-color: rgba(16, 185, 129, 0.5);
+}
+
+.level-complete-info-card {
+  background: var(--bg-card);
+  border: 1.5px solid var(--border-color);
+  border-radius: 16px;
+  padding: 14px 16px;
+  margin-bottom: 20px;
+  text-align: left;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+[data-theme="dark"] .level-complete-info-card {
+  background: #1f2937;
+  border-color: #374151;
+}
+
+.prof-promote-next-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 14px;
+  font-size: 0.82rem;
+  font-weight: 800;
+  background: linear-gradient(135deg, #10b981, #059669);
+  color: #fff;
+  border: none;
+  border-radius: 10px;
+  margin-top: 8px;
+  cursor: pointer;
+  box-shadow: 0 4px 12px rgba(16, 185, 129, 0.35);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.prof-promote-next-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(16, 185, 129, 0.45);
+}
+
