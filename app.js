@@ -14530,6 +14530,24 @@ let activeAvatarCategory = 'all';
           }
         } catch (e) {}
       }
+
+      // Anlık GitHub Contents API sorgusu (CDN önbelleğini bypass ederek anında son sürümü alır)
+      try {
+        const ghRes = await fetch('https://api.github.com/repos/rkorkut70/LexiGo/contents/version.json?_t=' + Date.now(), {
+          headers: { 'Accept': 'application/vnd.github.v3+json' },
+          cache: 'no-store'
+        });
+        if (ghRes.ok) {
+          const ghJson = await ghRes.json();
+          if (ghJson && ghJson.content) {
+            const decoded = JSON.parse(atob(ghJson.content.replace(/\s/g, '')));
+            if (decoded && (decoded.version || decoded.versionCode)) {
+              return decoded;
+            }
+          }
+        }
+      } catch (e) {}
+
       return null;
     }
 
