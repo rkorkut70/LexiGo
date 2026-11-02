@@ -7,7 +7,7 @@
 (function () {
   'use strict';
 
-  const APP_VERSION = 'v1.8.55';
+  const APP_VERSION = 'v1.8.56';
   const DEFAULT_AVATAR = 'avatar_default';
   const CURRENT_APP_BUILD = 'lexiq_build_19_clean';
 
@@ -5057,6 +5057,7 @@ let activeAvatarCategory = 'all';
   // KELİME KARTI GÖSTERİMİ & DÖNDÜRME
   // ==========================================
   function renderCard(unlearnedCount = 0, baseGoal = 5) {
+    cardDisplayedTime = Date.now();
     // Kartı ön yüze çevir
     setFlipped(false);
 
@@ -5597,6 +5598,58 @@ let activeAvatarCategory = 'all';
   // ==========================================
   // ÖĞRENME AKSİYONLARI (KURAL 6: LOCALSTORAGE)
   // ==========================================
+  let lastLearnedClickTime = 0;
+  let cardDisplayedTime = 0;
+  let rapidLearnedStreak = 0;
+  let isLearnedSpamCooling = false;
+
+  function shakeLearnedButton() {
+    const btn = dom.markLearnedBtn || document.getElementById('markLearnedBtn');
+    if (!btn) return;
+    btn.classList.remove('shake-warning');
+    void btn.offsetWidth;
+    btn.classList.add('shake-warning');
+    setTimeout(() => {
+      if (btn) btn.classList.remove('shake-warning');
+    }, 450);
+  }
+
+  function handleRapidLearnedSpamProtection() {
+    const now = Date.now();
+    const timeOnCard = cardDisplayedTime > 0 ? (now - cardDisplayedTime) : 9999;
+    const intervalSinceLast = lastLearnedClickTime > 0 ? (now - lastLearnedClickTime) : 9999;
+
+    // Eğer halihazırda spam soğutma devresindeyse doğrudan engelle ve uyar
+    if (isLearnedSpamCooling) {
+      triggerHapticFeedback('warning');
+      shakeLearnedButton();
+      showToast('⚠️ Çok hızlı basıyorsunuz! Lütfen her kelimeye birkaç saniye vakit ayırın.', 'wrong');
+      return true;
+    }
+
+    // Çok hızlı basma eşiği: Kartta kalma süresi < 700ms veya önceki öğrendim basışından bu yana < 850ms
+    if (timeOnCard < 700 || intervalSinceLast < 850) {
+      rapidLearnedStreak++;
+      isLearnedSpamCooling = true;
+      setTimeout(() => { isLearnedSpamCooling = false; }, 700);
+
+      triggerHapticFeedback('warning');
+      shakeLearnedButton();
+
+      if (rapidLearnedStreak >= 2) {
+        showToast('⚠️ Çok hızlı basıyorsunuz! Kelimeleri hafızaya almak için her karta en az 1-2 saniye ayırın.', 'wrong');
+      } else {
+        showToast('⚡ Biraz yavaş! Kalıcı öğrenmek için kartı incelemeye ve telaffuzunu dinlemeye vakit ayırın.', 'warning');
+      }
+      return true;
+    }
+
+    // Normal tempolu basış:
+    rapidLearnedStreak = 0;
+    lastLearnedClickTime = now;
+    return false;
+  }
+
   function markWordStatus(status) {
     if (state.words.length === 0) return;
 
@@ -5604,6 +5657,11 @@ let activeAvatarCategory = 'all';
     const wordId = currentWord.id;
 
     if (status === 1) {
+      // Çok hızlı / spam şeklinde "Öğrendim" basılmasını denetle ve eğitici uyarı ver
+      if (handleRapidLearnedSpamProtection()) {
+        return;
+      }
+
       triggerHapticFeedback('success');
       // Öğrenildi olarak kaydet (Aralıklı Tekrar için zaman damgasıyla)
       state.learnedMap[wordId] = {
@@ -6762,6 +6820,8 @@ let activeAvatarCategory = 'all';
       dom.toast.classList.add('toast-correct');
     } else if (type === 'wrong') {
       dom.toast.classList.add('toast-wrong');
+    } else if (type === 'warning') {
+      dom.toast.classList.add('toast-warning');
     }
     dom.toast.classList.add('show');
     clearTimeout(toastTimer);
