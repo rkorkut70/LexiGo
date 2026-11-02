@@ -7,7 +7,7 @@
 (function () {
   'use strict';
 
-  const APP_VERSION = 'v1.8.47';
+  const APP_VERSION = 'v1.8.48';
   const DEFAULT_AVATAR = 'avatar_default';
   const CURRENT_APP_BUILD = 'lexiq_build_19_clean';
 
@@ -3077,7 +3077,30 @@ let activeAvatarCategory = 'all';
   function getUnitsData() {
     if (typeof window !== 'undefined' && window.UNITS_DATA && window.UNITS_DATA.length) return window.UNITS_DATA;
     if (typeof UNITS_DATA !== 'undefined' && UNITS_DATA.length) return UNITS_DATA;
-    return [];
+
+    // Güvenlik Ağı: WORDS_DATA'dan dinamik ve eksiksiz ünite listesi türet
+    const allWords = getWordsData();
+    if (!allWords || !allWords.length) return [];
+    const unitsMap = new Map();
+    for (const w of allWords) {
+      if (!w || !w.dil || !w.unite_no) continue;
+      const key = `${w.dil}_${w.seviye || 'all'}_u${w.unite_no}`;
+      if (!unitsMap.has(key)) {
+        let cleanTitle = w.unite_adi || `Ünite ${w.unite_no}`;
+        unitsMap.set(key, {
+          unite_no: w.unite_no,
+          seviye: w.seviye || '',
+          dil: w.dil,
+          kitap: w.kitap || '',
+          unite_adi: w.unite_adi || cleanTitle,
+          baslik: `${w.seviye ? w.seviye + ' • ' : ''}${cleanTitle}`,
+          aciklama: `${w.kitap || ''} Ünite ${w.unite_no} kelimeleri`
+        });
+      }
+    }
+    const list = Array.from(unitsMap.values()).sort((a, b) => a.unite_no - b.unite_no);
+    if (typeof window !== 'undefined') window.UNITS_DATA = list;
+    return list;
   }
 
   function getWordsData() {
@@ -5062,12 +5085,18 @@ let activeAvatarCategory = 'all';
 
   let isSpeakingSentenceAudio = false;
   let sentenceAudioSafetyTimer = null;
+  let lastSentenceAudioClickTime = 0;
   function playCurrentCardSentenceAudio(e) {
     if (e) {
       if (typeof e.preventDefault === 'function') e.preventDefault();
       if (typeof e.stopPropagation === 'function') e.stopPropagation();
       if (typeof e.stopImmediatePropagation === 'function') e.stopImmediatePropagation();
     }
+    const now = Date.now();
+    if (now - lastSentenceAudioClickTime < 450) {
+      return;
+    }
+    lastSentenceAudioClickTime = now;
     const btn = dom.cardSentenceAudioBtn || document.getElementById('cardSentenceAudioBtn');
 
     // Eğer halihazırda çalıyorsa durdur ve temizle (toggle mantığı)
@@ -11281,9 +11310,6 @@ let activeAvatarCategory = 'all';
       }
       const sentenceBtn = e.target.closest('#cardSentenceAudioBtn, .card-sentence-audio-btn');
       if (sentenceBtn) {
-        e.preventDefault();
-        e.stopPropagation();
-        playCurrentCardSentenceAudio(e);
         return;
       }
       if (e.target.closest('#pronounceBtn, #pronounceUsBtn, #pronounceUkBtn, .accent-btn, .audio-btn, .accent-btn-group, .audio-controls-row, #prevCardBtn, #nextCardBtn, .card-edge-nav-btn, #markLearnedBtn, #markRepeatBtn, .card-inner-action-btn, #cardNotebookToggleBtn, #cardBackNotebookToggleBtn, .card-notebook-btn, #cardTroubledActionBtn, #cardBackTroubledActionBtn, .card-troubled-pill, .card-sentence-audio-btn, #cardSentenceAudioBtn')) return;

@@ -11644,9 +11644,9 @@ body[data-theme="dark"] .home-unit-select-btn:hover,
   display: flex;
   flex-direction: column;
   gap: 10px;
-  max-height: 260px;
-  overflow-y: auto;
-  padding-right: 4px;
+  max-height: none;
+  overflow-y: visible;
+  padding-right: 0;
 }
 
 .prof-unit-progress-item {

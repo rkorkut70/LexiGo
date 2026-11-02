@@ -230384,3 +230384,848 @@ const WORDS_DATA = [
 if (typeof window !== "undefined") {
   window.WORDS_DATA = WORDS_DATA;
 }
+
+
+var UNITS_DATA = [
+  {
+    "unite_no": 1,
+    "seviye": "A2",
+    "dil": "EN-TR",
+    "baslik": "A2 • Starter Unit",
+    "aciklama": "Gateway to the World A2, Starter Unit kelimelerini öğren",
+    "baslangic_tarihi": "2026-09-28",
+    "bitis_tarihi": "2026-10-07"
+  },
+  {
+    "unite_no": 2,
+    "seviye": "A2",
+    "dil": "EN-TR",
+    "baslik": "A2 • Unit 1",
+    "aciklama": "Gateway to the World A2, Unit 1 kelimelerini öğren",
+    "baslangic_tarihi": "2026-10-08",
+    "bitis_tarihi": "2026-10-17"
+  },
+  {
+    "unite_no": 3,
+    "seviye": "A2",
+    "dil": "EN-TR",
+    "baslik": "A2 • Unit 2",
+    "aciklama": "Gateway to the World A2, Unit 2 kelimelerini öğren",
+    "baslangic_tarihi": "2026-10-18",
+    "bitis_tarihi": "2026-10-27"
+  },
+  {
+    "unite_no": 4,
+    "seviye": "A2",
+    "dil": "EN-TR",
+    "baslik": "A2 • Unit 3",
+    "aciklama": "Gateway to the World A2, Unit 3 kelimelerini öğren",
+    "baslangic_tarihi": "2026-10-28",
+    "bitis_tarihi": "2026-11-06"
+  },
+  {
+    "unite_no": 5,
+    "seviye": "A2",
+    "dil": "EN-TR",
+    "baslik": "A2 • Unit 4",
+    "aciklama": "Gateway to the World A2, Unit 4 kelimelerini öğren",
+    "baslangic_tarihi": "2026-11-07",
+    "bitis_tarihi": "2026-11-16"
+  },
+  {
+    "unite_no": 6,
+    "seviye": "A2",
+    "dil": "EN-TR",
+    "baslik": "A2 • Unit 5",
+    "aciklama": "Gateway to the World A2, Unit 5 kelimelerini öğren",
+    "baslangic_tarihi": "2026-11-17",
+    "bitis_tarihi": "2026-11-26"
+  },
+  {
+    "unite_no": 7,
+    "seviye": "A2",
+    "dil": "EN-TR",
+    "baslik": "A2 • Unit 6",
+    "aciklama": "Gateway to the World A2, Unit 6 kelimelerini öğren",
+    "baslangic_tarihi": "2026-11-27",
+    "bitis_tarihi": "2026-12-06"
+  },
+  {
+    "unite_no": 8,
+    "seviye": "A2",
+    "dil": "EN-TR",
+    "baslik": "A2 • Unit 7",
+    "aciklama": "Gateway to the World A2, Unit 7 kelimelerini öğren",
+    "baslangic_tarihi": "2026-12-07",
+    "bitis_tarihi": "2026-12-16"
+  },
+  {
+    "unite_no": 9,
+    "seviye": "A2",
+    "dil": "EN-TR",
+    "baslik": "A2 • Unit 8",
+    "aciklama": "Gateway to the World A2, Unit 8 kelimelerini öğren",
+    "baslangic_tarihi": "2026-12-17",
+    "bitis_tarihi": "2026-12-26"
+  },
+  {
+    "unite_no": 10,
+    "seviye": "A2",
+    "dil": "EN-TR",
+    "baslik": "A2 • Unit 9",
+    "aciklama": "Gateway to the World A2, Unit 9 kelimelerini öğren",
+    "baslangic_tarihi": "2026-12-27",
+    "bitis_tarihi": "2027-01-05"
+  },
+  {
+    "unite_no": 11,
+    "seviye": "A2",
+    "dil": "EN-TR",
+    "baslik": "A2 • Unit 10",
+    "aciklama": "Gateway to the World A2, Unit 10 kelimelerini öğren",
+    "baslangic_tarihi": "2027-01-06",
+    "bitis_tarihi": "2027-01-15"
+  },
+  {
+    "unite_no": 12,
+    "seviye": "B1",
+    "dil": "EN-TR",
+    "baslik": "B1 • Unit 1",
+    "aciklama": "Gateway to the World B1, Unit 1 kelimelerini öğren",
+    "baslangic_tarihi": "2026-09-28",
+    "bitis_tarihi": "2026-10-08"
+  },
+  {
+    "unite_no": 13,
+    "seviye": "B1",
+    "dil": "EN-TR",
+    "baslik": "B1 • Unit 2",
+    "aciklama": "Gateway to the World B1, Unit 2 kelimelerini öğren",
+    "baslangic_tarihi": "2026-10-09",
+    "bitis_tarihi": "2026-10-19"
+  },
+  {
+    "unite_no": 14,
+    "seviye": "B1",
+    "dil": "EN-TR",
+    "baslik": "B1 • Unit 3",
+    "aciklama": "Gateway to the World B1, Unit 3 kelimelerini öğren",
+    "baslangic_tarihi": "2026-10-20",
+    "bitis_tarihi": "2026-10-30"
+  },
+  {
+    "unite_no": 15,
+    "seviye": "B1",
+    "dil": "EN-TR",
+    "baslik": "B1 • Unit 4",
+    "aciklama": "Gateway to the World B1, Unit 4 kelimelerini öğren",
+    "baslangic_tarihi": "2026-10-31",
+    "bitis_tarihi": "2026-11-10"
+  },
+  {
+    "unite_no": 16,
+    "seviye": "B1",
+    "dil": "EN-TR",
+    "baslik": "B1 • Unit 5",
+    "aciklama": "Gateway to the World B1, Unit 5 kelimelerini öğren",
+    "baslangic_tarihi": "2026-11-11",
+    "bitis_tarihi": "2026-11-21"
+  },
+  {
+    "unite_no": 17,
+    "seviye": "B1",
+    "dil": "EN-TR",
+    "baslik": "B1 • Unit 6",
+    "aciklama": "Gateway to the World B1, Unit 6 kelimelerini öğren",
+    "baslangic_tarihi": "2026-11-22",
+    "bitis_tarihi": "2026-12-02"
+  },
+  {
+    "unite_no": 18,
+    "seviye": "B1",
+    "dil": "EN-TR",
+    "baslik": "B1 • Unit 7",
+    "aciklama": "Gateway to the World B1, Unit 7 kelimelerini öğren",
+    "baslangic_tarihi": "2026-12-03",
+    "bitis_tarihi": "2026-12-13"
+  },
+  {
+    "unite_no": 19,
+    "seviye": "B1",
+    "dil": "EN-TR",
+    "baslik": "B1 • Unit 8",
+    "aciklama": "Gateway to the World B1, Unit 8 kelimelerini öğren",
+    "baslangic_tarihi": "2026-12-14",
+    "bitis_tarihi": "2026-12-24"
+  },
+  {
+    "unite_no": 20,
+    "seviye": "B1",
+    "dil": "EN-TR",
+    "baslik": "B1 • Unit 9",
+    "aciklama": "Gateway to the World B1, Unit 9 kelimelerini öğren",
+    "baslangic_tarihi": "2026-12-25",
+    "bitis_tarihi": "2027-01-04"
+  },
+  {
+    "unite_no": 21,
+    "seviye": "B1",
+    "dil": "EN-TR",
+    "baslik": "B1 • Unit 10",
+    "aciklama": "Gateway to the World B1, Unit 10 kelimelerini öğren",
+    "baslangic_tarihi": "2027-01-05",
+    "bitis_tarihi": "2027-01-15"
+  },
+  {
+    "unite_no": 22,
+    "seviye": "B1+",
+    "dil": "EN-TR",
+    "baslik": "B1+ • Unit 1",
+    "aciklama": "Gateway to the World B1+, Unit 1 kelimelerini öğren",
+    "baslangic_tarihi": "2027-01-16",
+    "bitis_tarihi": "2027-01-26"
+  },
+  {
+    "unite_no": 23,
+    "seviye": "B1+",
+    "dil": "EN-TR",
+    "baslik": "B1+ • Unit 2",
+    "aciklama": "Gateway to the World B1+, Unit 2 kelimelerini öğren",
+    "baslangic_tarihi": "2027-01-27",
+    "bitis_tarihi": "2027-02-06"
+  },
+  {
+    "unite_no": 24,
+    "seviye": "B1+",
+    "dil": "EN-TR",
+    "baslik": "B1+ • Unit 3",
+    "aciklama": "Gateway to the World B1+, Unit 3 kelimelerini öğren",
+    "baslangic_tarihi": "2027-02-07",
+    "bitis_tarihi": "2027-02-17"
+  },
+  {
+    "unite_no": 25,
+    "seviye": "B1+",
+    "dil": "EN-TR",
+    "baslik": "B1+ • Unit 4",
+    "aciklama": "Gateway to the World B1+, Unit 4 kelimelerini öğren",
+    "baslangic_tarihi": "2027-02-18",
+    "bitis_tarihi": "2027-02-28"
+  },
+  {
+    "unite_no": 26,
+    "seviye": "B1+",
+    "dil": "EN-TR",
+    "baslik": "B1+ • Unit 5",
+    "aciklama": "Gateway to the World B1+, Unit 5 kelimelerini öğren",
+    "baslangic_tarihi": "2027-03-01",
+    "bitis_tarihi": "2027-03-11"
+  },
+  {
+    "unite_no": 27,
+    "seviye": "B1+",
+    "dil": "EN-TR",
+    "baslik": "B1+ • Unit 6",
+    "aciklama": "Gateway to the World B1+, Unit 6 kelimelerini öğren",
+    "baslangic_tarihi": "2027-03-12",
+    "bitis_tarihi": "2027-03-22"
+  },
+  {
+    "unite_no": 28,
+    "seviye": "B1+",
+    "dil": "EN-TR",
+    "baslik": "B1+ • Unit 7",
+    "aciklama": "Gateway to the World B1+, Unit 7 kelimelerini öğren",
+    "baslangic_tarihi": "2027-03-23",
+    "bitis_tarihi": "2027-04-02"
+  },
+  {
+    "unite_no": 29,
+    "seviye": "B1+",
+    "dil": "EN-TR",
+    "baslik": "B1+ • Unit 8",
+    "aciklama": "Gateway to the World B1+, Unit 8 kelimelerini öğren",
+    "baslangic_tarihi": "2027-04-03",
+    "bitis_tarihi": "2027-04-13"
+  },
+  {
+    "unite_no": 30,
+    "seviye": "B1+",
+    "dil": "EN-TR",
+    "baslik": "B1+ • Unit 9",
+    "aciklama": "Gateway to the World B1+, Unit 9 kelimelerini öğren",
+    "baslangic_tarihi": "2027-04-14",
+    "bitis_tarihi": "2027-04-24"
+  },
+  {
+    "unite_no": 31,
+    "seviye": "B1+",
+    "dil": "EN-TR",
+    "baslik": "B1+ • Unit 10",
+    "aciklama": "Gateway to the World B1+, Unit 10 kelimelerini öğren",
+    "baslangic_tarihi": "2027-04-25",
+    "bitis_tarihi": "2027-05-05"
+  },
+  {
+    "unite_no": 1,
+    "seviye": "A1",
+    "dil": "FR-TR",
+    "baslik": "A1 • Dossier 1: Former un groupe",
+    "aciklama": "Édito A1 - Méthode de français, Dossier 1: Kendini tanıtma, tanışma ve temel iletişim.",
+    "baslangic_tarihi": "2026-09-28",
+    "bitis_tarihi": "2026-10-11"
+  },
+  {
+    "unite_no": 2,
+    "seviye": "A1",
+    "dil": "FR-TR",
+    "baslik": "A1 • Dossier 2: Communiquer",
+    "aciklama": "Édito A1 - Méthode de français, Dossier 2: İletişim kurma, haberleşme ve günlük ifadeler.",
+    "baslangic_tarihi": "2026-10-12",
+    "bitis_tarihi": "2026-10-25"
+  },
+  {
+    "unite_no": 3,
+    "seviye": "A1",
+    "dil": "FR-TR",
+    "baslik": "A1 • Dossier 3: Découvrir une ville",
+    "aciklama": "Édito A1 - Méthode de français, Dossier 3: Şehir hayatı, mekanlar ve yön tarifleri.",
+    "baslangic_tarihi": "2026-10-26",
+    "bitis_tarihi": "2026-11-08"
+  },
+  {
+    "unite_no": 4,
+    "seviye": "A1",
+    "dil": "FR-TR",
+    "baslik": "A1 • Dossier 4: Entretenir des relations",
+    "aciklama": "Édito A1 - Méthode de français, Dossier 4: Sosyal ilişkiler, aile ve arkadaşlar.",
+    "baslangic_tarihi": "2026-11-09",
+    "bitis_tarihi": "2026-11-22"
+  },
+  {
+    "unite_no": 5,
+    "seviye": "A1",
+    "dil": "FR-TR",
+    "baslik": "A1 • Dossier 5: Gérer son quotidien",
+    "aciklama": "Édito A1 - Méthode de français, Dossier 5: Günlük yaşam, alışveriş ve rutinler.",
+    "baslangic_tarihi": "2026-11-23",
+    "bitis_tarihi": "2026-12-06"
+  },
+  {
+    "unite_no": 6,
+    "seviye": "A1",
+    "dil": "FR-TR",
+    "baslik": "A1 • Dossier 6: Changer de cadre",
+    "aciklama": "Édito A1 - Méthode de français, Dossier 6: Seyahat, tatil ve yeni ortamlar.",
+    "baslangic_tarihi": "2026-12-07",
+    "bitis_tarihi": "2026-12-20"
+  },
+  {
+    "unite_no": 7,
+    "seviye": "A1",
+    "dil": "FR-TR",
+    "baslik": "A1 • Dossier 7: Prendre soin de soi",
+    "aciklama": "Édito A1 - Méthode de français, Dossier 7: Sağlık, beslenme ve iyi yaşam.",
+    "baslangic_tarihi": "2026-12-21",
+    "bitis_tarihi": "2027-01-03"
+  },
+  {
+    "unite_no": 8,
+    "seviye": "A1",
+    "dil": "FR-TR",
+    "baslik": "A1 • Dossier 8: Prendre part à la société",
+    "aciklama": "Édito A1 - Méthode de français, Dossier 8: Toplumsal yaşam, etkinlikler ve katılım.",
+    "baslangic_tarihi": "2027-01-04",
+    "bitis_tarihi": "2027-01-17"
+  },
+  {
+    "unite_no": 1,
+    "seviye": "A2",
+    "dil": "FR-TR",
+    "baslik": "A2 • Dossier 1: Être en relation",
+    "aciklama": "Édito A2 - Méthode de français, Dossier 1: İlişki kurma, arkadaşlık ve tanışma.",
+    "baslangic_tarihi": "2027-01-18",
+    "bitis_tarihi": "2027-01-31"
+  },
+  {
+    "unite_no": 2,
+    "seviye": "A2",
+    "dil": "FR-TR",
+    "baslik": "A2 • Dossier 2: Agir en consommateur",
+    "aciklama": "Édito A2 - Méthode de français, Dossier 2: Tüketici olarak davranma, alışveriş ve harcamalar.",
+    "baslangic_tarihi": "2027-02-01",
+    "bitis_tarihi": "2027-02-14"
+  },
+  {
+    "unite_no": 3,
+    "seviye": "A2",
+    "dil": "FR-TR",
+    "baslik": "A2 • Dossier 3: Choisir son cadre de vie",
+    "aciklama": "Édito A2 - Méthode de français, Dossier 3: Yaşam alanını seçme, ev ve şehir hayatı.",
+    "baslangic_tarihi": "2027-02-15",
+    "bitis_tarihi": "2027-02-28"
+  },
+  {
+    "unite_no": 4,
+    "seviye": "A2",
+    "dil": "FR-TR",
+    "baslik": "A2 • Dossier 4: S’insérer dans la vie active",
+    "aciklama": "Édito A2 - Méthode de français, Dossier 4: İş hayatına girme, meslek ve kariyer.",
+    "baslangic_tarihi": "2027-03-01",
+    "bitis_tarihi": "2027-03-14"
+  },
+  {
+    "unite_no": 5,
+    "seviye": "A2",
+    "dil": "FR-TR",
+    "baslik": "A2 • Dossier 5: Se distraire",
+    "aciklama": "Édito A2 - Méthode de français, Dossier 5: Eğlenme, restoran ve serbest zaman aktiviteleri.",
+    "baslangic_tarihi": "2027-03-15",
+    "bitis_tarihi": "2027-03-28"
+  },
+  {
+    "unite_no": 6,
+    "seviye": "A2",
+    "dil": "FR-TR",
+    "baslik": "A2 • Dossier 6: Découvrir de nouveaux horizons",
+    "aciklama": "Édito A2 - Méthode de français, Dossier 6: Yeni ufuklar keşfetme, seyahat ve tatil.",
+    "baslangic_tarihi": "2027-03-29",
+    "bitis_tarihi": "2027-04-11"
+  },
+  {
+    "unite_no": 7,
+    "seviye": "A2",
+    "dil": "FR-TR",
+    "baslik": "A2 • Dossier 7: S’informer, se cultiver",
+    "aciklama": "Édito A2 - Méthode de français, Dossier 7: Bilgilenme, kültür, sanat ve haberler.",
+    "baslangic_tarihi": "2027-04-12",
+    "bitis_tarihi": "2027-04-25"
+  },
+  {
+    "unite_no": 8,
+    "seviye": "A2",
+    "dil": "FR-TR",
+    "baslik": "A2 • Dossier 8: Se souvenir, transmettre",
+    "aciklama": "Édito A2 - Méthode de français, Dossier 8: Hatırlama, geçmiş, biyografi ve aktarma.",
+    "baslangic_tarihi": "2027-04-26",
+    "bitis_tarihi": "2027-05-09"
+  },
+  {
+    "unite_no": 1,
+    "seviye": "A1",
+    "dil": "DE-TR",
+    "baslik": "A1 📚 Guten Tag!",
+    "aciklama": "Netzwerk neu A1, Guten Tag! kelimelerini öğren",
+    "baslangic_tarihi": "2026-10-01",
+    "bitis_tarihi": "2026-10-15"
+  },
+  {
+    "unite_no": 2,
+    "seviye": "A1",
+    "dil": "DE-TR",
+    "baslik": "A1 📚 Freunde, Kollegen und ich",
+    "aciklama": "Netzwerk neu A1, Freunde, Kollegen und ich kelimelerini öğren",
+    "baslangic_tarihi": "2026-10-16",
+    "bitis_tarihi": "2026-10-31"
+  },
+  {
+    "unite_no": 3,
+    "seviye": "A1",
+    "dil": "DE-TR",
+    "baslik": "A1 📚 In Hamburg",
+    "aciklama": "Netzwerk neu A1, In Hamburg kelimelerini öğren",
+    "baslangic_tarihi": "2026-11-01",
+    "bitis_tarihi": "2026-11-15"
+  },
+  {
+    "unite_no": 4,
+    "seviye": "A1",
+    "dil": "DE-TR",
+    "baslik": "A1 📚 Guten Appetit!",
+    "aciklama": "Netzwerk neu A1, Guten Appetit! kelimelerini öğren",
+    "baslangic_tarihi": "2026-11-16",
+    "bitis_tarihi": "2026-11-30"
+  },
+  {
+    "unite_no": 5,
+    "seviye": "A1",
+    "dil": "DE-TR",
+    "baslik": "A1 📚 Alltag und Familie",
+    "aciklama": "Netzwerk neu A1, Alltag und Familie kelimelerini öğren",
+    "baslangic_tarihi": "2026-12-01",
+    "bitis_tarihi": "2026-12-15"
+  },
+  {
+    "unite_no": 6,
+    "seviye": "A1",
+    "dil": "DE-TR",
+    "baslik": "A1 📚 Zeit mit Freunden",
+    "aciklama": "Netzwerk neu A1, Zeit mit Freunden kelimelerini öğren",
+    "baslangic_tarihi": "2026-12-16",
+    "bitis_tarihi": "2026-12-31"
+  },
+  {
+    "unite_no": 7,
+    "seviye": "A1",
+    "dil": "DE-TR",
+    "baslik": "A1 📚 Arbeitsalltag",
+    "aciklama": "Netzwerk neu A1, Arbeitsalltag kelimelerini öğren",
+    "baslangic_tarihi": "2027-01-01",
+    "bitis_tarihi": "2027-01-15"
+  },
+  {
+    "unite_no": 8,
+    "seviye": "A1",
+    "dil": "DE-TR",
+    "baslik": "A1 📚 Fit und gesund",
+    "aciklama": "Netzwerk neu A1, Fit und gesund kelimelerini öğren",
+    "baslangic_tarihi": "2027-01-16",
+    "bitis_tarihi": "2027-01-31"
+  },
+  {
+    "unite_no": 9,
+    "seviye": "A1",
+    "dil": "DE-TR",
+    "baslik": "A1 📚 Meine Wohnung",
+    "aciklama": "Netzwerk neu A1, Meine Wohnung kelimelerini öğren",
+    "baslangic_tarihi": "2027-02-01",
+    "bitis_tarihi": "2027-02-15"
+  },
+  {
+    "unite_no": 10,
+    "seviye": "A1",
+    "dil": "DE-TR",
+    "baslik": "A1 📚 Studium und Beruf",
+    "aciklama": "Netzwerk neu A1, Studium und Beruf kelimelerini öğren",
+    "baslangic_tarihi": "2027-02-16",
+    "bitis_tarihi": "2027-02-28"
+  },
+  {
+    "unite_no": 11,
+    "seviye": "A1",
+    "dil": "DE-TR",
+    "baslik": "A1 📚 Die Jacke gefällt mir!",
+    "aciklama": "Netzwerk neu A1, Die Jacke gefällt mir! kelimelerini öğren",
+    "baslangic_tarihi": "2027-03-01",
+    "bitis_tarihi": "2027-03-15"
+  },
+  {
+    "unite_no": 12,
+    "seviye": "A1",
+    "dil": "DE-TR",
+    "baslik": "A1 📚 Ab in den Urlaub!",
+    "aciklama": "Netzwerk neu A1, Ab in den Urlaub! kelimelerini öğren",
+    "baslangic_tarihi": "2027-03-16",
+    "bitis_tarihi": "2027-03-31"
+  },
+  {
+    "unite_no": 1,
+    "seviye": "A2",
+    "dil": "DE-TR",
+    "baslik": "A2 📚 Und was machst du?",
+    "aciklama": "Netzwerk neu A2, Und was machst du? kelimelerini öğren",
+    "baslangic_tarihi": "2026-10-01",
+    "bitis_tarihi": "2026-10-15"
+  },
+  {
+    "unite_no": 2,
+    "seviye": "A2",
+    "dil": "DE-TR",
+    "baslik": "A2 📚 Nach der Schulzeit",
+    "aciklama": "Netzwerk neu A2, Nach der Schulzeit kelimelerini öğren",
+    "baslangic_tarihi": "2026-10-16",
+    "bitis_tarihi": "2026-10-31"
+  },
+  {
+    "unite_no": 3,
+    "seviye": "A2",
+    "dil": "DE-TR",
+    "baslik": "A2 📚 Immer online?",
+    "aciklama": "Netzwerk neu A2, Immer online? kelimelerini öğren",
+    "baslangic_tarihi": "2026-11-01",
+    "bitis_tarihi": "2026-11-15"
+  },
+  {
+    "unite_no": 4,
+    "seviye": "A2",
+    "dil": "DE-TR",
+    "baslik": "A2 📚 Große und kleine Gefühle",
+    "aciklama": "Netzwerk neu A2, Große und kleine Gefühle kelimelerini öğren",
+    "baslangic_tarihi": "2026-11-16",
+    "bitis_tarihi": "2026-11-30"
+  },
+  {
+    "unite_no": 5,
+    "seviye": "A2",
+    "dil": "DE-TR",
+    "baslik": "A2 📚 Leben in der Stadt",
+    "aciklama": "Netzwerk neu A2, Leben in der Stadt kelimelerini öğren",
+    "baslangic_tarihi": "2026-12-01",
+    "bitis_tarihi": "2026-12-15"
+  },
+  {
+    "unite_no": 6,
+    "seviye": "A2",
+    "dil": "DE-TR",
+    "baslik": "A2 📚 Arbeitswelten",
+    "aciklama": "Netzwerk neu A2, Arbeitswelten kelimelerini öğren",
+    "baslangic_tarihi": "2026-12-16",
+    "bitis_tarihi": "2026-12-31"
+  },
+  {
+    "unite_no": 7,
+    "seviye": "A2",
+    "dil": "DE-TR",
+    "baslik": "A2 📚 Ganz schön mobil",
+    "aciklama": "Netzwerk neu A2, Ganz schön mobil kelimelerini öğren",
+    "baslangic_tarihi": "2027-01-01",
+    "bitis_tarihi": "2027-01-15"
+  },
+  {
+    "unite_no": 8,
+    "seviye": "A2",
+    "dil": "DE-TR",
+    "baslik": "A2 📚 Gelernt ist gelernt!",
+    "aciklama": "Netzwerk neu A2, Gelernt ist gelernt! kelimelerini öğren",
+    "baslangic_tarihi": "2027-01-16",
+    "bitis_tarihi": "2027-01-31"
+  },
+  {
+    "unite_no": 9,
+    "seviye": "A2",
+    "dil": "DE-TR",
+    "baslik": "A2 📚 Sportlich, sportlich",
+    "aciklama": "Netzwerk neu A2, Sportlich, sportlich kelimelerini öğren",
+    "baslangic_tarihi": "2027-02-01",
+    "bitis_tarihi": "2027-02-15"
+  },
+  {
+    "unite_no": 10,
+    "seviye": "A2",
+    "dil": "DE-TR",
+    "baslik": "A2 📚 Zusammen leben",
+    "aciklama": "Netzwerk neu A2, Zusammen leben kelimelerini öğren",
+    "baslangic_tarihi": "2027-02-16",
+    "bitis_tarihi": "2027-02-28"
+  },
+  {
+    "unite_no": 11,
+    "seviye": "A2",
+    "dil": "DE-TR",
+    "baslik": "A2 📚 Wie die Zeit vergeht!",
+    "aciklama": "Netzwerk neu A2, Wie die Zeit vergeht! kelimelerini öğren",
+    "baslangic_tarihi": "2027-03-01",
+    "bitis_tarihi": "2027-03-15"
+  },
+  {
+    "unite_no": 12,
+    "seviye": "A2",
+    "dil": "DE-TR",
+    "baslik": "A2 📚 Gute Unterhaltung!",
+    "aciklama": "Netzwerk neu A2, Gute Unterhaltung! kelimelerini öğren",
+    "baslangic_tarihi": "2027-03-16",
+    "bitis_tarihi": "2027-03-31"
+  },
+  {
+    "unite_no": 1,
+    "seviye": "B1",
+    "dil": "DE-TR",
+    "baslik": "B1 📚 Gute Reise!",
+    "aciklama": "Netzwerk neu B1, Gute Reise! kelimelerini öğren",
+    "baslangic_tarihi": "2026-10-01",
+    "bitis_tarihi": "2026-10-15"
+  },
+  {
+    "unite_no": 2,
+    "seviye": "B1",
+    "dil": "DE-TR",
+    "baslik": "B1 📚 Das ist ja praktisch!",
+    "aciklama": "Netzwerk neu B1, Das ist ja praktisch! kelimelerini öğren",
+    "baslangic_tarihi": "2026-10-01",
+    "bitis_tarihi": "2026-10-15"
+  },
+  {
+    "unite_no": 3,
+    "seviye": "B1",
+    "dil": "DE-TR",
+    "baslik": "B1 📚 Veränderungen",
+    "aciklama": "Netzwerk neu B1, Veränderungen kelimelerini öğren",
+    "baslangic_tarihi": "2026-10-01",
+    "bitis_tarihi": "2026-10-15"
+  },
+  {
+    "unite_no": 4,
+    "seviye": "B1",
+    "dil": "DE-TR",
+    "baslik": "B1 📚 Arbeitswelt",
+    "aciklama": "Netzwerk neu B1, Arbeitswelt kelimelerini öğren",
+    "baslangic_tarihi": "2026-10-01",
+    "bitis_tarihi": "2026-10-15"
+  },
+  {
+    "unite_no": 5,
+    "seviye": "B1",
+    "dil": "DE-TR",
+    "baslik": "B1 📚 Umweltfreundlich?",
+    "aciklama": "Netzwerk neu B1, Umweltfreundlich? kelimelerini öğren",
+    "baslangic_tarihi": "2026-10-01",
+    "bitis_tarihi": "2026-10-15"
+  },
+  {
+    "unite_no": 6,
+    "seviye": "B1",
+    "dil": "DE-TR",
+    "baslik": "B1 📚 Blick nach vorn",
+    "aciklama": "Netzwerk neu B1, Blick nach vorn kelimelerini öğren",
+    "baslangic_tarihi": "2026-10-01",
+    "bitis_tarihi": "2026-10-15"
+  },
+  {
+    "unite_no": 7,
+    "seviye": "B1",
+    "dil": "DE-TR",
+    "baslik": "B1 📚 Zwischenmenschliches",
+    "aciklama": "Netzwerk neu B1, Zwischenmenschliches kelimelerini öğren",
+    "baslangic_tarihi": "2026-10-01",
+    "bitis_tarihi": "2026-10-15"
+  },
+  {
+    "unite_no": 8,
+    "seviye": "B1",
+    "dil": "DE-TR",
+    "baslik": "B1 📚 Rund um Körper und Geist",
+    "aciklama": "Netzwerk neu B1, Rund um Körper und Geist kelimelerini öğren",
+    "baslangic_tarihi": "2026-10-01",
+    "bitis_tarihi": "2026-10-15"
+  },
+  {
+    "unite_no": 9,
+    "seviye": "B1",
+    "dil": "DE-TR",
+    "baslik": "B1 📚 Kunststücke",
+    "aciklama": "Netzwerk neu B1, Kunststücke kelimelerini öğren",
+    "baslangic_tarihi": "2026-10-01",
+    "bitis_tarihi": "2026-10-15"
+  },
+  {
+    "unite_no": 10,
+    "seviye": "B1",
+    "dil": "DE-TR",
+    "baslik": "B1 📚 Miteinander",
+    "aciklama": "Netzwerk neu B1, Miteinander kelimelerini öğren",
+    "baslangic_tarihi": "2026-10-01",
+    "bitis_tarihi": "2026-10-15"
+  },
+  {
+    "unite_no": 11,
+    "seviye": "B1",
+    "dil": "DE-TR",
+    "baslik": "B1 📚 Stadt, Land, Fluss",
+    "aciklama": "Netzwerk neu B1, Stadt, Land, Fluss kelimelerini öğren",
+    "baslangic_tarihi": "2026-10-01",
+    "bitis_tarihi": "2026-10-15"
+  },
+  {
+    "unite_no": 12,
+    "seviye": "B1",
+    "dil": "DE-TR",
+    "baslik": "B1 📚 Geld regiert die Welt?",
+    "aciklama": "Netzwerk neu B1, Geld regiert die Welt? kelimelerini öğren",
+    "baslangic_tarihi": "2026-10-01",
+    "bitis_tarihi": "2026-10-15"
+  },
+  {
+    "unite_no": 1,
+    "seviye": "B1",
+    "dil": "FR-TR",
+    "baslik": "B1 • Dossier 1: Prendre soin de sa santé",
+    "aciklama": "Mon Alter Ego B1, Dossier 1: Sağlık, uyku, spor, beslenme ve iyi yaşam alışkanlıkları.",
+    "baslangic_tarihi": "2026-09-28",
+    "bitis_tarihi": "2026-10-11"
+  },
+  {
+    "unite_no": 2,
+    "seviye": "B1",
+    "dil": "FR-TR",
+    "baslik": "B1 • Dossier 2: S'évader du quotidien",
+    "aciklama": "Mon Alter Ego B1, Dossier 2: Seyahat, tatil, macera ve günlük rutinden kaçış.",
+    "baslangic_tarihi": "2026-10-12",
+    "bitis_tarihi": "2026-10-25"
+  },
+  {
+    "unite_no": 3,
+    "seviye": "B1",
+    "dil": "FR-TR",
+    "baslik": "B1 • Dossier 3: Assurer son confort et sa sécurité",
+    "aciklama": "Mon Alter Ego B1, Dossier 3: Konfor, barınma, güvenlik ve acil durumlar.",
+    "baslangic_tarihi": "2026-10-26",
+    "bitis_tarihi": "2026-11-08"
+  },
+  {
+    "unite_no": 4,
+    "seviye": "B1",
+    "dil": "FR-TR",
+    "baslik": "B1 • Dossier 4: Bien vivre ses relations",
+    "aciklama": "Mon Alter Ego B1, Dossier 4: İnsan ilişkileri, arkadaşlık, iletişim ve sosyal yaşam.",
+    "baslangic_tarihi": "2026-11-09",
+    "bitis_tarihi": "2026-11-22"
+  },
+  {
+    "unite_no": 5,
+    "seviye": "B1",
+    "dil": "FR-TR",
+    "baslik": "B1 • Dossier 5: Gérer son budget",
+    "aciklama": "Mon Alter Ego B1, Dossier 5: Bütçe yönetimi, para, alışveriş ve tüketim alışkanlıkları.",
+    "baslangic_tarihi": "2026-11-23",
+    "bitis_tarihi": "2026-12-06"
+  },
+  {
+    "unite_no": 6,
+    "seviye": "B1",
+    "dil": "FR-TR",
+    "baslik": "B1 • Dossier 6: Avoir une bonne image de soi",
+    "aciklama": "Mon Alter Ego B1, Dossier 6: Bireysel imaj, özgüven, kişisel gelişim ve moda.",
+    "baslangic_tarihi": "2026-12-07",
+    "bitis_tarihi": "2026-12-20"
+  },
+  {
+    "unite_no": 7,
+    "seviye": "B1",
+    "dil": "FR-TR",
+    "baslik": "B1 • Dossier 7: Réussir sa vie professionnelle",
+    "aciklama": "Mon Alter Ego B1, Dossier 7: Kariyer, iş dünyası, mesleki başarı ve çalışma hayatı.",
+    "baslangic_tarihi": "2026-12-21",
+    "bitis_tarihi": "2027-01-03"
+  },
+  {
+    "unite_no": 8,
+    "seviye": "B1",
+    "dil": "FR-TR",
+    "baslik": "B1 • Dossier 8: Comprendre le monde qui nous entoure",
+    "aciklama": "Mon Alter Ego B1, Dossier 8: Çevre, toplum, güncel olaylar ve küresel konular.",
+    "baslangic_tarihi": "2027-01-04",
+    "bitis_tarihi": "2027-01-17"
+  },
+  {
+    "unite_no": 9,
+    "seviye": "B1",
+    "dil": "FR-TR",
+    "baslik": "B1 • Dossier 9: S'engager",
+    "aciklama": "Mon Alter Ego B1, Dossier 9: Toplumsal sorumluluk, gönüllülük ve aktif katılım.",
+    "baslangic_tarihi": "2027-01-18",
+    "bitis_tarihi": "2027-01-31"
+  },
+  {
+    "unite_no": 10,
+    "seviye": "B1",
+    "dil": "FR-TR",
+    "baslik": "B1 • Annexe: Lexique complémentaire",
+    "aciklama": "Mon Alter Ego B1, Annexe: Tamamlayıcı ileri düzey B1 sözlük ve kelime dağarcığı.",
+    "baslangic_tarihi": "2027-02-01",
+    "bitis_tarihi": "2027-02-14"
+  }
+];
+
+if (typeof window !== "undefined") {
+  window.UNITS_DATA = UNITS_DATA;
+}
