@@ -16,7 +16,7 @@
   <meta name="referrer" content="no-referrer">
   <title>LexiGo • Çok Dilli Akıllı Kelime Kartları</title>
   <link rel="icon" type="image/jpeg" href="logo.jpg">
-  <link rel="stylesheet" href="style.css?v=1.8.61">
+  <link rel="stylesheet" href="style.css?v=1.8.62">
 </head>
 <body>
   <div class="app-container">
@@ -366,13 +366,22 @@
           </div>
         </div>
 
+        <!-- Dış Ünite & Seviye Bilgi Barı (Kart Başlığını Rahatlatan Dış Bar) -->
+        <div class="card-outer-unit-bar" id="cardOuterUnitBar">
+          <span class="card-outer-unit-badge" id="cardUnitBadge" lang="en">UNIT 1</span>
+        </div>
+
         <!-- Kart Sarmalayıcı (Fiziksel Deste Efekti) -->
         <div class="flashcard-wrapper" id="flashcardWrapper" title="Çevirmek için dokunun">
           <div class="flashcard" id="flashcard">
             <!-- Kart Ön Yüzü (Kağıt Şablonu) -->
             <div class="card-face card-front" id="cardFrontFace" lang="en">
               <div class="card-top">
-                <span class="card-unit-label" id="cardUnitBadge" lang="en">UNIT 1</span>
+                <div class="card-top-status-wrap">
+                  <span class="card-status-badge status-pending" id="cardStatusBadge">
+                    Bekliyor
+                  </span>
+                </div>
                 <div class="card-top-actions">
                   <button type="button" id="cardNotebookToggleBtn" class="card-notebook-btn" title="Kelime Defterime Ekle / Çıkar" aria-label="Kelime Defterim">
                     <span class="notebook-btn-icon">🔖</span>
@@ -386,9 +395,6 @@
                     <span class="notebook-btn-icon">↺</span>
                     <span class="notebook-btn-text">Yeniden Öğren</span>
                   </button>
-                  <span class="card-status-badge status-pending" id="cardStatusBadge">
-                    Bekliyor
-                  </span>
                 </div>
               </div>
 
@@ -464,7 +470,9 @@
             <!-- Kart Arka Yüzü -->
             <div class="card-face card-back">
               <div class="card-top">
-                <span class="card-unit-label" id="cardBackWordLabel">Kelime</span>
+                <div class="card-top-back-word-wrap">
+                  <span class="card-back-word-pill" id="cardBackWordLabel" title="Kelime">Kelime</span>
+                </div>
                 <div class="card-top-actions">
                   <button type="button" id="cardBackNotebookToggleBtn" class="card-notebook-btn" title="Kelime Defterime Ekle / Çıkar" aria-label="Kelime Defterim">
                     <span class="notebook-btn-icon">🔖</span>
@@ -478,9 +486,7 @@
                     <span class="notebook-btn-icon">↺</span>
                     <span class="notebook-btn-text">Yeniden Öğren</span>
                   </button>
-                  <span class="card-status-badge status-pending" id="cardBackStatusBadge">
-                    Türkçe Çeviri
-                  </span>
+                  <span id="cardBackStatusBadge" style="display: none !important;"></span>
                 </div>
               </div>
 
@@ -1468,7 +1474,7 @@
               <div class="welcome-logo-badge">
                 <img src="assets/icons/lexigo_brand_logo.png" alt="LexiGo" class="welcome-brand-img" />
               </div>
-              <span class="welcome-version-pill">v1.8.61</span>
+              <span class="welcome-version-pill">v1.8.62</span>
             </div>
           </div>
         </div>
@@ -2232,7 +2238,7 @@
             <div class="about-logo-badge">
               <img src="assets/icons/lexigo_brand_logo.png" alt="LexiGo" class="about-brand-img" />
             </div>
-            <span class="about-version-pill" id="aboutAppVersion">v1.8.61</span>
+            <span class="about-version-pill" id="aboutAppVersion">v1.8.62</span>
             <span class="about-platform-badge" id="aboutPlatformBadge" style="display: none; font-size: 0.72rem; font-weight: 700; padding: 3px 9px; border-radius: 12px; background: rgba(59,130,246,0.15); color: #3b82f6; border: 1px solid rgba(59,130,246,0.3);"></span>
           </div>
           <p class="about-tagline">Müfredat Tabanlı Çok Dilli Kelime Arenası</p>
@@ -3889,16 +3895,15 @@
       <div class="confirm-icon-wrap" style="font-size: 2.8rem; margin-bottom: 8px;">🎉</div>
       <h3 class="confirm-title" style="font-size: 1.3rem; font-weight: 800; margin: 0 0 6px 0;">LexiGo Güncellendi!</h3>
       <div class="app-update-version-badge" style="display: inline-block; padding: 4px 14px; border-radius: 20px; font-size: 0.84rem; font-weight: 800; margin-bottom: 14px;">
-        Sürüm <span id="appUpdateVersionText">v1.8.61</span>
+        Sürüm <span id="appUpdateVersionText">v1.8.62</span>
       </div>
       <div class="update-notes-box" style="text-align: left; border-radius: 16px; padding: 14px 16px; font-size: 0.88rem; line-height: 1.6; margin-bottom: 18px; max-height: 280px; overflow-y: auto;">
         <div class="update-notes-title" style="font-weight: 800; margin-bottom: 8px; display: flex; align-items: center; gap: 6px;">
           <span>✨</span><span>Bu Sürümdeki Yenilikler</span>
         </div>
         <ul style="margin: 0; padding-left: 20px; display: flex; flex-direction: column; gap: 8px;">
-          <li><strong>⚡ %82 Boyut Optimizasyonu:</strong> Geliştirme PDF dokümanları ve ham görseller APK paketinden temizlendi. Dosya boyutu 66 MB'tan tekrar ~11.5 MB'a düşürüldü.</li>
-          <li><strong>🛑 Son Kelime Kaydırma Uyarısı:</strong> Öğrenilecek kelimelerin sonuna gelindiğinde sola kaydırma direnci, titreşim ve geri dönüp tekrar etmeyi hatırlatan bildirim eklendi.</li>
-          <li><strong>🔍 Kristal Netliğinde Yardım Balonları:</strong> Yardım balonları hedef üzerindeki bulanıklıklar giderilerek %100 net ve keskin hale getirildi.</li>
+          <li><strong>🃏 Kart Başlığı Rahatlatıldı:</strong> Ünite bilgisi kartın dışına taşındı; "Öğrenilenler" ve "Zorlandıklarım" sekmelerinde eylem butonları geniş ve ferah hale getirildi.</li>
+          <li><strong>📊 Yatay Alıştırma Özeti:</strong> Arenadaki alıştırma özetinde hata yapılan kelimeler ve eşleşmeler yan yana (yatay) net formatta sunuldu.</li>
         </ul>
       </div>
       <div style="display: flex; flex-direction: column; gap: 8px; width: 100%;">
@@ -3961,11 +3966,11 @@
   <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-storage-compat.js"></script>
-  <script src="firebase_backend.js?v=1.8.61"></script>
+  <script src="firebase_backend.js?v=1.8.62"></script>
 
   <!-- Kelime Verisi ve Uygulama Mantığı (Sadece Standart Vanilla JS) -->
-  <script src="words_data.js?v=1.8.61"></script>
-  <script src="app.js?v=1.8.61"></script>
+  <script src="words_data.js?v=1.8.62"></script>
+  <script src="app.js?v=1.8.62"></script>
 
   </body>
 </html>

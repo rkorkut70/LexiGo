@@ -1,10 +1,9 @@
 {
-  "version": "v1.8.61",
-  "versionCode": 122,
+  "version": "v1.8.62",
+  "versionCode": 123,
   "releaseDate": "2026-11-03",
   "notes": [
-    "⚡ %82 Boyut Optimizasyonu: Geliştirme PDF dokümanları ve ham görseller APK paketinden temizlendi. Dosya boyutu 66 MB'tan tekrar ~11.5 MB'a düşürüldü.",
-    "🛑 Son Kelime Kaydırma Uyarısı: Öğrenilecek kelimelerin sonuna gelindiğinde sola kaydırma direnci, titreşim ve geri dönüp tekrar etmeyi hatırlatan bildirim eklendi.",
-    "🔍 Kristal Netliğinde Yardım Balonları: Yardım balonları hedef üzerindeki bulanıklıklar giderilerek %100 net ve keskin hale getirildi."
+    "🃏 Kart Başlığı Rahatlatıldı: Ünite bilgisi kartın dışına taşındı; 'Öğrenilenler' ve 'Zorlandıklarım' sekmelerinde eylem butonları (Yeniden Öğren, Pekiştirildi, Listeme Ekle) geniş ve ferah hale getirildi.",
+    "📊 Yatay Alıştırma Özeti: Arenadaki alıştırma özetinde hata yapılan kelimeler ve eşleşmeler dikey yığılmadan arındırılıp yan yana (yatay) net formatta sunuldu."
   ]
 }

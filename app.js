@@ -7,7 +7,7 @@
 (function () {
   'use strict';
 
-  const APP_VERSION = 'v1.8.61';
+  const APP_VERSION = 'v1.8.62';
   const DEFAULT_AVATAR = 'avatar_default';
   const CURRENT_APP_BUILD = 'lexiq_build_19_clean';
 
@@ -5311,7 +5311,8 @@ let activeAvatarCategory = 'all';
       dom.pronounceBtn.style.display = 'none';
 
       // Kart Arka Yüzü
-      dom.cardBackWordLabel.textContent = 'Yabancı Kelime';
+      dom.cardBackWordLabel.textContent = currentWord.kelime || 'Yabancı Kelime';
+      dom.cardBackWordLabel.title = currentWord.kelime || '';
       dom.cardMeaningText.textContent = currentWord.kelime;
       dom.cardSentenceTranslation.textContent = getWordSentenceTranslation(currentWord);
       const exampleSentence = getWordSentence(currentWord);
@@ -5374,6 +5375,7 @@ let activeAvatarCategory = 'all';
 
       // Kart Arka Yüzü
       dom.cardBackWordLabel.textContent = currentWord.kelime;
+      dom.cardBackWordLabel.title = currentWord.kelime;
       dom.cardMeaningText.textContent = getWordMeaning(currentWord);
       dom.cardSentenceTranslation.textContent = getWordSentenceTranslation(currentWord);
       const exampleSentence = getWordSentence(currentWord);
@@ -7612,11 +7614,12 @@ let activeAvatarCategory = 'all';
             const safeWord = (w.kelime || '').replace(/'/g, "\\'");
             return `
               <div class="mistake-word-item">
-                <div class="mistake-word-left">
+                <div class="mistake-col-left">
                   <span class="mistake-word-text">${w.kelime}</span>
                   <button type="button" class="mistake-word-audio-btn" title="Telaffuz" onclick="event.stopPropagation(); if (typeof window.speakWord === 'function') window.speakWord('${safeWord}', '${w.dil}');">🔊</button>
                 </div>
-                <div class="mistake-word-meaning">${meaning}</div>
+                <div class="mistake-col-arrow">➔</div>
+                <div class="mistake-col-right">${meaning}</div>
               </div>
             `;
           }).join('');
@@ -7684,14 +7687,16 @@ let activeAvatarCategory = 'all';
           dom.roundTfCorrectedList.innerHTML = identifiedWrongPairs.map(item => {
             const safeWord = (item.word || '').replace(/'/g, "\\'");
             return `
-              <div class="mistake-word-item" style="border-left: 3px solid #10b981;">
-                <div class="mistake-word-left">
+              <div class="mistake-word-item" style="border-left: 3.5px solid #10b981;">
+                <div class="mistake-col-left">
                   <span class="mistake-word-text">${item.word}</span>
                   <button type="button" class="mistake-word-audio-btn" title="Telaffuz" onclick="event.stopPropagation(); if (typeof window.speakWord === 'function') window.speakWord('${safeWord}', '${item.dil}');">🔊</button>
                 </div>
-                <div class="mistake-word-meaning" style="color: #10b981; font-weight: 800;">
-                  <span style="font-size: 0.75rem; color: var(--text-muted); text-decoration: line-through; margin-right: 6px;">${item.displayedMeaning}</span>
-                  <span>Doğru: "${item.trueMeaning}"</span>
+                <div class="mistake-col-arrow">➔</div>
+                <div class="mistake-tf-pair-container">
+                  <span class="mistake-tf-wrong-chip" title="Yanlış Gösterilen Anlam"><s>${item.displayedMeaning}</s></span>
+                  <span class="mistake-tf-arrow">➔</span>
+                  <span class="mistake-tf-correct-chip" title="Doğru Anlam">✓ ${item.trueMeaning}</span>
                 </div>
               </div>
             `;
