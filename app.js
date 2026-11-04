@@ -5535,31 +5535,32 @@ let activeAvatarCategory = 'all';
 
     if (!currentWord) return;
 
-    // 2. Kartın arka yüzündeki anlam ve cümle çevirisi gizleme/gösterme yönetimi
+    // 2. Kartın arka yüzündeki anlam ve cümle çevirisi yönetimi:
+    // KURAL: Kelimenin Türkçe karşılığı HER ZAMAN açık görünür, kesinlikle gizlenmez.
     const rawMeaning = state.reverseMode ? currentWord.kelime : getWordMeaning(currentWord);
     const rawTranslation = getWordSentenceTranslation(currentWord);
 
-    if (state.isTranslationRevealed) {
-      if (dom.cardMeaningText) {
-        dom.cardMeaningText.classList.remove('is-concealed');
-        dom.cardMeaningText.textContent = rawMeaning;
-        dom.cardMeaningText.title = 'Türkçe Anlamı';
-      }
-      if (dom.cardSentenceTranslation) {
+    if (dom.cardMeaningText) {
+      dom.cardMeaningText.classList.remove('is-concealed');
+      dom.cardMeaningText.textContent = rawMeaning;
+      dom.cardMeaningText.title = 'Türkçe Anlamı';
+    }
+
+    // Yalnızca örnek cümlenin Türkçesi gizlenir ve butonla gösterilir
+    if (dom.cardSentenceTranslation) {
+      if (state.isTranslationRevealed) {
         dom.cardSentenceTranslation.classList.remove('is-concealed');
-        dom.cardSentenceTranslation.textContent = rawTranslation;
+        dom.cardSentenceTranslation.textContent = rawTranslation || '';
         dom.cardSentenceTranslation.title = 'Cümle Çevirisi';
-      }
-    } else {
-      if (dom.cardMeaningText) {
-        dom.cardMeaningText.classList.add('is-concealed');
-        dom.cardMeaningText.innerHTML = '<span class="concealed-translation-badge"><span class="concealed-icon">🔒</span> Türkçe Anlamı Gizli</span>';
-        dom.cardMeaningText.title = 'Görmek için üstteki "Türkçe Anlamını Göster" butonuna veya buraya dokunun';
-      }
-      if (dom.cardSentenceTranslation) {
-        dom.cardSentenceTranslation.classList.add('is-concealed');
-        dom.cardSentenceTranslation.innerHTML = '<span class="concealed-sentence-badge"><span class="concealed-icon">🔒</span> Cümle çevirisi gizli</span>';
-        dom.cardSentenceTranslation.title = 'Görmek için üstteki "Türkçe Anlamını Göster" butonuna veya buraya dokunun';
+      } else {
+        if (rawTranslation) {
+          dom.cardSentenceTranslation.classList.add('is-concealed');
+          dom.cardSentenceTranslation.innerHTML = '<span class="concealed-sentence-badge"><span class="concealed-icon">🔒</span> Cümle çevirisi gizli</span>';
+          dom.cardSentenceTranslation.title = 'Görmek için üstteki "Türkçe Anlamını Göster" butonuna veya buraya dokunun';
+        } else {
+          dom.cardSentenceTranslation.classList.remove('is-concealed');
+          dom.cardSentenceTranslation.textContent = '';
+        }
       }
     }
   }
