@@ -1,9 +1,10 @@
 {
-  "version": "v1.8.63",
-  "versionCode": 124,
+  "version": "v1.8.64",
+  "versionCode": 125,
   "releaseDate": "2026-11-04",
   "notes": [
-    "👁️ Aktif Hatırlama (Active Recall): Kelime kartlarının arka yüzünde Türkçe çeviriler doğrudan görünmez; üst bar sağındaki 'Türkçe Anlamını Göster' butonuyla isteğe bağlı açılır.",
+    "🔖 Kelime Defterim Uyumu: Kart üzerindeki eylem butonu 'Defterime Ekle / Defterimde' olarak güncellendi ve üst menüdeki 'Kelime Defterim' ile tam eşitlendi.",
+    "👁️ Aktif Hatırlama (Active Recall): Kart arkasındaki Türkçe çeviriler gizlendi, sağ üstteki 'Türkçe Anlamını Göster' butonuna bağlandı.",
     "🔤 Cümle Kurma Noktalama Düzeltmesi: İki cümleli yapılarda tire (-) işareti yerine cümleler arasına temiz nokta (.) getirildi ve parantezler kaldırıldı."
   ]
 }

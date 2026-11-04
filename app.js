@@ -7,7 +7,7 @@
 (function () {
   'use strict';
 
-  const APP_VERSION = 'v1.8.63';
+  const APP_VERSION = 'v1.8.64';
   const DEFAULT_AVATAR = 'avatar_default';
   const CURRENT_APP_BUILD = 'lexiq_build_19_clean';
 
@@ -4750,7 +4750,7 @@ let activeAvatarCategory = 'all';
       btn.classList.toggle('in-notebook', inBook);
       btn.title = inBook ? "Kelime Defterim'de (Çıkarmak için dokunun)" : "Kelime Defterim'e Ekle";
       if (textEl) {
-        textEl.textContent = inBook ? 'Listemde' : 'Listeme Ekle';
+        textEl.textContent = inBook ? 'Defterimde' : 'Defterime Ekle';
       }
     };
     updateBtn(dom.cardNotebookToggleBtn, dom.cardNotebookBtnText);
@@ -5127,8 +5127,8 @@ let activeAvatarCategory = 'all';
         }
 
         dom.cardTargetWord.textContent = 'Kelime Defterim Boş 🔖';
-        dom.cardMeaningText.textContent = 'Henüz özel çalışma listene kelime eklemedin.';
-        dom.cardExampleSentence.textContent = 'Kartlardaki "Listeme Ekle" butonuna dokunarak istediğin kelimeleri buraya ekleyebilirsin.';
+        dom.cardMeaningText.textContent = 'Henüz kelime defterine kelime eklemedin.';
+        dom.cardExampleSentence.textContent = 'Kartlardaki "Defterime Ekle" butonuna dokunarak istediğin kelimeleri buraya ekleyebilirsin.';
         dom.cardStatusBadge.textContent = 'Boş';
         dom.cardSentenceTranslation.textContent = '';
         dom.cardIndexCounter.textContent = '0 / 0';
