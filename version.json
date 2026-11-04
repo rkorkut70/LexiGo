@@ -1,10 +1,10 @@
 {
-  "version": "v1.8.64",
-  "versionCode": 125,
+  "version": "v1.8.65",
+  "versionCode": 126,
   "releaseDate": "2026-11-04",
   "notes": [
+    "📐 Kart Cümle Çevirisi Taşırma Düzeltmesi: Kart arkasındaki uzun Türkçe cümle çevirilerinin (örn. 'abroad') alt satıra sarkıp kesilmesi giderildi, kart dikey alanı genişletildi ve tipografi optimize edildi.",
     "🔖 Kelime Defterim Uyumu: Kart üzerindeki eylem butonu 'Defterime Ekle / Defterimde' olarak güncellendi ve üst menüdeki 'Kelime Defterim' ile tam eşitlendi.",
-    "👁️ Aktif Hatırlama (Active Recall): Kart arkasındaki Türkçe çeviriler gizlendi, sağ üstteki 'Türkçe Anlamını Göster' butonuna bağlandı.",
-    "🔤 Cümle Kurma Noktalama Düzeltmesi: İki cümleli yapılarda tire (-) işareti yerine cümleler arasına temiz nokta (.) getirildi ve parantezler kaldırıldı."
+    "👁️ Aktif Hatırlama (Active Recall): Kart arkasındaki Türkçe çeviriler gizlendi, sağ üstteki 'Türkçe Anlamını Göster' butonuna bağlandı."
   ]
 }
