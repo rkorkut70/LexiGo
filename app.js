@@ -60,6 +60,7 @@
     isShuffled: localStorage.getItem('kelime_shuffle') === 'true',
     srsPriority: localStorage.getItem('kelime_srs_priority') !== 'false',
     readExampleAudio: localStorage.getItem('kelime_read_example_audio') !== 'false',
+    alwaysShowSentenceTranslation: localStorage.getItem('kelime_always_show_sentence_translation') === 'true',
     slideshowActive: false,
     slideshowTimer: null,
     cardAutoAccent: localStorage.getItem('lexiq_card_auto_accent') || 'US', // 'US' | 'UK'
@@ -979,6 +980,7 @@
     settingAutoSlideshow: document.getElementById('settingAutoSlideshow'),
     settingSrsPriority: document.getElementById('settingSrsPriority'),
     settingReadExampleAudio: document.getElementById('settingReadExampleAudio'),
+    settingAlwaysShowSentenceTranslation: document.getElementById('settingAlwaysShowSentenceTranslation'),
     settingStudyReminder: document.getElementById('settingStudyReminder'),
     studyReminderDetailsPanel: document.getElementById('studyReminderDetailsPanel'),
     reminderDisabledNotice: document.getElementById('reminderDisabledNotice'),
@@ -3143,6 +3145,7 @@ let activeAvatarCategory = 'all';
       if (dom.settingAutoSlideshow) dom.settingAutoSlideshow.checked = state.slideshowActive;
       if (dom.settingSrsPriority) dom.settingSrsPriority.checked = state.srsPriority;
       if (dom.settingReadExampleAudio) dom.settingReadExampleAudio.checked = state.readExampleAudio;
+      if (dom.settingAlwaysShowSentenceTranslation) dom.settingAlwaysShowSentenceTranslation.checked = state.alwaysShowSentenceTranslation;
       if (dom.settingCardFilter) dom.settingCardFilter.value = state.activeFilter;
       const settingCardHaptic = document.getElementById('settingCardHaptic');
       if (settingCardHaptic) settingCardHaptic.checked = state.cardHaptic;
@@ -5514,10 +5517,12 @@ let activeAvatarCategory = 'all';
   // ==========================================
   function updateCardTranslationVisibility() {
     const currentWord = (state.words && state.words[state.currentIndex]) ? state.words[state.currentIndex] : null;
+    const isAlwaysShow = Boolean(state.alwaysShowSentenceTranslation);
+    const isRevealed = isAlwaysShow || Boolean(state.isTranslationRevealed);
 
     // 1. Dış bar seviye/ünite rozetinin aynı hizasında sağa yanaşık buton
     if (dom.cardRevealMeaningBtn) {
-      if (state.isFlipped && currentWord) {
+      if (state.isFlipped && currentWord && !isAlwaysShow) {
         dom.cardRevealMeaningBtn.style.display = 'inline-flex';
         if (state.isTranslationRevealed) {
           dom.cardRevealMeaningBtn.classList.add('is-revealed');
@@ -5546,9 +5551,9 @@ let activeAvatarCategory = 'all';
       dom.cardMeaningText.title = 'Türkçe Anlamı';
     }
 
-    // Yalnızca örnek cümlenin Türkçesi gizlenir ve butonla gösterilir
+    // Yalnızca örnek cümlenin Türkçesi gizlenir ve butonla gösterilir (veya ayar açıksa hep gösterilir)
     if (dom.cardSentenceTranslation) {
-      if (state.isTranslationRevealed) {
+      if (isRevealed) {
         dom.cardSentenceTranslation.classList.remove('is-concealed');
         dom.cardSentenceTranslation.textContent = rawTranslation || '';
         dom.cardSentenceTranslation.title = 'Cümle Çevirisi';
@@ -11640,6 +11645,16 @@ let activeAvatarCategory = 'all';
         state.readExampleAudio = e.target.checked;
         localStorage.setItem('kelime_read_example_audio', state.readExampleAudio ? 'true' : 'false');
         showToast(state.readExampleAudio ? '🗣️ Kart çevrildiğinde örnek cümle seslendirilecek' : 'Örnek cümle seslendirmesi kapatıldı');
+      });
+    }
+
+    // Cümle Çevirisini Hep Göster
+    if (dom.settingAlwaysShowSentenceTranslation) {
+      dom.settingAlwaysShowSentenceTranslation.addEventListener('change', (e) => {
+        state.alwaysShowSentenceTranslation = e.target.checked;
+        localStorage.setItem('kelime_always_show_sentence_translation', state.alwaysShowSentenceTranslation ? 'true' : 'false');
+        showToast(state.alwaysShowSentenceTranslation ? '💬 Cümle çevirileri her zaman açık gösterilecek' : '🔒 Cümle çevirileri gizli başlayacak');
+        updateCardTranslationVisibility();
       });
     }
 
