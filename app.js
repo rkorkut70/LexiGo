@@ -7,7 +7,7 @@
 (function () {
   'use strict';
 
-  const APP_VERSION = 'v1.8.62';
+  const APP_VERSION = 'v1.8.63';
   const DEFAULT_AVATAR = 'avatar_default';
   const CURRENT_APP_BUILD = 'lexiq_build_19_clean';
 
@@ -78,6 +78,7 @@
     })(), // 'pending' | 'learned' | 'mylist' | 'troubled'
     currentIndex: 0,
     isFlipped: false,
+    isTranslationRevealed: false,
     words: [],
     // Öğrenilmiş kelime kimlikleri ve tekrar tarihleri: { [wordId]: { learned: true, timestamp: number } }
     learnedMap: JSON.parse(localStorage.getItem('kelime_learned_map') || '{}'),
@@ -697,7 +698,9 @@
     flashcardWrapper: document.getElementById('flashcardWrapper'),
     flashcard: document.getElementById('flashcard'),
     cardFrontFace: document.getElementById('cardFrontFace'),
+    cardOuterUnitBar: document.getElementById('cardOuterUnitBar'),
     cardUnitBadge: document.getElementById('cardUnitBadge'),
+    cardRevealMeaningBtn: document.getElementById('cardRevealMeaningBtn'),
     cardStatusBadge: document.getElementById('cardStatusBadge'),
     cardTargetWord: document.getElementById('cardTargetWord'),
     cardPhonetic: document.getElementById('cardPhonetic'),
@@ -5063,6 +5066,12 @@ let activeAvatarCategory = 'all';
     // Kartı ön yüze çevir
     setFlipped(false);
 
+    const curWordObj = (state.words && state.words[state.currentIndex]) ? state.words[state.currentIndex] : null;
+    if (curWordObj && state.lastConcealedWordId !== curWordObj.id) {
+      state.isTranslationRevealed = false;
+      state.lastConcealedWordId = curWordObj.id;
+    }
+
     if (state.words.length === 0) {
       if (state.activeFilter === 'learned') {
         if (dom.flashcardWrapper) dom.flashcardWrapper.style.display = 'block';
@@ -5313,10 +5322,9 @@ let activeAvatarCategory = 'all';
       // Kart Arka Yüzü
       dom.cardBackWordLabel.textContent = currentWord.kelime || 'Yabancı Kelime';
       dom.cardBackWordLabel.title = currentWord.kelime || '';
-      dom.cardMeaningText.textContent = currentWord.kelime;
-      dom.cardSentenceTranslation.textContent = getWordSentenceTranslation(currentWord);
       const exampleSentence = getWordSentence(currentWord);
       dom.cardExampleSentence.innerHTML = highlightWordInSentence(exampleSentence, currentWord.kelime);
+      updateCardTranslationVisibility();
     } else {
       // STANDART MOD: Ön yüzde Yabancı Kelime, Arka yüzde Türkçe Anlam
       const currentUnitObj = getUnitsData().find(u => u.dil === currentWord.dil && u.unite_no === currentWord.unite_no);
@@ -5376,10 +5384,9 @@ let activeAvatarCategory = 'all';
       // Kart Arka Yüzü
       dom.cardBackWordLabel.textContent = currentWord.kelime;
       dom.cardBackWordLabel.title = currentWord.kelime;
-      dom.cardMeaningText.textContent = getWordMeaning(currentWord);
-      dom.cardSentenceTranslation.textContent = getWordSentenceTranslation(currentWord);
       const exampleSentence = getWordSentence(currentWord);
       dom.cardExampleSentence.innerHTML = highlightWordInSentence(exampleSentence, currentWord.kelime);
+      updateCardTranslationVisibility();
     }
 
     // Durum Rozeti
@@ -5502,6 +5509,71 @@ let activeAvatarCategory = 'all';
   }
   window.stopAllSpeech = stopAllSpeech;
 
+  // ==========================================
+  // TÜRKÇE ÇEVİRİ GİZLEME / GÖSTERME (ACTIVE RECALL)
+  // ==========================================
+  function updateCardTranslationVisibility() {
+    const currentWord = (state.words && state.words[state.currentIndex]) ? state.words[state.currentIndex] : null;
+
+    // 1. Dış bar seviye/ünite rozetinin aynı hizasında sağa yanaşık buton
+    if (dom.cardRevealMeaningBtn) {
+      if (state.isFlipped && currentWord) {
+        dom.cardRevealMeaningBtn.style.display = 'inline-flex';
+        if (state.isTranslationRevealed) {
+          dom.cardRevealMeaningBtn.classList.add('is-revealed');
+          dom.cardRevealMeaningBtn.innerHTML = '<span class="reveal-btn-icon">🙈</span><span class="reveal-btn-text">Türkçe Anlamını Gizle</span>';
+          dom.cardRevealMeaningBtn.title = 'Türkçe Çeviriyi Gizle';
+        } else {
+          dom.cardRevealMeaningBtn.classList.remove('is-revealed');
+          dom.cardRevealMeaningBtn.innerHTML = '<span class="reveal-btn-icon">👁️</span><span class="reveal-btn-text">Türkçe Anlamını Göster</span>';
+          dom.cardRevealMeaningBtn.title = 'Türkçe Çeviriyi Göster';
+        }
+      } else {
+        dom.cardRevealMeaningBtn.style.display = 'none';
+      }
+    }
+
+    if (!currentWord) return;
+
+    // 2. Kartın arka yüzündeki anlam ve cümle çevirisi gizleme/gösterme yönetimi
+    const rawMeaning = state.reverseMode ? currentWord.kelime : getWordMeaning(currentWord);
+    const rawTranslation = getWordSentenceTranslation(currentWord);
+
+    if (state.isTranslationRevealed) {
+      if (dom.cardMeaningText) {
+        dom.cardMeaningText.classList.remove('is-concealed');
+        dom.cardMeaningText.textContent = rawMeaning;
+        dom.cardMeaningText.title = 'Türkçe Anlamı';
+      }
+      if (dom.cardSentenceTranslation) {
+        dom.cardSentenceTranslation.classList.remove('is-concealed');
+        dom.cardSentenceTranslation.textContent = rawTranslation;
+        dom.cardSentenceTranslation.title = 'Cümle Çevirisi';
+      }
+    } else {
+      if (dom.cardMeaningText) {
+        dom.cardMeaningText.classList.add('is-concealed');
+        dom.cardMeaningText.innerHTML = '<span class="concealed-translation-badge"><span class="concealed-icon">🔒</span> Türkçe Anlamı Gizli</span>';
+        dom.cardMeaningText.title = 'Görmek için üstteki "Türkçe Anlamını Göster" butonuna veya buraya dokunun';
+      }
+      if (dom.cardSentenceTranslation) {
+        dom.cardSentenceTranslation.classList.add('is-concealed');
+        dom.cardSentenceTranslation.innerHTML = '<span class="concealed-sentence-badge"><span class="concealed-icon">🔒</span> Cümle çevirisi gizli</span>';
+        dom.cardSentenceTranslation.title = 'Görmek için üstteki "Türkçe Anlamını Göster" butonuna veya buraya dokunun';
+      }
+    }
+  }
+
+  function toggleCardTranslation(forceState) {
+    if (typeof forceState === 'boolean') {
+      state.isTranslationRevealed = forceState;
+    } else {
+      state.isTranslationRevealed = !state.isTranslationRevealed;
+    }
+    triggerHapticFeedback('light');
+    updateCardTranslationVisibility();
+  }
+
   function setFlipped(flipped) {
     // Kart hangi yöne çevrilirse çevrilsin hemen önceki çalan/kuyruktaki sesleri derhal kes
     stopAllSpeech();
@@ -5510,6 +5582,7 @@ let activeAvatarCategory = 'all';
       triggerHapticFeedback('medium');
     }
     state.isFlipped = flipped;
+    updateCardTranslationVisibility();
     if (flipped) {
       dom.flashcard.classList.add('is-flipped');
       // Kartın arka yüzü açıldı: Kullanıcı kartın arka yüzünde kaldığı sürece cümleyi dinleyebilir
@@ -11105,20 +11178,48 @@ let activeAvatarCategory = 'all';
       if (dom.scrambleAudioBtn) dom.scrambleAudioBtn.style.display = 'inline-flex';
     }
 
-    const sentence = getWordSentence(target) || `This word means ${getWordMeaning(target) || 'it'}.`;
-    const words = sentence.trim().split(/\s+/);
+    const rawSentence = getWordSentence(target) || `This word means ${getWordMeaning(target) || 'it'}.`;
+
+    // Cümle Kurma Metin Temizliği (İki cümle varsa tire (-) yerine nokta (.), parantezsiz):
+    let sentence = rawSentence;
+    // 1. Gramer notu ön eklerini temizle (ör. "+ D.) (" vb.)
+    sentence = sentence.replace(/^\s*\+\s*[A-Za-z.]+\s*\)?\s*/g, ' ');
+    // 2. Parantez işaretlerini kaldır (parantez olmadan kuralı)
+    sentence = sentence.replace(/[()]/g, ' ');
+    // 3. Cümle başındaki tireleri temizle
+    sentence = sentence.replace(/^[\s-]+/, '');
+    // 4. İki cümle arasındaki tireyi noktaya çevir:
+    // Eğer tire öncesinde zaten nokta, soru veya ünlem varsa tireyi kaldırıp boşlukla birleştir
+    sentence = sentence.replace(/([.?!])\s*-\s*/g, function(m, p1) { return p1 + ' '; });
+    // Eğer noktalama işareti yoksa araya nokta (.) koy
+    sentence = sentence.replace(/\s+-\s+/g, '. ');
+    // 5. Çoklu noktaları tek noktaya indir ve boşlukları düzenle
+    sentence = sentence.replace(/\.{2,}/g, '.');
+    sentence = sentence.replace(/\s+/g, ' ').trim();
+    // 6. Noktadan sonraki ilk harf küçükse büyük harfe çevir
+    sentence = sentence.replace(/(\.\s+)([a-zğüşıöç])/g, function(m, p1, p2) { return p1 + p2.toUpperCase(); });
+
+    const words = sentence.split(/\s+/).filter(w => w && w !== '-');
     scrambleState.originalWords = [...words];
     scrambleState.userSlots = new Array(words.length).fill(null);
 
     const shuffled = words.map((w, idx) => ({ id: idx, word: w, used: false }))
                           .sort(() => Math.random() - 0.5);
-    if (shuffled.map(s => s.word).join(' ') === sentence && words.length > 2) {
+    if (shuffled.map(s => s.word).join(' ') === words.join(' ') && words.length > 2) {
       shuffled.reverse();
     }
     scrambleState.bankItems = shuffled;
 
     if (dom.scrambleTranslationText) {
-      dom.scrambleTranslationText.textContent = getWordSentenceTranslation(target) || getWordMeaning(target) || 'Cümleyi doğru sırayla kurun';
+      let rawTr = getWordSentenceTranslation(target) || getWordMeaning(target) || 'Cümleyi doğru sırayla kurun';
+      let cleanTr = rawTr.replace(/^\s*\+\s*[A-Za-z.]+\s*\)?\s*/g, ' ')
+                         .replace(/[()]/g, ' ')
+                         .replace(/^[\s-]+/, '')
+                         .replace(/([.?!])\s*-\s*/g, function(m, p1) { return p1 + ' '; })
+                         .replace(/\s+-\s+/g, '. ')
+                         .replace(/\.{2,}/g, '.')
+                         .replace(/\s+/g, ' ').trim();
+      dom.scrambleTranslationText.textContent = cleanTr;
     }
     if (dom.scrambleHintBtn) dom.scrambleHintBtn.disabled = false;
 
@@ -12127,9 +12228,24 @@ let activeAvatarCategory = 'all';
       if (sentenceBtn) {
         return;
       }
+      if (e.target.closest('#cardMeaningText.is-concealed, #cardSentenceTranslation.is-concealed, .concealed-translation-badge, .concealed-sentence-badge')) {
+        toggleCardTranslation(true);
+        return;
+      }
       if (e.target.closest('#pronounceBtn, #pronounceUsBtn, #pronounceUkBtn, .accent-btn, .audio-btn, .accent-btn-group, .audio-controls-row, #prevCardBtn, #nextCardBtn, .card-edge-nav-btn, #markLearnedBtn, #markRepeatBtn, .card-inner-action-btn, #cardNotebookToggleBtn, #cardBackNotebookToggleBtn, .card-notebook-btn, #cardTroubledActionBtn, #cardBackTroubledActionBtn, .card-troubled-pill, #cardUnlearnBtn, #cardBackUnlearnBtn, .card-unlearn-pill, .card-sentence-audio-btn, #cardSentenceAudioBtn')) return;
       toggleFlip();
     });
+
+    // Dış Bar Türkçe Anlamını Göster / Gizle Butonu
+    if (dom.cardRevealMeaningBtn) {
+      dom.cardRevealMeaningBtn.addEventListener('click', (e) => {
+        if (e) {
+          e.preventDefault();
+          e.stopPropagation();
+        }
+        toggleCardTranslation();
+      });
+    }
 
     // Ses Telaffuz Butonları
     if (dom.pronounceUsBtn) {

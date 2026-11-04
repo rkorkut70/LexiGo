@@ -1,9 +1,9 @@
 {
-  "version": "v1.8.62",
-  "versionCode": 123,
-  "releaseDate": "2026-11-03",
+  "version": "v1.8.63",
+  "versionCode": 124,
+  "releaseDate": "2026-11-04",
   "notes": [
-    "🃏 Kart Başlığı Rahatlatıldı: Ünite bilgisi kartın dışına taşındı; 'Öğrenilenler' ve 'Zorlandıklarım' sekmelerinde eylem butonları (Yeniden Öğren, Pekiştirildi, Listeme Ekle) geniş ve ferah hale getirildi.",
-    "📊 Yatay Alıştırma Özeti: Arenadaki alıştırma özetinde hata yapılan kelimeler ve eşleşmeler dikey yığılmadan arındırılıp yan yana (yatay) net formatta sunuldu."
+    "👁️ Aktif Hatırlama (Active Recall): Kelime kartlarının arka yüzünde Türkçe çeviriler doğrudan görünmez; üst bar sağındaki 'Türkçe Anlamını Göster' butonuyla isteğe bağlı açılır.",
+    "🔤 Cümle Kurma Noktalama Düzeltmesi: İki cümleli yapılarda tire (-) işareti yerine cümleler arasına temiz nokta (.) getirildi ve parantezler kaldırıldı."
   ]
 }

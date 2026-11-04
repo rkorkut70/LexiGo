@@ -1171,12 +1171,13 @@ html, body {
 .card-outer-unit-bar {
   display: flex;
   align-items: center;
-  justify-content: flex-start;
+  justify-content: space-between;
   width: 100%;
   max-width: clamp(300px, 92vw, 420px);
   margin: 0 auto 6px auto;
   padding: 0 4px;
   box-sizing: border-box;
+  gap: 8px;
 }
 
 .card-outer-unit-badge {
@@ -1191,17 +1192,134 @@ html, body {
   border: 1px solid rgba(99, 102, 241, 0.28);
   padding: 3px 10px;
   border-radius: 12px;
-  max-width: 100%;
+  max-width: 48%;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+  flex-shrink: 1;
 }
 
 [data-theme="dark"] .card-outer-unit-badge {
   color: #a5b4fc;
   background: rgba(99, 102, 241, 0.2);
   border-color: rgba(99, 102, 241, 0.4);
+}
+
+/* Türkçe Anlamını Göster / Gizle Butonu (Seviye/Ünite Butonuyla Aynı Hizada Sağa Yanaşık) */
+.card-reveal-meaning-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 4px 11px;
+  font-size: 0.74rem;
+  font-weight: 800;
+  border-radius: 12px;
+  background: rgba(16, 185, 129, 0.12);
+  color: #047857;
+  border: 1px solid rgba(16, 185, 129, 0.35);
+  cursor: pointer;
+  transition: all 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+  user-select: none;
+  -webkit-tap-highlight-color: transparent;
+  flex-shrink: 0;
+  box-shadow: 0 1px 4px rgba(16, 185, 129, 0.12);
+  white-space: nowrap;
+}
+
+.card-reveal-meaning-btn:hover {
+  background: rgba(16, 185, 129, 0.22);
+  transform: translateY(-1px);
+}
+
+.card-reveal-meaning-btn:active {
+  transform: scale(0.96);
+}
+
+.card-reveal-meaning-btn.is-revealed {
+  background: rgba(99, 102, 241, 0.12);
+  color: #4338ca;
+  border-color: rgba(99, 102, 241, 0.35);
+  box-shadow: 0 1px 4px rgba(99, 102, 241, 0.1);
+}
+
+[data-theme="dark"] .card-reveal-meaning-btn {
+  background: rgba(16, 185, 129, 0.2);
+  color: #34d399;
+  border-color: rgba(16, 185, 129, 0.45);
+}
+
+[data-theme="dark"] .card-reveal-meaning-btn.is-revealed {
+  background: rgba(99, 102, 241, 0.22);
+  color: #a5b4fc;
+  border-color: rgba(99, 102, 241, 0.45);
+}
+
+@media (max-width: 360px) {
+  .card-reveal-meaning-btn {
+    font-size: 0.68rem;
+    padding: 3px 7px;
+    gap: 3px;
+  }
+}
+
+/* Gizlenmiş Çeviri Rozetleri (Active Recall Pedagojisi) */
+.card-meaning.is-concealed {
+  cursor: pointer;
+}
+
+.concealed-translation-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.88rem;
+  font-weight: 700;
+  color: #64748b;
+  background: rgba(100, 116, 139, 0.1);
+  border: 1.5px dashed rgba(100, 116, 139, 0.35);
+  padding: 6px 14px;
+  border-radius: 12px;
+  transition: all 0.2s ease;
+  user-select: none;
+}
+
+.concealed-translation-badge:hover {
+  background: rgba(100, 116, 139, 0.16);
+  border-color: rgba(100, 116, 139, 0.55);
+  transform: scale(1.02);
+}
+
+[data-theme="dark"] .concealed-translation-badge {
+  color: #94a3b8;
+  background: rgba(148, 163, 184, 0.12);
+  border-color: rgba(148, 163, 184, 0.35);
+}
+
+.concealed-sentence-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 0.76rem;
+  font-weight: 600;
+  font-style: italic;
+  color: #94a3b8;
+  background: rgba(0, 0, 0, 0.04);
+  padding: 3px 8px;
+  border-radius: 8px;
+  border: 1px dashed rgba(148, 163, 184, 0.3);
+  cursor: pointer;
+  user-select: none;
+}
+
+[data-theme="dark"] .concealed-sentence-badge {
+  color: #64748b;
+  background: rgba(255, 255, 255, 0.04);
+  border-color: rgba(100, 116, 139, 0.3);
+}
+
+.concealed-icon {
+  font-size: 0.85em;
+  opacity: 0.85;
 }
 
 .card-top-status-wrap {
