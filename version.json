@@ -1,10 +1,10 @@
 {
-  "version": "v1.8.66",
-  "versionCode": 127,
+  "version": "v1.9.23",
+  "versionCode": 128,
   "releaseDate": "2026-11-05",
   "notes": [
-    "🇬🇧 İngilizce Müfredat Optimizasyonu: A2, B1 ve B1+ kurlarındaki tüm kelime anlamları, fiil mastar yapıları, IPA telaffuzları ve eksik cümle çevirileri eksiksiz Türkçeleştirildi ve pedagojik olarak mükemmelleştirildi.",
-    "✨ Karakter Temizliği: Veri tabanındaki görünmeyen sıfır genişlikli boşluklar (ZWSP) ve bölünemez boşluklar (NBSP) temizlenerek kelime türü filtrelemeleri ve eşleştirme mekanizmaları stabilize edildi.",
-    "📐 Kart Cümle Çevirisi & Defterim Uyumu: Kart arkasındaki Türkçe cümle çevirilerinin yerleşimi ve Kelime Defterim entegrasyonu korundu."
+    "🚀 LexiGo Canlı Yayın Sürümü (v1.9.23): Uygulama genel erişime açıldı; tüm dillerde (İngilizce, Almanca, Fransızca) A1, A2, B1 ve B1+ müfredatları eksiksiz pedagojik doğrulukla devreye alındı.",
+    "🧹 Temiz Başlangıç: Tüm test verileri ve deneme hesapları sıfırlandı; öğrenci kayıtları ve sınıf ilerlemeleri için tertemiz bir zemin oluşturuldu.",
+    "✨ Karakter ve Fonetik Optimizasyonu: Veri tabanındaki tüm fonetik (IPA) yazımları, bağlamsal kelime anlamları ve cümle çevirileri %100 SOV uyumlu ve hatasız hale getirildi."
   ]
 }
