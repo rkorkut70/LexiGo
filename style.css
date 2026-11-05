@@ -8434,160 +8434,188 @@ body.arena-game-active .drawer-peek-tab {
 }
 
 /* ==========================================================================
-   LEXIGO ADAPTİF 3D NEO-TACTILE GİRİŞ EKRANI (ADIM 0)
-   Mobilde, tablette ve masaüstünde dikey & yatay tam ortalama ve modern taktil estetik
+   LEXIGO ADAPTİF 3D NEO-TACTILE GİRİŞ EKRANI (ADIM 0) - KONSEPT 1
+   1. Üst Bölge: Kurumsal Okul Rozeti (Header)
+   2. Orta Bölge: Büyük 3D Amblem, LexiGo Tipografisi, Slogan, Başarı Sütunları (Hero)
+   3. Alt Bölge: 3D Taktil Giriş & Kayıt Butonları (Footer Actions)
    ========================================================================== */
 #onboardingModal.welcome-active .onboarding-card,
 #onboardingModal:has(#obStep0.active) .onboarding-card {
-  justify-content: center !important;
+  justify-content: space-between !important;
   align-items: center !important;
+  height: 100% !important;
+  height: 100dvh !important;
+  padding-top: max(env(safe-area-inset-top, 16px), 16px) !important;
+  padding-bottom: max(env(safe-area-inset-bottom, 20px), 20px) !important;
+  padding-left: clamp(16px, 4vw, 24px) !important;
+  padding-right: clamp(16px, 4vw, 24px) !important;
+  box-sizing: border-box !important;
+  overflow-y: auto !important;
+  overflow-x: hidden !important;
 }
 
 #obStep0.welcome-screen-view,
 .welcome-screen-view {
-  height: auto !important;
-  min-height: unset !important;
-  flex: 0 1 auto !important;
-  margin: auto auto !important;
-  justify-content: center !important;
-  align-items: center !important;
-  gap: clamp(14px, 2.5vh, 24px) !important;
-  max-width: 440px !important;
   width: 100% !important;
-  padding: 6px 0 !important;
+  max-width: 440px !important;
+  height: 100% !important;
+  min-height: 100% !important;
+  flex: 1 1 auto !important;
+  display: flex !important;
+  flex-direction: column !important;
+  justify-content: space-between !important;
+  align-items: center !important;
+  margin: 0 auto !important;
+  padding: 0 !important;
   box-sizing: border-box !important;
 }
 
-/* 1. Üst Kısım: Okul Rozeti & LexiGo Hero Logo */
-.welcome-top-group {
-  display: flex !important;
-  flex-direction: column !important;
-  align-items: center !important;
-  gap: clamp(10px, 1.8vh, 18px) !important;
+/* 1. ÜST BÖLGE (HEADER): Kurumsal Okul Rozeti */
+.welcome-header-zone {
   width: 100% !important;
-  margin-top: 0 !important;
+  display: flex !important;
+  justify-content: center !important;
+  align-items: center !important;
   flex-shrink: 0 !important;
+  padding-top: 4px !important;
+  margin-bottom: auto !important;
 }
 
-/* Okul Rozeti (Kompakt, Kurumsal, 3D) */
 .welcome-school-badge {
-  display: inline-flex;
-  align-items: center;
-  gap: 10px;
-  padding: 6px 16px 6px 8px;
-  background: linear-gradient(135deg, #f8fafc 0%, #eff6ff 100%);
-  border: 1.5px solid #bfdbfe;
-  border-radius: 999px;
-  box-shadow: 0 3px 10px rgba(37, 99, 235, 0.08), inset 0 1px 0 #ffffff;
-  max-width: 100%;
-  transition: transform 0.2s ease;
-  user-select: none;
-  -webkit-user-select: none;
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 10px !important;
+  padding: 6px 16px 6px 8px !important;
+  background: linear-gradient(135deg, #ffffff 0%, #eff6ff 100%) !important;
+  border: 1.5px solid #bfdbfe !important;
+  border-radius: 999px !important;
+  box-shadow: 0 3px 10px rgba(37, 99, 235, 0.08), inset 0 1px 0 #ffffff !important;
+  max-width: 100% !important;
+  user-select: none !important;
+  -webkit-user-select: none !important;
 }
 
 [data-theme="dark"] .welcome-school-badge {
-  background: linear-gradient(135deg, rgba(30, 41, 59, 0.8) 0%, rgba(15, 23, 42, 0.9) 100%);
-  border-color: rgba(96, 165, 250, 0.4);
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.4);
+  background: linear-gradient(135deg, rgba(30, 41, 59, 0.85) 0%, rgba(15, 23, 42, 0.95) 100%) !important;
+  border-color: rgba(96, 165, 250, 0.4) !important;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.4) !important;
 }
 
 .welcome-school-logo {
-  width: clamp(34px, 4.2vh, 42px);
-  height: clamp(34px, 4.2vh, 42px);
-  border-radius: 50%;
-  object-fit: cover;
-  border: 2px solid #3b82f6;
-  box-shadow: 0 2px 8px rgba(37, 99, 235, 0.25);
-  flex-shrink: 0;
+  width: clamp(34px, 4.2vh, 40px) !important;
+  height: clamp(34px, 4.2vh, 40px) !important;
+  border-radius: 50% !important;
+  object-fit: cover !important;
+  border: 2px solid #3b82f6 !important;
+  box-shadow: 0 2px 8px rgba(37, 99, 235, 0.25) !important;
+  flex-shrink: 0 !important;
 }
 
 [data-theme="dark"] .welcome-school-logo {
-  border-color: rgba(255, 255, 255, 0.35);
+  border-color: rgba(255, 255, 255, 0.4) !important;
 }
 
 .welcome-school-text {
-  display: flex;
-  flex-direction: column;
-  text-align: left;
-  line-height: 1.25;
+  display: flex !important;
+  flex-direction: column !important;
+  text-align: left !important;
+  line-height: 1.25 !important;
 }
 
 .welcome-school-title {
-  font-size: clamp(0.70rem, 1.9vw, 0.80rem);
-  font-weight: 800;
-  color: #1e3a8a;
-  letter-spacing: 0.04em;
-  text-transform: uppercase;
-  white-space: nowrap;
+  font-size: clamp(0.70rem, 1.9vw, 0.80rem) !important;
+  font-weight: 800 !important;
+  color: #1e3a8a !important;
+  letter-spacing: 0.04em !important;
+  text-transform: uppercase !important;
+  white-space: nowrap !important;
 }
 
 [data-theme="dark"] .welcome-school-title {
-  color: #f1f5f9;
+  color: #f1f5f9 !important;
 }
 
-/* 2. Ana 3D Logo, Slogan ve Versiyon Rozeti */
-.welcome-hero-section {
+/* 2. ORTA BÖLGE (CENTER HERO): Büyük 3D Amblem, LexiGo, Slogan, Başarı Sütunları */
+.welcome-hero-zone {
   display: flex !important;
   flex-direction: column !important;
   align-items: center !important;
   justify-content: center !important;
-  gap: 6px !important;
   width: 100% !important;
+  flex: 1 1 auto !important;
+  margin: auto 0 !important;
+  gap: clamp(6px, 1.4vh, 14px) !important;
+  padding: 8px 0 !important;
 }
 
-.welcome-brand-wrapper {
+.welcome-logo-container {
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
   position: relative !important;
-  display: inline-flex !important;
-  align-items: center !important;
-  justify-content: center !important;
 }
 
-.welcome-logo-badge {
-  background: transparent !important;
-  padding: 0 !important;
-  border: none !important;
-  box-shadow: none !important;
-  animation: none !important;
-  display: inline-flex !important;
-  align-items: center !important;
-  justify-content: center !important;
-}
-
-/* Neo-Tactile 3D App Amblemi */
-.welcome-brand-img.welcome-3d-logo {
-  width: clamp(110px, 17vh, 145px) !important;
-  height: clamp(110px, 17vh, 145px) !important;
-  max-width: 145px !important;
-  max-height: 145px !important;
+/* Büyük Görkemli 3D Amblem İkonu */
+.welcome-3d-emblem {
+  width: clamp(140px, 21vh, 190px) !important;
+  height: clamp(140px, 21vh, 190px) !important;
+  max-width: 190px !important;
+  max-height: 190px !important;
   object-fit: cover !important;
-  border-radius: clamp(24px, 3.8vh, 32px) !important;
-  border: 2px solid rgba(255, 255, 255, 0.45) !important;
-  box-shadow: 0 16px 36px -8px rgba(15, 23, 42, 0.45), 
-              0 0 0 1px rgba(255, 255, 255, 0.25) inset, 
-              0 8px 24px rgba(37, 99, 235, 0.3) !important;
+  border-radius: clamp(28px, 4.2vh, 42px) !important;
+  border: 2.5px solid rgba(255, 255, 255, 0.55) !important;
+  box-shadow: 0 20px 45px -8px rgba(15, 23, 42, 0.35), 
+              0 0 0 1px rgba(255, 255, 255, 0.3) inset, 
+              0 10px 30px rgba(37, 99, 235, 0.3) !important;
   display: block !important;
   transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.25s ease !important;
 }
 
-.welcome-brand-img.welcome-3d-logo:hover {
+.welcome-3d-emblem:hover {
   transform: translateY(-2px) scale(1.02) !important;
-  box-shadow: 0 20px 42px -6px rgba(15, 23, 42, 0.5), 
-              0 0 0 1px rgba(255, 255, 255, 0.35) inset, 
-              0 12px 28px rgba(37, 99, 235, 0.4) !important;
+  box-shadow: 0 24px 50px -6px rgba(15, 23, 42, 0.45), 
+              0 14px 34px rgba(37, 99, 235, 0.4) !important;
 }
 
-[data-theme="dark"] .welcome-brand-img.welcome-3d-logo {
+[data-theme="dark"] .welcome-3d-emblem {
   border-color: rgba(96, 165, 250, 0.45) !important;
-  box-shadow: 0 20px 45px -10px rgba(0, 0, 0, 0.75), 
+  box-shadow: 0 24px 52px -10px rgba(0, 0, 0, 0.8), 
               0 0 0 1px rgba(255, 255, 255, 0.15) inset, 
-              0 0 35px rgba(59, 130, 246, 0.35) !important;
+              0 0 40px rgba(59, 130, 246, 0.35) !important;
 }
 
-/* Köşe Sürüm Rozeti */
+/* LexiGo Tipografisi & Sürüm Rozeti */
+.welcome-title-row {
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 10px !important;
+  margin-top: clamp(2px, 0.6vh, 8px) !important;
+}
+
+.welcome-brand-title {
+  font-size: clamp(2.0rem, 4.8vh, 2.5rem) !important;
+  font-weight: 900 !important;
+  letter-spacing: -0.03em !important;
+  line-height: 1 !important;
+  margin: 0 !important;
+  color: #0f172a !important;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.08) !important;
+}
+
+[data-theme="dark"] .welcome-brand-title {
+  color: #ffffff !important;
+  text-shadow: 0 2px 14px rgba(59, 130, 246, 0.4) !important;
+}
+
+.brand-go-accent {
+  background: linear-gradient(135deg, #f97316 0%, #ea580c 100%) !important;
+  -webkit-background-clip: text !important;
+  -webkit-text-fill-color: transparent !important;
+  display: inline-block !important;
+}
+
 .welcome-version-pill {
-  position: absolute !important;
-  top: -4px !important;
-  right: -10px !important;
   font-size: clamp(0.66rem, 1.5vw, 0.74rem) !important;
   font-weight: 800 !important;
   padding: 3px 9px !important;
@@ -8596,8 +8624,8 @@ body.arena-game-active .drawer-peek-tab {
   border: 1.5px solid #bfdbfe !important;
   border-radius: 999px !important;
   letter-spacing: 0.02em !important;
-  box-shadow: 0 3px 6px rgba(0, 0, 0, 0.12), 0 2px 0 #93c5fd !important;
-  z-index: 5 !important;
+  box-shadow: 0 2px 6px rgba(37, 99, 235, 0.12), 0 2px 0 #93c5fd !important;
+  align-self: center !important;
 }
 
 [data-theme="dark"] .welcome-version-pill {
@@ -8609,33 +8637,33 @@ body.arena-game-active .drawer-peek-tab {
 
 /* Slogan: "Her yerde kelime öğren" */
 .welcome-slogan-text {
-  font-size: clamp(0.96rem, 2.3vw, 1.14rem) !important;
-  font-weight: 800 !important;
+  font-size: clamp(0.94rem, 2.2vw, 1.12rem) !important;
+  font-weight: 700 !important;
   letter-spacing: -0.01em !important;
-  color: #1e3a8a !important;
+  color: #475569 !important;
   text-align: center !important;
   line-height: 1.25 !important;
-  margin-top: 4px !important;
+  margin: 0 !important;
 }
 
 [data-theme="dark"] .welcome-slogan-text {
-  color: #f1f5f9 !important;
-  text-shadow: 0 2px 12px rgba(56, 189, 248, 0.3) !important;
+  color: #cbd5e1 !important;
+  text-shadow: 0 2px 10px rgba(0, 0, 0, 0.5) !important;
 }
 
-/* 3. Orta Kısım: Simgesiz 3D Başarı Sütunları */
+/* 3D Taktil Başarı Sütunları Kapsülü */
 .welcome-pillars-container {
   display: inline-flex !important;
   align-items: center !important;
   justify-content: center !important;
   flex-wrap: wrap !important;
   gap: clamp(6px, 1.2vh, 10px) clamp(10px, 2vw, 16px) !important;
-  padding: clamp(8px, 1.4vh, 12px) clamp(16px, 3.5vw, 22px) !important;
-  background: linear-gradient(145deg, #ffffff 0%, #f1f5f9 100%) !important;
+  padding: clamp(8px, 1.4vh, 12px) clamp(16px, 3.6vw, 22px) !important;
+  background: linear-gradient(145deg, #ffffff 0%, #f8fafc 100%) !important;
   border: 1.5px solid #cbd5e1 !important;
   border-radius: 999px !important;
-  box-shadow: 0 3px 0 #94a3b8, 0 6px 16px rgba(0, 0, 0, 0.05) !important;
-  margin: 0 !important;
+  box-shadow: 0 3px 0 #94a3b8, 0 8px 18px rgba(0, 0, 0, 0.06) !important;
+  margin-top: clamp(2px, 0.8vh, 8px) !important;
   max-width: 100% !important;
   flex-shrink: 0 !important;
 }
@@ -8643,7 +8671,7 @@ body.arena-game-active .drawer-peek-tab {
 [data-theme="dark"] .welcome-pillars-container {
   background: linear-gradient(145deg, #1e293b 0%, #0f172a 100%) !important;
   border-color: rgba(255, 255, 255, 0.16) !important;
-  box-shadow: 0 3px 0 #020617, 0 8px 20px rgba(0, 0, 0, 0.45) !important;
+  box-shadow: 0 3px 0 #020617, 0 8px 22px rgba(0, 0, 0, 0.45) !important;
 }
 
 .welcome-pillar-item {
@@ -8672,16 +8700,24 @@ body.arena-game-active .drawer-peek-tab {
   color: #60a5fa !important;
 }
 
-/* 4. Alt Kısım: Modern 3D Aksiyon Butonları */
+/* 3. ALT BÖLGE (FOOTER ACTIONS): Modern 3D Aksiyon Butonları */
+.welcome-footer-zone {
+  width: 100% !important;
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: center !important;
+  flex-shrink: 0 !important;
+  margin-top: auto !important;
+}
+
 .welcome-actions-container {
   display: flex !important;
   flex-direction: column !important;
   width: 100% !important;
   max-width: 440px !important;
-  gap: clamp(10px, 1.6vh, 13px) !important;
+  gap: clamp(9px, 1.5vh, 12px) !important;
   margin-top: 0 !important;
   margin-bottom: 0 !important;
-  flex-shrink: 0 !important;
 }
 
 /* Ortak Aksiyon Buton Yapısı */
@@ -8690,7 +8726,7 @@ body.arena-game-active .drawer-peek-tab {
   align-items: center !important;
   justify-content: space-between !important;
   width: 100% !important;
-  padding: clamp(12px, 1.8vh, 15px) clamp(16px, 3.5vw, 20px) !important;
+  padding: clamp(11px, 1.6vh, 14px) clamp(16px, 3.5vw, 20px) !important;
   border-radius: 18px !important;
   cursor: pointer !important;
   border: none !important;
@@ -8699,7 +8735,7 @@ body.arena-game-active .drawer-peek-tab {
   box-sizing: border-box !important;
   user-select: none !important;
   -webkit-user-select: none !important;
-  min-height: 56px !important;
+  min-height: 54px !important;
 }
 
 .welcome-action-btn .wab-content {
@@ -8711,14 +8747,14 @@ body.arena-game-active .drawer-peek-tab {
 }
 
 .welcome-action-btn .wab-title {
-  font-size: clamp(0.94rem, 2vw, 1.02rem) !important;
+  font-size: clamp(0.92rem, 2vw, 1.00rem) !important;
   font-weight: 800 !important;
   line-height: 1.25 !important;
   letter-spacing: -0.01em !important;
 }
 
 .welcome-action-btn .wab-sub {
-  font-size: clamp(0.72rem, 1.5vw, 0.78rem) !important;
+  font-size: clamp(0.70rem, 1.5vw, 0.76rem) !important;
   font-weight: 500 !important;
   line-height: 1.3 !important;
 }
@@ -8822,7 +8858,7 @@ body.arena-game-active .drawer-peek-tab {
   border: 1.5px solid #bfdbfe !important;
   border-radius: 999px !important;
   color: #1d4ed8 !important;
-  font-size: clamp(0.80rem, 1.8vw, 0.88rem) !important;
+  font-size: clamp(0.78rem, 1.8vw, 0.86rem) !important;
   font-weight: 700 !important;
   cursor: pointer !important;
   padding: 10px 18px !important;
@@ -8847,18 +8883,6 @@ body.arena-game-active .drawer-peek-tab {
   border: 1.5px solid rgba(56, 189, 248, 0.35) !important;
   border-radius: 999px !important;
   color: #38bdf8 !important;
-  box-shadow: 0 3px 0 rgba(15, 23, 42, 0.9), 0 4px 14px rgba(0, 0, 0, 0.35) !important;
-}
-
-[data-theme="dark"] .welcome-action-guest:hover {
-  background: rgba(30, 41, 59, 0.95) !important;
-  color: #7dd3fc !important;
-}
-
-[data-theme="dark"] .welcome-action-guest:active {
-  transform: translateY(2px) !important;
-  box-shadow: 0 1px 0 rgba(15, 23, 42, 0.9) !important;
-}
   box-shadow: 0 3px 0 rgba(15, 23, 42, 0.9), 0 4px 14px rgba(0, 0, 0, 0.35) !important;
 }
 
@@ -8942,19 +8966,21 @@ body.arena-game-active .drawer-peek-tab {
     font-size: 0.80rem !important;
   }
 
-  .welcome-brand-img.welcome-3d-logo {
-    width: clamp(140px, 18vh, 175px) !important;
-    height: clamp(140px, 18vh, 175px) !important;
-    max-width: 175px !important;
-    max-height: 175px !important;
-    border-radius: 36px !important;
+  .welcome-3d-emblem {
+    width: clamp(160px, 22vh, 210px) !important;
+    height: clamp(160px, 22vh, 210px) !important;
+    max-width: 210px !important;
+    max-height: 210px !important;
+    border-radius: 44px !important;
+  }
+
+  .welcome-brand-title {
+    font-size: 2.8rem !important;
   }
 
   .welcome-version-pill {
     font-size: 0.82rem !important;
     padding: 4px 12px !important;
-    top: -6px !important;
-    right: -12px !important;
   }
 
   .welcome-slogan-text {
@@ -9019,16 +9045,16 @@ body.arena-game-active .drawer-peek-tab {
     margin-top: 4px !important;
   }
 
-  .welcome-top-group {
-    gap: 6px !important;
+  .welcome-3d-emblem {
+    width: 90px !important;
+    height: 90px !important;
+    max-width: 90px !important;
+    max-height: 90px !important;
+    border-radius: 20px !important;
   }
 
-  .welcome-brand-img.welcome-3d-logo {
-    width: 80px !important;
-    height: 80px !important;
-    max-width: 80px !important;
-    max-height: 80px !important;
-    border-radius: 18px !important;
+  .welcome-brand-title {
+    font-size: 1.6rem !important;
   }
 
   .welcome-slogan-text {

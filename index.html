@@ -1460,61 +1460,64 @@
         <span class="ob-step-dot" data-step="6"></span>
       </div>
 
-      <!-- 1. ADIM: KARŞILAMA VE GİRİŞ EKRANI -->
+      <!-- 1. ADIM: KARŞILAMA VE GİRİŞ EKRANI (KONSEPT 1: NEO-TACTILE 3D) -->
       <div class="onboarding-step-view active welcome-screen-view" id="obStep0">
-        <!-- ÜST KISIM: Okul Rozeti & LexiGo Logo -->
-        <div class="welcome-top-group">
-          <!-- Kurumsal Üst Rozet (Kompakt ADÜ YDYO Kimliği) -->
+        <!-- 1. ÜST KISIM (TOP): Kurumsal Okul Rozeti -->
+        <header class="welcome-header-zone">
           <div class="welcome-school-badge">
-            <img src="school_logo.jpg" alt="ADÜ YDYO Logo" class="welcome-school-logo" width="40" height="40" style="width:40px;height:40px;max-width:40px;max-height:40px;object-fit:cover;border-radius:50%;flex-shrink:0;">
+            <img src="school_logo.jpg" alt="ADÜ YDYO Logo" class="welcome-school-logo" width="38" height="38">
             <div class="welcome-school-text">
               <span class="welcome-school-title">ADÜ YABANCI DİLLER YÜKSEKOKULU</span>
             </div>
           </div>
+        </header>
 
-          <!-- Ana Logo, Versiyon Rozeti ve Slogan -->
-          <div class="welcome-hero-section">
-            <div class="welcome-brand-wrapper">
-              <div class="welcome-logo-badge">
-                <img src="assets/icons/lexigo_3d_welcome_logo.jpg" alt="LexiGo" class="welcome-brand-img welcome-3d-logo" />
-              </div>
-              <span class="welcome-version-pill">v1.9.23</span>
-            </div>
-            <div class="welcome-slogan-text">Her yerde kelime öğren</div>
+        <!-- 2. ORTA KISIM (CENTER HERO): Büyük 3D Amblem, LexiGo Yazısı, Slogan ve Başarı Sütunları -->
+        <main class="welcome-hero-zone">
+          <div class="welcome-logo-container">
+            <img src="assets/icons/lexigo_3d_welcome_logo.jpg" alt="LexiGo Logo" class="welcome-3d-emblem" />
           </div>
-        </div>
 
-        <!-- ORTA KISIM: 3 Temel Başarı Sütunu (Simgesiz, Saf Tipografi 3D Pill) -->
-        <div class="welcome-pillars-container">
-          <span class="welcome-pillar-item">Akıllı Tekrar</span>
-          <span class="welcome-pillar-divider">•</span>
-          <span class="welcome-pillar-item">Kelime Arenası</span>
-          <span class="welcome-pillar-divider">•</span>
-          <span class="welcome-pillar-item">Kalıcı Başarı</span>
-        </div>
+          <div class="welcome-title-row">
+            <h1 class="welcome-brand-title">Lexi<span class="brand-go-accent">Go</span></h1>
+            <span class="welcome-version-pill">v1.9.23</span>
+          </div>
 
-        <!-- Aksiyon Butonları (Modern 3D Taktil Butonlar - Simgesiz) -->
-        <div class="welcome-actions-container">
-          <button type="button" class="welcome-action-btn welcome-action-primary" id="obWelcomeRegisterBtn">
-            <div class="wab-content">
-              <span class="wab-title">Kayıt Ol &amp; Hemen Başla</span>
-              <span class="wab-sub">İlerlemeyi ve XP'leri buluta kaydet</span>
-            </div>
-            <span class="wab-arrow">→</span>
-          </button>
-          
-          <button type="button" class="welcome-action-btn welcome-action-secondary" id="obWelcomeLoginBtn">
-            <div class="wab-content">
-              <span class="wab-title">Zaten Hesabım Var</span>
-              <span class="wab-sub">Mevcut hesabınla giriş yap</span>
-            </div>
-            <span class="wab-arrow">→</span>
-          </button>
-          
-          <button type="button" class="welcome-action-guest" id="obWelcomeGuestBtn">
-            <span>Kayıt olmadan misafir olarak devam et →</span>
-          </button>
-        </div>
+          <div class="welcome-slogan-text">Her yerde kelime öğren</div>
+
+          <div class="welcome-pillars-container">
+            <span class="welcome-pillar-item">Akıllı Tekrar</span>
+            <span class="welcome-pillar-divider">•</span>
+            <span class="welcome-pillar-item">Kelime Arenası</span>
+            <span class="welcome-pillar-divider">•</span>
+            <span class="welcome-pillar-item">Kalıcı Başarı</span>
+          </div>
+        </main>
+
+        <!-- 3. ALT KISIM (BOTTOM ACTIONS): Giriş & Kayıt Butonları -->
+        <footer class="welcome-footer-zone">
+          <div class="welcome-actions-container">
+            <button type="button" class="welcome-action-btn welcome-action-primary" id="obWelcomeRegisterBtn">
+              <div class="wab-content">
+                <span class="wab-title">Kayıt Ol &amp; Hemen Başla</span>
+                <span class="wab-sub">İlerlemeyi ve XP'leri buluta kaydet</span>
+              </div>
+              <span class="wab-arrow">→</span>
+            </button>
+            
+            <button type="button" class="welcome-action-btn welcome-action-secondary" id="obWelcomeLoginBtn">
+              <div class="wab-content">
+                <span class="wab-title">Zaten Hesabım Var</span>
+                <span class="wab-sub">Mevcut hesabınla giriş yap</span>
+              </div>
+              <span class="wab-arrow">→</span>
+            </button>
+            
+            <button type="button" class="welcome-action-guest" id="obWelcomeGuestBtn">
+              <span>Kayıt olmadan misafir olarak devam et →</span>
+            </button>
+          </div>
+        </footer>
       </div>
 
       <!-- 2. ADIM: İSİM & AVATAR -->
