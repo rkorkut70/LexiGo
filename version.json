@@ -1,10 +1,10 @@
 {
-  "version": "v1.8.65",
-  "versionCode": 126,
-  "releaseDate": "2026-11-04",
+  "version": "v1.8.66",
+  "versionCode": 127,
+  "releaseDate": "2026-11-05",
   "notes": [
-    "📐 Kart Cümle Çevirisi Taşırma Düzeltmesi: Kart arkasındaki uzun Türkçe cümle çevirilerinin (örn. 'abroad') alt satıra sarkıp kesilmesi giderildi, kart dikey alanı genişletildi ve tipografi optimize edildi.",
-    "🔖 Kelime Defterim Uyumu: Kart üzerindeki eylem butonu 'Defterime Ekle / Defterimde' olarak güncellendi ve üst menüdeki 'Kelime Defterim' ile tam eşitlendi.",
-    "👁️ Aktif Hatırlama (Active Recall): Kart arkasındaki Türkçe çeviriler gizlendi, sağ üstteki 'Türkçe Anlamını Göster' butonuna bağlandı."
+    "🇬🇧 İngilizce Müfredat Optimizasyonu: A2, B1 ve B1+ kurlarındaki tüm kelime anlamları, fiil mastar yapıları, IPA telaffuzları ve eksik cümle çevirileri eksiksiz Türkçeleştirildi ve pedagojik olarak mükemmelleştirildi.",
+    "✨ Karakter Temizliği: Veri tabanındaki görünmeyen sıfır genişlikli boşluklar (ZWSP) ve bölünemez boşluklar (NBSP) temizlenerek kelime türü filtrelemeleri ve eşleştirme mekanizmaları stabilize edildi.",
+    "📐 Kart Cümle Çevirisi & Defterim Uyumu: Kart arkasındaki Türkçe cümle çevirilerinin yerleşimi ve Kelime Defterim entegrasyonu korundu."
   ]
 }
