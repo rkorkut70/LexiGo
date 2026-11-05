@@ -166,6 +166,23 @@ async function syncUserData(user) {
       const doc = await userRef.get();
       if (doc.exists) {
         docData = doc.data();
+      } else {
+        // Belge Firestore'da yoksa (kullanıcı admin tarafından silinmiş veya yeni kayıt):
+        // Cihazdaki eski test kalıntılarının buluta yeniden yüklenmesini kesin olarak engelle!
+        console.warn("Firestore'da kullanıcı belgesi bulunamadı, yerel eski veriler temizleniyor.");
+        localStorage.removeItem('kelime_xp');
+        localStorage.removeItem('kelime_learned_map');
+        localStorage.removeItem('kelime_unlocked_badges');
+        localStorage.removeItem('kelime_max_streak');
+        localStorage.removeItem('kelime_arena_solved');
+        localStorage.removeItem('kelime_game_stats');
+        localStorage.removeItem('kelime_clean_wins');
+        localStorage.removeItem('lexiq_time_cards');
+        localStorage.removeItem('lexiq_time_games');
+        localStorage.removeItem('lexiq_unit_durations');
+        localStorage.removeItem('lexiq_weekly_xp');
+        localStorage.removeItem('lexiq_day_streak');
+        localStorage.removeItem('lexiq_max_day_streak');
       }
     } catch (err) {
       console.warn("Firestore kullanıcı bilgisi okunamadı:", err);
@@ -195,39 +212,52 @@ async function syncUserData(user) {
     resolvedWeeklyXp = 0;
   }
 
+  // Güvenli XP & İlerleme Senkronizasyonu:
+  // Eğer Firestore'da belge yoksa veya admin tarafından 0'a sıfırlanmışsa, cihazdaki eski test XP'sinin bulutu ezmesini engelle!
   const localXP = parseInt(localStorage.getItem('kelime_xp') || '0', 10);
   const fbXP = (docData && typeof docData.xp === 'number') ? docData.xp : 0;
-  const bestXP = Math.max(fbXP, localXP);
+  let bestXP = 0;
+  if (!docData) {
+    bestXP = 0;
+  } else if (docData.xp === 0) {
+    bestXP = 0;
+    localStorage.setItem('kelime_xp', '0');
+    localStorage.setItem('kelime_learned_map', '{}');
+  } else {
+    bestXP = Math.max(fbXP, localXP);
+  }
 
   // Öğrenilen Kelimeler, Rozetler ve Seri Senkronizasyonu
-  const localLearnedMap = JSON.parse(localStorage.getItem('kelime_learned_map') || '{}');
+  const localLearnedMap = (!docData || docData.xp === 0) ? {} : JSON.parse(localStorage.getItem('kelime_learned_map') || '{}');
   const fbLearnedMap = (docData && docData.learnedMap && typeof docData.learnedMap === 'object') ? docData.learnedMap : {};
   const mergedLearnedMap = Object.assign({}, fbLearnedMap, localLearnedMap);
 
-  const localBadges = JSON.parse(localStorage.getItem('kelime_unlocked_badges') || '[]');
+  const localBadges = (!docData || docData.xp === 0) ? [] : JSON.parse(localStorage.getItem('kelime_unlocked_badges') || '[]');
   const fbBadges = (docData && Array.isArray(docData.unlockedBadges)) ? docData.unlockedBadges : [];
   const mergedBadges = Array.from(new Set([...fbBadges, ...localBadges]));
 
-  const localMaxStreak = parseInt(localStorage.getItem('kelime_max_streak') || '0', 10);
+  const localMaxStreak = (!docData || docData.xp === 0) ? 0 : parseInt(localStorage.getItem('kelime_max_streak') || '0', 10);
   const fbMaxStreak = (docData && typeof docData.maxStreak === 'number') ? docData.maxStreak : 0;
-  const bestMaxStreak = Math.max(fbMaxStreak, localMaxStreak);
+  const bestMaxStreak = (!docData || docData.xp === 0) ? fbMaxStreak : Math.max(fbMaxStreak, localMaxStreak);
 
-  const localArenaSolved = parseInt(localStorage.getItem('kelime_arena_solved') || '0', 10);
+  const localArenaSolved = (!docData || docData.xp === 0) ? 0 : parseInt(localStorage.getItem('kelime_arena_solved') || '0', 10);
   const fbArenaSolved = (docData && typeof docData.arenaSolved === 'number') ? docData.arenaSolved : 0;
-  const bestArenaSolved = Math.max(fbArenaSolved, localArenaSolved);
+  const bestArenaSolved = (!docData || docData.xp === 0) ? fbArenaSolved : Math.max(fbArenaSolved, localArenaSolved);
 
   // 1. Oyun İstatistikleri (gameStats) Senkronizasyonu
-  const localGameStats = JSON.parse(localStorage.getItem('kelime_game_stats') || '{}');
+  const localGameStats = (!docData || docData.xp === 0) ? {} : JSON.parse(localStorage.getItem('kelime_game_stats') || '{}');
   const fbGameStats = (docData && docData.gameStats && typeof docData.gameStats === 'object') ? docData.gameStats : {};
   const mergedGameStats = Object.assign({}, fbGameStats);
-  for (const [k, v] of Object.entries(localGameStats)) {
-    mergedGameStats[k] = Math.max(mergedGameStats[k] || 0, typeof v === 'number' ? v : 0);
+  if (docData && docData.xp > 0) {
+    for (const [k, v] of Object.entries(localGameStats)) {
+      mergedGameStats[k] = Math.max(mergedGameStats[k] || 0, typeof v === 'number' ? v : 0);
+    }
   }
 
   // 2. Saf Zihin / Kusursuz Galibiyet (cleanWins)
-  const localCleanWins = parseInt(localStorage.getItem('kelime_clean_wins') || '0', 10);
+  const localCleanWins = (!docData || docData.xp === 0) ? 0 : parseInt(localStorage.getItem('kelime_clean_wins') || '0', 10);
   const fbCleanWins = (docData && typeof docData.cleanWins === 'number') ? docData.cleanWins : 0;
-  const bestCleanWins = Math.max(fbCleanWins, localCleanWins);
+  const bestCleanWins = (!docData || docData.xp === 0) ? fbCleanWins : Math.max(fbCleanWins, localCleanWins);
 
   // 3. Çalışma & Zaman Takibi (timeTracking: kartlar, oyunlar, ünite tamamlama süreleri)
   const fbTT = (docData && docData.timeTracking && typeof docData.timeTracking === 'object') ? docData.timeTracking : {};

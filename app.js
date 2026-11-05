@@ -9,7 +9,7 @@
 
   const APP_VERSION = 'v1.9.23';
   const DEFAULT_AVATAR = 'avatar_default';
-  const CURRENT_APP_BUILD = 'lexiq_build_20_prod_launch';
+  const CURRENT_APP_BUILD = 'lexigo_production_live_launch_v1923';
 
   // Build 13 temiz kurulum / sıfırlama güvencesi (Kullanıcı verilerini sıfırla, Hoş Geldin ekranını garantile)
   try {
