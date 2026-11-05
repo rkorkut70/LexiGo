@@ -8555,14 +8555,14 @@ body.arena-game-active .drawer-peek-tab {
   position: relative !important;
 }
 
-/* Büyük Görkemli 3D Amblem İkonu */
+/* Büyük Görkemli 3D Amblem İkonu (+25% Büyütülmüş) */
 .welcome-3d-emblem {
-  width: clamp(140px, 21vh, 190px) !important;
-  height: clamp(140px, 21vh, 190px) !important;
-  max-width: 190px !important;
-  max-height: 190px !important;
+  width: clamp(175px, 26vh, 238px) !important;
+  height: clamp(175px, 26vh, 238px) !important;
+  max-width: 238px !important;
+  max-height: 238px !important;
   object-fit: cover !important;
-  border-radius: clamp(28px, 4.2vh, 42px) !important;
+  border-radius: clamp(35px, 5.2vh, 48px) !important;
   border: 2.5px solid rgba(255, 255, 255, 0.55) !important;
   box-shadow: 0 20px 45px -8px rgba(15, 23, 42, 0.35), 
               0 0 0 1px rgba(255, 255, 255, 0.3) inset, 
@@ -8720,55 +8720,65 @@ body.arena-game-active .drawer-peek-tab {
   margin-bottom: 0 !important;
 }
 
-/* Ortak Aksiyon Buton Yapısı */
+/* Ortak Aksiyon Buton Yapısı (Yazılar Ortalanmış) */
 .welcome-action-btn {
   display: flex !important;
   align-items: center !important;
-  justify-content: space-between !important;
+  justify-content: center !important;
+  position: relative !important;
   width: 100% !important;
-  padding: clamp(11px, 1.6vh, 14px) clamp(16px, 3.5vw, 20px) !important;
+  padding: clamp(12px, 1.8vh, 15px) clamp(20px, 4vw, 24px) !important;
   border-radius: 18px !important;
   cursor: pointer !important;
   border: none !important;
-  text-align: left !important;
+  text-align: center !important;
   transition: transform 0.15s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.15s cubic-bezier(0.16, 1, 0.3, 1), background-color 0.15s ease !important;
   box-sizing: border-box !important;
   user-select: none !important;
   -webkit-user-select: none !important;
-  min-height: 54px !important;
+  min-height: 56px !important;
 }
 
 .welcome-action-btn .wab-content {
   display: flex !important;
   flex-direction: column !important;
-  gap: 2px !important;
+  align-items: center !important;
+  justify-content: center !important;
+  text-align: center !important;
+  gap: 3px !important;
   flex: 1 !important;
   min-width: 0 !important;
 }
 
 .welcome-action-btn .wab-title {
-  font-size: clamp(0.92rem, 2vw, 1.00rem) !important;
+  font-size: clamp(0.94rem, 2vw, 1.02rem) !important;
   font-weight: 800 !important;
   line-height: 1.25 !important;
   letter-spacing: -0.01em !important;
+  text-align: center !important;
 }
 
 .welcome-action-btn .wab-sub {
   font-size: clamp(0.70rem, 1.5vw, 0.76rem) !important;
   font-weight: 500 !important;
   line-height: 1.3 !important;
+  text-align: center !important;
 }
 
 .welcome-action-btn .wab-arrow {
+  position: absolute !important;
+  right: clamp(14px, 3.5vw, 20px) !important;
+  top: 50% !important;
+  transform: translateY(-50%) !important;
   font-size: 1.25rem !important;
   font-weight: 800 !important;
-  margin-left: 12px !important;
+  margin-left: 0 !important;
   flex-shrink: 0 !important;
   transition: transform 0.2s ease !important;
 }
 
 .welcome-action-btn:hover .wab-arrow {
-  transform: translateX(3px) !important;
+  transform: translateY(-50%) translateX(3px) !important;
 }
 
 /* 1. Birincil Buton: Kayıt Ol (3D Mavi/İndigo Taktil) */
@@ -8967,11 +8977,11 @@ body.arena-game-active .drawer-peek-tab {
   }
 
   .welcome-3d-emblem {
-    width: clamp(160px, 22vh, 210px) !important;
-    height: clamp(160px, 22vh, 210px) !important;
-    max-width: 210px !important;
-    max-height: 210px !important;
-    border-radius: 44px !important;
+    width: clamp(200px, 26vh, 260px) !important;
+    height: clamp(200px, 26vh, 260px) !important;
+    max-width: 260px !important;
+    max-height: 260px !important;
+    border-radius: 52px !important;
   }
 
   .welcome-brand-title {
@@ -9046,11 +9056,11 @@ body.arena-game-active .drawer-peek-tab {
   }
 
   .welcome-3d-emblem {
-    width: 90px !important;
-    height: 90px !important;
-    max-width: 90px !important;
-    max-height: 90px !important;
-    border-radius: 20px !important;
+    width: 112px !important;
+    height: 112px !important;
+    max-width: 112px !important;
+    max-height: 112px !important;
+    border-radius: 24px !important;
   }
 
   .welcome-brand-title {
