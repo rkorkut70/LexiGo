@@ -20941,57 +20941,150 @@ html:not([data-theme="dark"]) .custom-confirm-card .confirm-cancel-btn:hover {
   white-space: nowrap;
 }
 
-/* Bölüm Ayracı: "Henüz Arenaya Katılmayanlar" */
+/* Bölüm Ayracı: "Henüz Arenaya Katılmayanlar" Temel Yapısı */
 .lb-section-divider {
-  margin: 16px 0 10px 0;
-  padding: 10px 14px;
-  background: linear-gradient(135deg, rgba(148, 163, 184, 0.12) 0%, rgba(100, 116, 139, 0.05) 100%);
-  border: 1.5px dashed rgba(148, 163, 184, 0.35);
+  margin: 18px 0 10px 0;
+  padding: 12px 14px;
   border-radius: 14px;
   display: flex;
   flex-direction: column;
-  gap: 4px;
-}
-
-[data-theme="light"] .lb-section-divider {
-  background: linear-gradient(135deg, #f1f5f9 0%, #e2e8f0 100%);
-  border-color: #cbd5e1;
+  gap: 5px;
+  position: relative;
+  overflow: hidden;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 
 .lb-section-divider-content {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 10px;
 }
 
 .lb-section-icon {
-  font-size: 1.1rem;
+  font-size: 1.15rem;
   line-height: 1;
+  width: 30px;
+  height: 30px;
+  border-radius: 9px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
 }
 
 .lb-section-title {
-  font-size: 0.84rem;
+  font-size: 0.88rem;
   font-weight: 900;
-  color: var(--text-main);
-  letter-spacing: 0.2px;
+  letter-spacing: 0.3px;
 }
 
 .lb-section-count {
-  font-size: 0.7rem;
-  font-weight: 800;
-  padding: 2px 8px;
+  font-size: 0.72rem;
+  font-weight: 900;
+  padding: 3px 10px;
   border-radius: 999px;
-  background: rgba(148, 163, 184, 0.2);
-  color: var(--text-muted);
-  border: 1px solid rgba(148, 163, 184, 0.3);
   margin-left: auto;
+  white-space: nowrap;
+  flex-shrink: 0;
 }
 
 .lb-section-desc {
-  font-size: 0.72rem;
-  color: var(--text-muted);
+  font-size: 0.73rem;
   margin: 0;
-  line-height: 1.35;
+  line-height: 1.4;
+  font-weight: 600;
+}
+
+/* ==========================================================
+   ÖZEL DİKKAT ÇEKİCİ ZEMİN: ŞUBELER LİGİ AYRACI (AMBER / GÜN BATIMI NEON)
+   ========================================================== */
+.lb-branch-section-divider {
+  background: linear-gradient(135deg, rgba(245, 158, 11, 0.25) 0%, rgba(217, 119, 6, 0.15) 100%) !important;
+  border: 2px solid #f59e0b !important;
+  box-shadow: 0 4px 18px rgba(245, 158, 11, 0.25), inset 0 1px 1px rgba(255, 255, 255, 0.2) !important;
+}
+
+[data-theme="light"] .lb-branch-section-divider {
+  background: linear-gradient(135deg, #fffbeb 0%, #fef3c7 100%) !important;
+  border-color: #d97706 !important;
+  box-shadow: 0 4px 14px rgba(217, 119, 6, 0.2) !important;
+}
+
+.lb-branch-section-divider .lb-branch-section-icon {
+  background: linear-gradient(135deg, #f59e0b, #d97706);
+  color: #ffffff;
+  box-shadow: 0 3px 8px rgba(245, 158, 11, 0.45);
+}
+
+.lb-branch-section-divider .lb-section-title {
+  color: #fbbf24 !important;
+}
+
+[data-theme="light"] .lb-branch-section-divider .lb-section-title {
+  color: #b45309 !important;
+}
+
+.lb-branch-section-divider .lb-section-count {
+  background: #f59e0b !important;
+  color: #ffffff !important;
+  border: none !important;
+  box-shadow: 0 2px 6px rgba(245, 158, 11, 0.4) !important;
+}
+
+.lb-branch-section-divider .lb-section-desc {
+  color: #fde68a !important;
+  opacity: 0.95;
+}
+
+[data-theme="light"] .lb-branch-section-divider .lb-section-desc {
+  color: #78350f !important;
+  opacity: 0.9;
+}
+
+/* ==========================================================
+   ÖZEL DİKKAT ÇEKİCİ ZEMİN: ÖĞRENCİ LİSTESİ AYRACI (ZÜMRÜT YEŞİLİ NEON)
+   ========================================================== */
+.lb-student-section-divider {
+  background: linear-gradient(135deg, rgba(16, 185, 129, 0.22) 0%, rgba(5, 150, 105, 0.12) 100%) !important;
+  border: 2px solid #10b981 !important;
+  box-shadow: 0 4px 18px rgba(16, 185, 129, 0.22), inset 0 1px 1px rgba(255, 255, 255, 0.2) !important;
+}
+
+[data-theme="light"] .lb-student-section-divider {
+  background: linear-gradient(135deg, #ecfdf5 0%, #d1fae5 100%) !important;
+  border-color: #059669 !important;
+  box-shadow: 0 4px 14px rgba(16, 185, 129, 0.18) !important;
+}
+
+.lb-student-section-divider .lb-student-section-icon {
+  background: linear-gradient(135deg, #10b981, #059669);
+  color: #ffffff;
+  box-shadow: 0 3px 8px rgba(16, 185, 129, 0.45);
+}
+
+.lb-student-section-divider .lb-section-title {
+  color: #34d399 !important;
+}
+
+[data-theme="light"] .lb-student-section-divider .lb-section-title {
+  color: #047857 !important;
+}
+
+.lb-student-section-divider .lb-section-count {
+  background: #10b981 !important;
+  color: #ffffff !important;
+  border: none !important;
+  box-shadow: 0 2px 6px rgba(16, 185, 129, 0.4) !important;
+}
+
+.lb-student-section-divider .lb-section-desc {
+  color: #a7f3d0 !important;
+  opacity: 0.95;
+}
+
+[data-theme="light"] .lb-student-section-divider .lb-section-desc {
+  color: #065f46 !important;
+  opacity: 0.9;
 }
 
 /* 0 XP Öğrencileri Sırasız Rozet (Numara Verilmez!) */

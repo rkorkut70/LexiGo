@@ -12573,9 +12573,9 @@ let activeAvatarCategory = 'all';
                 // 0 XP Sınıf Arkadaşı (NUMARASIZ)
                 if (unrankedMembers.indexOf(user) === 0) {
                   listContainer.innerHTML += `
-                    <div class="lb-section-divider">
+                    <div class="lb-section-divider lb-student-section-divider" style="margin-top: 18px;">
                       <div class="lb-section-divider-content">
-                        <span class="lb-section-icon">🌱</span>
+                        <span class="lb-section-icon lb-student-section-icon">🌱</span>
                         <span class="lb-section-title">Henüz Arenaya Katılmayanlar</span>
                         <span class="lb-section-count">${unrankedMembers.length} Öğrenci</span>
                       </div>
@@ -12804,12 +12804,12 @@ let activeAvatarCategory = 'all';
               });
             }
 
-            // HENÜZ HERHANGİ BİR ÖĞRENCİNİN YARIŞMADIĞI ŞUBELER (AYRI BAŞLIK ALTINDA)
+            // HENÜZ HERHANGİ BİR ÖĞRENCİNİN YARIŞMADIĞI ŞUBELER (AYRI DİKKAT ÇEKİCİ BAŞLIK ALTINDA)
             if (unrankedBranches.length > 0) {
               listContainer.innerHTML += `
-                <div class="lb-section-divider" style="margin-top: 16px;">
+                <div class="lb-section-divider lb-branch-section-divider" style="margin-top: 22px;">
                   <div class="lb-section-divider-content">
-                    <span class="lb-section-icon">🏫</span>
+                    <span class="lb-section-icon lb-branch-section-icon">🏫</span>
                     <span class="lb-section-title">Henüz Arenaya Katılmayan Şubeler</span>
                     <span class="lb-section-count">${unrankedBranches.length} Şube</span>
                   </div>
@@ -13988,9 +13988,9 @@ let activeAvatarCategory = 'all';
             // "Henüz Arenaya Katılmayanlar" bölüm ayracı
             if (!unrankedDividerRendered) {
               listContainer.innerHTML += `
-                <div class="lb-section-divider">
+                <div class="lb-section-divider lb-student-section-divider" style="margin-top: 18px;">
                   <div class="lb-section-divider-content">
-                    <span class="lb-section-icon">🌱</span>
+                    <span class="lb-section-icon lb-student-section-icon">🌱</span>
                     <span class="lb-section-title">Henüz Arenaya Katılmayanlar</span>
                     <span class="lb-section-count">${unrankedUsers.length} Öğrenci</span>
                   </div>
