@@ -12946,8 +12946,8 @@ let activeAvatarCategory = 'all';
       } else if (currentPodiumPeriod === 'monthly') {
         if (infoIcon) infoIcon.textContent = '👑';
         infoTitle.textContent = 'Ayın Şampiyon Şubesi';
-        if (infoDesc) infoDesc.textContent = 'Bu ay en çok madalya ve lig puanı toplayan kral şubeler';
-        if (infoBadge) infoBadge.textContent = 'Aylık Kürsü';
+        if (infoDesc) infoDesc.textContent = 'Kasım 2026 devam ediyor • Ay sonuna kadar toplanan lig puanları ayın şampiyonunu belirleyecek';
+        if (infoBadge) infoBadge.textContent = '⏳ Ay Devam Ediyor';
       } else {
         if (infoIcon) infoIcon.textContent = '🏛️';
         infoTitle.textContent = 'Genel Lig & Yıl Sonu Şampiyonluğu';
@@ -13418,16 +13418,24 @@ let activeAvatarCategory = 'all';
               </div>
             `;
 
-            // Ayın Şampiyon Şubesi Spotlight Kartı
-            const spotlightHtml = `
+            // Ayın Şampiyon Şubesi Canlı Mücadele Kartı (Ay henüz bitmedi uyarısı ile)
+            const curDate = new Date();
+            const monthNames = ["Ocak", "Şubat", "Mart", "Nisan", "Mayıs", "Haziran", "Temmuz", "Ağustos", "Eylül", "Ekim", "Kasım", "Aralık"];
+            const realCurMonthLabel = monthNames[curDate.getMonth()] + ' ' + curDate.getFullYear();
+            const isOngoingMonth = (!topMonth.monthLabel || topMonth.monthLabel === realCurMonthLabel || topMonth.monthLabel === 'Kasım 2026');
+
+            // Ay devam ediyor bilgilendirme şeridi
+            const ongoingAlertHtml = isOngoingMonth ? '<div style="background: linear-gradient(135deg, rgba(245, 158, 11, 0.18), rgba(217, 119, 6, 0.1)); border: 1.5px solid rgba(245, 158, 11, 0.45); border-radius: 14px; padding: 12px 14px; margin-bottom: 12px; display: flex; align-items: center; gap: 10px; box-shadow: 0 4px 14px rgba(245, 158, 11, 0.12);"><span style="font-size: 1.35rem; line-height: 1; flex-shrink: 0;">⏳</span><div style="min-width: 0; font-size: 0.77rem; color: var(--text-main); line-height: 1.45;"><strong style="color: #f59e0b; display: block; margin-bottom: 2px;">' + (topMonth.monthLabel || 'Kasım 2026') + ' Şampiyonluk Mücadelesi Sürüyor!</strong><span>Ay henüz tamamlanmadı. Her pazar sonuçlanan haftalık düellolarda kazanılan lig puanları ay sonuna kadar toplanmaya devam edecek.</span></div></div>' : '';
+
+            const spotlightHtml = ongoingAlertHtml + `
               <div class="podium-spotlight-card">
                 <div class="podium-spotlight-header">
                   <div class="podium-spotlight-title">
                     <span>👑</span>
-                    <span>${topMonth.monthLabel || 'Bu Ay'} • Ayın Şampiyon Şubesi</span>
+                    <span>${topMonth.monthLabel || 'Kasım 2026'} • ${isOngoingMonth ? 'Ayın Şampiyonluk Yarışı (Canlı)' : 'Ayın Şampiyon Şubesi'}</span>
                   </div>
-                  <span class="podium-spotlight-badge">
-                    ${langPrefix} Ligi • Aylık Kürsü
+                  <span class="podium-spotlight-badge" style="${isOngoingMonth ? 'background: rgba(245, 158, 11, 0.25); color: #f59e0b; border: 1px solid rgba(245, 158, 11, 0.5); font-weight: 800;' : ''}">
+                    ${isOngoingMonth ? '⚡ Mücadele Sürüyor' : (langPrefix + ' Ligi • Tamamlanan Ay')}
                   </span>
                 </div>
 
@@ -13452,9 +13460,9 @@ let activeAvatarCategory = 'all';
                 </div>
 
                 <div class="podium-summary-strip">
-                  <span>🗓️ ${topMonth.monthLabel || 'Bu Ay'} Şampiyonluk Mücadelesi</span>
+                  <span>${isOngoingMonth ? '⚔️ Ay Henüz Bitmedi • Mücadele Devam Ediyor' : ('🗓️ ' + topMonth.monthLabel + ' Şampiyonluk Mücadelesi')}</span>
                   <span>•</span>
-                  <span>👑 Ayın Lideri: ${m1.code}</span>
+                  <span>👑 ${isOngoingMonth ? 'Şu Anki Lider' : 'Ayın Şampiyonu'}: ${m1.code}</span>
                 </div>
               </div>
             `;
