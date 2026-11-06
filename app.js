@@ -12532,57 +12532,131 @@ let activeAvatarCategory = 'all';
               return;
             }
 
-            let myRank = null;
+            // Sınıf öğrencilerini ikiye ayır: Arenada Puan Alanlar vs Henüz Arenaya Katılmayanlar (0 XP)
+            const rankedMembers = members
+              .filter(m => ((Number(m.weeklyXp) || 0) > 0) || ((Number(m.totalXp) || 0) > 0))
+              .sort((a, b) => (b.weeklyXp - a.weeklyXp) || (b.totalXp - a.totalXp));
+
             let currentRank = 1;
             let prevXp = null;
-
-            members.forEach((user, index) => {
+            rankedMembers.forEach((user, index) => {
               if (prevXp !== null && user.weeklyXp < prevXp) {
                 currentRank = index + 1;
               }
               prevXp = user.weeklyXp;
-              const rank = currentRank;
+              user.assignedRank = currentRank;
+              user.isRanked = true;
+            });
 
+            const unrankedMembers = members
+              .filter(m => ((Number(m.weeklyXp) || 0) === 0) && ((Number(m.totalXp) || 0) === 0))
+              .sort((a, b) => {
+                const regA = Number(a.registeredAt) || 0;
+                const regB = Number(b.registeredAt) || 0;
+                if (regB !== regA) return regB - regA;
+                return (a.displayName || '').localeCompare(b.displayName || '');
+              });
+
+            unrankedMembers.forEach(user => {
+              user.assignedRank = null; // KESİNLİKLE NUMARA VERİLMEZ!
+              user.isRanked = false;
+            });
+
+            const allClassMembers = [...rankedMembers, ...unrankedMembers];
+            let myObj = null;
+
+            allClassMembers.forEach((user) => {
               const isMe = (window.fbUser && user.uid === window.fbUser.uid) || (user.displayName === state.userName && user.avatar === state.userAvatar);
-              if (isMe) myRank = { rank, xp: user.weeklyXp };
+              if (isMe) myObj = user;
 
-              const rankClass = rank === 1 ? 'rank-1' : (rank === 2 ? 'rank-2' : (rank === 3 ? 'rank-3' : ''));
-              const highlightStyle = isMe ? 'background: rgba(59, 130, 246, 0.15); border: 2px solid var(--accent);' : '';
-              const rankDisplayHtml = rank === 1 
-                ? `<div class="lb-rank" title="Şampiyon">1</div>`
-                : `<div class="lb-rank">${rank}</div>`;
-              const topBadgeHtml = getTop3BadgeHtml(rank, false, false);
-
-              listContainer.innerHTML += `
-                <div class="leaderboard-item ${rankClass}" style="${highlightStyle}">
-                  ${rankDisplayHtml}
-                  <div class="lb-avatar">${getAvatarMarkup(user.avatar || DEFAULT_AVATAR, 'width:38px; height:38px;')}</div>
-                  <div class="lb-info">
-                    <div style="display:flex; align-items:center; gap:6px;">
-                      <div class="lb-name">${user.displayName || 'Öğrenci'}</div>
-                      ${isMe ? '<span style="font-size:0.72rem; font-weight:800; color:var(--accent);">(Sen)</span>' : ''}
+              if (!user.isRanked) {
+                // 0 XP Sınıf Arkadaşı (NUMARASIZ)
+                if (unrankedMembers.indexOf(user) === 0) {
+                  listContainer.innerHTML += `
+                    <div class="lb-section-divider">
+                      <div class="lb-section-divider-content">
+                        <span class="lb-section-icon">🌱</span>
+                        <span class="lb-section-title">Henüz Arenaya Katılmayanlar</span>
+                        <span class="lb-section-count">${unrankedMembers.length} Öğrenci</span>
+                      </div>
+                      <p class="lb-section-desc">Sınıfa kayıt olup henüz arenada puan kazanmamış öğrenciler.</p>
                     </div>
-                    <div class="lb-badge" style="color: var(--text-muted); font-size: 0.72rem;">Toplam: ${(user.totalXp || 0).toLocaleString()} XP</div>
+                  `;
+                }
+
+                listContainer.innerHTML += `
+                  <div class="leaderboard-item lb-unranked-item" style="${isMe ? 'background: rgba(59, 130, 246, 0.15); border-left: 4px solid var(--accent);' : ''}">
+                    <div class="lb-rank lb-rank-unranked" title="Arenaya Henüz Katılmadı">-</div>
+                    <div class="lb-avatar">${getAvatarMarkup(user.avatar || DEFAULT_AVATAR, 'width:38px; height:38px;')}</div>
+                    <div class="lb-info">
+                      <div style="display:flex; align-items:center; gap:6px;">
+                        <div class="lb-name">${user.displayName || 'Öğrenci'}</div>
+                        ${isMe ? '<span style="font-size:0.72rem; font-weight:800; color:var(--accent);">(Sen)</span>' : ''}
+                      </div>
+                      <div class="lb-badge" style="color: var(--text-muted); font-size: 0.72rem;">Hazırlanıyor</div>
+                    </div>
+                    <div style="text-align: right; flex-shrink: 0;">
+                      <div class="lb-score lb-score-zero">0 XP</div>
+                      <span style="font-size: 0.65rem; color: var(--text-muted);">⚡ 0 XP</span>
+                    </div>
                   </div>
-                  ${topBadgeHtml}
-                  <div class="lb-score" style="color: #10b981; font-weight: 800;">⚡ ${(user.weeklyXp || 0).toLocaleString()} XP</div>
-                </div>
-              `;
+                `;
+              } else {
+                // XP > 0 Sınıf Arkadaşı (NUMARALI)
+                const rank = user.assignedRank;
+                const rankClass = rank === 1 ? 'rank-1' : (rank === 2 ? 'rank-2' : (rank === 3 ? 'rank-3' : ''));
+                const highlightStyle = isMe ? 'background: rgba(59, 130, 246, 0.15); border: 2px solid var(--accent);' : '';
+                const rankDisplayHtml = rank === 1 
+                  ? `<div class="lb-rank" title="Şampiyon">1</div>`
+                  : `<div class="lb-rank">${rank}</div>`;
+                const topBadgeHtml = getTop3BadgeHtml(rank, false, false);
+
+                listContainer.innerHTML += `
+                  <div class="leaderboard-item ${rankClass}" style="${highlightStyle}">
+                    ${rankDisplayHtml}
+                    <div class="lb-avatar">${getAvatarMarkup(user.avatar || DEFAULT_AVATAR, 'width:38px; height:38px;')}</div>
+                    <div class="lb-info">
+                      <div style="display:flex; align-items:center; gap:6px;">
+                        <div class="lb-name">${user.displayName || 'Öğrenci'}</div>
+                        ${isMe ? '<span style="font-size:0.72rem; font-weight:800; color:var(--accent);">(Sen)</span>' : ''}
+                      </div>
+                      <div class="lb-badge" style="color: var(--text-muted); font-size: 0.72rem;">Toplam: ${(user.totalXp || 0).toLocaleString()} XP</div>
+                    </div>
+                    ${topBadgeHtml}
+                    <div class="lb-score" style="color: #10b981; font-weight: 800;">⚡ ${(user.weeklyXp || 0).toLocaleString()} XP</div>
+                  </div>
+                `;
+              }
             });
 
             // Alt bar kullanıcı durumu
-            if (myBar && myRank) {
+            if (myBar && myObj) {
               myBar.style.display = 'flex';
               const rankB = document.getElementById('lbMyRankBadge');
               const avB = document.getElementById('lbMyAvatar');
               const nameB = document.getElementById('lbMyName');
               const tagB = document.getElementById('lbMyBranchTag');
               const scoreB = document.getElementById('lbMyScore');
-              if (rankB) rankB.textContent = `#${myRank.rank}`;
+
+              if (myObj.isRanked && myObj.assignedRank) {
+                if (rankB) {
+                  rankB.textContent = `#${myObj.assignedRank}`;
+                  rankB.style.opacity = '1';
+                }
+                if (tagB) tagB.textContent = `Şube: ${state.userBranch}`;
+                if (scoreB) scoreB.textContent = `⚡ ${(myObj.weeklyXp || 0).toLocaleString()} XP`;
+              } else {
+                // 0 XP ise numara yok!
+                if (rankB) {
+                  rankB.textContent = `-`;
+                  rankB.style.opacity = '0.7';
+                }
+                if (tagB) tagB.textContent = `Şube: ${state.userBranch} (Henüz Arenada Değil)`;
+                if (scoreB) scoreB.textContent = `⚡ 0 XP`;
+              }
+
               if (avB) setAvatarElement(avB, state.userAvatar);
               if (nameB) nameB.textContent = state.userName;
-              if (tagB) tagB.textContent = `Şube: ${state.userBranch}`;
-              if (scoreB) scoreB.textContent = `⚡ ${myRank.xp.toLocaleString()} XP`;
             }
           }
         } catch (e) {
@@ -13444,102 +13518,296 @@ let activeAvatarCategory = 'all';
       }
     }
 
+    // Global Liderlik Tablosu Durumu (Sayfalama ve Önbellek)
+    let lbGlobalPageSize = 25;
+    let lbGlobalCurrentPage = 1;
+    let lbGlobalCachedUsers = null;
+
+    function formatLbRegistrationDate(timestamp) {
+      if (!timestamp) return 'Yeni Kayıt';
+      try {
+        const d = new Date(timestamp);
+        if (isNaN(d.getTime())) return 'Yeni Kayıt';
+        const day = String(d.getDate()).padStart(2, '0');
+        const months = ['Oca', 'Şub', 'Mar', 'Nis', 'May', 'Haz', 'Tem', 'Ağu', 'Eyl', 'Eki', 'Kas', 'Ara'];
+        const month = months[d.getMonth()] || '';
+        const year = d.getFullYear();
+        return `${day} ${month} ${year}`;
+      } catch (e) {
+        return 'Yeni Kayıt';
+      }
+    }
+
     // 4. Genel Okul Sıralaması
-    async function renderGlobalLeaderboard() {
+    async function renderGlobalLeaderboard(forceRefresh = true) {
       const listContainer = document.getElementById('globalLeaderboardList');
       const myBar = document.getElementById('lbCurrentUserBar');
+      const totalBadge = document.getElementById('lbTotalStudentsBadge');
+      const paginationBar = document.getElementById('lbPaginationBar');
+      const prevBtn = document.getElementById('lbPrevPageBtn');
+      const nextBtn = document.getElementById('lbNextPageBtn');
+      const pageIndicator = document.getElementById('lbPageIndicator');
+
       if (myBar) myBar.style.display = 'none';
 
-      if (listContainer) {
-        listContainer.innerHTML = '<div style="text-align:center; padding: 20px; color: var(--text-muted);">Yükleniyor...</div>';
+      // Sayfa boyutu butonlarını ayarla (25 / 50 / 100)
+      const sizePills = document.querySelectorAll('#lbPageSizePills .lb-size-pill');
+      sizePills.forEach(pill => {
+        const pSize = parseInt(pill.dataset.size, 10);
+        if (pSize === lbGlobalPageSize) {
+          pill.classList.add('active');
+        } else {
+          pill.classList.remove('active');
+        }
+        if (!pill._lbBound) {
+          pill._lbBound = true;
+          pill.addEventListener('click', () => {
+            const newSize = parseInt(pill.dataset.size, 10);
+            if (newSize && newSize !== lbGlobalPageSize) {
+              lbGlobalPageSize = newSize;
+              lbGlobalCurrentPage = 1;
+              renderGlobalLeaderboard(false);
+            }
+          });
+        }
+      });
+
+      // Sayfa gezinme butonları dinleyicileri
+      if (!prevBtn?._lbBound && prevBtn && nextBtn) {
+        prevBtn._lbBound = true;
+        nextBtn._lbBound = true;
+        prevBtn.addEventListener('click', () => {
+          if (lbGlobalCurrentPage > 1) {
+            lbGlobalCurrentPage--;
+            renderGlobalLeaderboard(false);
+            if (listContainer) listContainer.scrollTop = 0;
+          }
+        });
+        nextBtn.addEventListener('click', () => {
+          lbGlobalCurrentPage++;
+          renderGlobalLeaderboard(false);
+          if (listContainer) listContainer.scrollTop = 0;
+        });
       }
 
-      if (typeof window.fetchLeaderboard === 'function') {
-        try {
-          let leaders = await window.fetchLeaderboard();
-          if (listContainer) {
-            listContainer.innerHTML = '';
-            if (!leaders || leaders.length === 0) {
-              if (state.xp > 0) {
-                leaders = [{
-                  displayName: state.userName || 'Öğrenci',
-                  avatar: state.userAvatar || 'avatar_default',
-                  xp: state.xp,
-                  lang: state.activeLanguage || 'EN-TR'
-                }];
-              }
-            }
-
-            if (!leaders || leaders.length === 0) {
-              listContainer.innerHTML = '<div style="text-align:center; padding: 25px 15px; color: var(--text-muted);"><div style="font-size:2rem; margin-bottom:8px;">🏆</div><strong>Henüz Liderlik Tablosunda Kayıt Yok</strong><p style="font-size:0.78rem; margin-top:4px;">Kelime kartlarını tamamlayıp Arenada yarışarak ilk puanı sen kazan!</p></div>';
-            } else {
-              let currentRank = 1;
-              let previousXP = null;
-              let myRank = null;
-
-              leaders.forEach((user, index) => {
-                if (previousXP !== null && user.xp < previousXP) {
-                  currentRank = index + 1;
-                }
-                previousXP = user.xp;
-                const rank = currentRank;
-
-                let badge = 'Çırak';
-                if (user.xp >= 1000) badge = 'Usta';
-                if (user.xp >= 5000) badge = 'Efsane';
-                if (user.xp >= 10000) badge = 'Şampiyon';
-                
-                const isMe = (window.fbUser && user.uid === window.fbUser.uid) || (user.displayName === state.userName && user.avatar === state.userAvatar);
-                if (isMe) myRank = { rank, xp: user.xp };
-                const userLang = user.lang || (isMe ? state.activeLanguage : 'EN-TR');
-                const flagIcon = getLangFlag(userLang);
-                const langTitle = (typeof LANG_META !== 'undefined' && LANG_META[userLang] && LANG_META[userLang].name) ? LANG_META[userLang].name : userLang;
-                
-                const rankDisplayHtml = (rank === 1) 
-                  ? `<div class="lb-rank" title="Okul Şampiyonu">1</div>` 
-                  : `<div class="lb-rank">${rank}</div>`;
-                const topBadgeHtml = getTop3BadgeHtml(rank, false, true);
-                
-                listContainer.innerHTML += `
-                  <div class="leaderboard-item rank-${rank}" style="${isMe ? 'background: rgba(37, 99, 235, 0.1); border-left: 4px solid var(--accent);' : ''}">
-                    ${rankDisplayHtml}
-                    <div class="lb-avatar">${getAvatarMarkup(user.avatar || DEFAULT_AVATAR, 'width:38px; height:38px;')}</div>
-                    <div class="lb-info">
-                      <div style="display:flex; align-items:center; gap:6px; flex-wrap:wrap;">
-                        <div class="lb-name">${user.displayName || 'Öğrenci'}</div>
-                        <span class="lb-lang-flag" title="${langTitle}" aria-label="${langTitle}" style="font-size:1.1rem; line-height:1; display:inline-flex; align-items:center; cursor:help;">${flagIcon}</span>
-                        ${isMe ? '<span style="font-size:0.7rem; font-weight:800; color:var(--accent); flex-shrink:0;">(Sen)</span>' : ''}
-                      </div>
-                      <div class="lb-badge">${badge}</div>
-                    </div>
-                    ${topBadgeHtml}
-                    <div class="lb-score">${(user.xp || 0).toLocaleString()} XP</div>
-                  </div>
-                `;
-              });
-
-              // Alt bar kullanıcı durumu (Genel Sıralama)
-              if (myBar) {
-                if (myRank) {
-                  myBar.style.display = 'flex';
-                  const rankB = document.getElementById('lbMyRankBadge');
-                  const avB = document.getElementById('lbMyAvatar');
-                  const nameB = document.getElementById('lbMyName');
-                  const tagB = document.getElementById('lbMyBranchTag');
-                  const scoreB = document.getElementById('lbMyScore');
-                  if (rankB) rankB.textContent = `#${myRank.rank}`;
-                  if (avB) setAvatarElement(avB, state.userAvatar);
-                  if (nameB) nameB.textContent = state.userName;
-                  if (tagB) tagB.textContent = `Okul Geneli`;
-                  if (scoreB) scoreB.textContent = `${myRank.xp.toLocaleString()} XP`;
-                } else {
-                  myBar.style.display = 'none';
-                }
-              }
-            }
+      if (forceRefresh || !lbGlobalCachedUsers) {
+        if (listContainer) {
+          listContainer.innerHTML = '<div style="text-align:center; padding: 25px; color: var(--text-muted); font-size:0.88rem;">⏳ Liderlik tablosu yükleniyor...</div>';
+        }
+        if (typeof window.fetchLeaderboard === 'function') {
+          try {
+            let fetched = await window.fetchLeaderboard();
+            lbGlobalCachedUsers = fetched || [];
+          } catch(e) {
+            console.warn('Leaderboard fetch hatası:', e);
+            lbGlobalCachedUsers = [];
           }
-        } catch(e) {
-          console.warn('Global leaderboard error:', e);
+        } else {
+          lbGlobalCachedUsers = [];
+        }
+      }
+
+      let rawUsers = [...(lbGlobalCachedUsers || [])];
+
+      // Eğer mevcut kullanıcı listede yoksa ve yerel profili varsa listeye dahil et
+      const curUserId = window.fbUser ? window.fbUser.uid : null;
+      const myDisplayName = (state && state.userName) || localStorage.getItem('lexiq_user_name') || 'Öğrenci';
+      const myAvatar = (state && state.userAvatar) || localStorage.getItem('lexiq_user_avatar') || 'avatar_default';
+      const myXp = (state && typeof state.xp === 'number') ? state.xp : parseInt(localStorage.getItem('kelime_xp') || '0', 10);
+      const myLang = (state && state.activeLanguage) || localStorage.getItem('kelime_active_lang') || 'EN-TR';
+      const myBranch = (state && state.userBranch) || localStorage.getItem('lexiq_user_branch') || '';
+      const myRegAt = parseInt(localStorage.getItem('lexiq_registered_at') || '0', 10) || parseInt(localStorage.getItem('lexiq_first_started_at') || '0', 10) || Date.now();
+
+      const existsInList = rawUsers.some(u => (curUserId && u.uid === curUserId) || (u.displayName === myDisplayName && u.avatar === myAvatar));
+      if (!existsInList && myDisplayName && myDisplayName !== 'Öğrenci' && myDisplayName !== 'İsimsiz Kahraman') {
+        rawUsers.push({
+          uid: curUserId || 'me_local',
+          displayName: myDisplayName,
+          avatar: myAvatar,
+          xp: myXp,
+          lang: myLang,
+          branch: myBranch,
+          registeredAt: myRegAt
+        });
+      }
+
+      if (!rawUsers || rawUsers.length === 0) {
+        if (listContainer) {
+          listContainer.innerHTML = '<div style="text-align:center; padding: 25px 15px; color: var(--text-muted);"><div style="font-size:2rem; margin-bottom:8px;">🏆</div><strong>Henüz Liderlik Tablosunda Kayıt Yok</strong><p style="font-size:0.78rem; margin-top:4px;">Kelime kartlarını tamamlayıp Arenada yarışarak ilk puanı sen kazan!</p></div>';
+        }
+        if (totalBadge) totalBadge.textContent = '0 Öğrenci';
+        if (paginationBar) paginationBar.style.display = 'none';
+        return;
+      }
+
+      // 1. GRUP: ARENADA PUAN ALANLAR (XP > 0) -> Sıralama numarası (#1, #2...) ALIR
+      const rankedUsers = rawUsers
+        .filter(u => (Number(u.xp) || 0) > 0)
+        .sort((a, b) => (b.xp - a.xp) || ((b.registeredAt || 0) - (a.registeredAt || 0)));
+
+      let currentRank = 1;
+      let prevXP = null;
+      rankedUsers.forEach((u, idx) => {
+        if (prevXP !== null && u.xp < prevXP) {
+          currentRank = idx + 1;
+        }
+        prevXP = u.xp;
+        u.assignedRank = currentRank;
+        u.isRanked = true;
+      });
+
+      // 2. GRUP: HENÜZ ARENAYA KATILMAYANLAR (XP == 0) -> Sıralama numarası VERİLMEZ!
+      // Kayıt oldukları tarihe göre (en son kaydolan en başta) sıralanır
+      const unrankedUsers = rawUsers
+        .filter(u => (Number(u.xp) || 0) === 0)
+        .sort((a, b) => {
+          const regA = Number(a.registeredAt) || 0;
+          const regB = Number(b.registeredAt) || 0;
+          if (regB !== regA) return regB - regA;
+          return (a.displayName || '').localeCompare(b.displayName || '');
+        });
+
+      unrankedUsers.forEach(u => {
+        u.assignedRank = null; // KESİNLİKLE NUMARA VERİLMEZ!
+        u.isRanked = false;
+      });
+
+      // BİRLEŞİK LİSTE (Önce Arenada Puan Alanlar, Sonra Katılmayanlar)
+      const allDisplayUsers = [...rankedUsers, ...unrankedUsers];
+
+      if (totalBadge) {
+        totalBadge.textContent = `${allDisplayUsers.length} Öğrenci`;
+      }
+
+      // Sayfalama Hesabı
+      const totalPages = Math.max(1, Math.ceil(allDisplayUsers.length / lbGlobalPageSize));
+      if (lbGlobalCurrentPage > totalPages) lbGlobalCurrentPage = totalPages;
+      if (lbGlobalCurrentPage < 1) lbGlobalCurrentPage = 1;
+
+      const startIndex = (lbGlobalCurrentPage - 1) * lbGlobalPageSize;
+      const endIndex = startIndex + lbGlobalPageSize;
+      const pageSlice = allDisplayUsers.slice(startIndex, endIndex);
+
+      // Sayfalama Çubuğunu Güncelle
+      if (paginationBar) {
+        paginationBar.style.display = totalPages > 1 ? 'flex' : (allDisplayUsers.length > 10 ? 'flex' : 'none');
+        if (prevBtn) prevBtn.disabled = (lbGlobalCurrentPage <= 1);
+        if (nextBtn) nextBtn.disabled = (lbGlobalCurrentPage >= totalPages);
+        if (pageIndicator) pageIndicator.textContent = `Sayfa ${lbGlobalCurrentPage} / ${totalPages}`;
+      }
+
+      // Çizim
+      if (listContainer) {
+        listContainer.innerHTML = '';
+        let unrankedDividerRendered = false;
+
+        pageSlice.forEach((user) => {
+          const isMe = (curUserId && user.uid === curUserId) || (user.displayName === myDisplayName && user.avatar === myAvatar);
+          const userLang = user.lang || (isMe ? myLang : 'EN-TR');
+          const flagIcon = getLangFlag(userLang);
+          const langTitle = (typeof LANG_META !== 'undefined' && LANG_META[userLang] && LANG_META[userLang].name) ? LANG_META[userLang].name : userLang;
+
+          if (!user.isRanked) {
+            // "Henüz Arenaya Katılmayanlar" bölüm ayracı
+            if (!unrankedDividerRendered) {
+              listContainer.innerHTML += `
+                <div class="lb-section-divider">
+                  <div class="lb-section-divider-content">
+                    <span class="lb-section-icon">🌱</span>
+                    <span class="lb-section-title">Henüz Arenaya Katılmayanlar</span>
+                    <span class="lb-section-count">${unrankedUsers.length} Öğrenci</span>
+                  </div>
+                  <p class="lb-section-desc">Kayıt olup henüz arenada puan kazanmamış öğrenciler, kayıt tarihlerine göre listelenir.</p>
+                </div>
+              `;
+              unrankedDividerRendered = true;
+            }
+
+            // 0 XP Kullanıcı Satırı (Sıralama Numarası VERİLMEZ!)
+            const regDateStr = formatLbRegistrationDate(user.registeredAt);
+            listContainer.innerHTML += `
+              <div class="leaderboard-item lb-unranked-item" style="${isMe ? 'background: rgba(37, 99, 235, 0.1); border-left: 4px solid var(--accent);' : ''}">
+                <div class="lb-rank lb-rank-unranked" title="Arenaya Henüz Katılmadı">-</div>
+                <div class="lb-avatar">${getAvatarMarkup(user.avatar || DEFAULT_AVATAR, 'width:38px; height:38px;')}</div>
+                <div class="lb-info">
+                  <div style="display:flex; align-items:center; gap:6px; flex-wrap:wrap;">
+                    <div class="lb-name">${user.displayName || 'Öğrenci'}</div>
+                    <span class="lb-lang-flag" title="${langTitle}" aria-label="${langTitle}" style="font-size:1.1rem; line-height:1; display:inline-flex; align-items:center; cursor:help;">${flagIcon}</span>
+                    ${isMe ? '<span style="font-size:0.7rem; font-weight:800; color:var(--accent); flex-shrink:0;">(Sen)</span>' : ''}
+                  </div>
+                  <div class="lb-badge" style="color:var(--text-muted); font-size:0.72rem;">Hazırlanıyor</div>
+                </div>
+                <div style="text-align: right; flex-shrink: 0;">
+                  <div class="lb-score lb-score-zero">0 XP</div>
+                  <div class="lb-reg-date-sub" title="Kayıt Tarihi">📅 ${regDateStr}</div>
+                </div>
+              </div>
+            `;
+          } else {
+            // XP > 0 Kullanıcı Satırı (Sıralama Numarası Verilir)
+            const rank = user.assignedRank;
+            let badge = 'Çırak';
+            if (user.xp >= 1000) badge = 'Usta';
+            if (user.xp >= 5000) badge = 'Efsane';
+            if (user.xp >= 10000) badge = 'Şampiyon';
+
+            const rankDisplayHtml = (rank === 1) 
+              ? `<div class="lb-rank" title="Okul Şampiyonu">1</div>` 
+              : `<div class="lb-rank">${rank}</div>`;
+            const topBadgeHtml = getTop3BadgeHtml(rank, false, true);
+
+            listContainer.innerHTML += `
+              <div class="leaderboard-item rank-${rank}" style="${isMe ? 'background: rgba(37, 99, 235, 0.1); border-left: 4px solid var(--accent);' : ''}">
+                ${rankDisplayHtml}
+                <div class="lb-avatar">${getAvatarMarkup(user.avatar || DEFAULT_AVATAR, 'width:38px; height:38px;')}</div>
+                <div class="lb-info">
+                  <div style="display:flex; align-items:center; gap:6px; flex-wrap:wrap;">
+                    <div class="lb-name">${user.displayName || 'Öğrenci'}</div>
+                    <span class="lb-lang-flag" title="${langTitle}" aria-label="${langTitle}" style="font-size:1.1rem; line-height:1; display:inline-flex; align-items:center; cursor:help;">${flagIcon}</span>
+                    ${isMe ? '<span style="font-size:0.7rem; font-weight:800; color:var(--accent); flex-shrink:0;">(Sen)</span>' : ''}
+                  </div>
+                  <div class="lb-badge">${badge}</div>
+                </div>
+                ${topBadgeHtml}
+                <div class="lb-score">${(user.xp || 0).toLocaleString()} XP</div>
+              </div>
+            `;
+          }
+        });
+      }
+
+      // Alt Bar Kullanıcı Durumu (Genel Sıralama)
+      if (myBar) {
+        const myObj = allDisplayUsers.find(u => (curUserId && u.uid === curUserId) || (u.displayName === myDisplayName && u.avatar === myAvatar));
+        if (myObj) {
+          myBar.style.display = 'flex';
+          const rankB = document.getElementById('lbMyRankBadge');
+          const avB = document.getElementById('lbMyAvatar');
+          const nameB = document.getElementById('lbMyName');
+          const tagB = document.getElementById('lbMyBranchTag');
+          const scoreB = document.getElementById('lbMyScore');
+
+          if (myObj.isRanked && myObj.assignedRank) {
+            if (rankB) {
+              rankB.textContent = `#${myObj.assignedRank}`;
+              rankB.style.opacity = '1';
+            }
+            if (tagB) tagB.textContent = `Okul Geneli`;
+            if (scoreB) scoreB.textContent = `${(myObj.xp || 0).toLocaleString()} XP`;
+          } else {
+            // 0 XP olan kullanıcı için ASLA sıralama numarası verilmez!
+            if (rankB) {
+              rankB.textContent = `-`;
+              rankB.style.opacity = '0.7';
+            }
+            if (tagB) tagB.textContent = `Henüz Arenaya Katılmadı`;
+            if (scoreB) scoreB.textContent = `0 XP`;
+          }
+
+          if (avB) setAvatarElement(avB, myAvatar);
+          if (nameB) nameB.textContent = myDisplayName;
+        } else {
+          myBar.style.display = 'none';
         }
       }
     }

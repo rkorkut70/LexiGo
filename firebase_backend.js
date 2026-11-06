@@ -688,18 +688,31 @@ window.fetchLeaderboard = async function() {
   try {
     const snapshot = await db.collection('users')
                              .orderBy('xp', 'desc')
-                             .limit(100)
+                             .limit(300)
                              .get();
     
     const leaders = [];
     snapshot.forEach(doc => {
-      const data = doc.data();
+      const data = doc.data() || {};
+      let regTime = 0;
+      if (data.createdAt) {
+        if (typeof data.createdAt.toMillis === 'function') regTime = data.createdAt.toMillis();
+        else if (data.createdAt.seconds) regTime = data.createdAt.seconds * 1000;
+        else if (typeof data.createdAt === 'number') regTime = data.createdAt;
+      } else if (data.timeTracking && data.timeTracking.registeredAt) {
+        regTime = Number(data.timeTracking.registeredAt) || 0;
+      } else if (data.registeredAt) {
+        regTime = Number(data.registeredAt) || 0;
+      }
+
       leaders.push({
         uid: doc.id,
         displayName: data.displayName || 'İsimsiz Kahraman',
-        avatar: data.avatar || '👤',
-        xp: data.xp || 0,
-        lang: data.lang || data.activeLanguage || 'EN-TR'
+        avatar: data.avatar || 'avatar_default',
+        xp: Number(data.xp) || 0,
+        lang: data.lang || data.activeLanguage || 'EN-TR',
+        branch: data.branch || '',
+        registeredAt: regTime
       });
     });
     return leaders;
@@ -775,15 +788,27 @@ window.fetchClassLeaderboard = async function(branchCode) {
       } else if (typeof data.xp === 'number' && data.xp > 0) {
         weeklyXp = data.xp;
       }
+      let regTime = 0;
+      if (data.createdAt) {
+        if (typeof data.createdAt.toMillis === 'function') regTime = data.createdAt.toMillis();
+        else if (data.createdAt.seconds) regTime = data.createdAt.seconds * 1000;
+        else if (typeof data.createdAt === 'number') regTime = data.createdAt;
+      } else if (data.timeTracking && data.timeTracking.registeredAt) {
+        regTime = Number(data.timeTracking.registeredAt) || 0;
+      } else if (data.registeredAt) {
+        regTime = Number(data.registeredAt) || 0;
+      }
+
       members.push({
         uid: doc.id,
         displayName: data.displayName || 'Öğrenci',
-        avatar: data.avatar || '👤',
+        avatar: data.avatar || 'avatar_default',
         weeklyXp: weeklyXp,
         totalXp: data.xp || 0,
         branch: branchCode,
         track: data.track || '',
-        level: data.level || ''
+        level: data.level || '',
+        registeredAt: regTime
       });
     });
 

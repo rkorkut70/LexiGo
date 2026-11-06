@@ -1988,11 +1988,36 @@
 
         <!-- PANEL 1: GENEL OKUL SIRALAMASI -->
         <div id="lbPanelGlobal" class="lb-panel" style="display: flex;">
-          <div style="padding: 6px 12px; margin-bottom: 8px; font-size: 0.74rem; color: var(--text-muted); text-align: center; flex-shrink: 0;">
-            🌍 Tüm diller ve kurlar genelinde tüm zamanlar XP sıralaması
+          <div class="lb-global-toolbar">
+            <div class="lb-toolbar-info">
+              <span class="lb-toolbar-subtitle">🌍 Tüm Diller & Kurlar</span>
+              <span id="lbTotalStudentsBadge" class="lb-total-badge">--</span>
+            </div>
+            <div class="lb-page-size-selector">
+              <span class="lb-page-size-label">Göster:</span>
+              <div class="lb-page-size-pills" id="lbPageSizePills">
+                <button type="button" class="lb-size-pill active" data-size="25">25</button>
+                <button type="button" class="lb-size-pill" data-size="50">50</button>
+                <button type="button" class="lb-size-pill" data-size="100">100</button>
+              </div>
+            </div>
           </div>
+
           <div class="leaderboard-list" id="globalLeaderboardList">
             <!-- JS ile doldurulur -->
+          </div>
+
+          <!-- Sayfalama Gezinti Alt Çubuğu -->
+          <div class="lb-pagination-bar" id="lbPaginationBar" style="display: none;">
+            <button type="button" class="lb-page-nav-btn" id="lbPrevPageBtn" disabled aria-label="Önceki Sayfa">
+              <span>◀</span> Önceki
+            </button>
+            <div class="lb-page-indicator" id="lbPageIndicator">
+              Sayfa 1 / 1
+            </div>
+            <button type="button" class="lb-page-nav-btn" id="lbNextPageBtn" disabled aria-label="Sonraki Sayfa">
+              Sonraki <span>▶</span>
+            </button>
           </div>
         </div>
 
