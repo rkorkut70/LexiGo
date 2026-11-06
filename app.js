@@ -13511,15 +13511,22 @@ let activeAvatarCategory = 'all';
               });
             }
 
-            // Varsa Diğer Geçmiş Ayların Arşivi
-            if (monthlyData.length > 1) {
+            // Varsa Diğer Geçmiş Ayların Arşivi (Program 5 Kasım 2026'da yayınlandığından Ekim ve öncesi elenir)
+            const pastMonths = (monthlyData.length > 1) ? monthlyData.slice(1).filter(m => {
+              if (!m) return false;
+              if (m.monthLabel && m.monthLabel.includes('Ekim')) return false;
+              if (m.monthKey && m.monthKey.startsWith('2026-10')) return false;
+              return true;
+            }) : [];
+
+            if (pastMonths.length > 0) {
               listContainer.innerHTML += `
                 <div style="font-size: 0.78rem; font-weight: 800; color: var(--text-muted); margin: 16px 0 8px 4px; display: flex; align-items: center; gap: 6px;">
                   <span>🗓️</span> Önceki Ayların Şampiyonluk Arşivi
                 </div>
               `;
 
-              monthlyData.slice(1).forEach(m => {
+              pastMonths.forEach(m => {
                 listContainer.innerHTML += `
                   <div class="podium-accordion-item">
                     <div class="podium-accordion-header" onclick="this.parentElement.classList.toggle('open')">

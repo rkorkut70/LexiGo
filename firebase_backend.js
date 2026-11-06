@@ -1063,18 +1063,12 @@ window.fetchPodiumMonthlyArchive = async function(lang) {
 
     const curDate = new Date();
     const monthNames = ["Ocak", "Şubat", "Mart", "Nisan", "Mayıs", "Haziran", "Temmuz", "Ağustos", "Eylül", "Ekim", "Kasım", "Aralık"];
-    // Ayın ilk günlerinde (örneğin 1-7 Kasım) aylık şampiyonluk henüz tamamlanan önceki aya (Ekim) aittir:
-    let targetMonthIdx = curDate.getMonth();
-    let targetYear = curDate.getFullYear();
-    if (curDate.getDate() <= 7) {
-      targetMonthIdx -= 1;
-      if (targetMonthIdx < 0) {
-        targetMonthIdx = 11;
-        targetYear -= 1;
-      }
-    }
-    const curMonthKey = `${targetYear}-${String(targetMonthIdx + 1).padStart(2, '0')}`;
-    const curMonthLabel = `${monthNames[targetMonthIdx]} ${targetYear}`;
+    // Program resmi olarak 5 Kasım 2026'da yayınlandığından, geçerli şampiyonluk ayı Kasım 2026'dır.
+    // Ekim 2026 veya öncesine ait yapay kayıtlar kesinlikle oluşturulmaz/gösterilmez.
+    const curMonthIdx = curDate.getMonth();
+    const curYear = curDate.getFullYear();
+    const curMonthKey = `${curYear}-${String(curMonthIdx + 1).padStart(2, '0')}`;
+    const curMonthLabel = `${monthNames[curMonthIdx]} ${curYear}`;
 
     // Eğer haftalık arşiv henüz Firestore'da yoksa veya boşsa, geçerli düellolardan ay tablosunu dinamik oluştur
     if (!weeklyArchives || weeklyArchives.length === 0) {
@@ -1129,18 +1123,17 @@ window.fetchPodiumMonthlyArchive = async function(lang) {
       }];
     }
 
-    // Haftaları aylara göre grupla (Örn: "2026-10" / "Ekim 2026")
+    // Haftaları aylara göre grupla (Kasım 2026 ve sonrası)
     const monthMap = {};
 
     weeklyArchives.forEach(w => {
+      // Program 5 Kasım 2026'da yayınlandığından Ekim 2026 ve öncesi kayıtlar tamamen yoksayılır
+      if (w.weekId && typeof w.weekId === 'string' && w.weekId.includes('Ekim')) return;
       const d = w.timestamp instanceof Date ? w.timestamp : new Date();
       let mIdx = d.getMonth();
       let mYear = d.getFullYear();
-      if ((w.weekId && w.weekId.includes('Ekim')) || (d.getDate() <= 3 && mIdx > 0 && w.weekId && !w.weekId.includes('Kasım'))) {
-        if (w.weekId && w.weekId.includes('Ekim')) {
-          mIdx = 9; // Ekim
-        }
-      }
+      if (mYear === 2026 && mIdx < 10) return; // Kasım 2026 öncesi elendi
+
       const monthKey = `${mYear}-${String(mIdx + 1).padStart(2, '0')}`;
       const monthLabel = `${monthNames[mIdx]} ${mYear}`;
 
