@@ -12700,17 +12700,30 @@ let activeAvatarCategory = 'all';
       if (typeof window.fetchClassDuels === 'function') {
         try {
           const res = await window.fetchClassDuels(targetLang);
-          const branches = (res && res.branches) || [];
+          const rawBranches = (res && res.branches) || [];
+
+          // KURAL: Güncel hafta sıralamasında 0 ortalama XP alan şubeler kesinlikle yer almasın!
+          const branches = rawBranches.filter(b => (Number(b.avgWeeklyXp) || 0) > 0);
 
           if (listContainer) {
             listContainer.innerHTML = '';
             if (branches.length === 0) {
-              listContainer.innerHTML = '<div style="text-align:center; padding: 25px; color: var(--text-muted);">Bu dilde kayıtlı şube bulunamadı.</div>';
+              const langNameOnly = (langMeta && langMeta.name) ? langMeta.name.split(' ')[0].trim() : 'Bu dilde';
+              listContainer.innerHTML = `
+                <div style="text-align:center; padding: 35px 18px; color: var(--text-muted);">
+                  <div style="font-size: 2.2rem; margin-bottom: 10px;">⚡</div>
+                  <strong style="color: var(--text-main); font-size: 0.95rem; display: block; margin-bottom: 6px;">Henüz Puan Kazanan Şube Yok</strong>
+                  <p style="font-size: 0.8rem; margin: 0 auto; max-width: 320px; line-height: 1.45;">
+                    Bu hafta ${langNameOnly} şubelerinde henüz arenada puan toplayan bir şube bulunmuyor. Arenada ilk puanı kazanarak şubeni zirveye taşı!
+                  </p>
+                </div>
+              `;
+              if (myBar) myBar.style.display = 'none';
               return;
             }
 
-            // VS Karşılaşma Vitrini: İlk 2 şube arasındaki heyecanlı düello
-            if (branches.length >= 2 && branches[0].totalWeeklyXp > 0) {
+            // VS Karşılaşma Vitrini: İlk 2 şube arasındaki heyecanlı düello (Her ikisi de puan almışsa)
+            if (branches.length >= 2 && branches[0].avgWeeklyXp > 0 && branches[1].avgWeeklyXp > 0) {
               const b1 = branches[0];
               const b2 = branches[1];
               listContainer.innerHTML += `
@@ -12729,6 +12742,16 @@ let activeAvatarCategory = 'all';
                       <div style="font-size: 0.86rem; font-weight: 800; color: #10b981; margin-top: 2px;">Ø ${b2.avgWeeklyXp} XP</div>
                     </div>
                   </div>
+                </div>
+              `;
+            } else if (branches.length === 1 && branches[0].avgWeeklyXp > 0) {
+              const b1 = branches[0];
+              listContainer.innerHTML += `
+                <div style="background: linear-gradient(135deg, rgba(245, 158, 11, 0.15), rgba(217, 119, 6, 0.08)); border: 1.5px solid rgba(245, 158, 11, 0.4); border-radius: 14px; padding: 12px; margin-bottom: 12px; text-align: center;">
+                  <div style="font-size: 0.76rem; font-weight: 800; color: #f59e0b; letter-spacing: 0.5px; text-transform: uppercase; margin-bottom: 4px;">👑 Haftanın Tek Lider Şubesi</div>
+                  <div style="font-size: 1.25rem; font-weight: 900; color: var(--text-main);">${b1.code}</div>
+                  <div style="font-size: 0.75rem; color: var(--text-muted);">${b1.trackName ? `${b1.trackName} (${b1.level})` : ''}</div>
+                  <div style="font-size: 0.9rem; font-weight: 800; color: #10b981; margin-top: 4px;">Ø ${b1.avgWeeklyXp} XP • ${(b1.totalWeeklyXp || 0).toLocaleString()} Toplam XP</div>
                 </div>
               `;
             }
@@ -12787,6 +12810,22 @@ let activeAvatarCategory = 'all';
                 if (nameB) nameB.textContent = `Şuben: ${myB.code}`;
                 if (tagB) tagB.textContent = `👥 ${myB.studentCount} Öğrenci`;
                 if (scoreB) scoreB.textContent = `Ø ${myB.avgWeeklyXp} XP`;
+              } else if (state.userBranch) {
+                // Kullanıcının şubesi 0 XP aldığı için sıralamada yok
+                myBar.style.display = 'flex';
+                const rankB = document.getElementById('lbMyRankBadge');
+                const avB = document.getElementById('lbMyAvatar');
+                const nameB = document.getElementById('lbMyName');
+                const tagB = document.getElementById('lbMyBranchTag');
+                const scoreB = document.getElementById('lbMyScore');
+                if (rankB) rankB.textContent = `-`;
+                if (avB) {
+                  avB.innerHTML = '🏫';
+                  avB.style.fontSize = '1.2rem';
+                }
+                if (nameB) nameB.textContent = `Şuben: ${state.userBranch}`;
+                if (tagB) tagB.textContent = `Henüz Puan Yok`;
+                if (scoreB) scoreB.textContent = `Ø 0 XP`;
               } else {
                 myBar.style.display = 'none';
               }
@@ -12952,38 +12991,54 @@ let activeAvatarCategory = 'all';
             archives = await window.fetchPodiumWeeklyArchive(targetLang);
           }
 
-          // Eğer Firestore'da henüz arşiv kaydı yoksa veya eksikse, garantili şube kürsüsü oluştur
+          // Eğer Firestore'da henüz arşiv kaydı yoksa veya eksikse, güncel haftadan türet (Yalnızca > 0 puan alan şubeler)
           if (!archives || archives.length === 0) {
-            let b1 = langBranches[0] || { code: `${langPrefix} 101` };
-            let b2 = langBranches[1] || { code: `${langPrefix} 102` };
-            let b3 = langBranches[2] || { code: `${langPrefix} 103` };
-
+            let activeBranches = [];
             if (typeof window.fetchClassDuels === 'function') {
               try {
                 const duelData = await window.fetchClassDuels(targetLang);
-                if (duelData && duelData.branches && duelData.branches.length >= 3) {
-                  b1 = duelData.branches[0];
-                  b2 = duelData.branches[1];
-                  b3 = duelData.branches[2];
+                if (duelData && duelData.branches) {
+                  // KURAL: 0 ortalama XP alan şubeler güncel hafta sıralamasına ve kürsüye dahil edilmez!
+                  activeBranches = duelData.branches.filter(b => (Number(b.avgWeeklyXp) || 0) > 0);
                 }
               } catch(e) {}
             }
 
-            const rawA1 = Number(b1.avgWeeklyXp) || 0;
-            const rawA2 = Number(b2.avgWeeklyXp) || 0;
-            const rawA3 = Number(b3.avgWeeklyXp) || 0;
-            const baseAvg = Math.max(rawA1, rawA2, rawA3, 350);
+            if (activeBranches.length > 0) {
+              const b1 = activeBranches[0];
+              const b2 = activeBranches[1] || null;
+              const b3 = activeBranches[2] || null;
 
-            archives = [{
-              weekId: 'Güncel Hafta Sıralaması',
-              firstBranch: b1.code,
-              firstAvg: rawA1,
-              secondBranch: b2.code,
-              secondAvg: rawA2,
-              thirdBranch: b3.code,
-              thirdAvg: rawA3,
-              timestamp: new Date()
-            }];
+              archives = [{
+                weekId: 'Güncel Hafta Sıralaması',
+                firstBranch: b1.code,
+                firstAvg: b1.avgWeeklyXp || 0,
+                secondBranch: b2 ? b2.code : null,
+                secondAvg: b2 ? (b2.avgWeeklyXp || 0) : null,
+                thirdBranch: b3 ? b3.code : null,
+                thirdAvg: b3 ? (b3.avgWeeklyXp || 0) : null,
+                timestamp: new Date()
+              }];
+            } else {
+              archives = [];
+            }
+          }
+
+          // Eğer puan toplayan hiçbir şube yoksa kürsü oluşturulamaz, kullanıcıya bilgi verilir
+          if (!archives || archives.length === 0 || !archives[0].firstBranch || (Number(archives[0].firstAvg) || 0) <= 0) {
+            const langNameOnly = (LANG_META && LANG_META[targetLang]) ? LANG_META[targetLang].name.split(' ')[0] : 'Bu dilde';
+            if (listContainer) {
+              listContainer.innerHTML = `
+                <div style="text-align:center; padding: 40px 18px; color: var(--text-muted);">
+                  <div style="font-size: 2.4rem; margin-bottom: 10px;">🏆</div>
+                  <strong style="color: var(--text-main); font-size: 1rem; display: block; margin-bottom: 6px;">Kürsü Henüz Oluşmadı</strong>
+                  <p style="font-size: 0.82rem; margin: 0 auto; max-width: 320px; line-height: 1.45;">
+                    Bu hafta ${langNameOnly} şubelerinde henüz ortalama puan kazanan bir şube bulunmuyor. Arenada ilk puanı alarak şubeni kürsüye taşı!
+                  </p>
+                </div>
+              `;
+            }
+            return;
           }
 
           // Ayın Şampiyon Şubesi Lideri Bilgisini Hazırla (Üstte hızlı erişim vitrini)
@@ -13027,8 +13082,56 @@ let activeAvatarCategory = 'all';
             const latest = archives[0];
             const latestWeekTitle = formatWeekDisplay(latest.weekId);
             const m1 = getBranchMeta(latest.firstBranch);
-            const m2 = getBranchMeta(latest.secondBranch);
-            const m3 = getBranchMeta(latest.thirdBranch);
+            const m2 = latest.secondBranch ? getBranchMeta(latest.secondBranch) : null;
+            const m3 = latest.thirdBranch ? getBranchMeta(latest.thirdBranch) : null;
+
+            const secondColHtml = m2 ? `
+              <div class="podium-col col-second">
+                <span class="podium-rank-tag tag-second">🥈 2. ŞUBE</span>
+                <div class="podium-avatar-badge"><img src="assets/icons/icon_3d_arena.png" class="podium-3d-icon" alt="2. Şube"></div>
+                <div class="podium-branch-code">${m2.code}</div>
+                <div class="podium-branch-track">${m2.trackName || 'Şube'}</div>
+                <div class="podium-pedestal">
+                  <div class="podium-pedestal-score">${latest.secondAvg || 0}</div>
+                  <div class="podium-pedestal-label">Ort. XP</div>
+                </div>
+              </div>
+            ` : `
+              <div class="podium-col col-second" style="opacity: 0.35;">
+                <span class="podium-rank-tag tag-second" style="background: rgba(148, 163, 184, 0.2); color: var(--text-muted);">🥈 2. ŞUBE</span>
+                <div class="podium-avatar-badge" style="filter: grayscale(1); opacity: 0.5;"><img src="assets/icons/icon_3d_arena.png" class="podium-3d-icon" alt="2. Şube"></div>
+                <div class="podium-branch-code">-</div>
+                <div class="podium-branch-track">Bekleniyor</div>
+                <div class="podium-pedestal">
+                  <div class="podium-pedestal-score">-</div>
+                  <div class="podium-pedestal-label">Ort. XP</div>
+                </div>
+              </div>
+            `;
+
+            const thirdColHtml = m3 ? `
+              <div class="podium-col col-third">
+                <span class="podium-rank-tag tag-third">🥉 3. ŞUBE</span>
+                <div class="podium-avatar-badge"><img src="assets/icons/icon_3d_school.png" class="podium-3d-icon" alt="3. Şube"></div>
+                <div class="podium-branch-code">${m3.code}</div>
+                <div class="podium-branch-track">${m3.trackName || 'Şube'}</div>
+                <div class="podium-pedestal">
+                  <div class="podium-pedestal-score">${latest.thirdAvg || 0}</div>
+                  <div class="podium-pedestal-label">Ort. XP</div>
+                </div>
+              </div>
+            ` : `
+              <div class="podium-col col-third" style="opacity: 0.35;">
+                <span class="podium-rank-tag tag-third" style="background: rgba(148, 163, 184, 0.2); color: var(--text-muted);">🥉 3. ŞUBE</span>
+                <div class="podium-avatar-badge" style="filter: grayscale(1); opacity: 0.5;"><img src="assets/icons/icon_3d_school.png" class="podium-3d-icon" alt="3. Şube"></div>
+                <div class="podium-branch-code">-</div>
+                <div class="podium-branch-track">Bekleniyor</div>
+                <div class="podium-pedestal">
+                  <div class="podium-pedestal-score">-</div>
+                  <div class="podium-pedestal-label">Ort. XP</div>
+                </div>
+              </div>
+            `;
 
             const spotlightHtml = `
               <div class="podium-spotlight-card">
@@ -13044,16 +13147,7 @@ let activeAvatarCategory = 'all';
 
                 <div class="podium-stage-row">
                   <!-- 2. Şube (Gümüş) -->
-                  <div class="podium-col col-second">
-                    <span class="podium-rank-tag tag-second">🥈 2. ŞUBE</span>
-                    <div class="podium-avatar-badge"><img src="assets/icons/icon_3d_arena.png" class="podium-3d-icon" alt="2. Şube"></div>
-                    <div class="podium-branch-code">${m2.code}</div>
-                    <div class="podium-branch-track">${m2.trackName || 'Şube'}</div>
-                    <div class="podium-pedestal">
-                      <div class="podium-pedestal-score">${latest.secondAvg || 0}</div>
-                      <div class="podium-pedestal-label">Ort. XP</div>
-                    </div>
-                  </div>
+                  ${secondColHtml}
 
                   <!-- 1. Şube (Altın) -->
                   <div class="podium-col col-first">
@@ -13068,16 +13162,7 @@ let activeAvatarCategory = 'all';
                   </div>
 
                   <!-- 3. Şube (Bronz) -->
-                  <div class="podium-col col-third">
-                    <span class="podium-rank-tag tag-third">🥉 3. ŞUBE</span>
-                    <div class="podium-avatar-badge"><img src="assets/icons/icon_3d_school.png" class="podium-3d-icon" alt="3. Şube"></div>
-                    <div class="podium-branch-code">${m3.code}</div>
-                    <div class="podium-branch-track">${m3.trackName || 'Şube'}</div>
-                    <div class="podium-pedestal">
-                      <div class="podium-pedestal-score">${latest.thirdAvg || 0}</div>
-                      <div class="podium-pedestal-label">Ort. XP</div>
-                    </div>
-                  </div>
+                  ${thirdColHtml}
                 </div>
 
                 <div class="podium-summary-strip">
