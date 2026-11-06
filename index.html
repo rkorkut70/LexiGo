@@ -1938,15 +1938,30 @@
   <div id="leaderboardModal" class="modal-overlay full-screen-modal" style="z-index: 10020;">
     <div class="modal-card leaderboard-modal-card">
       <div class="modal-header leaderboard-modal-header">
-        <div style="display: flex; align-items: center; gap: 8px;">
-          <img src="assets/icons/icon_3d_trophy.png" style="width: 28px; height: 28px; object-fit: contain; filter: drop-shadow(0 2px 6px rgba(245, 158, 11, 0.45));" alt="Turnuva & Liderlik">
-          <h2 class="modal-title" style="margin: 0; font-size: 1.15rem;">Turnuva & Liderler</h2>
+        <div class="lb-brand-wrap">
+          <div class="lb-header-trophy-badge" aria-hidden="true">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"/>
+              <path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"/>
+              <path d="M4 22h16"/>
+              <path d="M10 14.66V17c0 .55-.45 1-1 1H8v4h8v-4h-1c-.55 0-1-.45-1-1v-2.34"/>
+              <path d="M18 2H6v7a6 6 0 0 0 12 0V2Z"/>
+            </svg>
+          </div>
+          <div>
+            <h2 class="modal-title">Turnuva & Liderler</h2>
+            <div class="lb-header-sub">Akademik Lig & Şube Sıralamaları</div>
+          </div>
         </div>
-        <div style="display: flex; align-items: center; gap: 6px;">
-          <button id="openTournamentGuideBtn" class="icon-btn" title="Turnuva Kuralları & Rehber" aria-label="Turnuva Kuralları" style="width: 34px; height: 34px; border-radius: 10px; font-size: 0.95rem; background: rgba(245, 158, 11, 0.15); color: #f59e0b; border: 1px solid rgba(245, 158, 11, 0.3);">
-            ❓
+        <div style="display: flex; align-items: center; gap: 8px;">
+          <button id="openTournamentGuideBtn" class="icon-btn lb-guide-btn" title="Turnuva Kuralları & Rehber" aria-label="Turnuva Kuralları">
+            <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="12" cy="12" r="10"/>
+              <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/>
+              <line x1="12" y1="17" x2="12.01" y2="17"/>
+            </svg>
           </button>
-          <button id="closeLeaderboardModalBtn" class="icon-btn" aria-label="Kapat" style="width: 34px; height: 34px; border-radius: 10px;">
+          <button id="closeLeaderboardModalBtn" class="icon-btn" aria-label="Kapat" style="width: 36px; height: 36px; border-radius: 10px;">
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
               <line x1="18" y1="6" x2="6" y2="18"></line>
               <line x1="6" y1="6" x2="18" y2="18"></line>
@@ -1955,19 +1970,23 @@
         </div>
       </div>
       
-      <!-- Sekmeler (Okul / Sınıfım / Şube Ligi / Şeref Kürsüsü) -->
+      <!-- Sekmeler (Okul / Sınıfım / Şube Ligi / Kürsü) - Minimalist & Collegiate -->
       <div class="leaderboard-tabs-nav" id="leaderboardTabsNav">
         <button type="button" class="lb-tab-btn active" data-tab="global">
-          <img src="assets/icons/icon_3d_trophy.png" class="tab-3d-icon" alt="Okul Liderliği"> Okul
+          <svg class="lb-tab-svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+          <span>Okul</span>
         </button>
         <button type="button" class="lb-tab-btn" data-tab="class">
-          <img src="assets/icons/icon_3d_home.png" class="tab-3d-icon" alt="Sınıfım"> Sınıfım
+          <svg class="lb-tab-svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c3 3 9 3 12 0v-5"/></svg>
+          <span>Sınıfım</span>
         </button>
         <button type="button" class="lb-tab-btn" data-tab="duels">
-          <img src="assets/icons/icon_3d_arena.png" class="tab-3d-icon" alt="Lig"> Şube Ligi
+          <svg class="lb-tab-svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="m14.5 17.5-11.5-11.5v-3h3l11.5 11.5"/><path d="m13 19 6-6"/><path d="m16 16 4 4"/><path d="m19 21 2-2"/><path d="m14.5 6.5 3.5-3.5h3v3l-3.5 3.5"/><path d="m5 14 4 4"/><path d="m7 17-3 3"/><path d="m3 19 2 2"/></svg>
+          <span>Şube Ligi</span>
         </button>
         <button type="button" class="lb-tab-btn" data-tab="honor">
-          <img src="assets/icons/icon_3d_crown.png" class="tab-3d-icon" alt="Kürsü"> Kürsü
+          <svg class="lb-tab-svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="m2 4 3 12h14l3-12-6 7-4-7-4 7-6-7zm3 16h14"/></svg>
+          <span>Kürsü</span>
         </button>
       </div>
 
@@ -1990,7 +2009,7 @@
         <div id="lbPanelGlobal" class="lb-panel" style="display: flex;">
           <div class="lb-global-toolbar">
             <div class="lb-toolbar-info">
-              <span class="lb-toolbar-subtitle">🌍 Tüm Diller & Kurlar</span>
+              <span class="lb-toolbar-subtitle"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align: -2px; margin-right: 4px;"><circle cx="12" cy="12" r="10"/><path d="M12 2a14.5 14.5 0 0 0 0 20 14.5 14.5 0 0 0 0-20"/><path d="M2 12h20"/></svg>Kampüs Geneli</span>
               <span id="lbTotalStudentsBadge" class="lb-total-badge">--</span>
             </div>
             <div class="lb-page-size-selector">
@@ -2035,14 +2054,22 @@
 
         <!-- PANEL 2: SINIFIM LİDERLİK TABLOSU -->
         <div id="lbPanelClass" class="lb-panel" style="display: none;">
-          <div id="lbClassHeaderCard" style="display: flex; align-items: center; justify-content: space-between; padding: 10px 14px; background: rgba(59, 130, 246, 0.1); border: 1px solid rgba(59, 130, 246, 0.25); border-radius: 12px; margin-bottom: 10px; flex-shrink: 0;">
-            <div>
-              <span id="lbClassBranchBadge" style="font-size: 0.95rem; font-weight: 800; color: #3b82f6;">🏫 Şube: -</span>
-              <div id="lbClassTrackBadge" style="font-size: 0.74rem; color: var(--text-muted);">Kur bilgisi</div>
+          <div id="lbClassHeaderCard" class="lb-collegiate-class-card">
+            <div class="lb-class-left">
+              <div class="lb-class-crest-icon" aria-hidden="true">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M22 10v6M2 10l10-5 10 5-10 5z"/>
+                  <path d="M6 12v5c3 3 9 3 12 0v-5"/>
+                </svg>
+              </div>
+              <div>
+                <span id="lbClassBranchBadge" class="lb-class-title">Şube: -</span>
+                <div id="lbClassTrackBadge" class="lb-class-sub">Kur Bilgisi</div>
+              </div>
             </div>
-            <div style="text-align: right;">
-              <span style="font-size: 0.72rem; font-weight: 700; color: #10b981; display: block;">⚡ Bu Hafta</span>
-              <span id="lbClassStudentCount" style="font-size: 0.74rem; color: var(--text-muted);">0 Öğrenci</span>
+            <div class="lb-class-right">
+              <span class="lb-class-live-pill"><span class="lb-live-pulse-dot"></span> Bu Hafta</span>
+              <span id="lbClassStudentCount" class="lb-class-count-text">0 Öğrenci</span>
             </div>
           </div>
 
@@ -2056,17 +2083,28 @@
         <!-- PANEL 3: ŞUBELER ARASI DÜELLO (LİG & EŞLEŞME) -->
         <div id="lbPanelDuels" class="lb-panel" style="display: none;">
           <!-- Haftalık Bilgi & Reset Sayacı -->
-          <div style="display: flex; align-items: center; justify-content: space-between; padding: 8px 12px; background: rgba(239, 68, 68, 0.1); border: 1px solid rgba(239, 68, 68, 0.25); border-radius: 12px; margin-bottom: 10px; flex-shrink: 0;">
-            <div style="display: flex; align-items: center; gap: 6px;">
-              <span style="font-size: 1.1rem;">🔥</span>
+          <div class="lb-collegiate-duels-bar">
+            <div class="lb-duels-bar-left">
+              <div class="lb-duels-bar-icon" aria-hidden="true">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="m14.5 17.5-11.5-11.5v-3h3l11.5 11.5"/>
+                  <path d="m13 19 6-6"/>
+                  <path d="m16 16 4 4"/>
+                  <path d="m19 21 2-2"/>
+                  <path d="m14.5 6.5 3.5-3.5h3v3l-3.5 3.5"/>
+                  <path d="m5 14 4 4"/>
+                  <path d="m7 17-3 3"/>
+                  <path d="m3 19 2 2"/>
+                </svg>
+              </div>
               <div>
-                <strong style="font-size: 0.85rem; color: #ef4444; display: block;">Haftalık Şube Ligi</strong>
-                <span id="lbDuelLangBadge" style="font-size: 0.72rem; color: var(--text-muted);">Aynı dildeki tüm şubeler yarışıyor</span>
+                <strong class="lb-duels-title">Haftalık Şube Düelloları</strong>
+                <span id="lbDuelLangBadge" class="lb-duels-sub">Hazırlık Şubeleri Lig Tablosu</span>
               </div>
             </div>
-            <div style="text-align: right;">
-              <span style="font-size: 0.72rem; font-weight: 800; padding: 3px 8px; border-radius: 8px; background: rgba(239, 68, 68, 0.2); color: #ef4444; display: block;">Adil Ortalama XP</span>
-              <span id="lbDuelResetCountdown" style="font-size: 0.68rem; color: var(--text-muted);">Pazar 23:59 sıfırlanır</span>
+            <div class="lb-duels-bar-right">
+              <span class="lb-duels-metric-chip">Adil Ortalama XP</span>
+              <span id="lbDuelResetCountdown" class="lb-duels-countdown-text"><span class="lb-live-pulse-dot"></span> Pazar 23:59 Sıfırlanır</span>
             </div>
           </div>
 
@@ -2084,13 +2122,16 @@
             <!-- Dönem Segmenti: Haftalık / Aylık / Genel Lig -->
             <div class="podium-period-nav" id="podiumPeriodNav">
               <button type="button" class="podium-period-btn active" data-period="weekly">
-                <span>⚡</span> Haftalık
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+                <span>Haftalık</span>
               </button>
               <button type="button" class="podium-period-btn" data-period="monthly">
-                <span>👑</span> Ayın Şampiyonu
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="m2 4 3 12h14l3-12-6 7-4-7-4 7-6-7zm3 16h14"/></svg>
+                <span>Ayın Şampiyonu</span>
               </button>
               <button type="button" class="podium-period-btn" data-period="alltime">
-                <span>🏛️</span> Genel Lig
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+                <span>Genel Lig</span>
               </button>
             </div>
 
@@ -2110,14 +2151,16 @@
 
           <!-- Dinamik Bilgi / Başlık Şeridi -->
           <div id="podiumPeriodInfoBar" class="podium-info-bar">
-            <div style="display: flex; align-items: center; gap: 8px;">
-              <span id="podiumInfoIcon" style="font-size: 1.25rem;">⚡</span>
+            <div style="display: flex; align-items: center; gap: 10px;">
+              <div id="podiumInfoIconWrap" class="podium-info-icon-wrap" aria-hidden="true">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="m2 4 3 12h14l3-12-6 7-4-7-4 7-6-7zm3 16h14"/></svg>
+              </div>
               <div>
-                <strong id="podiumInfoTitle" style="font-size: 0.85rem; color: #f59e0b; display: block;">Haftalık Şampiyon Şubeler</strong>
-                <span id="podiumInfoDesc" style="font-size: 0.72rem; color: var(--text-muted);">Tamamlanan her haftanın kürsüye çıkan ilk 3 şubesi</span>
+                <strong id="podiumInfoTitle" class="podium-info-title">Haftalık Şampiyon Şubeler</strong>
+                <span id="podiumInfoDesc" class="podium-info-desc">Tamamlanan her haftanın kürsüye çıkan ilk 3 şubesi</span>
               </div>
             </div>
-            <span id="podiumInfoBadge" style="font-size: 0.72rem; font-weight: 800; padding: 4px 10px; border-radius: 10px; background: rgba(245, 158, 11, 0.18); color: #f59e0b; border: 1px solid rgba(245, 158, 11, 0.35);">
+            <span id="podiumInfoBadge" class="podium-info-badge">
               Haftalık Arşiv
             </span>
           </div>
