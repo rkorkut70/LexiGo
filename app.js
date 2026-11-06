@@ -13606,6 +13606,7 @@ let activeAvatarCategory = 'all';
     // Global Liderlik Tablosu Durumu (Sayfalama ve Önbellek)
     let lbGlobalPageSize = 25;
     let lbGlobalCurrentPage = 1;
+    let lbGlobalTotalPages = 1;
     let lbGlobalCachedUsers = null;
 
     function formatLbRegistrationDate(timestamp) {
@@ -13629,8 +13630,10 @@ let activeAvatarCategory = 'all';
       const myBar = document.getElementById('lbCurrentUserBar');
       const totalBadge = document.getElementById('lbTotalStudentsBadge');
       const paginationBar = document.getElementById('lbPaginationBar');
+      const firstBtn = document.getElementById('lbFirstPageBtn');
       const prevBtn = document.getElementById('lbPrevPageBtn');
       const nextBtn = document.getElementById('lbNextPageBtn');
+      const lastBtn = document.getElementById('lbLastPageBtn');
       const pageIndicator = document.getElementById('lbPageIndicator');
 
       if (myBar) myBar.style.display = 'none';
@@ -13657,10 +13660,21 @@ let activeAvatarCategory = 'all';
         }
       });
 
-      // Sayfa gezinme butonları dinleyicileri
-      if (!prevBtn?._lbBound && prevBtn && nextBtn) {
+      // Sayfa gezinme butonları dinleyicileri (İlk, Geri, İleri, Son)
+      if (!firstBtn?._lbBound && firstBtn && prevBtn && nextBtn && lastBtn) {
+        firstBtn._lbBound = true;
         prevBtn._lbBound = true;
         nextBtn._lbBound = true;
+        lastBtn._lbBound = true;
+
+        firstBtn.addEventListener('click', () => {
+          if (lbGlobalCurrentPage > 1) {
+            lbGlobalCurrentPage = 1;
+            renderGlobalLeaderboard(false);
+            if (listContainer) listContainer.scrollTop = 0;
+          }
+        });
+
         prevBtn.addEventListener('click', () => {
           if (lbGlobalCurrentPage > 1) {
             lbGlobalCurrentPage--;
@@ -13668,10 +13682,21 @@ let activeAvatarCategory = 'all';
             if (listContainer) listContainer.scrollTop = 0;
           }
         });
+
         nextBtn.addEventListener('click', () => {
-          lbGlobalCurrentPage++;
-          renderGlobalLeaderboard(false);
-          if (listContainer) listContainer.scrollTop = 0;
+          if (lbGlobalCurrentPage < lbGlobalTotalPages) {
+            lbGlobalCurrentPage++;
+            renderGlobalLeaderboard(false);
+            if (listContainer) listContainer.scrollTop = 0;
+          }
+        });
+
+        lastBtn.addEventListener('click', () => {
+          if (lbGlobalCurrentPage < lbGlobalTotalPages) {
+            lbGlobalCurrentPage = lbGlobalTotalPages;
+            renderGlobalLeaderboard(false);
+            if (listContainer) listContainer.scrollTop = 0;
+          }
         });
       }
 
@@ -13765,20 +13790,22 @@ let activeAvatarCategory = 'all';
       }
 
       // Sayfalama Hesabı
-      const totalPages = Math.max(1, Math.ceil(allDisplayUsers.length / lbGlobalPageSize));
-      if (lbGlobalCurrentPage > totalPages) lbGlobalCurrentPage = totalPages;
+      lbGlobalTotalPages = Math.max(1, Math.ceil(allDisplayUsers.length / lbGlobalPageSize));
+      if (lbGlobalCurrentPage > lbGlobalTotalPages) lbGlobalCurrentPage = lbGlobalTotalPages;
       if (lbGlobalCurrentPage < 1) lbGlobalCurrentPage = 1;
 
       const startIndex = (lbGlobalCurrentPage - 1) * lbGlobalPageSize;
       const endIndex = startIndex + lbGlobalPageSize;
       const pageSlice = allDisplayUsers.slice(startIndex, endIndex);
 
-      // Sayfalama Çubuğunu Güncelle
+      // Sayfalama Çubuğunu Güncelle (İlk Sayfa, Geri, İleri, Son Sayfa)
       if (paginationBar) {
-        paginationBar.style.display = totalPages > 1 ? 'flex' : (allDisplayUsers.length > 10 ? 'flex' : 'none');
+        paginationBar.style.display = lbGlobalTotalPages > 1 ? 'flex' : (allDisplayUsers.length > 10 ? 'flex' : 'none');
+        if (firstBtn) firstBtn.disabled = (lbGlobalCurrentPage <= 1);
         if (prevBtn) prevBtn.disabled = (lbGlobalCurrentPage <= 1);
-        if (nextBtn) nextBtn.disabled = (lbGlobalCurrentPage >= totalPages);
-        if (pageIndicator) pageIndicator.textContent = `Sayfa ${lbGlobalCurrentPage} / ${totalPages}`;
+        if (nextBtn) nextBtn.disabled = (lbGlobalCurrentPage >= lbGlobalTotalPages);
+        if (lastBtn) lastBtn.disabled = (lbGlobalCurrentPage >= lbGlobalTotalPages);
+        if (pageIndicator) pageIndicator.textContent = `Sayfa ${lbGlobalCurrentPage} / ${lbGlobalTotalPages}`;
       }
 
       // Çizim

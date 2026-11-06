@@ -20865,12 +20865,12 @@ html:not([data-theme="dark"]) .custom-confirm-card .confirm-cancel-btn:hover {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 12px;
-  padding: 10px 14px;
+  gap: 8px;
+  padding: 8px 12px;
   margin-top: 8px;
   background: rgba(255, 255, 255, 0.04);
   border: 1px solid rgba(255, 255, 255, 0.08);
-  border-radius: 12px;
+  border-radius: 14px;
   flex-shrink: 0;
 }
 
@@ -20879,12 +20879,20 @@ html:not([data-theme="dark"]) .custom-confirm-card .confirm-cancel-btn:hover {
   border-color: #e2e8f0;
 }
 
+.lb-page-nav-group {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  flex-shrink: 0;
+}
+
 .lb-page-nav-btn {
   display: inline-flex;
   align-items: center;
-  gap: 6px;
-  padding: 6px 14px;
-  font-size: 0.78rem;
+  justify-content: center;
+  gap: 4px;
+  padding: 6px 10px;
+  font-size: 0.74rem;
   font-weight: 800;
   background: rgba(255, 255, 255, 0.08);
   border: 1px solid rgba(255, 255, 255, 0.12);
@@ -20893,12 +20901,18 @@ html:not([data-theme="dark"]) .custom-confirm-card .confirm-cancel-btn:hover {
   cursor: pointer;
   transition: all 0.15s ease;
   user-select: none;
+  min-height: 32px;
 }
 
 [data-theme="light"] .lb-page-nav-btn {
   background: #ffffff;
   border-color: #cbd5e1;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+}
+
+.lb-page-nav-btn.lb-nav-quick {
+  background: rgba(59, 130, 246, 0.1);
+  border-color: rgba(59, 130, 246, 0.25);
+  color: var(--accent, #3b82f6);
 }
 
 .lb-page-nav-btn:hover:not(:disabled) {
@@ -20909,16 +20923,22 @@ html:not([data-theme="dark"]) .custom-confirm-card .confirm-cancel-btn:hover {
 }
 
 .lb-page-nav-btn:disabled {
-  opacity: 0.35;
+  opacity: 0.28;
   cursor: not-allowed;
   transform: none;
 }
 
+.lb-page-indicator-wrap {
+  flex: 1;
+  text-align: center;
+  min-width: 0;
+}
+
 .lb-page-indicator {
-  font-size: 0.78rem;
+  font-size: 0.76rem;
   font-weight: 800;
   color: var(--text-main);
-  text-align: center;
+  white-space: nowrap;
 }
 
 /* Bölüm Ayracı: "Henüz Arenaya Katılmayanlar" */

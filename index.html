@@ -1994,11 +1994,11 @@
               <span id="lbTotalStudentsBadge" class="lb-total-badge">--</span>
             </div>
             <div class="lb-page-size-selector">
-              <span class="lb-page-size-label">Göster:</span>
+              <span class="lb-page-size-label">Kayıt:</span>
               <div class="lb-page-size-pills" id="lbPageSizePills">
-                <button type="button" class="lb-size-pill active" data-size="25">25</button>
-                <button type="button" class="lb-size-pill" data-size="50">50</button>
-                <button type="button" class="lb-size-pill" data-size="100">100</button>
+                <button type="button" class="lb-size-pill active" data-size="25" title="Sayfa başına 25 kayıt">25</button>
+                <button type="button" class="lb-size-pill" data-size="50" title="Sayfa başına 50 kayıt">50</button>
+                <button type="button" class="lb-size-pill" data-size="100" title="Sayfa başına 100 kayıt">100</button>
               </div>
             </div>
           </div>
@@ -2007,17 +2007,29 @@
             <!-- JS ile doldurulur -->
           </div>
 
-          <!-- Sayfalama Gezinti Alt Çubuğu -->
+          <!-- Sayfalama Gezinti Alt Çubuğu (İlk Sayfa, Önceki, Sayfa X/Y, Sonraki, Son Sayfa) -->
           <div class="lb-pagination-bar" id="lbPaginationBar" style="display: none;">
-            <button type="button" class="lb-page-nav-btn" id="lbPrevPageBtn" disabled aria-label="Önceki Sayfa">
-              <span>◀</span> Önceki
-            </button>
-            <div class="lb-page-indicator" id="lbPageIndicator">
-              Sayfa 1 / 1
+            <div class="lb-page-nav-group">
+              <button type="button" class="lb-page-nav-btn lb-nav-quick" id="lbFirstPageBtn" disabled title="Doğrudan İlk Sayfaya Git" aria-label="İlk Sayfa">
+                <span>«</span> İlk
+              </button>
+              <button type="button" class="lb-page-nav-btn" id="lbPrevPageBtn" disabled title="Önceki Sayfa" aria-label="Önceki Sayfa">
+                <span>‹</span> Geri
+              </button>
             </div>
-            <button type="button" class="lb-page-nav-btn" id="lbNextPageBtn" disabled aria-label="Sonraki Sayfa">
-              Sonraki <span>▶</span>
-            </button>
+
+            <div class="lb-page-indicator-wrap">
+              <div class="lb-page-indicator" id="lbPageIndicator">Sayfa 1 / 1</div>
+            </div>
+
+            <div class="lb-page-nav-group">
+              <button type="button" class="lb-page-nav-btn" id="lbNextPageBtn" disabled title="Sonraki Sayfa" aria-label="Sonraki Sayfa">
+                İleri <span>›</span>
+              </button>
+              <button type="button" class="lb-page-nav-btn lb-nav-quick" id="lbLastPageBtn" disabled title="Doğrudan Son Sayfaya Git" aria-label="Son Sayfa">
+                Son <span>»</span>
+              </button>
+            </div>
           </div>
         </div>
 
