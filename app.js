@@ -12702,129 +12702,192 @@ let activeAvatarCategory = 'all';
           const res = await window.fetchClassDuels(targetLang);
           const rawBranches = (res && res.branches) || [];
 
-          // KURAL: Güncel hafta sıralamasında 0 ortalama XP alan şubeler kesinlikle yer almasın!
-          const branches = rawBranches.filter(b => (Number(b.avgWeeklyXp) || 0) > 0);
-
           if (listContainer) {
             listContainer.innerHTML = '';
-            if (branches.length === 0) {
-              const langNameOnly = (langMeta && langMeta.name) ? langMeta.name.split(' ')[0].trim() : 'Bu dilde';
-              listContainer.innerHTML = `
-                <div style="text-align:center; padding: 35px 18px; color: var(--text-muted);">
-                  <div style="font-size: 2.2rem; margin-bottom: 10px;">⚡</div>
-                  <strong style="color: var(--text-main); font-size: 0.95rem; display: block; margin-bottom: 6px;">Henüz Puan Kazanan Şube Yok</strong>
-                  <p style="font-size: 0.8rem; margin: 0 auto; max-width: 320px; line-height: 1.45;">
-                    Bu hafta ${langNameOnly} şubelerinde henüz arenada puan toplayan bir şube bulunmuyor. Arenada ilk puanı kazanarak şubeni zirveye taşı!
-                  </p>
-                </div>
-              `;
+            if (rawBranches.length === 0) {
+              listContainer.innerHTML = '<div style="text-align:center; padding: 25px; color: var(--text-muted);">Bu dilde kayıtlı şube bulunamadı.</div>';
               if (myBar) myBar.style.display = 'none';
               return;
             }
 
-            // VS Karşılaşma Vitrini: İlk 2 şube arasındaki heyecanlı düello (Her ikisi de puan almışsa)
-            if (branches.length >= 2 && branches[0].avgWeeklyXp > 0 && branches[1].avgWeeklyXp > 0) {
-              const b1 = branches[0];
-              const b2 = branches[1];
+            // 1. GRUP: PUAN ALMIŞ ŞUBELER (avgWeeklyXp > 0)
+            const activeBranches = rawBranches
+              .filter(b => (Number(b.avgWeeklyXp) || 0) > 0)
+              .sort((a, b) => (b.avgWeeklyXp - a.avgWeeklyXp) || (b.totalWeeklyXp - a.totalWeeklyXp));
+
+            // 2. GRUP: HENÜZ HERHANGİ BİR ÖĞRENCİNİN YARIŞMADIĞI ŞUBELER (0 XP)
+            const unrankedBranches = rawBranches
+              .filter(b => (Number(b.avgWeeklyXp) || 0) === 0)
+              .sort((a, b) => a.code.localeCompare(b.code, undefined, { numeric: true }));
+
+            // Eğer hiç puan almış şube yoksa bilgilendirme kartı göster
+            if (activeBranches.length === 0) {
+              const langNameOnly = (langMeta && langMeta.name) ? langMeta.name.split(' ')[0].trim() : 'Bu dilde';
               listContainer.innerHTML += `
-                <div style="background: linear-gradient(135deg, rgba(239, 68, 68, 0.15), rgba(59, 130, 246, 0.15)); border: 2px solid rgba(239, 68, 68, 0.35); border-radius: 14px; padding: 12px; margin-bottom: 12px; text-align: center;">
-                  <div style="font-size: 0.76rem; font-weight: 800; color: #ef4444; letter-spacing: 0.5px; text-transform: uppercase; margin-bottom: 6px;">⚔️ Zirve Düellosu</div>
-                  <div style="display: flex; align-items: center; justify-content: space-around; gap: 8px;">
-                    <div style="flex: 1; text-align: center;">
-                      <div style="font-size: 1.15rem; font-weight: 900; color: #f59e0b;">👑 ${b1.code}</div>
-                      <div style="font-size: 0.72rem; color: var(--text-muted); font-weight: 600;">${b1.trackName ? `${b1.trackName} (${b1.level})` : (b1.name && b1.name !== b1.code ? b1.name : 'Hazırlık')}</div>
-                      <div style="font-size: 0.86rem; font-weight: 800; color: #10b981; margin-top: 2px;">Ø ${b1.avgWeeklyXp} XP</div>
-                    </div>
-                    <div style="font-size: 1.3rem; font-weight: 900; color: #ef4444;">VS</div>
-                    <div style="flex: 1; text-align: center;">
-                      <div style="font-size: 1.15rem; font-weight: 900; color: #3b82f6;">🛡️ ${b2.code}</div>
-                      <div style="font-size: 0.72rem; color: var(--text-muted); font-weight: 600;">${b2.trackName ? `${b2.trackName} (${b2.level})` : (b2.name && b2.name !== b2.code ? b2.name : 'Hazırlık')}</div>
-                      <div style="font-size: 0.86rem; font-weight: 800; color: #10b981; margin-top: 2px;">Ø ${b2.avgWeeklyXp} XP</div>
+                <div style="background: rgba(239, 68, 68, 0.08); border: 1.5px dashed rgba(239, 68, 68, 0.35); border-radius: 14px; padding: 14px 16px; margin-bottom: 14px; text-align: center;">
+                  <div style="font-size: 1.5rem; margin-bottom: 4px;">⚡</div>
+                  <strong style="color: var(--text-main); font-size: 0.92rem; display: block; margin-bottom: 4px;">Bu Hafta Henüz Puan Alan Şube Yok</strong>
+                  <p style="font-size: 0.78rem; color: var(--text-muted); margin: 0 auto; max-width: 320px; line-height: 1.4;">
+                    ${langNameOnly} şubelerinde bu hafta henüz arenada puan toplayan bir şube bulunmuyor. Arenada ilk puanı alarak şubeni zirveye taşı!
+                  </p>
+                </div>
+              `;
+            } else {
+              // VS Karşılaşma Vitrini: İlk 2 şube arasındaki heyecanlı düello (Her ikisi de puan almışsa)
+              if (activeBranches.length >= 2 && activeBranches[0].avgWeeklyXp > 0 && activeBranches[1].avgWeeklyXp > 0) {
+                const b1 = activeBranches[0];
+                const b2 = activeBranches[1];
+                listContainer.innerHTML += `
+                  <div style="background: linear-gradient(135deg, rgba(239, 68, 68, 0.15), rgba(59, 130, 246, 0.15)); border: 2px solid rgba(239, 68, 68, 0.35); border-radius: 14px; padding: 12px; margin-bottom: 12px; text-align: center;">
+                    <div style="font-size: 0.76rem; font-weight: 800; color: #ef4444; letter-spacing: 0.5px; text-transform: uppercase; margin-bottom: 6px;">⚔️ Zirve Düellosu</div>
+                    <div style="display: flex; align-items: center; justify-content: space-around; gap: 8px;">
+                      <div style="flex: 1; text-align: center;">
+                        <div style="font-size: 1.15rem; font-weight: 900; color: #f59e0b;">👑 ${b1.code}</div>
+                        <div style="font-size: 0.72rem; color: var(--text-muted); font-weight: 600;">${b1.trackName ? `${b1.trackName} (${b1.level})` : (b1.name && b1.name !== b1.code ? b1.name : 'Hazırlık')}</div>
+                        <div style="font-size: 0.86rem; font-weight: 800; color: #10b981; margin-top: 2px;">Ø ${b1.avgWeeklyXp} XP</div>
+                      </div>
+                      <div style="font-size: 1.3rem; font-weight: 900; color: #ef4444;">VS</div>
+                      <div style="flex: 1; text-align: center;">
+                        <div style="font-size: 1.15rem; font-weight: 900; color: #3b82f6;">🛡️ ${b2.code}</div>
+                        <div style="font-size: 0.72rem; color: var(--text-muted); font-weight: 600;">${b2.trackName ? `${b2.trackName} (${b2.level})` : (b2.name && b2.name !== b2.code ? b2.name : 'Hazırlık')}</div>
+                        <div style="font-size: 0.86rem; font-weight: 800; color: #10b981; margin-top: 2px;">Ø ${b2.avgWeeklyXp} XP</div>
+                      </div>
                     </div>
                   </div>
-                </div>
-              `;
-            } else if (branches.length === 1 && branches[0].avgWeeklyXp > 0) {
-              const b1 = branches[0];
-              listContainer.innerHTML += `
-                <div style="background: linear-gradient(135deg, rgba(245, 158, 11, 0.15), rgba(217, 119, 6, 0.08)); border: 1.5px solid rgba(245, 158, 11, 0.4); border-radius: 14px; padding: 12px; margin-bottom: 12px; text-align: center;">
-                  <div style="font-size: 0.76rem; font-weight: 800; color: #f59e0b; letter-spacing: 0.5px; text-transform: uppercase; margin-bottom: 4px;">👑 Haftanın Tek Lider Şubesi</div>
-                  <div style="font-size: 1.25rem; font-weight: 900; color: var(--text-main);">${b1.code}</div>
-                  <div style="font-size: 0.75rem; color: var(--text-muted);">${b1.trackName ? `${b1.trackName} (${b1.level})` : ''}</div>
-                  <div style="font-size: 0.9rem; font-weight: 800; color: #10b981; margin-top: 4px;">Ø ${b1.avgWeeklyXp} XP • ${(b1.totalWeeklyXp || 0).toLocaleString()} Toplam XP</div>
-                </div>
-              `;
+                `;
+              } else if (activeBranches.length === 1 && activeBranches[0].avgWeeklyXp > 0) {
+                const b1 = activeBranches[0];
+                listContainer.innerHTML += `
+                  <div style="background: linear-gradient(135deg, rgba(245, 158, 11, 0.15), rgba(217, 119, 6, 0.08)); border: 1.5px solid rgba(245, 158, 11, 0.4); border-radius: 14px; padding: 12px; margin-bottom: 12px; text-align: center;">
+                    <div style="font-size: 0.76rem; font-weight: 800; color: #f59e0b; letter-spacing: 0.5px; text-transform: uppercase; margin-bottom: 4px;">👑 Haftanın Tek Lider Şubesi</div>
+                    <div style="font-size: 1.25rem; font-weight: 900; color: var(--text-main);">${b1.code}</div>
+                    <div style="font-size: 0.75rem; color: var(--text-muted);">${b1.trackName ? `${b1.trackName} (${b1.level})` : ''}</div>
+                    <div style="font-size: 0.9rem; font-weight: 800; color: #10b981; margin-top: 4px;">Ø ${b1.avgWeeklyXp} XP • ${(b1.totalWeeklyXp || 0).toLocaleString()} Toplam XP</div>
+                  </div>
+                `;
+              }
+
+              // PUAN ALAN ŞUBELERİN LİSTESİ (1, 2, 3...)
+              activeBranches.forEach((b, idx) => {
+                const rankNum = idx + 1;
+                const isMyBranch = (state.userBranch && b.code === state.userBranch);
+                const rankClass = rankNum === 1 ? 'rank-1' : (rankNum === 2 ? 'rank-2' : (rankNum === 3 ? 'rank-3' : ''));
+                const highlightStyle = isMyBranch ? 'background: rgba(59, 130, 246, 0.16); border: 2px solid var(--accent);' : '';
+                const branchDetail = (b.trackName && b.level) ? `(${b.trackName} • ${b.level})` : (b.name && b.name !== b.code ? `(${b.name})` : '');
+                const rankDisplayHtml = (idx === 0) 
+                  ? `<div class="lb-rank" title="Lig Şampiyonu">1</div>` 
+                  : `<div class="lb-rank">${idx + 1}</div>`;
+                const topBadgeHtml = getTop3BadgeHtml(rankNum, true, false);
+
+                listContainer.innerHTML += `
+                  <div class="leaderboard-item ${rankClass}" style="${highlightStyle}">
+                    ${rankDisplayHtml}
+                    <div class="lb-avatar" style="font-size: 1.1rem; font-weight: 800; border-radius: 10px; background: rgba(59, 130, 246, 0.15); color: #3b82f6; width: 36px; height: 36px; display: flex; align-items: center; justify-content: center;">
+                      🏫
+                    </div>
+                    <div class="lb-info">
+                      <div style="display:flex; align-items:center; gap:6px;">
+                        <div class="lb-name" style="font-weight: 800;">${b.code} ${branchDetail ? `<span style="font-size:0.75rem; font-weight:600; color:var(--text-muted); margin-left:4px;">${branchDetail}</span>` : ''}</div>
+                        ${isMyBranch ? '<span style="font-size:0.72rem; font-weight:800; color:var(--accent);">(Şuben)</span>' : ''}
+                      </div>
+                      <div class="lb-badge" style="font-size: 0.72rem; color: var(--text-muted);">
+                        👥 ${(b.activeStudentCount || b.studentCount || 0)} Öğrenci • Toplam: ${(b.totalWeeklyXp || 0).toLocaleString()} XP
+                      </div>
+                    </div>
+                    ${topBadgeHtml}
+                    <div style="text-align: right; flex-shrink: 0;">
+                      <div class="lb-score" style="color: #ef4444; font-size: 0.95rem; font-weight: 900;">Ø ${(b.avgWeeklyXp || 0).toLocaleString()} XP</div>
+                      <span style="font-size: 0.68rem; color: var(--text-muted);">Haftalık Ort. XP</span>
+                    </div>
+                  </div>
+                `;
+              });
             }
 
-            branches.forEach((b, idx) => {
-              const rankNum = idx + 1;
-              const isMyBranch = (state.userBranch && b.code === state.userBranch);
-              const rankClass = rankNum === 1 ? 'rank-1' : (rankNum === 2 ? 'rank-2' : (rankNum === 3 ? 'rank-3' : ''));
-              const highlightStyle = isMyBranch ? 'background: rgba(59, 130, 246, 0.16); border: 2px solid var(--accent);' : '';
-              const branchDetail = (b.trackName && b.level) ? `(${b.trackName} • ${b.level})` : (b.name && b.name !== b.code ? `(${b.name})` : '');
-              const rankDisplayHtml = (idx === 0) 
-                ? `<div class="lb-rank" title="Lig Şampiyonu">1</div>` 
-                : `<div class="lb-rank">${idx + 1}</div>`;
-              const topBadgeHtml = getTop3BadgeHtml(rankNum, true, false);
-
+            // HENÜZ HERHANGİ BİR ÖĞRENCİNİN YARIŞMADIĞI ŞUBELER (AYRI BAŞLIK ALTINDA)
+            if (unrankedBranches.length > 0) {
               listContainer.innerHTML += `
-                <div class="leaderboard-item ${rankClass}" style="${highlightStyle}">
-                  ${rankDisplayHtml}
-                  <div class="lb-avatar" style="font-size: 1.1rem; font-weight: 800; border-radius: 10px; background: rgba(59, 130, 246, 0.15); color: #3b82f6; width: 36px; height: 36px; display: flex; align-items: center; justify-content: center;">
-                    🏫
+                <div class="lb-section-divider" style="margin-top: 16px;">
+                  <div class="lb-section-divider-content">
+                    <span class="lb-section-icon">🏫</span>
+                    <span class="lb-section-title">Henüz Arenaya Katılmayan Şubeler</span>
+                    <span class="lb-section-count">${unrankedBranches.length} Şube</span>
                   </div>
-                  <div class="lb-info">
-                    <div style="display:flex; align-items:center; gap:6px;">
-                      <div class="lb-name" style="font-weight: 800;">${b.code} ${branchDetail ? `<span style="font-size:0.75rem; font-weight:600; color:var(--text-muted); margin-left:4px;">${branchDetail}</span>` : ''}</div>
-                      ${isMyBranch ? '<span style="font-size:0.72rem; font-weight:800; color:var(--accent);">(Şuben)</span>' : ''}
-                    </div>
-                    <div class="lb-badge" style="font-size: 0.72rem; color: var(--text-muted);">
-                      👥 ${(b.activeStudentCount || b.studentCount || 0)} Öğrenci • Toplam: ${(b.totalWeeklyXp || 0).toLocaleString()} XP
-                    </div>
-                  </div>
-                  ${topBadgeHtml}
-                  <div style="text-align: right; flex-shrink: 0;">
-                    <div class="lb-score" style="color: #ef4444; font-size: 0.95rem; font-weight: 900;">Ø ${(b.avgWeeklyXp || 0).toLocaleString()} XP</div>
-                    <span style="font-size: 0.68rem; color: var(--text-muted);">Haftalık Ort. XP</span>
-                  </div>
+                  <p class="lb-section-desc">Bu hafta henüz öğrencileri arenada yarışıp puan toplamamış hazırlık şubeleri.</p>
                 </div>
               `;
-            });
+
+              unrankedBranches.forEach(b => {
+                const isMyBranch = (state.userBranch && b.code === state.userBranch);
+                const highlightStyle = isMyBranch ? 'background: rgba(59, 130, 246, 0.1); border-left: 4px solid var(--accent);' : '';
+                const branchDetail = (b.trackName && b.level) ? `(${b.trackName} • ${b.level})` : (b.name && b.name !== b.code ? `(${b.name})` : '');
+
+                listContainer.innerHTML += `
+                  <div class="leaderboard-item lb-unranked-item" style="${highlightStyle}">
+                    <div class="lb-rank lb-rank-unranked" title="Bu hafta henüz yarışmadı">-</div>
+                    <div class="lb-avatar" style="font-size: 1.1rem; font-weight: 800; border-radius: 10px; background: rgba(148, 163, 184, 0.15); color: var(--text-muted); width: 36px; height: 36px; display: flex; align-items: center; justify-content: center;">
+                      🏫
+                    </div>
+                    <div class="lb-info">
+                      <div style="display:flex; align-items:center; gap:6px;">
+                        <div class="lb-name" style="font-weight: 800;">${b.code} ${branchDetail ? `<span style="font-size:0.75rem; font-weight:600; color:var(--text-muted); margin-left:4px;">${branchDetail}</span>` : ''}</div>
+                        ${isMyBranch ? '<span style="font-size:0.72rem; font-weight:800; color:var(--accent);">(Şuben)</span>' : ''}
+                      </div>
+                      <div class="lb-badge" style="font-size: 0.72rem; color: var(--text-muted);">
+                        👥 ${(b.studentCount || 0)} Kayıtlı Öğrenci • Hazırlanıyor
+                      </div>
+                    </div>
+                    <div style="text-align: right; flex-shrink: 0;">
+                      <div class="lb-score lb-score-zero">Ø 0 XP</div>
+                      <span style="font-size: 0.66rem; color: var(--text-muted);">Puan Yok</span>
+                    </div>
+                  </div>
+                `;
+              });
+            }
 
             // Alt bar şube durumu
             if (myBar) {
-              const myBranchIdx = branches.findIndex(b => state.userBranch && b.code === state.userBranch);
-              if (myBranchIdx !== -1) {
-                const myB = branches[myBranchIdx];
+              const myActiveIdx = activeBranches.findIndex(b => state.userBranch && b.code === state.userBranch);
+              if (myActiveIdx !== -1) {
+                const myB = activeBranches[myActiveIdx];
                 myBar.style.display = 'flex';
                 const rankB = document.getElementById('lbMyRankBadge');
                 const avB = document.getElementById('lbMyAvatar');
                 const nameB = document.getElementById('lbMyName');
                 const tagB = document.getElementById('lbMyBranchTag');
                 const scoreB = document.getElementById('lbMyScore');
-                if (rankB) rankB.textContent = `#${myBranchIdx + 1}`;
+                if (rankB) {
+                  rankB.textContent = `#${myActiveIdx + 1}`;
+                  rankB.className = '';
+                  rankB.style.opacity = '1';
+                }
                 if (avB) {
                   avB.innerHTML = '🏫';
                   avB.style.fontSize = '1.2rem';
                 }
                 if (nameB) nameB.textContent = `Şuben: ${myB.code}`;
-                if (tagB) tagB.textContent = `👥 ${myB.studentCount} Öğrenci`;
+                if (tagB) tagB.textContent = `👥 ${myB.activeStudentCount || myB.studentCount} Öğrenci`;
                 if (scoreB) scoreB.textContent = `Ø ${myB.avgWeeklyXp} XP`;
               } else if (state.userBranch) {
-                // Kullanıcının şubesi 0 XP aldığı için sıralamada yok
+                // Kullanıcının şubesi henüz yarışmamış grupta (0 XP)
                 myBar.style.display = 'flex';
                 const rankB = document.getElementById('lbMyRankBadge');
                 const avB = document.getElementById('lbMyAvatar');
                 const nameB = document.getElementById('lbMyName');
                 const tagB = document.getElementById('lbMyBranchTag');
                 const scoreB = document.getElementById('lbMyScore');
-                if (rankB) rankB.textContent = `-`;
+                if (rankB) {
+                  rankB.textContent = `-`;
+                  rankB.className = 'lb-rank lb-rank-unranked';
+                  rankB.style.opacity = '0.7';
+                }
                 if (avB) {
                   avB.innerHTML = '🏫';
                   avB.style.fontSize = '1.2rem';
                 }
                 if (nameB) nameB.textContent = `Şuben: ${state.userBranch}`;
-                if (tagB) tagB.textContent = `Henüz Puan Yok`;
+                if (tagB) tagB.textContent = `Henüz Arenada Yarışmadı`;
                 if (scoreB) scoreB.textContent = `Ø 0 XP`;
               } else {
                 myBar.style.display = 'none';
