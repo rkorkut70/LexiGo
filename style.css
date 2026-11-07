@@ -11818,24 +11818,27 @@ html:not([data-theme="dark"]) .card-unlearn-pill {
   transform: rotate(30deg);
 }
 
+/* ============================================================
+   ÖĞRENCİ PROFİLİ MODALI (AKADEMİK PORTFOLYO & GELİŞİM DÜZEYİ)
+   ============================================================ */
 .student-profile-modal-card {
-  max-width: 520px;
-  width: 94%;
-  max-height: 88dvh;
+  max-width: 540px;
+  width: min(94vw, 540px);
+  max-height: 90dvh;
   display: flex;
   flex-direction: column;
-  border-radius: var(--radius-lg);
+  border-radius: var(--radius-xl, 22px);
   overflow: hidden;
   padding: 0;
-  background: var(--bg-surface);
-  border: 1.5px solid var(--border-color);
-  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.25);
+  background: var(--bg-surface, #ffffff);
+  border: 1px solid var(--border-color, rgba(226, 232, 240, 0.8));
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.15);
 }
 
 [data-theme="dark"] .student-profile-modal-card {
-  background: #181b36;
-  border: 1.5px solid rgba(139, 92, 246, 0.35);
-  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.7), 0 0 35px rgba(99, 102, 241, 0.25);
+  background: #0f172a;
+  border: 1px solid rgba(99, 102, 241, 0.25);
+  box-shadow: 0 25px 60px rgba(0, 0, 0, 0.65), 0 0 30px rgba(99, 102, 241, 0.15);
 }
 
 .student-profile-header {
@@ -11853,28 +11856,86 @@ html:not([data-theme="dark"]) .card-unlearn-pill {
   gap: 12px;
 }
 
-.student-profile-main-icon {
-  font-size: 1.8rem;
+.student-profile-badge-icon {
+  width: 40px;
+  height: 40px;
+  border-radius: 12px;
+  background: linear-gradient(135deg, rgba(99, 102, 241, 0.16), rgba(79, 70, 229, 0.26));
+  border: 1px solid rgba(99, 102, 241, 0.3);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.35rem;
+  flex-shrink: 0;
+}
+
+.student-profile-titles {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.student-profile-titles .modal-title {
+  font-size: 1.12rem;
+  font-weight: 800;
+  color: var(--text-main);
+  letter-spacing: -0.01em;
+  margin: 0;
+}
+
+.student-profile-titles .modal-subtitle {
+  font-size: 0.74rem;
+  font-weight: 500;
+  color: var(--text-muted);
+  margin: 0;
+}
+
+.student-profile-close-btn {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--text-muted);
+  background: var(--bg-surface);
+  border: 1px solid var(--border-subtle);
+  transition: all 0.2s ease;
+}
+
+.student-profile-close-btn:hover {
+  background: rgba(239, 68, 68, 0.1);
+  color: #ef4444;
+  border-color: rgba(239, 68, 68, 0.3);
+  transform: rotate(90deg);
 }
 
 .student-profile-body {
-  padding: 18px 20px;
+  padding: 18px 20px clamp(32px, 6vh, 48px) 20px;
   overflow-y: auto;
   display: flex;
   flex-direction: column;
   gap: 16px;
+  scroll-behavior: smooth;
 }
 
-/* Öğrenci Kimlik Kartı - Yenilenmiş Şık & Adaptif */
+/* 1. KİMLİK KARTI (AKADEMİK KÜNYE) */
 .student-hero-card {
   display: flex;
   flex-direction: column;
   gap: 12px;
-  padding: clamp(14px, 2.5vh, 18px);
-  border-radius: var(--radius-lg, 16px);
+  padding: 16px 18px;
+  border-radius: 18px;
   background: var(--bg-card);
   border: 1px solid var(--border-color);
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.04);
+  position: relative;
+}
+
+[data-theme="dark"] .student-hero-card {
+  background: linear-gradient(135deg, rgba(30, 41, 59, 0.8) 0%, rgba(15, 23, 42, 0.9) 100%);
+  border-color: rgba(99, 102, 241, 0.2);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.35);
 }
 
 .student-hero-main-row,
@@ -11882,28 +11943,27 @@ html:not([data-theme="dark"]) .card-unlearn-pill {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 10px;
+  gap: 12px;
   width: 100%;
 }
 
 .student-hero-identity {
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 12px;
   min-width: 0;
 }
 
 .student-avatar-badge {
-  font-size: clamp(2rem, 4vh, 2.3rem);
-  width: clamp(48px, 6.2vh, 56px);
-  height: clamp(48px, 6.2vh, 56px);
+  width: clamp(50px, 6.5vh, 58px);
+  height: clamp(50px, 6.5vh, 58px);
   border-radius: 50%;
   background: var(--bg-surface);
   display: flex;
   align-items: center;
   justify-content: center;
-  border: 2px solid var(--accent);
-  box-shadow: 0 4px 14px rgba(37, 99, 235, 0.25);
+  border: 2.5px solid var(--accent, #6366f1);
+  box-shadow: 0 4px 16px rgba(99, 102, 241, 0.25);
   flex-shrink: 0;
   position: relative;
 }
@@ -11918,8 +11978,8 @@ html:not([data-theme="dark"]) .card-unlearn-pill {
 
 .student-avatar-clickable:hover {
   transform: scale(1.06);
-  border-color: #6366f1;
-  box-shadow: 0 6px 18px rgba(99, 102, 241, 0.35);
+  border-color: #4f46e5;
+  box-shadow: 0 6px 20px rgba(99, 102, 241, 0.4);
 }
 
 .student-avatar-clickable:active {
@@ -11930,129 +11990,67 @@ html:not([data-theme="dark"]) .card-unlearn-pill {
   position: absolute;
   bottom: -2px;
   right: -2px;
-  width: 18px;
-  height: 18px;
-  background: var(--accent);
+  width: 20px;
+  height: 20px;
+  background: var(--accent, #6366f1);
   color: #ffffff;
   border-radius: 50%;
-  font-size: 0.62rem;
+  font-size: 0.64rem;
   display: flex;
   align-items: center;
   justify-content: center;
-  border: 1.5px solid var(--bg-card);
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.25);
+  border: 2px solid var(--bg-card);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.25);
 }
 
-.student-hero-details {
+.student-hero-user-meta {
   display: flex;
   flex-direction: column;
-  gap: 6px;
-  flex: 1;
+  gap: 3px;
   min-width: 0;
 }
 
-.student-name-edit-wrap {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  width: 100%;
-  margin-top: 10px;
-  box-sizing: border-box;
+.student-hero-user-title {
+  font-size: 0.70rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--accent, #6366f1);
 }
 
-.student-name-input {
-  background: var(--bg-surface);
-  border: 1.5px solid var(--border-color);
-  border-radius: 12px;
-  padding: 9px 12px;
+.student-hero-user-subtitle {
+  font-size: 1.05rem;
+  font-weight: 800;
   color: var(--text-main);
-  font-size: 0.95rem;
-  font-weight: 700;
-  outline: none;
-  flex: 1;
-  min-width: 0;
-  box-sizing: border-box;
-  transition: border-color 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
-}
-
-.student-name-input:focus {
-  border-color: var(--accent);
-  background: var(--bg-card);
-  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.18);
-}
-
-.student-name-save-pill {
-  background: var(--accent);
-  color: #ffffff;
-  border: none;
-  font-size: 0.82rem;
-  font-weight: 700;
-  padding: 9px 16px;
-  border-radius: 12px;
-  cursor: pointer;
   white-space: nowrap;
-  flex-shrink: 0;
-  margin-left: auto;
-  box-shadow: 0 3px 10px rgba(37, 99, 235, 0.28);
-  transition: transform 0.15s ease, background 0.2s ease, box-shadow 0.2s ease;
-}
-
-.student-name-save-pill:hover {
-  background: var(--accent-hover, #1d4ed8);
-  box-shadow: 0 4px 14px rgba(37, 99, 235, 0.4);
-}
-
-.student-name-save-pill:active {
-  transform: scale(0.95);
-}
-
-.student-hero-badges {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: 6px;
-}
-
-.student-track-badge, .student-lang-badge {
-  font-size: 0.72rem;
-  font-weight: 700;
-  padding: 2.5px 8px;
-  border-radius: 7px;
-  background: rgba(37, 99, 235, 0.12);
-  color: var(--accent);
-  border: 1px solid rgba(37, 99, 235, 0.22);
-  display: inline-flex;
-  align-items: center;
-  white-space: nowrap;
-}
-
-.student-lang-badge {
-  background: rgba(16, 185, 129, 0.12);
-  color: #10b981;
-  border-color: rgba(16, 185, 129, 0.22);
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .student-hero-action {
+  display: flex;
+  align-items: center;
+  gap: 6px;
   flex-shrink: 0;
 }
 
 .student-login-toggle-btn {
-  background: rgba(255, 255, 255, 0.06);
-  color: var(--text-main);
-  border: 1px solid var(--border-color);
+  background: rgba(99, 102, 241, 0.08);
+  color: var(--accent, #6366f1);
+  border: 1px solid rgba(99, 102, 241, 0.25);
   font-size: 0.76rem;
   font-weight: 700;
-  padding: 7px 12px;
-  border-radius: 9px;
+  padding: 7px 13px;
+  border-radius: 999px;
   cursor: pointer;
   white-space: nowrap;
-  transition: transform 0.15s ease, background 0.2s ease, border-color 0.2s ease;
+  transition: all 0.2s ease;
 }
 
 .student-login-toggle-btn:hover {
-  background: rgba(37, 99, 235, 0.15);
-  border-color: var(--accent);
-  color: var(--accent);
+  background: rgba(99, 102, 241, 0.18);
+  border-color: var(--accent, #6366f1);
+  transform: translateY(-1px);
 }
 
 .student-login-toggle-btn.is-logout {
@@ -12066,28 +12064,140 @@ html:not([data-theme="dark"]) .card-unlearn-pill {
   border-color: #ef4444;
 }
 
-.student-login-toggle-btn:active {
+/* Rozetler Satırı */
+.student-hero-badges-row,
+.student-hero-badges {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+}
+
+.student-track-badge,
+.student-lang-badge {
+  font-size: 0.72rem;
+  font-weight: 700;
+  padding: 4px 10px;
+  border-radius: 999px;
+  background: rgba(99, 102, 241, 0.12);
+  color: var(--accent, #6366f1);
+  border: 1px solid rgba(99, 102, 241, 0.25);
+  display: inline-flex;
+  align-items: center;
+  white-space: nowrap;
+}
+
+.student-branch-pill {
+  background: rgba(14, 165, 233, 0.12) !important;
+  color: #0284c7 !important;
+  border-color: rgba(14, 165, 233, 0.3) !important;
+}
+
+[data-theme="dark"] .student-branch-pill {
+  color: #38bdf8 !important;
+  border-color: rgba(56, 189, 248, 0.4) !important;
+}
+
+.student-lang-badge {
+  background: rgba(16, 185, 129, 0.12);
+  color: #059669;
+  border-color: rgba(16, 185, 129, 0.25);
+}
+
+[data-theme="dark"] .student-lang-badge {
+  color: #34d399;
+  border-color: rgba(52, 211, 153, 0.3);
+}
+
+/* İsim Düzenleme Alanı */
+.student-name-edit-wrap {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+  margin-top: 4px;
+}
+
+.student-name-input-group {
+  position: relative;
+  display: flex;
+  align-items: center;
+  flex: 1;
+  min-width: 0;
+}
+
+.student-name-icon {
+  position: absolute;
+  left: 12px;
+  font-size: 0.95rem;
+  pointer-events: none;
+  opacity: 0.6;
+}
+
+.student-name-input {
+  background: var(--bg-surface);
+  border: 1.5px solid var(--border-color);
+  border-radius: 12px;
+  padding: 9px 12px 9px 34px;
+  color: var(--text-main);
+  font-size: 0.92rem;
+  font-weight: 700;
+  outline: none;
+  width: 100%;
+  box-sizing: border-box;
+  transition: all 0.2s ease;
+}
+
+.student-name-input:focus {
+  border-color: var(--accent, #6366f1);
+  background: var(--bg-card);
+  box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.2);
+}
+
+.student-name-save-pill {
+  background: linear-gradient(135deg, #6366f1, #4f46e5);
+  color: #ffffff;
+  border: none;
+  font-size: 0.82rem;
+  font-weight: 700;
+  padding: 9px 16px;
+  border-radius: 12px;
+  cursor: pointer;
+  white-space: nowrap;
+  flex-shrink: 0;
+  box-shadow: 0 3px 12px rgba(79, 70, 229, 0.3);
+  transition: all 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.student-name-save-pill:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 5px 16px rgba(79, 70, 229, 0.4);
+}
+
+.student-name-save-pill:active {
   transform: scale(0.96);
 }
 
+/* Durum Bildirimi */
 .student-hero-status-row {
   display: flex;
   align-items: center;
   gap: 8px;
-  padding: 6px 10px;
+  padding: 7px 12px;
   background: var(--bg-surface);
-  border-radius: 8px;
+  border-radius: 10px;
   border: 1px solid var(--border-subtle);
   width: 100%;
   box-sizing: border-box;
 }
 
 .status-indicator-dot {
-  width: 7px;
-  height: 7px;
+  width: 8px;
+  height: 8px;
   border-radius: 50%;
   background: #f59e0b;
-  box-shadow: 0 0 6px rgba(245, 158, 11, 0.5);
+  box-shadow: 0 0 8px rgba(245, 158, 11, 0.5);
   flex-shrink: 0;
 }
 
@@ -12100,14 +12210,81 @@ html:not([data-theme="dark"]) .card-unlearn-pill {
   text-overflow: ellipsis;
 }
 
-/* İstatistik Sayaçları Grid - 4'lü Sade & Kompakt */
+/* Şifre ve Güvenlik Kartı */
+.student-security-card {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 11px 14px;
+  background: rgba(99, 102, 241, 0.05);
+  border: 1px solid rgba(99, 102, 241, 0.2);
+  border-radius: 14px;
+  margin-top: 4px;
+}
+
+.student-security-info {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-width: 0;
+}
+
+.student-security-icon {
+  font-size: 1.2rem;
+  flex-shrink: 0;
+}
+
+.student-security-texts {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+
+.student-security-title {
+  font-size: 0.84rem;
+  font-weight: 700;
+  color: var(--text-main);
+  display: block;
+}
+
+.student-security-subtitle {
+  font-size: 0.70rem;
+  color: var(--text-muted);
+}
+
+.student-security-btn {
+  padding: 6px 14px;
+  font-size: 0.78rem;
+  font-weight: 700;
+  border-radius: 999px;
+  background: rgba(14, 165, 233, 0.12);
+  color: #0284c7;
+  border: 1px solid rgba(14, 165, 233, 0.35);
+  cursor: pointer;
+  white-space: nowrap;
+  transition: all 0.2s ease;
+}
+
+[data-theme="dark"] .student-security-btn {
+  color: #38bdf8;
+  border-color: rgba(56, 189, 248, 0.4);
+}
+
+.student-security-btn:hover {
+  background: rgba(14, 165, 233, 0.22);
+  transform: translateY(-1px);
+}
+
+/* 2. TEMEL AKADEMİK METRİKLER (4'LÜ SAYAÇ) */
 .student-stats-grid {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
-  gap: clamp(6px, 1.6vw, 10px);
+  gap: clamp(8px, 1.6vw, 12px);
 }
 
-@media (max-width: 360px) {
+@media (max-width: 400px) {
   .student-stats-grid {
     grid-template-columns: repeat(2, 1fr);
   }
@@ -12118,51 +12295,101 @@ html:not([data-theme="dark"]) .card-unlearn-pill {
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  padding: clamp(10px, 1.8vh, 14px) 4px;
+  padding: clamp(10px, 1.8vh, 14px) 6px;
   background: var(--bg-card);
   border: 1px solid var(--border-color);
-  border-radius: var(--radius-md, 12px);
+  border-radius: var(--radius-md, 14px);
   text-align: center;
-  transition: transform 0.2s ease, border-color 0.2s ease;
+  transition: transform 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
   min-width: 0;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.03);
+  position: relative;
+  overflow: hidden;
 }
 
 .student-stat-card:hover {
   transform: translateY(-2px);
-  border-color: var(--accent);
+  border-color: var(--accent, #6366f1);
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.07);
+}
+
+.student-stat-card.stat-card-learned::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: linear-gradient(90deg, #6366f1, #818cf8);
+}
+
+.student-stat-card.stat-card-xp::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: linear-gradient(90deg, #f59e0b, #fbbf24);
+}
+
+.student-stat-card.stat-card-streak::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: linear-gradient(90deg, #f97316, #fb923c);
+}
+
+.student-stat-card.stat-card-badges::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: linear-gradient(90deg, #10b981, #34d399);
 }
 
 .student-stat-card .stat-icon {
-  font-size: clamp(1.15rem, 2.5vh, 1.35rem);
+  font-size: clamp(1.2rem, 2.4vh, 1.4rem);
   margin-bottom: 2px;
 }
 
 .student-stat-card .stat-val {
-  font-size: clamp(0.95rem, 2vh, 1.18rem);
+  font-size: clamp(0.98rem, 2.1vh, 1.22rem);
   font-weight: 800;
   color: var(--text-main);
   white-space: nowrap;
+  font-variant-numeric: tabular-nums;
 }
 
 .student-stat-card .stat-lbl {
-  font-size: clamp(0.62rem, 1.3vh, 0.72rem);
-  font-weight: 600;
+  font-size: clamp(0.62rem, 1.3vh, 0.70rem);
+  font-weight: 700;
   color: var(--text-muted);
   margin-top: 2px;
   line-height: 1.2;
 }
 
-/* Detaylı Etkinlik ve Zaman İstatistikleri Kartı */
+/* 3. DETAYLI ETKİNLİK VE ZAMAN İSTATİSTİKLERİ */
 .student-activity-stats-card {
   display: flex;
   flex-direction: column;
-  gap: 12px;
-  padding: clamp(12px, 2.2vh, 16px);
+  gap: 14px;
+  padding: 16px 18px;
   background: var(--bg-card);
   border: 1px solid var(--border-color);
-  border-radius: var(--radius-lg, 16px);
-  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.04);
+  border-radius: 18px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.04);
+}
+
+[data-theme="dark"] .student-activity-stats-card {
+  background: linear-gradient(135deg, rgba(30, 41, 59, 0.7) 0%, rgba(15, 23, 42, 0.85) 100%);
+  border-color: rgba(99, 102, 241, 0.18);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.35);
 }
 
 .activity-stats-header {
@@ -12175,19 +12402,20 @@ html:not([data-theme="dark"]) .card-unlearn-pill {
 .activity-stats-title-row {
   display: flex;
   align-items: center;
-  gap: 9px;
+  gap: 10px;
 }
 
 .activity-header-icon {
-  font-size: 1.3rem;
+  font-size: 1.35rem;
   line-height: 1;
 }
 
 .activity-section-title {
-  font-size: 0.92rem;
+  font-size: 0.94rem;
   font-weight: 800;
   color: var(--text-main);
   margin: 0;
+  letter-spacing: -0.01em;
 }
 
 .activity-section-desc {
@@ -12198,31 +12426,36 @@ html:not([data-theme="dark"]) .card-unlearn-pill {
 }
 
 .activity-stats-refresh-btn {
+  width: 32px;
+  height: 32px;
+  border-radius: 10px;
   background: var(--bg-surface);
   border: 1px solid var(--border-subtle);
-  border-radius: var(--radius-sm);
-  padding: 5px 8px;
-  font-size: 0.85rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.88rem;
   cursor: pointer;
   color: var(--text-muted);
-  transition: transform 0.2s ease, color 0.2s ease;
+  transition: all 0.25s ease;
 }
 
 .activity-stats-refresh-btn:hover {
-  transform: rotate(90deg);
-  color: var(--accent);
+  transform: rotate(180deg);
+  color: var(--accent, #6366f1);
+  border-color: var(--accent, #6366f1);
 }
 
 .activity-time-grid {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
-  gap: 8px;
+  gap: 10px;
 }
 
 @media (max-width: 440px) {
   .activity-time-grid {
     grid-template-columns: 1fr;
-    gap: 7px;
+    gap: 8px;
   }
 }
 
@@ -12230,15 +12463,15 @@ html:not([data-theme="dark"]) .card-unlearn-pill {
   display: flex;
   align-items: center;
   gap: 10px;
-  padding: 9px 11px;
+  padding: 10px 12px;
   background: var(--bg-surface);
   border: 1px solid var(--border-subtle);
-  border-radius: var(--radius-md, 10px);
+  border-radius: 12px;
   box-sizing: border-box;
 }
 
 .time-item-icon {
-  font-size: 1.25rem;
+  font-size: 1.3rem;
   flex-shrink: 0;
 }
 
@@ -12259,12 +12492,13 @@ html:not([data-theme="dark"]) .card-unlearn-pill {
 }
 
 .time-item-val {
-  font-size: 0.88rem;
+  font-size: 0.92rem;
   font-weight: 800;
   color: var(--text-main);
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+  font-variant-numeric: tabular-nums;
 }
 
 /* Ünite Tamamlama Süreleri Bölümü */
@@ -12272,7 +12506,7 @@ html:not([data-theme="dark"]) .card-unlearn-pill {
   display: flex;
   flex-direction: column;
   gap: 8px;
-  padding-top: 6px;
+  padding-top: 10px;
   border-top: 1px dashed var(--border-color);
 }
 
@@ -12280,13 +12514,13 @@ html:not([data-theme="dark"]) .card-unlearn-pill {
   display: flex;
   align-items: center;
   gap: 6px;
-  font-size: 0.78rem;
+  font-size: 0.80rem;
   font-weight: 700;
   color: var(--text-main);
 }
 
 .unit-durations-icon {
-  font-size: 0.92rem;
+  font-size: 0.95rem;
 }
 
 .unit-durations-list {
@@ -12302,10 +12536,10 @@ html:not([data-theme="dark"]) .card-unlearn-pill {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 6px 10px;
+  padding: 7px 12px;
   background: var(--bg-surface);
   border: 1px solid var(--border-subtle);
-  border-radius: var(--radius-sm);
+  border-radius: 10px;
   font-size: 0.76rem;
 }
 
@@ -12319,43 +12553,44 @@ html:not([data-theme="dark"]) .card-unlearn-pill {
 
 .unit-duration-badge {
   font-size: 0.68rem;
-  padding: 2px 6px;
-  background: rgba(16, 185, 129, 0.12);
-  color: #10b981;
+  padding: 2px 7px;
+  background: rgba(99, 102, 241, 0.12);
+  color: var(--accent, #6366f1);
   border-radius: 6px;
   font-weight: 700;
 }
 
 .unit-duration-time {
   font-weight: 800;
-  color: var(--accent);
+  color: var(--accent, #6366f1);
+  font-variant-numeric: tabular-nums;
 }
 
 .unit-duration-empty {
   font-size: 0.74rem;
   color: var(--text-muted);
   text-align: center;
-  padding: 8px 4px;
+  padding: 10px 4px;
   font-style: italic;
 }
 
 /* ============================================================
-   ÖĞRENCİ PROFİLİ: KİTAPTAKİ ÜNİTELERDE İLERLEME VE %75 KURALI KARTI
+   4. KİTAP ÜNİTELERİNDEKİ İLERLEME VE %80 KURALI
    ============================================================ */
 .student-unit-progress-card {
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 14px;
   background: var(--bg-card);
   border: 1px solid var(--border-color);
-  border-radius: var(--radius-md, 16px);
-  padding: 14px 16px;
-  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.05);
+  border-radius: 18px;
+  padding: 16px 18px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.04);
 }
 
 [data-theme="dark"] .student-unit-progress-card {
-  background: rgba(30, 41, 59, 0.7);
-  border-color: rgba(255, 255, 255, 0.12);
+  background: linear-gradient(135deg, rgba(30, 41, 59, 0.7) 0%, rgba(15, 23, 42, 0.85) 100%);
+  border-color: rgba(99, 102, 241, 0.18);
   box-shadow: 0 8px 24px rgba(0, 0, 0, 0.35);
 }
 
@@ -12364,7 +12599,7 @@ html:not([data-theme="dark"]) .card-unlearn-pill {
   align-items: center;
   justify-content: space-between;
   gap: 10px;
-  padding-bottom: 6px;
+  padding-bottom: 8px;
   border-bottom: 1px solid var(--border-subtle);
 }
 
@@ -12375,13 +12610,13 @@ html:not([data-theme="dark"]) .card-unlearn-pill {
 }
 
 .up-header-icon {
-  font-size: 1.3rem;
+  font-size: 1.35rem;
   line-height: 1.2;
 }
 
 .up-section-title {
   margin: 0;
-  font-size: 0.90rem;
+  font-size: 0.94rem;
   font-weight: 800;
   color: var(--text-main);
   letter-spacing: -0.01em;
@@ -12395,21 +12630,20 @@ html:not([data-theme="dark"]) .card-unlearn-pill {
 }
 
 .up-rule-badge {
-  font-size: 0.70rem;
+  font-size: 0.72rem;
   font-weight: 800;
-  padding: 3px 8px;
-  background: rgba(37, 99, 235, 0.12);
-  color: #2563eb;
-  border: 1px solid rgba(37, 99, 235, 0.3);
+  padding: 4px 10px;
+  background: rgba(245, 158, 11, 0.12);
+  color: #d97706;
+  border: 1px solid rgba(245, 158, 11, 0.3);
   border-radius: 999px;
   white-space: nowrap;
-  letter-spacing: 0.02em;
 }
 
 [data-theme="dark"] .up-rule-badge {
-  background: rgba(96, 165, 250, 0.18);
-  color: #60a5fa;
-  border-color: rgba(96, 165, 250, 0.4);
+  background: rgba(245, 158, 11, 0.18);
+  color: #fbbf24;
+  border-color: rgba(245, 158, 11, 0.4);
 }
 
 /* Seviye / Kitap Filtreleme Sekmeleri */
@@ -12419,19 +12653,20 @@ html:not([data-theme="dark"]) .card-unlearn-pill {
   gap: 8px;
   overflow-x: auto;
   padding: 4px 2px 8px 2px;
-  margin-top: 4px;
   -webkit-overflow-scrolling: touch;
   scrollbar-width: none;
 }
+
 .prof-unit-level-tabs::-webkit-scrollbar {
   display: none;
 }
+
 .prof-level-tab-btn {
   display: inline-flex;
   align-items: center;
-  gap: 5px;
-  padding: 6px 12px;
-  font-size: 0.74rem;
+  gap: 6px;
+  padding: 7px 14px;
+  font-size: 0.76rem;
   font-weight: 700;
   border-radius: 999px;
   border: 1px solid var(--border-color);
@@ -12442,30 +12677,36 @@ html:not([data-theme="dark"]) .card-unlearn-pill {
   white-space: nowrap;
   user-select: none;
 }
+
 .prof-level-tab-btn:hover {
-  background: var(--bg-card-hover, rgba(0,0,0,0.05));
+  background: rgba(99, 102, 241, 0.08);
   color: var(--text-main);
+  border-color: rgba(99, 102, 241, 0.25);
 }
+
 .prof-level-tab-btn.active {
-  background: linear-gradient(135deg, #2563eb, #1d4ed8);
+  background: linear-gradient(135deg, #6366f1, #4f46e5);
   color: #ffffff;
-  border-color: #2563eb;
-  box-shadow: 0 2px 8px rgba(37, 99, 235, 0.3);
+  border-color: #6366f1;
+  box-shadow: 0 3px 12px rgba(99, 102, 241, 0.35);
 }
+
 [data-theme="dark"] .prof-level-tab-btn {
   background: rgba(30, 41, 59, 0.8);
-  border-color: rgba(255, 255, 255, 0.12);
+  border-color: rgba(255, 255, 255, 0.1);
   color: #94a3b8;
 }
+
 [data-theme="dark"] .prof-level-tab-btn:hover {
   background: rgba(51, 65, 85, 0.9);
   color: #f8fafc;
 }
+
 [data-theme="dark"] .prof-level-tab-btn.active {
-  background: linear-gradient(135deg, #3b82f6, #2563eb);
+  background: linear-gradient(135deg, #6366f1, #4f46e5);
   color: #ffffff;
-  border-color: #3b82f6;
-  box-shadow: 0 3px 12px rgba(59, 130, 246, 0.4);
+  border-color: #6366f1;
+  box-shadow: 0 4px 14px rgba(99, 102, 241, 0.4);
 }
 
 /* Kitap Bazlı Bölümler */
@@ -12473,44 +12714,51 @@ html:not([data-theme="dark"]) .card-unlearn-pill {
   display: flex;
   flex-direction: column;
   gap: 10px;
-  background: rgba(0, 0, 0, 0.02);
+  background: rgba(99, 102, 241, 0.03);
   border: 1px solid var(--border-subtle);
   border-radius: 14px;
   padding: 12px 14px;
   transition: all 0.2s ease;
 }
+
 [data-theme="dark"] .prof-book-section {
   background: rgba(15, 23, 42, 0.4);
-  border-color: rgba(255, 255, 255, 0.08);
+  border-color: rgba(99, 102, 241, 0.15);
 }
+
 .prof-book-section-header {
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: 8px;
 }
+
 .prof-book-header-left {
   display: flex;
   align-items: center;
   gap: 10px;
   min-width: 0;
 }
+
 .prof-book-icon {
   font-size: 1.4rem;
   line-height: 1;
   flex-shrink: 0;
 }
+
 .prof-book-info {
   display: flex;
   flex-direction: column;
   min-width: 0;
 }
+
 .prof-book-title-row {
   display: flex;
   align-items: center;
   gap: 6px;
   flex-wrap: wrap;
 }
+
 .prof-book-title {
   font-size: 0.88rem;
   font-weight: 800;
@@ -12520,70 +12768,73 @@ html:not([data-theme="dark"]) .card-unlearn-pill {
   overflow: hidden;
   text-overflow: ellipsis;
 }
+
 .prof-book-level-badge {
-  font-size: 0.65rem;
+  font-size: 0.66rem;
   font-weight: 800;
   padding: 2px 7px;
   border-radius: 6px;
-  background: rgba(37, 99, 235, 0.12);
-  color: #2563eb;
-  border: 1px solid rgba(37, 99, 235, 0.25);
+  background: rgba(99, 102, 241, 0.12);
+  color: var(--accent, #6366f1);
+  border: 1px solid rgba(99, 102, 241, 0.25);
   line-height: 1.2;
 }
-[data-theme="dark"] .prof-book-level-badge {
-  background: rgba(96, 165, 250, 0.15);
-  color: #60a5fa;
-  border-color: rgba(96, 165, 250, 0.3);
-}
+
 .prof-book-meta {
   font-size: 0.70rem;
   color: var(--text-muted);
   font-weight: 600;
   margin-top: 2px;
 }
-.prof-book-header-right {
-  flex-shrink: 0;
-}
+
 .prof-book-pct-badge {
   font-size: 0.74rem;
   font-weight: 800;
-  padding: 3px 9px;
+  padding: 3px 10px;
   border-radius: 999px;
   background: rgba(16, 185, 129, 0.12);
   color: #10b981;
   border: 1px solid rgba(16, 185, 129, 0.25);
+  font-variant-numeric: tabular-nums;
 }
+
 .prof-book-pct-badge.is-complete {
   background: rgba(245, 158, 11, 0.15);
   color: #d97706;
-  border-color: rgba(245, 158, 11, 0.3);
+  border-color: rgba(245, 158, 11, 0.35);
 }
+
 [data-theme="dark"] .prof-book-pct-badge {
   background: rgba(52, 211, 153, 0.18);
   color: #34d399;
   border-color: rgba(52, 211, 153, 0.3);
 }
+
 [data-theme="dark"] .prof-book-pct-badge.is-complete {
   background: rgba(251, 191, 36, 0.2);
   color: #fbbf24;
   border-color: rgba(251, 191, 36, 0.4);
 }
+
 .prof-book-progress-mini {
-  height: 5px;
+  height: 6px;
   background: rgba(0, 0, 0, 0.06);
   border-radius: 999px;
   overflow: hidden;
-  margin: 1px 0 4px 0;
+  margin: 2px 0 4px 0;
 }
+
 [data-theme="dark"] .prof-book-progress-mini {
   background: rgba(255, 255, 255, 0.08);
 }
+
 .prof-book-mini-fill {
   height: 100%;
-  background: linear-gradient(90deg, #3b82f6, #10b981);
+  background: linear-gradient(90deg, #6366f1, #10b981);
   border-radius: 999px;
   transition: width 0.3s ease;
 }
+
 .prof-book-units-list {
   display: flex;
   flex-direction: column;
@@ -12602,8 +12853,8 @@ html:not([data-theme="dark"]) .card-unlearn-pill {
 .prof-unit-progress-item {
   display: flex;
   flex-direction: column;
-  gap: 6px;
-  padding: 10px 12px;
+  gap: 7px;
+  padding: 11px 13px;
   background: var(--bg-surface);
   border: 1px solid var(--border-subtle);
   border-radius: 12px;
@@ -12616,7 +12867,7 @@ html:not([data-theme="dark"]) .card-unlearn-pill {
 }
 
 [data-theme="dark"] .prof-unit-progress-item.is-locked {
-  background: rgba(15, 23, 42, 0.4);
+  background: rgba(15, 23, 42, 0.35);
 }
 
 .prof-unit-progress-item.is-complete {
@@ -12639,13 +12890,13 @@ html:not([data-theme="dark"]) .card-unlearn-pill {
 }
 
 .pup-unit-num {
-  width: 22px;
-  height: 22px;
+  width: 24px;
+  height: 24px;
   display: flex;
   align-items: center;
   justify-content: center;
   border-radius: 50%;
-  background: var(--accent);
+  background: linear-gradient(135deg, #6366f1, #4f46e5);
   color: #ffffff;
   font-size: 0.72rem;
   font-weight: 800;
@@ -12664,7 +12915,7 @@ html:not([data-theme="dark"]) .card-unlearn-pill {
 }
 
 .pup-title {
-  font-size: 0.82rem;
+  font-size: 0.84rem;
   font-weight: 700;
   color: var(--text-main);
   white-space: nowrap;
@@ -12681,7 +12932,7 @@ html:not([data-theme="dark"]) .card-unlearn-pill {
 .pup-badge {
   font-size: 0.68rem;
   font-weight: 700;
-  padding: 2px 7px;
+  padding: 3px 8px;
   border-radius: 6px;
   white-space: nowrap;
 }
@@ -12703,13 +12954,13 @@ html:not([data-theme="dark"]) .card-unlearn-pill {
 }
 
 .pup-badge.pup-passed {
-  background: rgba(37, 99, 235, 0.12);
-  color: #2563eb;
-  border: 1px solid rgba(37, 99, 235, 0.3);
+  background: rgba(99, 102, 241, 0.12);
+  color: var(--accent, #6366f1);
+  border: 1px solid rgba(99, 102, 241, 0.3);
 }
 
 [data-theme="dark"] .pup-badge.pup-passed {
-  color: #60a5fa;
+  color: #818cf8;
 }
 
 .pup-badge.pup-completed {
@@ -12722,7 +12973,7 @@ html:not([data-theme="dark"]) .card-unlearn-pill {
   color: #34d399;
 }
 
-/* İlerleme Çubuğu ve %75 Eşik Göstergesi */
+/* İlerleme Çubuğu ve %80 Eşik Göstergesi */
 .pup-bar-track {
   position: relative;
   width: 100%;
@@ -12739,7 +12990,7 @@ html:not([data-theme="dark"]) .card-unlearn-pill {
 .pup-bar-fill {
   height: 100%;
   border-radius: 999px;
-  background: linear-gradient(90deg, #3b82f6 0%, #10b981 100%);
+  background: linear-gradient(90deg, #6366f1 0%, #10b981 100%);
   transition: width 0.3s ease;
 }
 
@@ -12749,41 +13000,57 @@ html:not([data-theme="dark"]) .card-unlearn-pill {
   bottom: 0;
   width: 2px;
   background: #f59e0b;
-  box-shadow: 0 0 4px rgba(245, 158, 11, 0.8);
+  box-shadow: 0 0 6px rgba(245, 158, 11, 0.9);
   z-index: 2;
 }
 
-/* Nasıl Çalışır Banner */
+/* 5. NASIL ÇALIŞIR & REHBER BANNERI */
 .student-how-it-works-banner {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 10px 14px;
-  background: linear-gradient(135deg, rgba(37, 99, 235, 0.08), rgba(124, 58, 237, 0.08));
-  border: 1px solid rgba(37, 99, 235, 0.2);
-  border-radius: var(--radius-md, 12px);
+  padding: 12px 16px;
+  background: linear-gradient(135deg, rgba(99, 102, 241, 0.08), rgba(79, 70, 229, 0.04));
+  border: 1px solid rgba(99, 102, 241, 0.22);
+  border-radius: 16px;
   cursor: pointer;
-  transition: transform 0.15s ease, background 0.2s ease, border-color 0.2s ease;
+  transition: all 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
 }
 
 .student-how-it-works-banner:hover {
-  background: linear-gradient(135deg, rgba(37, 99, 235, 0.15), rgba(124, 58, 237, 0.15));
-  border-color: var(--accent);
-  transform: translateY(-1px);
+  background: linear-gradient(135deg, rgba(99, 102, 241, 0.14), rgba(79, 70, 229, 0.08));
+  border-color: var(--accent, #6366f1);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 18px rgba(99, 102, 241, 0.15);
 }
 
 .how-banner-left {
   display: flex;
   align-items: center;
-  gap: 11px;
+  gap: 12px;
 }
 
-.how-icon {
-  font-size: 1.4rem;
+.how-icon-circle {
+  width: 38px;
+  height: 38px;
+  border-radius: 12px;
+  background: rgba(99, 102, 241, 0.15);
+  border: 1px solid rgba(99, 102, 241, 0.25);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.25rem;
+  flex-shrink: 0;
+}
+
+.how-texts {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
 }
 
 .how-title {
-  font-size: 0.86rem;
+  font-size: 0.88rem;
   font-weight: 700;
   color: var(--text-main);
 }
@@ -12794,9 +13061,14 @@ html:not([data-theme="dark"]) .card-unlearn-pill {
 }
 
 .how-arrow {
-  font-size: 1.2rem;
-  color: var(--accent);
+  font-size: 1.25rem;
+  color: var(--accent, #6366f1);
   font-weight: 700;
+  transition: transform 0.2s ease;
+}
+
+.student-how-it-works-banner:hover .how-arrow {
+  transform: translateX(3px);
 }
 
 /* AVATAR SEÇİM MODALI */

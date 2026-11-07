@@ -2805,14 +2805,14 @@
     <div class="modal-card student-profile-modal-card">
       <div class="modal-header student-profile-header">
         <div class="student-profile-title-wrap">
-          <span class="student-profile-main-icon">🎓</span>
-          <div>
+          <div class="student-profile-badge-icon" aria-hidden="true">🎓</div>
+          <div class="student-profile-titles">
             <h2 class="modal-title">Öğrenci Profili</h2>
-            <p class="modal-subtitle">Gelişim ve İlerleme Durumu</p>
+            <p class="modal-subtitle">Akademik Gelişim &amp; Performans Portfolyosu</p>
           </div>
         </div>
-        <button id="closeStudentProfileModalBtn" class="icon-btn" aria-label="Kapat" title="Kapat">
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+        <button id="closeStudentProfileModalBtn" class="icon-btn student-profile-close-btn" aria-label="Kapat" title="Kapat">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
             <line x1="18" y1="6" x2="6" y2="18"></line>
             <line x1="6" y1="6" x2="18" y2="18"></line>
           </svg>
@@ -2820,18 +2820,18 @@
       </div>
 
       <div class="student-profile-body">
-        <!-- 1. KİMLİK KARTI (SADE, KOMPAKT & ENTEGRE) -->
+        <!-- 1. KİMLİK VE AKADEMİK KÜNYE KARTI -->
         <div class="student-hero-card">
-          <!-- Üst Satır: Solda Avatar & Başlık, Sağda Aksiyon Butonları (Asla Çakışmaz) -->
+          <!-- Üst Satır: Avatar, Unvan ve Giriş/Çıkış Butonları -->
           <div class="student-hero-top-row">
             <div class="student-hero-identity">
               <button type="button" class="student-avatar-badge student-avatar-clickable" id="profHeroAvatarBtn" title="Avatarı Değiştir">
-                <span id="profHeroAvatar"><img src="assets/avatars/avatar_default.jpg" class="avatar-img-fluid" style="width:100%; height:100%; border-radius:50%; object-fit:cover; display:block;" alt="Avatar"></span>
-                <span class="avatar-edit-icon" title="Değiştir">✏️</span>
+                <span id="profHeroAvatar"><img src="assets/avatars/avatar_default.jpg" class="avatar-img-fluid" alt="Avatar"></span>
+                <span class="avatar-edit-icon" title="Avatarı Değiştir">✏️</span>
               </button>
               <div class="student-hero-user-meta">
-                <span class="student-hero-user-title">Öğrenci Profili</span>
-                <span class="student-hero-user-subtitle" id="profHeroSubtitle">LexiGo Öğrenicisi</span>
+                <span class="student-hero-user-title">Akademik Profil</span>
+                <span class="student-hero-user-subtitle" id="profHeroSubtitle">Öğrenci</span>
               </div>
             </div>
             <div class="student-hero-action">
@@ -2840,63 +2840,67 @@
             </div>
           </div>
 
-          <!-- Rozetler Satırı: Tam Genişlikte, Esnek ve Ferah (Sınıf Seç rozeti asla butona çarpmaz) -->
+          <!-- Rozetler Satırı: Sınıf / Seviye, Turnuva Şubesi ve Dil -->
           <div class="student-hero-badges-row">
             <span class="student-track-badge" id="profHeroTrackBadge">4A (A2 Temel)</span>
-            <span class="student-track-badge" id="profHeroBranchBadge" style="background: rgba(59, 130, 246, 0.2); color: #3b82f6; border-color: rgba(59, 130, 246, 0.4);">🏫 Şube: -</span>
+            <span class="student-track-badge student-branch-pill" id="profHeroBranchBadge">🏫 Şube: -</span>
             <span class="student-lang-badge" id="profHeroLangBadge">🇬🇧 İngilizce</span>
           </div>
 
-          <!-- Genişletilmiş İsim Düzenleme Alanı (Tam Genişlik & Sağa Yanaşık Kaydet) -->
+          <!-- İsim Düzenleme Alanı -->
           <div class="student-name-edit-wrap">
-            <input type="text" id="profNameInput" class="student-name-input" placeholder="Öğrenci Adı" maxlength="20" title="Öğrenci Adı">
+            <div class="student-name-input-group">
+              <span class="student-name-icon">👤</span>
+              <input type="text" id="profNameInput" class="student-name-input" placeholder="Öğrenci Adı" maxlength="20" title="Öğrenci Adı">
+            </div>
             <button type="button" id="profSaveBtn" class="student-name-save-pill" title="Değişiklikleri Kaydet">
               <span>Kaydet</span>
             </button>
           </div>
           <span id="profHeroName" style="display: none;">Öğrenci</span>
 
+          <!-- Hesap Senkronizasyon Durumu -->
           <div class="student-hero-status-row">
             <span class="status-indicator-dot"></span>
             <span class="student-account-status" id="profAccountStatusText">Misafir Kullanıcı (Bulut kapalı)</span>
           </div>
 
-          <!-- ŞİFRE DEĞİŞTİRME & HESAP GÜVENLİĞİ (GİRİŞ YAPMIŞ HESAPLAR İÇİN) -->
-          <div class="student-security-card" id="profSecurityCard" style="display: none; margin-top: 12px; background: rgba(255, 255, 255, 0.04); border: 1px solid var(--border-color); border-radius: 14px; padding: 10px 14px; align-items: center; justify-content: space-between;">
-            <div style="display: flex; align-items: center; gap: 8px;">
-              <span style="font-size: 1.15rem;">🔐</span>
-              <div>
-                <strong style="font-size: 0.85rem; color: var(--text-main); display: block;">Hesap Şifresi</strong>
-                <span style="font-size: 0.72rem; color: var(--text-muted);">Şifrenizi güvenle güncelleyin</span>
+          <!-- Şifre Değiştirme ve Güvenlik Kartı (Giriş Yapmış Hesaplar İçin) -->
+          <div class="student-security-card" id="profSecurityCard" style="display: none;">
+            <div class="student-security-info">
+              <span class="student-security-icon">🔐</span>
+              <div class="student-security-texts">
+                <strong class="student-security-title">Hesap Güvenliği</strong>
+                <span class="student-security-subtitle">Giriş şifrenizi dilediğiniz zaman güncelleyin</span>
               </div>
             </div>
-            <button type="button" id="profOpenChangePasswordBtn" class="pill-btn" style="padding: 6px 14px; font-size: 0.8rem; font-weight: 700; background: rgba(56, 189, 248, 0.14); color: #38bdf8; border: 1px solid rgba(56, 189, 248, 0.35); cursor: pointer;">
+            <button type="button" id="profOpenChangePasswordBtn" class="student-security-btn">
               Şifre Değiştir
             </button>
           </div>
         </div>
 
-        <!-- 2. İSTATİSTİK SAYACI (4'LÜ SADE KARTLAR) -->
+        <!-- 2. TEMEL AKADEMİK METRİKLER (4'LÜ SAYAÇ KARTLARI) -->
         <div class="student-stats-grid">
-          <div class="student-stat-card">
+          <div class="student-stat-card stat-card-learned">
             <span class="stat-icon">📚</span>
             <div class="stat-val" id="profStatLearned">0</div>
-            <div class="stat-lbl">Öğrenilen</div>
+            <div class="stat-lbl">Öğrenilen Kelime</div>
           </div>
-          <div class="student-stat-card">
+          <div class="student-stat-card stat-card-xp">
             <span class="stat-icon">⭐</span>
             <div class="stat-val" id="profStatXp">0</div>
             <div class="stat-lbl">Toplam XP</div>
           </div>
-          <div class="student-stat-card">
+          <div class="student-stat-card stat-card-streak">
             <span class="stat-icon">🔥</span>
             <div class="stat-val" id="profStatStreak">0</div>
             <div class="stat-lbl">En İyi Seri</div>
           </div>
-          <div class="student-stat-card">
+          <div class="student-stat-card stat-card-badges">
             <span class="stat-icon">🎖️</span>
             <div class="stat-val" id="profStatBadges">0 / 36</div>
-            <div class="stat-lbl">Rozetler</div>
+            <div class="stat-lbl">Kazanılan Rozet</div>
           </div>
         </div>
 
@@ -2906,11 +2910,11 @@
             <div class="activity-stats-title-row">
               <span class="activity-header-icon">⏱️</span>
               <div>
-                <h4 class="activity-section-title">Çalışma Süreleri</h4>
-                <p class="activity-section-desc">Toplam zaman kullanımı ve oturum bilgileri</p>
+                <h4 class="activity-section-title">Çalışma &amp; Odaklanma Süreleri</h4>
+                <p class="activity-section-desc">Etkinlik bazlı zaman kullanımı ve oturum kayıtları</p>
               </div>
             </div>
-            <button type="button" id="refreshStatsBtn" class="activity-stats-refresh-btn" title="Yenile">🔄</button>
+            <button type="button" id="refreshStatsBtn" class="activity-stats-refresh-btn" title="İstatistikleri Senkronize Et">🔄</button>
           </div>
 
           <div class="activity-time-grid">
@@ -2925,7 +2929,7 @@
             <div class="activity-time-item">
               <span class="time-item-icon">🎮</span>
               <div class="time-item-details">
-                <span class="time-item-label">Oyun & Pratik</span>
+                <span class="time-item-label">Oyun &amp; Pratik</span>
                 <span class="time-item-val" id="profTimeGames">0 dk</span>
               </div>
             </div>
@@ -2951,7 +2955,7 @@
           <div class="activity-unit-durations-section">
             <div class="unit-durations-header">
               <span class="unit-durations-icon">🏆</span>
-              <span class="unit-durations-title">Ünite Tamamlama Süreleri</span>
+              <span class="unit-durations-title">Ünite Tamamlama Kayıtları</span>
             </div>
             <div class="unit-durations-list" id="profUnitDurationsList">
               <div class="unit-duration-empty">Henüz tamamlanan ünite bulunmuyor.</div>
@@ -2959,17 +2963,17 @@
           </div>
         </div>
 
-        <!-- 4. KİTAP ÜNİTELERİNDEKİ İLERLEME VE %75 KURALI KARTI -->
+        <!-- 4. MÜFREDAT VE KİTAP ÜNİTELERİNDEKİ İLERLEME -->
         <div class="student-unit-progress-card">
           <div class="unit-progress-card-header">
             <div class="unit-progress-title-wrap">
               <span class="up-header-icon">📖</span>
               <div>
-                <h4 class="up-section-title">Kitap Ünitelerindeki İlerleme</h4>
-                <p class="up-section-desc">Müfredattaki üniteleri açmak için bir önceki üniteyi en az <strong>%80</strong> oranında tamamlamalısın.</p>
+                <h4 class="up-section-title">Müfredat ve Ünite İlerlemesi</h4>
+                <p class="up-section-desc">Sonraki üniteyi açmak için mevcut üniteyi en az <strong>%80</strong> oranında tamamlayın.</p>
               </div>
             </div>
-            <span class="up-rule-badge">%80 Kuralı</span>
+            <span class="up-rule-badge">%80 Baraj Kuralı</span>
           </div>
 
           <!-- Seviye / Kitap Filtreleme Sekmeleri -->
@@ -2983,13 +2987,13 @@
           </div>
         </div>
 
-        <!-- 4. XP VE ROZET SİSTEMİ REHBERİ -->
-        <div class="student-how-it-works-banner" id="profOpenBadgesGuideBtn" title="XP ve Rozet Kurallarını Gör">
+        <!-- 5. XP VE ROZET SİSTEMİ REHBERİ -->
+        <div class="student-how-it-works-banner" id="profOpenBadgesGuideBtn" title="XP ve Rozet Kurallarını İncele">
           <div class="how-banner-left">
-            <span class="how-icon">📖</span>
-            <div>
-              <div class="how-title">XP ve Rozet Sistemi Nasıl İşler?</div>
-              <div class="how-subtitle">Kelime öğrenme +10 XP • İpucu -5 XP • Kriterler</div>
+            <div class="how-icon-circle">🎖️</div>
+            <div class="how-texts">
+              <div class="how-title">XP, Seviye ve Rozet Sistemi Nasıl İşler?</div>
+              <div class="how-subtitle">Kelime öğrenme +10 XP • İpucu kullanımı -5 XP • Rozet Kriterleri</div>
             </div>
           </div>
           <span class="how-arrow">›</span>
