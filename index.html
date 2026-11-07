@@ -2266,28 +2266,28 @@
   </div>
 
   <!-- BİR DEFAYA MAHSUS ŞUBE SEÇME MODALI (Mevcut kullanıcılar için) -->
-  <div id="selectBranchModal" class="modal-overlay" style="z-index: 10030; display: none;">
-    <div class="modal-card" style="max-width: 440px; width: 92%; padding: 22px; text-align: center;">
-      <div style="font-size: 2.4rem; margin-bottom: 8px;">🏫</div>
-      <h2 style="font-size: 1.25rem; font-weight: 900; margin-bottom: 6px; color: var(--text-main);">Resmi Şubeni Seç</h2>
-      <p style="font-size: 0.84rem; color: var(--text-muted); margin-bottom: 16px; line-height: 1.4;">
+  <div id="selectBranchModal" class="modal-overlay" style="display: none;">
+    <div class="modal-card select-branch-modal-card">
+      <div class="select-branch-icon">🏫</div>
+      <h2 class="select-branch-title">Resmi Şubeni Seç</h2>
+      <p class="select-branch-desc">
         Sınıf arkadaşlarınla liderlik yarışına katılmak ve şubeler arası düelloda sınıfını zafere taşımak için şubeni seç.
       </p>
 
-      <div style="text-align: left; margin-bottom: 14px;">
-        <label style="display: block; font-size: 0.78rem; font-weight: 700; color: var(--text-muted); margin-bottom: 6px; text-transform: uppercase;">Şube Listesi:</label>
-        <select id="modalBranchSelect" class="setting-select-box" style="width: 100%; padding: 12px 14px; font-size: 0.95rem; font-weight: 700; border-radius: 12px; background: var(--bg-card); border: 2px solid var(--accent); color: var(--text-main);">
+      <div class="select-branch-form-group">
+        <label for="modalBranchSelect" class="select-branch-label">Şube Listesi:</label>
+        <select id="modalBranchSelect" class="setting-select-box select-branch-select">
           <!-- Dinamik doldurulacak -->
         </select>
-        <div style="display: flex; align-items: center; gap: 6px; margin-top: 8px; padding: 8px 10px; background: rgba(245, 158, 11, 0.12); border: 1px solid rgba(245, 158, 11, 0.3); border-radius: 10px; font-size: 0.74rem; color: #f59e0b; line-height: 1.35;">
-          <span>🔒</span>
+        <div class="select-branch-notice">
+          <span class="select-branch-notice-icon">🔒</span>
           <span><strong>Önemli:</strong> Şube seçimi kalıcıdır ve sonradan ayarlardan değiştirilemez. Lütfen doğru şubeyi seçtiğinden emin ol!</span>
         </div>
       </div>
 
-      <div style="display: flex; gap: 8px; justify-content: flex-end; margin-top: 18px;">
-        <button type="button" id="cancelBranchModalBtn" class="pill-btn secondary-btn" style="padding: 10px 18px; font-size: 0.88rem;">Daha Sonra</button>
-        <button type="button" id="confirmBranchModalBtn" class="pill-btn primary-action-btn" style="padding: 10px 22px; font-size: 0.88rem;">Şubemi Onayla ➔</button>
+      <div class="select-branch-actions">
+        <button type="button" id="cancelBranchModalBtn" class="pill-btn secondary-btn select-branch-cancel-btn">Daha Sonra</button>
+        <button type="button" id="confirmBranchModalBtn" class="pill-btn primary-action-btn select-branch-confirm-btn">Şubemi Onayla ➔</button>
       </div>
     </div>
   </div>
@@ -3735,7 +3735,7 @@
   </div>
 
   <!-- ŞİFRE DEĞİŞTİRME MODALI -->
-  <div id="changePasswordModal" class="modal-overlay" style="z-index: 10055; display: none;">
+  <div id="changePasswordModal" class="modal-overlay" style="display: none;">
     <div class="modal-card change-password-modal-card" style="max-width: 420px; padding: 24px 22px;">
       <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
         <div style="display: flex; align-items: center; gap: 10px;">
@@ -3781,7 +3781,7 @@
   </div>
 
   <!-- UYGULAMA İÇİ ÖZEL ONAY VE ÇIKIŞ MODALI (CUSTOM CONFIRM & EXIT MODAL) -->
-  <div id="customConfirmModal" class="modal-overlay" style="z-index: 10080; display: none;">
+  <div id="customConfirmModal" class="modal-overlay" style="display: none;">
     <div class="modal-card custom-confirm-card">
       <div class="confirm-icon-wrap" id="confirmModalIcon">👋</div>
       <h3 class="confirm-title" id="confirmModalTitle">Çıkış Yap</h3>
@@ -4027,7 +4027,7 @@
   </div>
 
   <!-- DUOLINGO BENZERİ GÜNLÜK SERİ SÖZÜ BİLGİLENDİRME MODALI -->
-  <div id="streakPledgeModal" class="modal-overlay" style="z-index: 10070; display: none;">
+  <div id="streakPledgeModal" class="modal-overlay" style="display: none;">
     <div class="modal-card streak-pledge-modal-card" style="max-width: 440px; text-align: center; padding: 26px 20px; border-radius: 24px;">
       <!-- Üst Alev İkonu & Başlık -->
       <div class="streak-flame-icon-wrap" style="font-size: 3.2rem; margin-bottom: 4px; filter: drop-shadow(0 0 16px rgba(249, 115, 22, 0.5)); animation: bounceFlame 2s infinite ease-in-out;">

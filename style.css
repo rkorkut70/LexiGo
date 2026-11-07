@@ -2030,6 +2030,148 @@ html, body {
   z-index: 200050 !important;
 }
 
+/* Profil veya Ayarlar Üzerinde Açılan Alt Pencereler (Katman Hiyerarşisi) */
+#selectBranchModal,
+#selectBranchModal.active,
+#changePasswordModal,
+#changePasswordModal.active,
+#avatarPickerModal,
+#avatarPickerModal.active,
+#streakPledgeModal,
+#streakPledgeModal.active {
+  z-index: 200060 !important;
+}
+
+#customConfirmModal,
+#customConfirmModal.active {
+  z-index: 200090 !important;
+}
+
+/* Şube Seçme Modalı (selectBranchModal) Tasarımı */
+.select-branch-modal-card {
+  max-width: 440px;
+  width: min(92vw, 440px);
+  padding: 24px 22px;
+  text-align: center;
+  border-radius: var(--radius-xl, 22px);
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.35);
+}
+
+[data-theme="dark"] .select-branch-modal-card {
+  background: #0f172a;
+  border-color: rgba(99, 102, 241, 0.3);
+  box-shadow: 0 25px 60px rgba(0, 0, 0, 0.7), 0 0 30px rgba(99, 102, 241, 0.15);
+}
+
+.select-branch-icon {
+  font-size: 2.5rem;
+  line-height: 1;
+  margin-bottom: 8px;
+}
+
+.select-branch-title {
+  font-size: 1.25rem;
+  font-weight: 800;
+  margin: 0 0 6px 0;
+  color: var(--text-main);
+  letter-spacing: -0.01em;
+}
+
+.select-branch-desc {
+  font-size: 0.82rem;
+  color: var(--text-muted);
+  margin: 0 0 16px 0;
+  line-height: 1.45;
+}
+
+.select-branch-form-group {
+  text-align: left;
+  margin-bottom: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.select-branch-label {
+  display: block;
+  font-size: 0.76rem;
+  font-weight: 700;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.select-branch-select {
+  width: 100%;
+  padding: 12px 14px;
+  font-size: 0.92rem;
+  font-weight: 700;
+  border-radius: 12px;
+  background: var(--bg-surface);
+  border: 2px solid var(--accent, #6366f1);
+  color: var(--text-main);
+  outline: none;
+  cursor: pointer;
+  box-sizing: border-box;
+  transition: all 0.2s ease;
+}
+
+.select-branch-select:focus {
+  border-color: #4f46e5;
+  box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.25);
+}
+
+.select-branch-notice {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  margin-top: 8px;
+  padding: 10px 12px;
+  background: rgba(245, 158, 11, 0.1);
+  border: 1px solid rgba(245, 158, 11, 0.28);
+  border-radius: 12px;
+  font-size: 0.74rem;
+  color: #d97706;
+  line-height: 1.35;
+}
+
+[data-theme="dark"] .select-branch-notice {
+  color: #fbbf24;
+  background: rgba(245, 158, 11, 0.15);
+  border-color: rgba(245, 158, 11, 0.35);
+}
+
+.select-branch-notice-icon {
+  font-size: 1rem;
+  flex-shrink: 0;
+  line-height: 1.2;
+}
+
+.select-branch-actions {
+  display: flex;
+  gap: 10px;
+  justify-content: flex-end;
+  margin-top: 18px;
+}
+
+.select-branch-cancel-btn {
+  padding: 10px 18px;
+  font-size: 0.86rem;
+  font-weight: 700;
+  border-radius: 12px;
+}
+
+.select-branch-confirm-btn {
+  padding: 10px 22px;
+  font-size: 0.88rem;
+  font-weight: 800;
+  border-radius: 12px;
+  background: linear-gradient(135deg, #6366f1, #4f46e5);
+  box-shadow: 0 4px 14px rgba(79, 70, 229, 0.3);
+}
+
 #gameRoundCompletedModal:not(.active),
 #dailyPracticeCompletedModal:not(.active),
 #badgesModal:not(.active),
@@ -18803,7 +18945,7 @@ html:not([data-theme="dark"]) .about-disclaimer-text,
   padding: 0 !important;
   margin: 0 !important;
   background: var(--bg-body, #0f172a) !important;
-  z-index: 10600 !important;
+  z-index: 200060 !important;
   flex-direction: column !important;
   border-radius: 0 !important;
 }
@@ -18854,7 +18996,7 @@ html:not([data-theme="dark"]) .about-disclaimer-text,
   padding: 0 !important;
   margin: 0 !important;
   background: var(--bg-body, #0f172a) !important;
-  z-index: 10600 !important;
+  z-index: 200060 !important;
   flex-direction: column !important;
   border-radius: 0 !important;
 }
