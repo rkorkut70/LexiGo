@@ -15554,12 +15554,16 @@ html.screen-fit-compact .welcome-action-guest {
 #leaderboardModal.full-screen-modal .leaderboard-tabs-nav {
   display: grid !important;
   grid-template-columns: repeat(4, 1fr) !important;
-  gap: 6px !important;
-  padding: 6px !important;
-  margin: 8px clamp(10px, 3vw, 18px) !important;
+  gap: 5px !important;
+  padding: 4px !important;
+  margin: 8px auto 10px auto !important;
+  width: calc(100% - 24px) !important;
+  max-width: 460px !important;
+  align-self: center !important;
+  justify-self: center !important;
   background: rgba(13, 16, 26, 0.85) !important;
   border: 1px solid rgba(255, 255, 255, 0.08) !important;
-  border-radius: 14px !important;
+  border-radius: 12px !important;
   box-shadow: inset 0 2px 5px rgba(0, 0, 0, 0.4), 0 2px 8px rgba(0, 0, 0, 0.2) !important;
   box-sizing: border-box !important;
   flex-shrink: 0 !important;
@@ -21121,19 +21125,20 @@ html:not([data-theme="dark"]) .custom-confirm-card .confirm-cancel-btn:hover {
 
 /* ============================================================
    PROFESSIONAL COLLEGIATE / ACADEMIC LEADERBOARD & TOURNAMENT UI
+   (Refined, Harmonious Sizing & Strictly Centered Layout)
    ============================================================ */
 
 /* 1. Modal Başlığı (Header) */
 .lb-brand-wrap {
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: 10px;
 }
 
 .lb-header-trophy-badge {
-  width: 36px;
-  height: 36px;
-  border-radius: 11px;
+  width: 32px;
+  height: 32px;
+  border-radius: 9px;
   background: linear-gradient(135deg, rgba(245, 158, 11, 0.22), rgba(217, 119, 6, 0.12));
   border: 1px solid rgba(245, 158, 11, 0.45);
   color: #f59e0b;
@@ -21141,21 +21146,28 @@ html:not([data-theme="dark"]) .custom-confirm-card .confirm-cancel-btn:hover {
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
-  box-shadow: 0 4px 12px rgba(245, 158, 11, 0.2), inset 0 1px 0 rgba(255, 255, 255, 0.2);
+  box-shadow: 0 2px 8px rgba(245, 158, 11, 0.2);
+}
+
+#leaderboardModal.full-screen-modal .modal-title {
+  font-size: 0.98rem !important;
+  font-weight: 800 !important;
+  letter-spacing: -0.2px;
+  line-height: 1.2;
 }
 
 .lb-header-sub {
-  font-size: 0.72rem;
+  font-size: 0.68rem;
   color: var(--text-muted);
   font-weight: 600;
-  letter-spacing: 0.2px;
+  letter-spacing: 0.1px;
   margin-top: 1px;
 }
 
 .lb-guide-btn {
-  width: 36px !important;
-  height: 36px !important;
-  border-radius: 10px !important;
+  width: 32px !important;
+  height: 32px !important;
+  border-radius: 8px !important;
   background: rgba(255, 255, 255, 0.05) !important;
   color: var(--text-muted) !important;
   border: 1px solid rgba(255, 255, 255, 0.1) !important;
@@ -21171,17 +21183,23 @@ html:not([data-theme="dark"]) .custom-confirm-card .confirm-cancel-btn:hover {
   border-color: rgba(245, 158, 11, 0.35) !important;
 }
 
-/* 2. Sekmeler (Segmented Collegiate Tabs) */
+/* 2. Sekmeler (Segmented Collegiate Tabs) - EKRANA TAM ORTALANMIŞ */
 #leaderboardModal.full-screen-modal .leaderboard-tabs-nav {
   display: grid !important;
   grid-template-columns: repeat(4, 1fr) !important;
-  gap: 6px !important;
-  padding: 5px !important;
-  margin: 6px clamp(10px, 3vw, 18px) 10px !important;
+  gap: 5px !important;
+  padding: 4px !important;
+  margin: 8px auto 10px auto !important;
+  width: calc(100% - 24px) !important;
+  max-width: 480px !important;
+  align-self: center !important;
   background: rgba(15, 20, 32, 0.85) !important;
   border: 1px solid rgba(255, 255, 255, 0.08) !important;
-  border-radius: 13px !important;
-  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.4), 0 2px 8px rgba(0, 0, 0, 0.15) !important;
+  border-radius: 12px !important;
+  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.35), 0 2px 8px rgba(0, 0, 0, 0.15) !important;
+  box-sizing: border-box !important;
+  flex-shrink: 0 !important;
+  z-index: 5 !important;
 }
 
 [data-theme="light"] #leaderboardModal.full-screen-modal .leaderboard-tabs-nav {
@@ -21191,18 +21209,21 @@ html:not([data-theme="dark"]) .custom-confirm-card .confirm-cancel-btn:hover {
 }
 
 #leaderboardModal.full-screen-modal .lb-tab-btn {
-  padding: 8px 6px !important;
-  font-size: 0.78rem !important;
+  padding: 7px 4px !important;
+  font-size: 0.76rem !important;
   font-weight: 700 !important;
   letter-spacing: -0.2px !important;
-  border-radius: 9px !important;
+  border-radius: 8px !important;
   color: #94a3b8 !important;
-  display: flex !important;
+  display: inline-flex !important;
   align-items: center !important;
   justify-content: center !important;
-  gap: 6px !important;
+  gap: 5px !important;
+  text-align: center !important;
   transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1) !important;
   border: 1px solid transparent !important;
+  box-sizing: border-box !important;
+  background: transparent !important;
 }
 
 [data-theme="light"] #leaderboardModal.full-screen-modal .lb-tab-btn {
@@ -21223,30 +21244,55 @@ html:not([data-theme="dark"]) .custom-confirm-card .confirm-cancel-btn:hover {
   background: linear-gradient(135deg, #4f46e5 0%, #3730a3 100%) !important;
   color: #ffffff !important;
   border: 1px solid rgba(255, 255, 255, 0.2) !important;
-  box-shadow: 0 4px 12px rgba(79, 70, 229, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.3) !important;
+  box-shadow: 0 3px 10px rgba(79, 70, 229, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.3) !important;
   transform: translateY(-1px) !important;
 }
 
 .lb-tab-svg {
-  width: 15px;
-  height: 15px;
+  width: 14px;
+  height: 14px;
   flex-shrink: 0;
   stroke-width: 2.2;
 }
 
-/* 3. Liderlik Sıralama Rozetleri (Collegiate Rank Badges) */
+/* Gövde ve Paneller - EKRANA TAM ORTALANMIŞ */
+#leaderboardModal.full-screen-modal .leaderboard-modal-body > *,
+#leaderboardModal.full-screen-modal .lb-panel {
+  max-width: 480px !important;
+  width: 100% !important;
+  margin-left: auto !important;
+  margin-right: auto !important;
+  box-sizing: border-box !important;
+}
+
+#leaderboardModal.full-screen-modal #lbCurrentUserBar {
+  max-width: 480px !important;
+  left: 0 !important;
+  right: 0 !important;
+  margin-left: auto !important;
+  margin-right: auto !important;
+}
+
+/* 3. Liderlik Sıralama Satırları & Rozetleri (Orantılı Tipografi) */
+.leaderboard-item {
+  padding: 8px 10px !important;
+  margin-bottom: 4px !important;
+  border-radius: 12px !important;
+  gap: 10px !important;
+}
+
 .leaderboard-item .lb-rank {
-  font-weight: 900 !important;
-  width: 30px !important;
-  height: 30px !important;
-  border-radius: 9px !important;
+  font-weight: 800 !important;
+  width: 26px !important;
+  height: 26px !important;
+  border-radius: 8px !important;
   display: inline-flex !important;
   align-items: center !important;
   justify-content: center !important;
   background: rgba(255, 255, 255, 0.05) !important;
   border: 1px solid rgba(255, 255, 255, 0.08) !important;
   color: #94a3b8 !important;
-  font-size: 0.82rem !important;
+  font-size: 0.78rem !important;
   flex-shrink: 0 !important;
   box-sizing: border-box !important;
   font-variant-numeric: tabular-nums;
@@ -21258,17 +21304,35 @@ html:not([data-theme="dark"]) .custom-confirm-card .confirm-cancel-btn:hover {
   color: #64748b !important;
 }
 
+.leaderboard-item .lb-name {
+  font-size: 0.82rem !important;
+  font-weight: 700 !important;
+  line-height: 1.3 !important;
+}
+
+.leaderboard-item .lb-badge {
+  font-size: 0.68rem !important;
+  color: var(--text-muted) !important;
+  margin-top: 1px !important;
+}
+
+.leaderboard-item .lb-score {
+  font-size: 0.82rem !important;
+  font-weight: 800 !important;
+  color: #10b981 !important;
+}
+
 /* 1. Sıra (Altın Prestij) */
 .leaderboard-item.rank-1 .lb-rank {
   background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%) !important;
   color: #ffffff !important;
-  border: 1.5px solid #fef08a !important;
-  box-shadow: 0 2px 8px rgba(245, 158, 11, 0.5), inset 0 1px 1px rgba(255, 255, 255, 0.8) !important;
-  font-size: 0.9rem !important;
+  border: 1px solid #fef08a !important;
+  box-shadow: 0 2px 6px rgba(245, 158, 11, 0.4) !important;
+  font-size: 0.84rem !important;
 }
 
 .leaderboard-item.rank-1 {
-  border-left: 3.5px solid #f59e0b !important;
+  border-left: 3px solid #f59e0b !important;
   background: linear-gradient(90deg, rgba(245, 158, 11, 0.08) 0%, rgba(23, 27, 43, 0.75) 100%) !important;
 }
 
@@ -21280,36 +21344,36 @@ html:not([data-theme="dark"]) .custom-confirm-card .confirm-cancel-btn:hover {
 .leaderboard-item.rank-2 .lb-rank {
   background: linear-gradient(135deg, #94a3b8 0%, #64748b 100%) !important;
   color: #ffffff !important;
-  border: 1.5px solid #e2e8f0 !important;
-  box-shadow: 0 2px 8px rgba(148, 163, 184, 0.4), inset 0 1px 1px rgba(255, 255, 255, 0.8) !important;
-  font-size: 0.86rem !important;
+  border: 1px solid #e2e8f0 !important;
+  box-shadow: 0 2px 6px rgba(148, 163, 184, 0.3) !important;
+  font-size: 0.82rem !important;
 }
 
 .leaderboard-item.rank-2 {
-  border-left: 3.5px solid #94a3b8 !important;
+  border-left: 3px solid #94a3b8 !important;
 }
 
 /* 3. Sıra (Bronz Prestij) */
 .leaderboard-item.rank-3 .lb-rank {
   background: linear-gradient(135deg, #b45309 0%, #78350f 100%) !important;
   color: #ffffff !important;
-  border: 1.5px solid #fed7aa !important;
-  box-shadow: 0 2px 8px rgba(180, 83, 9, 0.4), inset 0 1px 1px rgba(255, 255, 255, 0.7) !important;
-  font-size: 0.84rem !important;
+  border: 1px solid #fed7aa !important;
+  box-shadow: 0 2px 6px rgba(180, 83, 9, 0.3) !important;
+  font-size: 0.80rem !important;
 }
 
 .leaderboard-item.rank-3 {
-  border-left: 3.5px solid #b45309 !important;
+  border-left: 3px solid #b45309 !important;
 }
 
 /* Canlı Pulse Noktası */
 .lb-live-pulse-dot {
   display: inline-block;
-  width: 7px;
-  height: 7px;
+  width: 6px;
+  height: 6px;
   border-radius: 50%;
   background: #10b981;
-  box-shadow: 0 0 8px #10b981;
+  box-shadow: 0 0 6px #10b981;
   animation: lbLivePulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
   flex-shrink: 0;
   vertical-align: middle;
@@ -21320,24 +21384,23 @@ html:not([data-theme="dark"]) .custom-confirm-card .confirm-cancel-btn:hover {
   50% { opacity: 0.4; transform: scale(0.85); }
 }
 
-/* 4. Sınıfım Paneli Akademik Kartı */
+/* 4. Sınıfım Paneli Akademik Kartı (Dengeli Tipografi) */
 .lb-collegiate-class-card {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 12px 14px;
+  padding: 10px 12px;
   background: linear-gradient(135deg, rgba(37, 99, 235, 0.12) 0%, rgba(59, 130, 246, 0.05) 100%);
   border: 1px solid rgba(59, 130, 246, 0.25);
-  border-radius: 14px;
-  margin-bottom: 12px;
+  border-radius: 12px;
+  margin-bottom: 10px;
   flex-shrink: 0;
-  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.15);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 }
 
 [data-theme="light"] .lb-collegiate-class-card {
   background: linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%);
   border-color: rgba(59, 130, 246, 0.3);
-  box-shadow: 0 2px 8px rgba(59, 130, 246, 0.08);
 }
 
 .lb-class-left {
@@ -21348,9 +21411,9 @@ html:not([data-theme="dark"]) .custom-confirm-card .confirm-cancel-btn:hover {
 }
 
 .lb-class-crest-icon {
-  width: 38px;
-  height: 38px;
-  border-radius: 11px;
+  width: 32px;
+  height: 32px;
+  border-radius: 9px;
   background: rgba(59, 130, 246, 0.18);
   border: 1px solid rgba(59, 130, 246, 0.4);
   color: #3b82f6;
@@ -21361,7 +21424,7 @@ html:not([data-theme="dark"]) .custom-confirm-card .confirm-cancel-btn:hover {
 }
 
 .lb-class-title {
-  font-size: 0.95rem;
+  font-size: 0.84rem;
   font-weight: 800;
   color: #3b82f6;
   display: block;
@@ -21372,7 +21435,7 @@ html:not([data-theme="dark"]) .custom-confirm-card .confirm-cancel-btn:hover {
 }
 
 .lb-class-sub {
-  font-size: 0.72rem;
+  font-size: 0.68rem;
   color: var(--text-muted);
   font-weight: 600;
   margin-top: 1px;
@@ -21386,36 +21449,36 @@ html:not([data-theme="dark"]) .custom-confirm-card .confirm-cancel-btn:hover {
 .lb-class-live-pill {
   display: inline-flex;
   align-items: center;
-  gap: 5px;
-  font-size: 0.7rem;
+  gap: 4px;
+  font-size: 0.66rem;
   font-weight: 700;
   color: #10b981;
   background: rgba(16, 185, 129, 0.12);
   border: 1px solid rgba(16, 185, 129, 0.3);
-  padding: 3px 8px;
-  border-radius: 8px;
+  padding: 2px 6px;
+  border-radius: 6px;
 }
 
 .lb-class-count-text {
-  font-size: 0.72rem;
+  font-size: 0.68rem;
   color: var(--text-muted);
   display: block;
-  margin-top: 3px;
+  margin-top: 2px;
   font-weight: 600;
 }
 
-/* 5. Şube Ligi Paneli Üst Barı */
+/* 5. Şube Ligi Paneli Üst Barı (Dengeli Tipografi) */
 .lb-collegiate-duels-bar {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 12px 14px;
+  padding: 10px 12px;
   background: linear-gradient(135deg, rgba(239, 68, 68, 0.12) 0%, rgba(220, 38, 38, 0.05) 100%);
   border: 1px solid rgba(239, 68, 68, 0.25);
-  border-radius: 14px;
-  margin-bottom: 12px;
+  border-radius: 12px;
+  margin-bottom: 10px;
   flex-shrink: 0;
-  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.15);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 }
 
 [data-theme="light"] .lb-collegiate-duels-bar {
@@ -21431,9 +21494,9 @@ html:not([data-theme="dark"]) .custom-confirm-card .confirm-cancel-btn:hover {
 }
 
 .lb-duels-bar-icon {
-  width: 38px;
-  height: 38px;
-  border-radius: 11px;
+  width: 32px;
+  height: 32px;
+  border-radius: 9px;
   background: rgba(239, 68, 68, 0.18);
   border: 1px solid rgba(239, 68, 68, 0.4);
   color: #ef4444;
@@ -21444,7 +21507,7 @@ html:not([data-theme="dark"]) .custom-confirm-card .confirm-cancel-btn:hover {
 }
 
 .lb-duels-title {
-  font-size: 0.92rem;
+  font-size: 0.84rem;
   font-weight: 800;
   color: #ef4444;
   display: block;
@@ -21455,7 +21518,7 @@ html:not([data-theme="dark"]) .custom-confirm-card .confirm-cancel-btn:hover {
 }
 
 .lb-duels-sub {
-  font-size: 0.72rem;
+  font-size: 0.68rem;
   color: var(--text-muted);
   font-weight: 600;
   margin-top: 1px;
@@ -21469,10 +21532,10 @@ html:not([data-theme="dark"]) .custom-confirm-card .confirm-cancel-btn:hover {
 
 .lb-duels-metric-chip {
   display: inline-block;
-  font-size: 0.7rem;
+  font-size: 0.66rem;
   font-weight: 800;
-  padding: 3px 8px;
-  border-radius: 8px;
+  padding: 2px 6px;
+  border-radius: 6px;
   background: rgba(239, 68, 68, 0.15);
   color: #ef4444;
   border: 1px solid rgba(239, 68, 68, 0.3);
@@ -21484,21 +21547,21 @@ html:not([data-theme="dark"]) .custom-confirm-card .confirm-cancel-btn:hover {
 }
 
 .lb-duels-countdown-text {
-  font-size: 0.7rem;
+  font-size: 0.68rem;
   color: var(--text-muted);
   display: flex;
   align-items: center;
-  gap: 5px;
+  gap: 4px;
   justify-content: flex-end;
-  margin-top: 3px;
+  margin-top: 2px;
   font-weight: 600;
 }
 
-/* Şube Kalkanı / Amblemi (Branch Shield Crest) */
+/* Şube Kalkanı / Amblemi */
 .lb-branch-shield {
-  width: 36px;
-  height: 36px;
-  border-radius: 10px;
+  width: 30px;
+  height: 30px;
+  border-radius: 8px;
   background: linear-gradient(135deg, rgba(59, 130, 246, 0.2) 0%, rgba(37, 99, 235, 0.1) 100%);
   border: 1px solid rgba(59, 130, 246, 0.35);
   color: #3b82f6;
@@ -21506,7 +21569,6 @@ html:not([data-theme="dark"]) .custom-confirm-card .confirm-cancel-btn:hover {
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.15);
 }
 
 .lb-branch-shield-unranked {
@@ -21515,48 +21577,47 @@ html:not([data-theme="dark"]) .custom-confirm-card .confirm-cancel-btn:hover {
   color: var(--text-muted) !important;
 }
 
-/* Şube Ligi Zirve Karşılaşması Kartı (Collegiate Clash Card) */
+/* Şube Ligi Zirve Karşılaşması Kartı (Orantılı Tipografi) */
 .lb-clash-card {
-  background: linear-gradient(135deg, rgba(239, 68, 68, 0.14) 0%, rgba(59, 130, 246, 0.14) 100%);
-  border: 1.5px solid rgba(255, 255, 255, 0.12);
-  border-radius: 16px;
-  padding: 12px 14px;
-  margin-bottom: 14px;
-  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.25);
+  background: linear-gradient(135deg, rgba(239, 68, 68, 0.12) 0%, rgba(59, 130, 246, 0.12) 100%);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 14px;
+  padding: 8px 10px;
+  margin-bottom: 10px;
+  box-shadow: 0 3px 12px rgba(0, 0, 0, 0.2);
 }
 
 [data-theme="light"] .lb-clash-card {
   background: linear-gradient(135deg, #fff1f2 0%, #eff6ff 100%);
   border-color: rgba(0, 0, 0, 0.08);
-  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.06);
 }
 
 .lb-clash-header {
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 6px;
-  font-size: 0.72rem;
+  gap: 5px;
+  font-size: 0.68rem;
   font-weight: 800;
-  letter-spacing: 0.8px;
+  letter-spacing: 0.6px;
   text-transform: uppercase;
   color: #ef4444;
-  margin-bottom: 10px;
+  margin-bottom: 6px;
 }
 
 .lb-clash-body {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 10px;
+  gap: 8px;
 }
 
 .lb-clash-team {
   flex: 1;
   text-align: center;
   min-width: 0;
-  padding: 8px 6px;
-  border-radius: 12px;
+  padding: 6px 4px;
+  border-radius: 10px;
   background: rgba(0, 0, 0, 0.2);
   border: 1px solid rgba(255, 255, 255, 0.06);
 }
@@ -21568,13 +21629,13 @@ html:not([data-theme="dark"]) .custom-confirm-card .confirm-cancel-btn:hover {
 
 .lb-clash-team.leader {
   border-color: rgba(245, 158, 11, 0.35);
-  background: linear-gradient(180deg, rgba(245, 158, 11, 0.12) 0%, rgba(0, 0, 0, 0.2) 100%);
+  background: linear-gradient(180deg, rgba(245, 158, 11, 0.1) 0%, rgba(0, 0, 0, 0.2) 100%);
 }
 
 .lb-clash-code {
-  font-size: 1.15rem;
-  font-weight: 900;
-  letter-spacing: -0.3px;
+  font-size: 0.85rem;
+  font-weight: 800;
+  letter-spacing: -0.2px;
   color: var(--text-main);
   white-space: nowrap;
   overflow: hidden;
@@ -21586,28 +21647,28 @@ html:not([data-theme="dark"]) .custom-confirm-card .confirm-cancel-btn:hover {
 }
 
 .lb-clash-sub {
-  font-size: 0.7rem;
+  font-size: 0.66rem;
   color: var(--text-muted);
   font-weight: 600;
-  margin-top: 2px;
+  margin-top: 1px;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
 }
 
 .lb-clash-score {
-  font-size: 0.88rem;
+  font-size: 0.76rem;
   font-weight: 800;
   color: #10b981;
-  margin-top: 4px;
+  margin-top: 2px;
 }
 
 .lb-clash-vs-badge {
-  font-size: 0.95rem;
+  font-size: 0.68rem;
   font-weight: 900;
   color: #ef4444;
-  width: 32px;
-  height: 32px;
+  width: 24px;
+  height: 24px;
   border-radius: 50%;
   background: rgba(239, 68, 68, 0.15);
   border: 1px solid rgba(239, 68, 68, 0.35);
@@ -21615,31 +21676,31 @@ html:not([data-theme="dark"]) .custom-confirm-card .confirm-cancel-btn:hover {
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
-  letter-spacing: 0.5px;
+  letter-spacing: 0.3px;
 }
 
-/* 6. Kürsü & Şeref Podyumu (Collegiate Podium Stage) */
+/* 6. Kürsü & Şeref Podyumu (Kompakt ve Orantılı Podyum) */
 .podium-spotlight-card {
   background: linear-gradient(180deg, rgba(23, 27, 43, 0.9) 0%, rgba(16, 19, 31, 0.95) 100%) !important;
-  border: 1.5px solid rgba(255, 255, 255, 0.1) !important;
-  border-radius: 18px !important;
-  padding: 14px 14px 12px !important;
-  margin-bottom: 14px !important;
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.08) !important;
+  border: 1px solid rgba(255, 255, 255, 0.1) !important;
+  border-radius: 14px !important;
+  padding: 10px 10px 8px !important;
+  margin-bottom: 10px !important;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.25) !important;
 }
 
 [data-theme="light"] .podium-spotlight-card {
   background: linear-gradient(180deg, #ffffff 0%, #f8fafc 100%) !important;
   border-color: rgba(203, 213, 225, 0.8) !important;
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08) !important;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.06) !important;
 }
 
 .podium-spotlight-header {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  margin-bottom: 12px;
-  padding-bottom: 10px;
+  margin-bottom: 8px;
+  padding-bottom: 6px;
   border-bottom: 1px solid rgba(255, 255, 255, 0.06);
 }
 
@@ -21650,30 +21711,30 @@ html:not([data-theme="dark"]) .custom-confirm-card .confirm-cancel-btn:hover {
 .podium-spotlight-title {
   display: flex;
   align-items: center;
-  gap: 8px;
-  font-size: 0.92rem;
+  gap: 6px;
+  font-size: 0.82rem;
   font-weight: 800;
   color: var(--text-main);
   letter-spacing: -0.2px;
 }
 
 .podium-spotlight-badge {
-  font-size: 0.72rem;
+  font-size: 0.68rem;
   font-weight: 700;
-  padding: 3px 9px;
-  border-radius: 8px;
+  padding: 2px 7px;
+  border-radius: 6px;
   background: rgba(255, 255, 255, 0.06);
   border: 1px solid rgba(255, 255, 255, 0.1);
   color: var(--text-muted);
 }
 
-/* Podyum Basamakları Düzeni (Stepped Olympic Podium) */
+/* Podyum Basamakları Düzeni */
 .podium-stage-row {
   display: grid !important;
   grid-template-columns: 1fr 1.15fr 1fr !important;
-  gap: 8px !important;
+  gap: 6px !important;
   align-items: end !important;
-  padding: 8px 4px 0 !important;
+  padding: 4px 2px 0 !important;
 }
 
 .podium-col {
@@ -21684,28 +21745,26 @@ html:not([data-theme="dark"]) .custom-confirm-card .confirm-cancel-btn:hover {
   min-width: 0 !important;
 }
 
-/* Podyum Taç / Rozet Başlığı */
 .podium-crown-badge {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 3px;
-  margin-bottom: 6px;
+  gap: 2px;
+  margin-bottom: 4px;
 }
 
 .podium-rank-pill {
-  font-size: 0.65rem;
+  font-size: 0.60rem;
   font-weight: 800;
-  letter-spacing: 0.3px;
-  padding: 2px 7px;
-  border-radius: 6px;
+  letter-spacing: 0.2px;
+  padding: 1px 6px;
+  border-radius: 5px;
   text-transform: uppercase;
 }
 
 .col-first .podium-rank-pill {
   background: linear-gradient(135deg, #f59e0b, #d97706);
   color: #fff;
-  box-shadow: 0 2px 6px rgba(245, 158, 11, 0.4);
 }
 
 .pill-silver {
@@ -21718,61 +21777,60 @@ html:not([data-theme="dark"]) .custom-confirm-card .confirm-cancel-btn:hover {
   color: #fff;
 }
 
-/* Şube Amblem Kutusu (Emblem) */
+/* Şube Amblemi */
 .podium-branch-emblem {
-  width: 44px;
-  height: 44px;
-  border-radius: 12px;
+  width: 36px;
+  height: 36px;
+  border-radius: 9px;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-weight: 900;
-  font-size: 0.88rem;
-  letter-spacing: -0.3px;
-  margin-bottom: 5px;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.25);
+  font-weight: 800;
+  font-size: 0.78rem;
+  letter-spacing: -0.2px;
+  margin-bottom: 3px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
 }
 
 .col-first .podium-branch-emblem {
-  width: 52px;
-  height: 52px;
-  font-size: 1rem;
+  width: 42px;
+  height: 42px;
+  font-size: 0.85rem;
 }
 
 .emblem-gold {
   background: linear-gradient(135deg, rgba(254, 240, 138, 0.25) 0%, rgba(245, 158, 11, 0.2) 100%);
-  border: 2px solid #f59e0b;
+  border: 1.5px solid #f59e0b;
   color: #f59e0b;
-  box-shadow: 0 0 16px rgba(245, 158, 11, 0.35);
 }
 
 .emblem-silver {
   background: linear-gradient(135deg, rgba(248, 250, 252, 0.2) 0%, rgba(148, 163, 184, 0.15) 100%);
-  border: 1.5px solid #94a3b8;
+  border: 1px solid #94a3b8;
   color: #cbd5e1;
 }
 
 .emblem-bronze {
   background: linear-gradient(135deg, rgba(254, 215, 170, 0.2) 0%, rgba(180, 83, 9, 0.15) 100%);
-  border: 1.5px solid #d97706;
+  border: 1px solid #d97706;
   color: #fed7aa;
 }
 
 .podium-branch-track {
-  font-size: 0.68rem !important;
+  font-size: 0.65rem !important;
   color: var(--text-muted) !important;
   font-weight: 600 !important;
   white-space: nowrap !important;
   overflow: hidden !important;
   text-overflow: ellipsis !important;
   max-width: 100% !important;
-  margin-bottom: 6px !important;
+  margin-bottom: 4px !important;
 }
 
-/* Basamak Gövdesi (Pedestal Column) */
+/* Podyum Basamak Yükseklikleri & Yazı Boyutları */
 .podium-pedestal {
   width: 100% !important;
-  border-radius: 12px 12px 6px 6px !important;
+  border-radius: 9px 9px 4px 4px !important;
   display: flex !important;
   flex-direction: column !important;
   align-items: center !important;
@@ -21780,13 +21838,12 @@ html:not([data-theme="dark"]) .custom-confirm-card .confirm-cancel-btn:hover {
   position: relative !important;
   overflow: hidden !important;
   box-sizing: border-box !important;
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.15) !important;
 }
 
 .pedestal-first {
-  height: 95px !important;
-  background: linear-gradient(180deg, rgba(245, 158, 11, 0.25) 0%, rgba(217, 119, 6, 0.12) 100%) !important;
-  border: 1.5px solid rgba(245, 158, 11, 0.5) !important;
+  height: 58px !important;
+  background: linear-gradient(180deg, rgba(245, 158, 11, 0.22) 0%, rgba(217, 119, 6, 0.1) 100%) !important;
+  border: 1px solid rgba(245, 158, 11, 0.45) !important;
   border-bottom: none !important;
 }
 
@@ -21796,9 +21853,9 @@ html:not([data-theme="dark"]) .custom-confirm-card .confirm-cancel-btn:hover {
 }
 
 .pedestal-second {
-  height: 72px !important;
-  background: linear-gradient(180deg, rgba(148, 163, 184, 0.2) 0%, rgba(100, 116, 139, 0.1) 100%) !important;
-  border: 1.5px solid rgba(148, 163, 184, 0.4) !important;
+  height: 46px !important;
+  background: linear-gradient(180deg, rgba(148, 163, 184, 0.18) 0%, rgba(100, 116, 139, 0.08) 100%) !important;
+  border: 1px solid rgba(148, 163, 184, 0.35) !important;
   border-bottom: none !important;
 }
 
@@ -21808,9 +21865,9 @@ html:not([data-theme="dark"]) .custom-confirm-card .confirm-cancel-btn:hover {
 }
 
 .pedestal-third {
-  height: 58px !important;
-  background: linear-gradient(180deg, rgba(180, 83, 9, 0.2) 0%, rgba(120, 53, 15, 0.1) 100%) !important;
-  border: 1.5px solid rgba(217, 119, 6, 0.4) !important;
+  height: 38px !important;
+  background: linear-gradient(180deg, rgba(180, 83, 9, 0.18) 0%, rgba(120, 53, 15, 0.08) 100%) !important;
+  border: 1px solid rgba(217, 119, 6, 0.35) !important;
   border-bottom: none !important;
 }
 
@@ -21820,50 +21877,47 @@ html:not([data-theme="dark"]) .custom-confirm-card .confirm-cancel-btn:hover {
 }
 
 .pedestal-number {
-  font-size: 1.4rem;
-  font-weight: 900;
-  opacity: 0.25;
-  position: absolute;
-  top: 2px;
-  line-height: 1;
+  display: none !important;
 }
 
 .podium-pedestal-score {
-  font-size: 1.05rem !important;
-  font-weight: 900 !important;
+  font-size: 0.82rem !important;
+  font-weight: 800 !important;
   color: var(--text-main) !important;
   position: relative !important;
   z-index: 2 !important;
-  letter-spacing: -0.3px !important;
+  letter-spacing: -0.2px !important;
 }
 
 .col-first .podium-pedestal-score {
   color: #f59e0b !important;
-  font-size: 1.2rem !important;
+  font-size: 0.90rem !important;
+  font-weight: 900 !important;
 }
 
 .podium-pedestal-label {
-  font-size: 0.65rem !important;
+  font-size: 0.60rem !important;
   color: var(--text-muted) !important;
   font-weight: 700 !important;
   position: relative !important;
   z-index: 2 !important;
   text-transform: uppercase !important;
+  margin-top: 1px;
 }
 
 .podium-summary-strip {
-  margin-top: 10px !important;
-  padding: 8px 10px !important;
-  border-radius: 10px !important;
+  margin-top: 8px !important;
+  padding: 6px 8px !important;
+  border-radius: 8px !important;
   background: rgba(0, 0, 0, 0.25) !important;
-  font-size: 0.72rem !important;
+  font-size: 0.68rem !important;
   color: var(--text-muted) !important;
   text-align: center !important;
   font-weight: 600 !important;
   display: flex !important;
   align-items: center !important;
   justify-content: center !important;
-  gap: 8px !important;
+  gap: 6px !important;
 }
 
 [data-theme="light"] .podium-summary-strip {
@@ -21872,23 +21926,23 @@ html:not([data-theme="dark"]) .custom-confirm-card .confirm-cancel-btn:hover {
 
 /* 7. Devam Eden Ay / Canlı Mücadele Bannerı */
 .podium-live-ongoing-banner {
-  background: linear-gradient(135deg, rgba(245, 158, 11, 0.16) 0%, rgba(217, 119, 6, 0.08) 100%);
-  border: 1.5px solid rgba(245, 158, 11, 0.4);
-  border-radius: 14px;
-  padding: 10px 14px;
-  margin-bottom: 12px;
+  background: linear-gradient(135deg, rgba(245, 158, 11, 0.14) 0%, rgba(217, 119, 6, 0.06) 100%);
+  border: 1px solid rgba(245, 158, 11, 0.35);
+  border-radius: 12px;
+  padding: 8px 12px;
+  margin-bottom: 10px;
   display: flex;
   align-items: center;
-  gap: 12px;
-  box-shadow: 0 4px 14px rgba(245, 158, 11, 0.1);
+  gap: 10px;
+  box-shadow: 0 2px 8px rgba(245, 158, 11, 0.08);
 }
 
 .podium-live-dot-wrap {
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 24px;
-  height: 24px;
+  width: 20px;
+  height: 20px;
   border-radius: 50%;
   background: rgba(245, 158, 11, 0.2);
   flex-shrink: 0;
@@ -21896,7 +21950,7 @@ html:not([data-theme="dark"]) .custom-confirm-card .confirm-cancel-btn:hover {
 
 .podium-live-dot-wrap .lb-live-pulse-dot {
   background: #f59e0b;
-  box-shadow: 0 0 10px #f59e0b;
+  box-shadow: 0 0 6px #f59e0b;
 }
 
 .podium-live-content {
@@ -21905,37 +21959,37 @@ html:not([data-theme="dark"]) .custom-confirm-card .confirm-cancel-btn:hover {
 }
 
 .podium-live-title {
-  font-size: 0.82rem;
+  font-size: 0.78rem;
   font-weight: 800;
   color: #f59e0b;
   margin-bottom: 2px;
 }
 
 .podium-live-desc {
-  font-size: 0.73rem;
+  font-size: 0.68rem;
   color: var(--text-main);
-  line-height: 1.4;
+  line-height: 1.35;
   opacity: 0.9;
 }
 
 .podium-live-badge {
-  font-size: 0.65rem;
+  font-size: 0.62rem;
   font-weight: 900;
-  letter-spacing: 0.5px;
-  padding: 3px 7px;
-  border-radius: 6px;
+  letter-spacing: 0.4px;
+  padding: 2px 6px;
+  border-radius: 5px;
   background: rgba(245, 158, 11, 0.25);
   color: #f59e0b;
   border: 1px solid rgba(245, 158, 11, 0.5);
   flex-shrink: 0;
 }
 
-/* 8. Modern Ayrım Çizgisi (Collegiate Section Divider) */
+/* 8. Modern Akademik Ayrım Çizgisi */
 .lb-academic-divider {
   display: flex;
   align-items: center;
-  gap: 12px;
-  margin: 18px 4px 10px;
+  gap: 10px;
+  margin: 14px 4px 8px;
 }
 
 .lb-academic-divider::before,
@@ -21952,13 +22006,13 @@ html:not([data-theme="dark"]) .custom-confirm-card .confirm-cancel-btn:hover {
 }
 
 .lb-academic-divider-badge {
-  font-size: 0.72rem;
+  font-size: 0.68rem;
   font-weight: 700;
   color: var(--text-muted);
   background: rgba(255, 255, 255, 0.05);
   border: 1px solid rgba(255, 255, 255, 0.08);
-  padding: 3px 10px;
-  border-radius: 20px;
+  padding: 2px 8px;
+  border-radius: 16px;
   white-space: nowrap;
 }
 

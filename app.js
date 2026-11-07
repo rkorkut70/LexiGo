@@ -12414,8 +12414,8 @@ let activeAvatarCategory = 'all';
       tabBtns.forEach(btn => {
         const isAct = btn.getAttribute('data-tab') === tabName;
         btn.classList.toggle('active', isAct);
-        btn.style.background = isAct ? 'var(--accent)' : 'transparent';
-        btn.style.color = isAct ? '#fff' : 'var(--text-muted)';
+        btn.style.background = '';
+        btn.style.color = '';
       });
 
       // Paneller
