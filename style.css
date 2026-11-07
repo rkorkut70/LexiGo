@@ -5949,7 +5949,7 @@ html:not([data-theme="dark"])[data-card-theme="dark"] .card-face {
 .settings-modal-card {
   max-width: 480px;
   width: 92%;
-  height: 480px; /* SABİT BOYUT: Sekmeler arası geçişte boyutu ASLA zıplamaz veya değişmez */
+  height: 480px;
   max-height: 85dvh;
   display: flex;
   flex-direction: column;
@@ -5958,6 +5958,17 @@ html:not([data-theme="dark"])[data-card-theme="dark"] .card-face {
   padding: 0;
   background: var(--bg-surface);
   box-shadow: 0 16px 36px rgba(0, 0, 0, 0.3);
+}
+
+.full-screen-modal .settings-modal-card,
+#settingsModal .settings-modal-card {
+  max-width: 100% !important;
+  width: 100% !important;
+  height: 100% !important;
+  height: 100dvh !important;
+  max-height: 100dvh !important;
+  border-radius: 0 !important;
+  box-shadow: none !important;
 }
 
 .settings-header-compact {
@@ -13295,18 +13306,22 @@ html[data-flip-speed="slow"] .flashcard {
 #aboutModal.full-screen-modal {
   position: fixed !important;
   inset: 0 !important;
+  top: 0 !important;
+  left: 0 !important;
+  right: 0 !important;
+  bottom: 0 !important;
   width: 100vw !important;
   height: 100% !important;
   height: 100dvh !important;
-  height: 100vh !important;
+  max-height: 100dvh !important;
   padding: 0 !important;
   margin: 0 !important;
-  background: var(--bg-body, #0f172a) !important;
+  background: var(--bg-body, #0a0c14) !important;
   display: flex !important;
   flex-direction: column !important;
   align-items: stretch !important;
   justify-content: stretch !important;
-  z-index: 10020 !important;
+  z-index: 200030 !important;
   overflow: hidden !important;
   box-sizing: border-box !important;
 }
@@ -13319,8 +13334,6 @@ html[data-flip-speed="slow"] .flashcard {
   max-width: 100% !important;
   height: 100% !important;
   height: 100dvh !important;
-  height: 100vh !important;
-  max-height: 100% !important;
   max-height: 100dvh !important;
   border-radius: 0 !important;
   border: none !important;
@@ -13329,7 +13342,7 @@ html[data-flip-speed="slow"] .flashcard {
   display: flex !important;
   flex-direction: column !important;
   box-shadow: none !important;
-  background: var(--bg-body, #0f172a) !important;
+  background: var(--bg-body, #0a0c14) !important;
   overflow: hidden !important;
   box-sizing: border-box !important;
   flex: 1 1 auto !important;
@@ -13382,26 +13395,49 @@ html[data-flip-speed="slow"] .flashcard {
   white-space: nowrap !important;
 }
 
-/* Ayarlar içerik gövdesi (Scroll ve padding) */
+/* Ayarlar içerik gövdesi (Tek Merkezli ve Ekrana Tam Uyumlu) */
 #settingsModal.full-screen-modal .settings-content {
   flex: 1 1 auto !important;
   min-height: 0 !important;
   height: auto !important;
-  overflow-y: scroll !important;
+  display: flex !important;
+  flex-direction: column !important;
+  overflow-y: auto !important;
   overflow-x: hidden !important;
   -webkit-overflow-scrolling: touch !important;
-  padding: 16px clamp(12px, 3.5vw, 24px) calc(env(safe-area-inset-bottom, 24px) + 90px) clamp(12px, 3.5vw, 24px) !important;
+  overscroll-behavior-y: contain !important;
+  padding: 14px clamp(12px, 3.5vw, 20px) calc(env(safe-area-inset-bottom, 20px) + 52px) clamp(12px, 3.5vw, 20px) !important;
   box-sizing: border-box !important;
+  background: transparent !important;
 }
 
 #settingsModal.full-screen-modal .settings-tab-panels {
+  flex: none !important;
+  width: 100% !important;
+  max-width: 540px !important;
+  margin-left: auto !important;
+  margin-right: auto !important;
   height: auto !important;
-  min-height: 0 !important;
+  min-height: auto !important;
+  overflow: visible !important;
+  display: flex !important;
+  flex-direction: column !important;
+  padding: 0 !important;
   box-sizing: border-box !important;
 }
 
 #settingsModal.full-screen-modal .settings-tab-panel {
+  display: none !important;
+  flex-direction: column !important;
+  gap: 12px !important;
+  width: 100% !important;
   box-sizing: border-box !important;
+  overflow: visible !important;
+  padding: 0 0 10px 0 !important;
+}
+
+#settingsModal.full-screen-modal .settings-tab-panel.active {
+  display: flex !important;
 }
 
 /* Öğrenci profili içerik gövdesi - Adaptif & Sade */
@@ -13849,7 +13885,7 @@ html[data-flip-speed="slow"] .flashcard {
 
 @media (max-width: 480px) {
   #settingsModal.full-screen-modal .settings-content {
-    padding: 12px 10px calc(env(safe-area-inset-bottom, 24px) + 90px) 10px !important;
+    padding: 12px 10px calc(env(safe-area-inset-bottom, 20px) + 52px) 10px !important;
   }
   .data-hub-card {
     padding: 12px;
@@ -15781,20 +15817,28 @@ html.screen-fit-compact .welcome-action-guest {
 #settingsModal.full-screen-modal {
   position: fixed !important;
   inset: 0 !important;
+  top: 0 !important;
+  left: 0 !important;
+  right: 0 !important;
+  bottom: 0 !important;
+  width: 100% !important;
   width: 100vw !important;
   height: 100% !important;
   height: 100dvh !important;
-  height: 100vh !important;
+  max-height: 100dvh !important;
   display: flex !important;
-  align-items: center !important;
-  justify-content: center !important;
+  flex-direction: column !important;
+  align-items: stretch !important;
+  justify-content: stretch !important;
   padding: 0 !important;
-  background: rgba(7, 9, 15, 0.88) !important;
+  margin: 0 !important;
+  background: var(--bg-body, #0a0c14) !important;
   backdrop-filter: blur(14px) !important;
   -webkit-backdrop-filter: blur(14px) !important;
   transition: opacity 0.28s cubic-bezier(0.16, 1, 0.3, 1), visibility 0.28s !important;
   z-index: 200030 !important;
   overflow: hidden !important;
+  box-sizing: border-box !important;
 }
 
 #settingsModal.full-screen-modal:not(.active) {
@@ -15815,19 +15859,23 @@ html.screen-fit-compact .welcome-action-guest {
 /* 2. 3D Ana Kart Gövdesi (Adaptive Shell) */
 #settingsModal.full-screen-modal .settings-modal-card {
   width: 100% !important;
-  height: 100% !important;
   max-width: 100% !important;
-  max-height: 100% !important;
+  height: 100% !important;
+  height: 100dvh !important;
+  max-height: 100dvh !important;
   margin: 0 !important;
+  padding: 0 !important;
   border-radius: 0 !important;
   border: none !important;
-  background: linear-gradient(180deg, #131622 0%, #0d0f18 100%) !important;
+  background: var(--bg-body, #0a0c14) !important;
   box-shadow: none !important;
   display: flex !important;
   flex-direction: column !important;
   overflow: hidden !important;
   position: relative !important;
   box-sizing: border-box !important;
+  flex: 1 1 auto !important;
+  min-height: 0 !important;
 }
 
 /* Ayarlar Modalı: Her Ekran Boyutunda (Mobil, Tablet, Masaüstü) Kesintisiz %100 Tam Ekran */
@@ -16045,26 +16093,36 @@ html.screen-fit-compact .welcome-action-guest {
   transform: scale(0.95) !important;
 }
 
-/* 5. Ayarlar İçerik Gövdesi & Panelleri */
+/* 5. Ayarlar İçerik Gövdesi & Panelleri (Tek Merkezli ve Ekrana Tam Uyumlu) */
 #settingsModal .settings-content {
   flex: 1 1 auto !important;
   min-height: 0 !important;
+  height: auto !important;
   display: flex !important;
   flex-direction: column !important;
-  overflow: hidden !important;
+  overflow-y: auto !important;
+  overflow-x: hidden !important;
+  -webkit-overflow-scrolling: touch !important;
+  overscroll-behavior-y: contain !important;
+  padding: 14px clamp(12px, 3.5vw, 20px) calc(env(safe-area-inset-bottom, 20px) + 52px) clamp(12px, 3.5vw, 20px) !important;
+  box-sizing: border-box !important;
+  background: transparent !important;
   position: relative !important;
 }
 
 #settingsModal .settings-tab-panels {
-  flex: 1 1 auto !important;
-  min-height: 0 !important;
-  overflow-y: auto !important;
-  overflow-x: hidden !important;
-  -webkit-overflow-scrolling: touch !important;
-  padding: 14px clamp(12px, 3.5vw, 22px) calc(env(safe-area-inset-bottom, 12px) + 8px) clamp(12px, 3.5vw, 22px) !important;
+  flex: none !important;
+  width: 100% !important;
+  max-width: 540px !important;
+  margin-left: auto !important;
+  margin-right: auto !important;
+  height: auto !important;
+  min-height: auto !important;
+  overflow: visible !important;
   display: flex !important;
   flex-direction: column !important;
-  gap: 12px !important;
+  padding: 0 !important;
+  box-sizing: border-box !important;
 }
 
 #settingsModal .settings-tab-panel {
@@ -16072,7 +16130,10 @@ html.screen-fit-compact .welcome-action-guest {
   flex-direction: column !important;
   gap: 12px !important;
   width: 100% !important;
-  animation: settingsFadeIn 0.24s cubic-bezier(0.16, 1, 0.3, 1) !important;
+  box-sizing: border-box !important;
+  overflow: visible !important;
+  animation: settingsFadeIn 0.2s cubic-bezier(0.16, 1, 0.3, 1) !important;
+  padding: 0 0 10px 0 !important;
 }
 
 #settingsModal .settings-tab-panel.active {

@@ -2156,6 +2156,10 @@
         panel.classList.toggle('active', panel.id === targetPanelId);
       });
     }
+    const settingsContentEl = document.querySelector('#settingsModal .settings-content') || document.querySelector('#settingsModal .settings-tab-panels');
+    if (settingsContentEl) {
+      settingsContentEl.scrollTop = 0;
+    }
     if (tabName === 'reminder') {
       updateNextAlarmCountdown();
     }
