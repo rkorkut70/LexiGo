@@ -3397,69 +3397,74 @@
 
           <!-- 4. SEKME: HATIRLATICI (GELİŞMİŞ AKILLI ALARM & BİLDİRİM SİSTEMİ) -->
           <div class="settings-tab-panel" id="tabPanelReminder">
-            <!-- GÜNLÜK SERİ ÇALIŞMA SÖZÜ (STREAK TAAHHÜDÜ) -->
-            <div class="setting-block" id="settingStreakPledgeBlock" style="margin-bottom: 20px; background: rgba(255, 255, 255, 0.02); border: 1.5px solid var(--border-color); border-radius: 18px; padding: 16px;">
-              <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px;">
-                <div>
-                  <span class="setting-block-label" style="font-size: 0.96rem; color: #fbbf24; font-weight: 800; display: flex; align-items: center; gap: 6px;">
-                    <span>🔥</span> Günlük Seri Sözü (Streak Taahhüdü)
-                  </span>
-                  <span class="setting-row-desc" style="display: block; font-size: 0.78rem; color: var(--text-muted); margin-top: 2px;">
-                    Duolingo tarzı arka arkaya çalışma sözü vererek disiplin kazan
-                  </span>
+            <!-- 1. GÜNLÜK ÇALIŞMA SERİSİ (STREAK HEDEFİ) -->
+            <div class="setting-block reminder-streak-card" id="settingStreakPledgeBlock">
+              <div class="setting-block-header">
+                <div class="setting-block-title-group">
+                  <span class="setting-block-badge-icon streak-badge-icon" aria-hidden="true">🔥</span>
+                  <div>
+                    <span class="setting-block-label">Günlük Çalışma Serisi</span>
+                    <span class="setting-row-desc">Düzenli çalışma alışkanlığı için kesintisiz pratik hedefi</span>
+                  </div>
                 </div>
+                <span class="setting-badge-pill streak-pill">Disiplin</span>
               </div>
 
-              <!-- Aktif Taahhüt Durumu (JS ile doldurulur) -->
-              <div id="settingStreakPledgeActiveBox" style="display: none; background: rgba(249, 115, 22, 0.08); border: 1.5px solid rgba(249, 115, 22, 0.35); border-radius: 16px; padding: 14px; margin-top: 10px;">
-                <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px;">
-                  <span id="settingStreakPledgeStatusTitle" style="font-weight: 800; font-size: 0.9rem; color: #fbbf24;">
-                    🎯 5 Günlük Seri Sözü Devam Ediyor
-                  </span>
-                  <span style="font-size: 0.72rem; background: rgba(239, 68, 68, 0.15); border: 1px solid rgba(239, 68, 68, 0.3); color: #f87171; padding: 2px 8px; border-radius: 8px; font-weight: 800;">
-                    🔒 İptal Edilemez
+              <!-- Aktif Taahhüt Durumu (JS ile yönetilir) -->
+              <div id="settingStreakPledgeActiveBox" class="streak-pledge-active-card" style="display: none;">
+                <div class="streak-pledge-active-header">
+                  <div class="streak-pledge-active-title-wrap">
+                    <span class="streak-flame-icon">🎯</span>
+                    <span id="settingStreakPledgeStatusTitle" class="streak-pledge-active-title">5 Günlük Seri Hedefi Devam Ediyor</span>
+                  </div>
+                  <span class="streak-lock-badge">
+                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+                    Sabit Hedef
                   </span>
                 </div>
-                <!-- Gün Göstergesi Kutuları (3, 5 ya da 7 adet) -->
-                <div id="settingStreakPledgeDaysTrack" class="streak-modal-days-track" style="margin: 12px 0;"></div>
-                <p style="font-size: 0.76rem; color: var(--text-muted); margin: 6px 0 12px 0; line-height: 1.4;">
-                  Başlatılan bir seri sözü ortasında iptal edilemez. Gün hesabı her gece 00:00'da yenilenir.
+                <div id="settingStreakPledgeDaysTrack" class="streak-modal-days-track"></div>
+                <p class="streak-pledge-hint">
+                  Başlatılan seri hedefi her gece 00:00'da güncellenir ve tamamlanana kadar sürdürülür.
                 </p>
-                <button type="button" class="pill-btn" id="settingViewStreakModalBtn" style="width: 100%; padding: 10px; font-size: 0.86rem; font-weight: 700; background: rgba(249, 115, 22, 0.15); border: 1px solid rgba(249, 115, 22, 0.4); color: #f97316; border-radius: 12px; cursor: pointer;">
-                  🔥 Seri Durumunu Detaylı Gör
+                <button type="button" class="pill-btn streak-status-btn" id="settingViewStreakModalBtn">
+                  <span>🔥</span> Seri İlerlemesini Görüntüle
                 </button>
               </div>
 
               <!-- Yeni Taahhüt Başlatma Kutusu (Aktif Taahhüt Yokken) -->
-              <div id="settingStreakPledgeSelectBox" style="background: var(--bg-card); border: 1.5px solid var(--border-color); border-radius: 16px; padding: 14px; margin-top: 10px;">
-                <span style="display:block; font-size: 0.82rem; font-weight: 800; color: var(--text-main); margin-bottom: 8px;">
-                  Hedef Gün Sayısı Seç:
-                </span>
-                <div class="streak-pledge-buttons-row" style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-bottom: 12px;">
+              <div id="settingStreakPledgeSelectBox" class="streak-pledge-select-card">
+                <span class="streak-select-label">Hedef Gün Sayısını Belirleyin:</span>
+                <div class="streak-pledge-buttons-row">
                   <button type="button" class="setting-streak-opt-btn" data-days="3">
-                    <strong>3 Gün</strong>
-                    <small style="display:block; font-size:0.68rem; opacity:0.85;">🎯 Hızlı Başlangıç</small>
+                    <span class="streak-opt-days">3 Gün</span>
+                    <span class="streak-opt-sub">Temel Alışkanlık</span>
                   </button>
                   <button type="button" class="setting-streak-opt-btn active" data-days="5">
-                    <strong>5 Gün ⭐</strong>
-                    <small style="display:block; font-size:0.68rem; opacity:0.85;">🔥 Kararlı</small>
+                    <span class="streak-opt-days">5 Gün ⭐</span>
+                    <span class="streak-opt-sub">Dengeli Çalışma</span>
                   </button>
                   <button type="button" class="setting-streak-opt-btn" data-days="7">
-                    <strong>7 Gün</strong>
-                    <small style="display:block; font-size:0.68rem; opacity:0.85;">⚡ Şampiyon</small>
+                    <span class="streak-opt-days">7 Gün</span>
+                    <span class="streak-opt-sub">Akademik Disiplin</span>
                   </button>
                 </div>
-                <button type="button" id="settingStartStreakPledgeBtn" class="pill-btn primary-action-btn" style="width: 100%; padding: 11px; font-size: 0.88rem; font-weight: 800; background: linear-gradient(135deg, #f97316, #ea580c); color: #fff; border: none; border-radius: 12px; cursor: pointer;">
-                  🔥 Seri Çalışma Sözünü Başlat
+                <button type="button" id="settingStartStreakPledgeBtn" class="pill-btn primary-action-btn streak-start-btn">
+                  <span>🔥</span> Seri Çalışma Hedefini Başlat
                 </button>
               </div>
             </div>
 
-            <div class="setting-block no-border">
-              <div class="setting-compact-row">
+            <!-- 2. AKILLI ÇALIŞMA HATIRLATICISI -->
+            <div class="setting-block reminder-schedule-card">
+              <div class="setting-compact-row reminder-toggle-row">
                 <div class="setting-row-info">
-                  <span class="setting-row-text">Akıllı Çalışma Hatırlatıcısı</span>
-                  <span class="setting-row-desc">Uygulama kapalıyken bile belirlediğiniz gün ve saatlerde bildirim</span>
+                  <div class="setting-block-title-group">
+                    <span class="setting-block-badge-icon reminder-badge-icon" aria-hidden="true">⏰</span>
+                    <div>
+                      <span class="setting-row-text">Akıllı Çalışma Hatırlatıcısı</span>
+                      <span class="setting-row-desc">Belirlediğiniz gün ve saatlerde kelime tekrarı için bildirim</span>
+                    </div>
+                  </div>
                 </div>
                 <label class="toggle-switch">
                   <input type="checkbox" id="settingStudyReminder">
@@ -3467,8 +3472,8 @@
                 </label>
               </div>
 
-              <!-- Hatırlatıcı Detay Paneli (Varsayılan olarak görünür, izin kapalıyken pasif modda) -->
-              <div id="studyReminderDetailsPanel" class="reminder-details-panel panel-disabled" style="margin-top: 14px; padding: 16px; background: var(--bg-card); border: 1.5px solid var(--border-color); border-radius: 16px;">
+              <!-- Hatırlatıcı Detay Paneli -->
+              <div id="studyReminderDetailsPanel" class="reminder-details-panel panel-disabled">
                 <!-- Pasif Bilgilendirme Rozeti -->
                 <div id="reminderDisabledNotice" class="reminder-disabled-notice">
                   <span class="reminder-disabled-notice-icon">🔒</span>
@@ -3476,26 +3481,29 @@
                 </div>
 
                 <!-- Canlı Durum & Bir Sonraki Bildirim Göstergesi -->
-                <div id="reminderNextAlarmStatusBox" style="display: flex; align-items: center; justify-content: space-between; padding: 10px 14px; background: rgba(37, 99, 235, 0.08); border: 1px solid rgba(37, 99, 235, 0.25); border-radius: 12px; margin-bottom: 14px;">
-                  <div style="display: flex; align-items: center; gap: 8px;">
-                    <span style="font-size: 1.2rem;">⏱️</span>
+                <div id="reminderNextAlarmStatusBox" class="reminder-next-alarm-box">
+                  <div class="reminder-next-alarm-left">
+                    <div class="reminder-clock-icon-wrap">
+                      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                    </div>
                     <div>
-                      <div style="font-size: 0.8rem; font-weight: 800; color: var(--accent);">Bir Sonraki Bildirim:</div>
-                      <div id="reminderNextAlarmText" style="font-size: 0.84rem; font-weight: 700; color: var(--text-main);">Hesaplanıyor...</div>
+                      <span class="reminder-next-alarm-caption">Bir Sonraki Hatırlatma</span>
+                      <div id="reminderNextAlarmText" class="reminder-next-alarm-value">Hesaplanıyor...</div>
                     </div>
                   </div>
-                  <button type="button" id="reminderTestNotificationBtn" class="pill-btn primary-action-btn" style="padding: 6px 12px; font-size: 0.78rem; white-space: nowrap;" title="Şimdi bir test bildirimi gönder">
-                    <span>🔔</span> Test Et
+                  <button type="button" id="reminderTestNotificationBtn" class="pill-btn reminder-test-btn" title="Şimdi bir test bildirimi gönder">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+                    <span>Test Et</span>
                   </button>
                 </div>
 
                 <!-- 1. Gün Seçimi -->
-                <div style="margin-bottom: 14px;">
-                  <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 8px;">
-                    <span style="font-size: 0.84rem; font-weight: 800; color: var(--text-main);">📅 Hatırlatma Günleri:</span>
-                    <button type="button" id="reminderSelectAllDaysBtn" style="background:none; border:none; color:var(--accent); font-size:0.78rem; font-weight:700; cursor:pointer; padding:2px 6px;">Her Gün</button>
+                <div class="reminder-sub-section">
+                  <div class="reminder-section-header">
+                    <span class="reminder-section-title">📅 Hatırlatma Günleri</span>
+                    <button type="button" id="reminderSelectAllDaysBtn" class="reminder-quick-link-btn">Her Gün</button>
                   </div>
-                  <div class="reminder-days-grid" id="reminderDaysGrid" style="display: flex; gap: 6px; justify-content: space-between;">
+                  <div class="reminder-days-grid" id="reminderDaysGrid">
                     <button type="button" class="reminder-day-chip active" data-day="1" title="Pazartesi">Pzt</button>
                     <button type="button" class="reminder-day-chip active" data-day="2" title="Salı">Sal</button>
                     <button type="button" class="reminder-day-chip active" data-day="3" title="Çarşamba">Çar</button>
@@ -3507,78 +3515,84 @@
                 </div>
 
                 <!-- 2. Çoklu Saat Seçimi -->
-                <div>
-                  <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 8px;">
-                    <span style="font-size: 0.84rem; font-weight: 800; color: var(--text-main);">⏰ Hatırlatma Saatleri:</span>
-                    <span style="font-size: 0.74rem; color: var(--text-muted);">(Günde birden fazla eklenebilir)</span>
+                <div class="reminder-sub-section">
+                  <div class="reminder-section-header">
+                    <span class="reminder-section-title">⏰ Hatırlatma Saatleri</span>
+                    <span class="reminder-section-subtitle">Günde birden fazla saat tanımlanabilir</span>
                   </div>
 
                   <!-- Mevcut Saat Rozetleri -->
-                  <div class="reminder-times-list" id="reminderTimesList" style="display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 12px;">
-                    <!-- JS ile dinamik doldurulur -->
-                  </div>
+                  <div class="reminder-times-list" id="reminderTimesList"></div>
 
                   <!-- Yeni Saat Ekleme Çubuğu -->
-                  <div style="display: flex; gap: 8px; align-items: center;">
-                    <input type="time" id="reminderNewTimeInput" value="20:00" class="setting-time-input" style="padding: 6px 12px; border-radius: 10px; border: 1.5px solid var(--border-color); background: var(--bg-surface); color: var(--text-main); font-size: 0.9rem; font-weight: 700; flex: 1;">
-                    <button type="button" id="reminderAddTimeBtn" class="pill-btn primary-action-btn" style="padding: 7px 14px; font-size: 0.82rem; white-space: nowrap;">
-                      <span>➕</span> Saat Ekle
+                  <div class="reminder-add-time-row">
+                    <input type="time" id="reminderNewTimeInput" value="20:00" class="setting-time-input">
+                    <button type="button" id="reminderAddTimeBtn" class="pill-btn primary-action-btn reminder-add-btn">
+                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                      <span>Saat Ekle</span>
                     </button>
                   </div>
                 </div>
               </div>
             </div>
 
-            <!-- 3. DUOLINGO BENZERİ DİNAMİK SİMGE VE İNAKTİVİTE UYARISI -->
-            <div class="setting-block" id="settingDynamicIconBlock" style="margin-top: 14px;">
+            <!-- 3. DİNAMİK UYGULAMA SİMGESİ (İNAKTİVİTE TAKİBİ) -->
+            <div class="setting-block reminder-dynamic-icon-card" id="settingDynamicIconBlock">
               <div class="setting-block-header">
-                <span class="setting-block-label" style="display:flex; align-items:center; gap:6px;">
-                  <span>🔥</span> Akıllı Dinamik Simge (İnaktivite Takibi)
-                </span>
-                
+                <div class="setting-block-title-group">
+                  <span class="setting-block-badge-icon icon-stage-badge-icon" aria-hidden="true">📱</span>
+                  <div>
+                    <span class="setting-block-label">Dinamik Uygulama Simgesi</span>
+                    <span class="setting-row-desc">Düzenli çalışılmadığında ana ekran simgesi otomatik evrilerek uyarır</span>
+                  </div>
+                </div>
+                <span class="setting-badge-pill icon-stage-pill">İnaktivite</span>
               </div>
-              <p style="font-size:0.8rem; color:var(--text-muted); line-height:1.5; margin:0 0 10px 0;">
-                Uygulamaya birkaç gün girilmediğinde cihaz ana ekranındaki <strong>LexiGo (LG)</strong> simgesi ve altındaki isim otomatik evrilerek sizi uyarır:
+
+              <p class="dynamic-icon-desc">
+                Uygulamaya birkaç gün girilmediğinde cihaz ana ekranındaki <strong>LexiGo (LG)</strong> simgesi ve altındaki isim kademeli olarak güncellenir:
               </p>
 
-              <!-- Simge Evreleri Şeması (Yeni 3D LexiGo Simgeleriyle Canlı Önizleme) -->
-              <div class="dynamic-icons-preview-grid" style="display:grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin-bottom: 12px; text-align: center;">
-                <div class="dynamic-icon-stage-card" data-stage="0" style="padding: 8px 4px; border-radius: 14px; border: 1.5px solid rgba(56, 189, 248, 0.45); background: rgba(56, 189, 248, 0.08); cursor: pointer; transition: all 0.2s ease;" title="Normal Durum (0-1 gün)">
-                  <img src="assets/icons/dynamic_icon_stage_0.png" alt="Normal Simge" class="dynamic-stage-img" style="width: 44px; height: 44px; border-radius: 10px; margin: 0 auto 4px; display: block; box-shadow: 0 4px 10px rgba(0,0,0,0.25);">
-                  <strong style="font-size: 0.75rem; color: #38bdf8; display: block; font-weight: 800;">Normal</strong>
-                  <span style="font-size: 0.64rem; color: var(--text-muted);">0-1 Gün</span>
-                  <div style="font-size: 0.62rem; color: #94a3b8; margin-top: 2px;">"LexiGo"</div>
+              <!-- Simge Evreleri Şeması -->
+              <div class="dynamic-icons-preview-grid">
+                <div class="dynamic-icon-stage-card stage-0" data-stage="0" title="Normal Durum (0-1 gün)">
+                  <img src="assets/icons/dynamic_icon_stage_0.png" alt="Normal Simge" class="dynamic-stage-img">
+                  <strong class="stage-name">Normal</strong>
+                  <span class="stage-days">0-1 Gün</span>
+                  <div class="stage-label-preview">"LexiGo"</div>
                 </div>
 
-                <div class="dynamic-icon-stage-card" data-stage="1" style="padding: 8px 4px; border-radius: 14px; border: 1.5px solid rgba(251, 146, 60, 0.45); background: rgba(251, 146, 60, 0.08); cursor: pointer; transition: all 0.2s ease;" title="2 Gün İnaktif">
-                  <img src="assets/icons/dynamic_icon_stage_1.png" alt="2 Gün İnaktif" class="dynamic-stage-img" style="width: 44px; height: 44px; border-radius: 10px; margin: 0 auto 4px; display: block; box-shadow: 0 4px 10px rgba(251,146,60,0.3);">
-                  <strong style="font-size: 0.75rem; color: #fb923c; display: block; font-weight: 800;">2 Gün</strong>
-                  <span style="font-size: 0.64rem; color: var(--text-muted);">Isınan Simge</span>
-                  <div style="font-size: 0.62rem; color: #94a3b8; margin-top: 2px;">"LexiGo"</div>
+                <div class="dynamic-icon-stage-card stage-1" data-stage="1" title="2 Gün İnaktif">
+                  <img src="assets/icons/dynamic_icon_stage_1.png" alt="2 Gün İnaktif" class="dynamic-stage-img">
+                  <strong class="stage-name">Isınma</strong>
+                  <span class="stage-days">2 Gün</span>
+                  <div class="stage-label-preview">"LexiGo"</div>
                 </div>
 
-                <div class="dynamic-icon-stage-card" data-stage="2" style="padding: 8px 4px; border-radius: 14px; border: 1.5px solid rgba(249, 115, 22, 0.45); background: rgba(249, 115, 22, 0.08); cursor: pointer; transition: all 0.2s ease;" title="4 Gün İnaktif">
-                  <img src="assets/icons/dynamic_icon_stage_2.png" alt="4 Gün İnaktif" class="dynamic-stage-img" style="width: 44px; height: 44px; border-radius: 10px; margin: 0 auto 4px; display: block; box-shadow: 0 4px 10px rgba(249,115,22,0.35);">
-                  <strong style="font-size: 0.75rem; color: #f97316; display: block; font-weight: 800;">4 Gün</strong>
-                  <span style="font-size: 0.64rem; color: var(--text-muted);">Alevli Simge</span>
-                  <div style="font-size: 0.62rem; color: #fbbf24; font-weight:700; margin-top: 2px;">"Özledik 🥺"</div>
+                <div class="dynamic-icon-stage-card stage-2" data-stage="2" title="4 Gün İnaktif">
+                  <img src="assets/icons/dynamic_icon_stage_2.png" alt="4 Gün İnaktif" class="dynamic-stage-img">
+                  <strong class="stage-name">Uyarı</strong>
+                  <span class="stage-days">4 Gün</span>
+                  <div class="stage-label-preview">"Seri Bekliyor"</div>
                 </div>
 
-                <div class="dynamic-icon-stage-card" data-stage="3" style="padding: 8px 4px; border-radius: 14px; border: 1.5px solid rgba(239, 68, 68, 0.45); background: rgba(239, 68, 68, 0.08); cursor: pointer; transition: all 0.2s ease;" title="6+ Gün İnaktif">
-                  <img src="assets/icons/dynamic_icon_stage_3.png" alt="6+ Gün İnaktif" class="dynamic-stage-img" style="width: 44px; height: 44px; border-radius: 10px; margin: 0 auto 4px; display: block; box-shadow: 0 4px 10px rgba(239,68,68,0.35);">
-                  <strong style="font-size: 0.75rem; color: #ef4444; display: block; font-weight: 800;">6+ Gün</strong>
-                  <span style="font-size: 0.64rem; color: var(--text-muted);">Acil Durum</span>
-                  <div style="font-size: 0.62rem; color: #ef4444; font-weight:700; margin-top: 2px;">"Geri Dön! ⚠️"</div>
+                <div class="dynamic-icon-stage-card stage-3" data-stage="3" title="6+ Gün İnaktif">
+                  <img src="assets/icons/dynamic_icon_stage_3.png" alt="6+ Gün İnaktif" class="dynamic-stage-img">
+                  <strong class="stage-name">Kritik</strong>
+                  <span class="stage-days">6+ Gün</span>
+                  <div class="stage-label-preview">"Hedef Tehlikede"</div>
                 </div>
               </div>
 
               <!-- Test Butonları -->
-              <div style="display: flex; gap: 8px;">
-                <button type="button" id="testDynamicIconBtn" class="pill-btn" style="flex: 1; padding: 9px; font-size: 0.8rem; font-weight: 700; background: rgba(255, 255, 255, 0.07); border: 1px solid var(--border-color); color: var(--text-main);">
-                  📱 Simgeleri Test Et (Döngü)
+              <div class="dynamic-icon-actions-row">
+                <button type="button" id="testDynamicIconBtn" class="pill-btn dynamic-test-btn">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"/><polyline points="16 6 12 2 8 6"/><line x1="12" y1="2" x2="12" y2="15"/></svg>
+                  <span>Simgeleri Test Et (Döngü)</span>
                 </button>
-                <button type="button" id="resetDynamicIconBtn" class="pill-btn primary-action-btn" style="padding: 9px 14px; font-size: 0.8rem; font-weight: 700;">
-                  🔄 Normale Döndür
+                <button type="button" id="resetDynamicIconBtn" class="pill-btn primary-action-btn dynamic-reset-btn">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/></svg>
+                  <span>Normale Döndür</span>
                 </button>
               </div>
             </div>

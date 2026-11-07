@@ -13471,32 +13471,451 @@ html[data-flip-speed="slow"] .flashcard {
 }
 
 /* ============================================================
-   GELİŞMİŞ HATIRLATICI GÜN VE SAAT ELEMANLARI
+   GELİŞMİŞ VE PROFESYONEL HATIRLATICI & STREAK TASARIMI (v1.5.4)
    ============================================================ */
-.reminder-day-chip {
-  flex: 1;
-  padding: 8px 4px;
+.setting-block-title-group {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.setting-block-badge-icon {
+  width: 34px;
+  height: 34px;
   border-radius: 10px;
-  background: var(--bg-card);
-  border: 1.5px solid var(--border-color);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.15rem;
+  flex-shrink: 0;
+  box-shadow: inset 0 1px 1px rgba(255, 255, 255, 0.2);
+}
+
+.streak-badge-icon {
+  background: rgba(245, 158, 11, 0.15);
+  border: 1px solid rgba(245, 158, 11, 0.35);
+  color: #f59e0b;
+}
+
+.reminder-badge-icon {
+  background: rgba(99, 102, 241, 0.15);
+  border: 1px solid rgba(99, 102, 241, 0.35);
+  color: #818cf8;
+}
+
+.icon-stage-badge-icon {
+  background: rgba(56, 189, 248, 0.15);
+  border: 1px solid rgba(56, 189, 248, 0.35);
+  color: #38bdf8;
+}
+
+.streak-pill {
+  background: rgba(245, 158, 11, 0.12) !important;
+  color: #f59e0b !important;
+  border: 1px solid rgba(245, 158, 11, 0.25) !important;
+  font-size: 0.68rem !important;
+  font-weight: 800 !important;
+  padding: 3px 8px !important;
+  border-radius: 6px !important;
+}
+
+.icon-stage-pill {
+  background: rgba(56, 189, 248, 0.12) !important;
+  color: #38bdf8 !important;
+  border: 1px solid rgba(56, 189, 248, 0.25) !important;
+  font-size: 0.68rem !important;
+  font-weight: 800 !important;
+  padding: 3px 8px !important;
+  border-radius: 6px !important;
+}
+
+/* Streak Aktif Durum Kartı */
+.streak-pledge-active-card {
+  background: linear-gradient(135deg, rgba(245, 158, 11, 0.08) 0%, rgba(217, 119, 6, 0.04) 100%);
+  border: 1px solid rgba(245, 158, 11, 0.25);
+  border-radius: 14px;
+  padding: 12px 14px;
+  margin-top: 10px;
+}
+
+[data-theme="light"] .streak-pledge-active-card {
+  background: linear-gradient(135deg, #fffbeb 0%, #fef3c7 100%);
+  border-color: #fde68a;
+}
+
+.streak-pledge-active-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+
+.streak-pledge-active-title-wrap {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  min-width: 0;
+}
+
+.streak-flame-icon {
+  font-size: 1rem;
+}
+
+.streak-pledge-active-title {
+  font-size: 0.84rem;
+  font-weight: 800;
+  color: #f59e0b;
+  letter-spacing: -0.2px;
+}
+
+[data-theme="light"] .streak-pledge-active-title {
+  color: #b45309;
+}
+
+.streak-lock-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 0.65rem;
+  font-weight: 700;
+  padding: 2px 7px;
+  border-radius: 6px;
+  background: rgba(148, 163, 184, 0.15);
+  color: #94a3b8;
+  border: 1px solid rgba(148, 163, 184, 0.25);
+  flex-shrink: 0;
+}
+
+.streak-pledge-hint {
+  font-size: 0.72rem;
   color: var(--text-muted);
+  line-height: 1.4;
+  margin: 6px 0 10px 0;
+}
+
+.streak-status-btn {
+  width: 100%;
+  padding: 8px 12px;
+  font-size: 0.80rem;
+  font-weight: 800;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  background: rgba(245, 158, 11, 0.12);
+  border: 1px solid rgba(245, 158, 11, 0.3);
+  color: #f59e0b;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.streak-status-btn:hover {
+  background: rgba(245, 158, 11, 0.2);
+  transform: translateY(-1px);
+}
+
+/* Streak Hedef Seçim Kartı */
+.streak-pledge-select-card {
+  background: rgba(0, 0, 0, 0.18);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: 14px;
+  padding: 12px 14px;
+  margin-top: 10px;
+}
+
+[data-theme="light"] .streak-pledge-select-card {
+  background: #f8fafc;
+  border-color: #e2e8f0;
+}
+
+.streak-select-label {
+  display: block;
   font-size: 0.78rem;
+  font-weight: 800;
+  color: var(--text-main);
+  margin-bottom: 8px;
+}
+
+.streak-pledge-buttons-row {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+  margin-bottom: 10px;
+}
+
+.setting-streak-opt-btn {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 8px 6px;
+  border-radius: 10px;
+  border: 1.5px solid rgba(255, 255, 255, 0.08);
+  background: rgba(255, 255, 255, 0.04);
+  color: var(--text-main);
+  cursor: pointer;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  text-align: center;
+}
+
+[data-theme="light"] .setting-streak-opt-btn {
+  background: #ffffff;
+  border-color: #cbd5e1;
+}
+
+.setting-streak-opt-btn:hover {
+  border-color: rgba(245, 158, 11, 0.4);
+  background: rgba(245, 158, 11, 0.06);
+}
+
+.setting-streak-opt-btn.active {
+  border-color: #f59e0b !important;
+  background: linear-gradient(135deg, rgba(245, 158, 11, 0.16) 0%, rgba(217, 119, 6, 0.08) 100%) !important;
+  color: #f59e0b !important;
+  box-shadow: 0 2px 8px rgba(245, 158, 11, 0.2) !important;
+  transform: translateY(-1px);
+}
+
+[data-theme="light"] .setting-streak-opt-btn.active {
+  background: #fef3c7 !important;
+  color: #b45309 !important;
+}
+
+.streak-opt-days {
+  font-size: 0.82rem;
+  font-weight: 800;
+}
+
+.streak-opt-sub {
+  font-size: 0.65rem;
+  font-weight: 600;
+  opacity: 0.75;
+  margin-top: 2px;
+}
+
+.streak-start-btn {
+  width: 100%;
+  padding: 9px 12px;
+  font-size: 0.82rem;
+  font-weight: 800;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%) !important;
+  color: #ffffff !important;
+  border: none !important;
+  border-radius: 10px !important;
+  cursor: pointer;
+  box-shadow: 0 3px 10px rgba(245, 158, 11, 0.3) !important;
+  transition: all 0.2s ease;
+}
+
+.streak-start-btn:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 5px 14px rgba(245, 158, 11, 0.4) !important;
+}
+
+/* Hatırlatıcı Detay Paneli */
+.reminder-details-panel {
+  margin-top: 12px;
+  padding: 12px 14px;
+  background: rgba(0, 0, 0, 0.15);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: 14px;
+  transition: opacity 0.25s ease, filter 0.25s ease;
+}
+
+[data-theme="light"] .reminder-details-panel {
+  background: #f8fafc;
+  border-color: #e2e8f0;
+}
+
+.reminder-details-panel.panel-disabled {
+  opacity: 0.52;
+  pointer-events: none;
+  filter: grayscale(0.5);
+  user-select: none;
+}
+
+.reminder-disabled-notice {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 12px;
+  border-radius: 10px;
+  background: rgba(148, 163, 184, 0.12);
+  border: 1px dashed var(--border-color);
+  color: var(--text-muted);
+  font-size: 0.76rem;
+  font-weight: 600;
+  margin-bottom: 12px;
+}
+
+.reminder-disabled-notice-icon {
+  font-size: 1rem;
+}
+
+.reminder-next-alarm-box {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 8px 12px;
+  background: linear-gradient(135deg, rgba(99, 102, 241, 0.1) 0%, rgba(59, 130, 246, 0.04) 100%);
+  border: 1px solid rgba(99, 102, 241, 0.25);
+  border-radius: 10px;
+  margin-bottom: 12px;
+}
+
+[data-theme="light"] .reminder-next-alarm-box {
+  background: linear-gradient(135deg, #eef2ff 0%, #e0e7ff 100%);
+  border-color: #c7d2fe;
+}
+
+.reminder-next-alarm-left {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
+}
+
+.reminder-clock-icon-wrap {
+  width: 28px;
+  height: 28px;
+  border-radius: 8px;
+  background: rgba(99, 102, 241, 0.15);
+  border: 1px solid rgba(99, 102, 241, 0.3);
+  color: #818cf8;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+[data-theme="light"] .reminder-clock-icon-wrap {
+  background: #e0e7ff;
+  color: #4338ca;
+  border-color: #c7d2fe;
+}
+
+.reminder-next-alarm-caption {
+  display: block;
+  font-size: 0.68rem;
+  font-weight: 800;
+  color: #818cf8;
+  letter-spacing: -0.1px;
+}
+
+[data-theme="light"] .reminder-next-alarm-caption {
+  color: #4338ca;
+}
+
+.reminder-next-alarm-value {
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: var(--text-main);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.reminder-test-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 5px 10px;
+  font-size: 0.72rem;
+  font-weight: 700;
+  background: rgba(99, 102, 241, 0.15);
+  border: 1px solid rgba(99, 102, 241, 0.3);
+  color: #818cf8;
+  border-radius: 8px;
+  cursor: pointer;
+  white-space: nowrap;
+  flex-shrink: 0;
+  transition: all 0.2s ease;
+}
+
+[data-theme="light"] .reminder-test-btn {
+  background: #e0e7ff;
+  color: #4338ca;
+  border-color: #c7d2fe;
+}
+
+.reminder-test-btn:hover {
+  background: rgba(99, 102, 241, 0.25);
+  transform: translateY(-1px);
+}
+
+.reminder-sub-section {
+  margin-bottom: 12px;
+}
+
+.reminder-sub-section:last-child {
+  margin-bottom: 0;
+}
+
+.reminder-section-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 6px;
+}
+
+.reminder-section-title {
+  font-size: 0.76rem;
+  font-weight: 800;
+  color: var(--text-main);
+}
+
+.reminder-section-subtitle {
+  font-size: 0.68rem;
+  color: var(--text-muted);
+}
+
+.reminder-quick-link-btn {
+  background: none;
+  border: none;
+  color: var(--accent);
+  font-size: 0.72rem;
+  font-weight: 700;
+  cursor: pointer;
+  padding: 2px 4px;
+}
+
+.reminder-days-grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 5px;
+}
+
+.reminder-day-chip {
+  padding: 6px 2px;
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  color: var(--text-muted);
+  font-size: 0.74rem;
   font-weight: 700;
   cursor: pointer;
   text-align: center;
   transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-.reminder-day-chip:hover {
-  background: var(--accent-light);
-  color: var(--text-main);
+[data-theme="light"] .reminder-day-chip {
+  background: #ffffff;
+  border-color: #cbd5e1;
+  color: #64748b;
 }
 
 .reminder-day-chip.active {
-  background: var(--accent);
-  color: #ffffff;
-  border-color: var(--accent);
-  box-shadow: 0 2px 8px rgba(37, 99, 235, 0.35);
+  background: var(--accent, #6366f1) !important;
+  color: #ffffff !important;
+  border-color: var(--accent, #6366f1) !important;
+  box-shadow: 0 2px 6px rgba(99, 102, 241, 0.3) !important;
   transform: translateY(-1px);
 }
 
@@ -13504,15 +13923,20 @@ html[data-flip-speed="slow"] .flashcard {
   display: inline-flex;
   align-items: center;
   gap: 6px;
-  padding: 6px 12px;
-  border-radius: var(--radius-full);
-  background: var(--bg-card);
-  border: 1.5px solid var(--border-color);
+  padding: 5px 10px;
+  border-radius: var(--radius-full, 999px);
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.1);
   color: var(--text-main);
-  font-size: 0.84rem;
+  font-size: 0.80rem;
   font-weight: 800;
   box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
   animation: fadeInPanel 0.2s ease-out;
+}
+
+[data-theme="light"] .reminder-time-pill {
+  background: #ffffff;
+  border-color: #cbd5e1;
 }
 
 .reminder-time-remove-btn {
@@ -13537,35 +13961,164 @@ html[data-flip-speed="slow"] .flashcard {
   color: #ffffff;
 }
 
-/* Hatırlatıcı Detay Paneli ve Pasif / Kilitli Durumu */
-.reminder-details-panel {
-  transition: opacity 0.25s ease, filter 0.25s ease;
-  position: relative;
-}
-
-.reminder-details-panel.panel-disabled {
-  opacity: 0.52;
-  pointer-events: none;
-  filter: grayscale(0.5);
-  user-select: none;
-}
-
-.reminder-disabled-notice {
+.reminder-add-time-row {
   display: flex;
-  align-items: center;
   gap: 8px;
-  padding: 8px 12px;
-  border-radius: 10px;
-  background: rgba(148, 163, 184, 0.12);
-  border: 1px dashed var(--border-color);
-  color: var(--text-muted);
-  font-size: 0.78rem;
-  font-weight: 600;
-  margin-bottom: 12px;
+  align-items: center;
 }
 
-.reminder-disabled-notice-icon {
-  font-size: 1rem;
+.setting-time-input {
+  padding: 6px 10px;
+  border-radius: 8px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: rgba(0, 0, 0, 0.2);
+  color: var(--text-main);
+  font-size: 0.82rem;
+  font-weight: 700;
+  flex: 1;
+}
+
+[data-theme="light"] .setting-time-input {
+  background: #ffffff;
+  border-color: #cbd5e1;
+}
+
+.reminder-add-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 6px 12px;
+  font-size: 0.76rem;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+/* Dinamik Uygulama Simgesi */
+.dynamic-icon-desc {
+  font-size: 0.74rem;
+  color: var(--text-muted);
+  line-height: 1.45;
+  margin: 0 0 10px 0;
+}
+
+.dynamic-icons-preview-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 6px;
+  margin-bottom: 10px;
+  text-align: center;
+}
+
+.dynamic-icon-stage-card {
+  padding: 8px 4px;
+  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: rgba(255, 255, 255, 0.03);
+  cursor: pointer;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+[data-theme="light"] .dynamic-icon-stage-card {
+  background: #ffffff;
+  border-color: #e2e8f0;
+}
+
+.dynamic-icon-stage-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.dynamic-icon-stage-card.stage-0 {
+  border-color: rgba(56, 189, 248, 0.35);
+  background: rgba(56, 189, 248, 0.06);
+}
+
+.dynamic-icon-stage-card.stage-1 {
+  border-color: rgba(245, 158, 11, 0.35);
+  background: rgba(245, 158, 11, 0.06);
+}
+
+.dynamic-icon-stage-card.stage-2 {
+  border-color: rgba(249, 115, 22, 0.35);
+  background: rgba(249, 115, 22, 0.06);
+}
+
+.dynamic-icon-stage-card.stage-3 {
+  border-color: rgba(239, 68, 68, 0.35);
+  background: rgba(239, 68, 68, 0.06);
+}
+
+.dynamic-stage-img {
+  width: 38px;
+  height: 38px;
+  border-radius: 9px;
+  margin: 0 auto 4px;
+  display: block;
+  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.2);
+}
+
+.stage-name {
+  font-size: 0.72rem;
+  display: block;
+  font-weight: 800;
+  color: var(--text-main);
+}
+
+.stage-0 .stage-name { color: #38bdf8; }
+.stage-1 .stage-name { color: #f59e0b; }
+.stage-2 .stage-name { color: #f97316; }
+.stage-3 .stage-name { color: #ef4444; }
+
+.stage-days {
+  font-size: 0.62rem;
+  color: var(--text-muted);
+  display: block;
+}
+
+.stage-label-preview {
+  font-size: 0.62rem;
+  color: var(--text-muted);
+  font-weight: 700;
+  margin-top: 2px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.dynamic-icon-actions-row {
+  display: flex;
+  gap: 8px;
+}
+
+.dynamic-test-btn {
+  flex: 1;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  padding: 8px 10px;
+  font-size: 0.76rem;
+  font-weight: 700;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  color: var(--text-main);
+  border-radius: 9px;
+  cursor: pointer;
+}
+
+[data-theme="light"] .dynamic-test-btn {
+  background: #ffffff;
+  border-color: #cbd5e1;
+}
+
+.dynamic-reset-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  padding: 8px 12px;
+  font-size: 0.76rem;
+  font-weight: 700;
 }
 
 /* ==========================================================================
