@@ -12766,11 +12766,6 @@ let activeAvatarCategory = 'all';
                 listContainer.innerHTML += `
                   <div class="leaderboard-item ${rankClass}" style="${highlightStyle}">
                     ${rankDisplayHtml}
-                    <div class="lb-branch-shield" aria-label="${b.code}">
-                      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-                        <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
-                      </svg>
-                    </div>
                     <div class="lb-info">
                       <div style="display:flex; align-items:center; gap:6px;">
                         <div class="lb-name" style="font-weight: 800;">${b.code} ${branchDetail ? `<span style="font-size:0.75rem; font-weight:600; color:var(--text-muted); margin-left:4px;">${branchDetail}</span>` : ''}</div>
@@ -12782,7 +12777,7 @@ let activeAvatarCategory = 'all';
                     </div>
                     ${topBadgeHtml}
                     <div style="text-align: right; flex-shrink: 0;">
-                      <div class="lb-score" style="color: #ef4444; font-size: 0.95rem; font-weight: 900;">Ø ${(b.avgWeeklyXp || 0).toLocaleString()} XP</div>
+                      <div class="lb-score" style="color: var(--accent); font-size: 0.88rem; font-weight: 800;">Ø ${(b.avgWeeklyXp || 0).toLocaleString()} XP</div>
                       <span style="font-size: 0.68rem; color: var(--text-muted);">Haftalık Ort. XP</span>
                     </div>
                   </div>
@@ -12806,11 +12801,6 @@ let activeAvatarCategory = 'all';
                 listContainer.innerHTML += `
                   <div class="leaderboard-item lb-unranked-item" style="${highlightStyle}">
                     <div class="lb-rank lb-rank-unranked" title="Bu hafta henüz yarışmadı">-</div>
-                    <div class="lb-branch-shield lb-branch-shield-unranked" aria-label="${b.code}">
-                      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-                        <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
-                      </svg>
-                    </div>
                     <div class="lb-info">
                       <div style="display:flex; align-items:center; gap:6px;">
                         <div class="lb-name" style="font-weight: 800;">${b.code} ${branchDetail ? `<span style="font-size:0.75rem; font-weight:600; color:var(--text-muted); margin-left:4px;">${branchDetail}</span>` : ''}</div>
