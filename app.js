@@ -7,26 +7,16 @@
 (function () {
   'use strict';
 
-  const APP_VERSION = 'v1.9.24';
+  const APP_VERSION = 'v1.9.25';
   const DEFAULT_AVATAR = 'avatar_default';
-  const CURRENT_APP_BUILD = 'lexigo_production_live_launch_v1923';
+  const CURRENT_APP_BUILD = 'lexigo_production_live_launch_v1925';
 
-  // Build 13 temiz kurulum / sıfırlama güvencesi (Kullanıcı verilerini sıfırla, Hoş Geldin ekranını garantile)
+  // Sürüm ve oturum güvenliği: Kullanıcı oturumunu ve verilerini asla izinsiz sıfırlama
   try {
-    if (!localStorage.getItem(CURRENT_APP_BUILD)) {
-      try {
-        localStorage.clear();
-        sessionStorage.clear();
-        localStorage.setItem(CURRENT_APP_BUILD, 'true');
-        if (window.firebase && window.firebase.auth) {
-          window.firebase.auth().signOut().catch(() => {});
-        }
-      } catch (e) {
-        console.warn('Build clean reset error:', e);
-      }
-    }
+    localStorage.setItem('lexigo_last_version', APP_VERSION);
+    localStorage.setItem('lexigo_app_build', CURRENT_APP_BUILD);
   } catch (storageErr) {
-    console.warn('LocalStorage erişim kısıtı veya hata:', storageErr);
+    console.warn('LocalStorage erişim uyarısı:', storageErr);
   }
 
   // Manuel test için URL reset parametresi kontrolü (?reset=1)
@@ -3681,6 +3671,14 @@ let activeAvatarCategory = 'all';
     if (userData.learnedMap && typeof userData.learnedMap === 'object') {
       state.learnedMap = userData.learnedMap;
       localStorage.setItem('kelime_learned_map', JSON.stringify(userData.learnedMap));
+    }
+    if (userData.notebookMap && typeof userData.notebookMap === 'object') {
+      state.notebookMap = Object.assign({}, state.notebookMap || {}, userData.notebookMap);
+      localStorage.setItem('lexiq_notebook_words', JSON.stringify(state.notebookMap));
+    }
+    if (userData.troubledMap && typeof userData.troubledMap === 'object') {
+      state.troubledMap = Object.assign({}, state.troubledMap || {}, userData.troubledMap);
+      localStorage.setItem('lexiq_troubled_words', JSON.stringify(state.troubledMap));
     }
     if (Array.isArray(userData.unlockedBadges)) {
       state.unlockedBadges = userData.unlockedBadges;
@@ -14710,6 +14708,8 @@ let activeAvatarCategory = 'all';
       state.unlockedBadges = [];
       state.gameStats = {};
       state.learnedMap = {};
+      state.notebookMap = {};
+      state.troubledMap = {};
       if (state.sessionLearnedIds) state.sessionLearnedIds.clear();
       state.dailyGoalExtra = 0;
 
@@ -14723,6 +14723,8 @@ let activeAvatarCategory = 'all';
       localStorage.removeItem('lexiq_user_onboarded');
       localStorage.setItem('kelime_xp', '0');
       localStorage.removeItem('kelime_learned_map');
+      localStorage.removeItem('lexiq_notebook_words');
+      localStorage.removeItem('lexiq_troubled_words');
       localStorage.removeItem('kelime_streak');
       localStorage.removeItem('kelime_max_streak');
       localStorage.removeItem('kelime_arena_solved');
