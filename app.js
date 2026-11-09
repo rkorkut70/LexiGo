@@ -9561,11 +9561,29 @@ let activeAvatarCategory = 'all';
     const pool = getLearnedWordsPool();
     if (pool.length < 3) return;
 
-    // Tek kelimelik ve harf uzunluğu en az 3 olan kelimeleri öncelikle seç
-    const singleWords = pool.filter(w => !w.kelime.includes(' ') && w.kelime.length >= 3);
-    const candidatePool = singleWords.length > 0 ? singleWords : pool;
+    // Tetris için öncelikle temiz, parantezsiz, tek kelimelik ve 3-10 harf arası kelimeleri seç (küçük ekranda taşmayı kesin önler)
+    const idealWords = pool.filter(w => {
+      const clean = (w.kelime || '').replace(/\(.*?\)/g, '').trim();
+      const raw = clean.replace(/[^\p{L}]/gu, '');
+      return !clean.includes(' ') && !clean.includes('/') && raw.length >= 3 && raw.length <= 10;
+    });
+    // Eğer ünitede 10 harf ve altı yeterli değilse 11 harfe kadar genişlet
+    const extendedWords = pool.filter(w => {
+      const clean = (w.kelime || '').replace(/\(.*?\)/g, '').trim();
+      const raw = clean.replace(/[^\p{L}]/gu, '');
+      return !clean.includes(' ') && !clean.includes('/') && raw.length >= 3 && raw.length <= 11;
+    });
+    const candidatePool = idealWords.length >= 3 ? idealWords : (extendedWords.length > 0 ? extendedWords : pool);
 
     let candidate = getNextMistakeRetryCandidate();
+    // Mistake retry adayı varsa, Tetris'e uygunluk kontrolü yap (tek kelime ve en fazla 11 harf olmalı)
+    if (candidate) {
+      const cClean = (candidate.kelime || '').replace(/\(.*?\)/g, '').trim();
+      const cRaw = cClean.replace(/[^\p{L}]/gu, '');
+      if (cClean.includes(' ') || cClean.includes('/') || cRaw.length < 3 || cRaw.length > 11) {
+        candidate = null; // Tetris ekranına sığmayacak çok uzun veya cümle halindeki kelimeleri Tetris'te sorma
+      }
+    }
     if (!candidate) {
       candidate = candidatePool[Math.floor(Math.random() * candidatePool.length)];
       if (candidatePool.length > 1 && tetrisState.targetWord && candidate.id === tetrisState.targetWord.id) {
@@ -9641,6 +9659,15 @@ let activeAvatarCategory = 'all';
 
   function renderTetrisSlots() {
     dom.tetrisSlots.innerHTML = '';
+    const totalCount = tetrisState.targetLetters.length;
+    dom.tetrisSlots.setAttribute('data-slots-count', totalCount);
+
+    if (totalCount >= 9) {
+      dom.tetrisSlots.classList.add('dense-slots');
+    } else {
+      dom.tetrisSlots.classList.remove('dense-slots');
+    }
+
     tetrisState.targetLetters.forEach((letter, idx) => {
       const isFilled = tetrisState.filledSlots[idx];
       const slot = document.createElement('div');
@@ -9683,15 +9710,16 @@ let activeAvatarCategory = 'all';
 
     // Şerit (lane) hesaplaması: Harflerin asla üst üste düşmemesini sağlar
     const stageWidth = (dom.tetrisStage && dom.tetrisStage.clientWidth > 0) ? dom.tetrisStage.clientWidth : 320;
-    const numLanes = Math.max(3, Math.min(5, Math.floor(stageWidth / 56)));
+    const blockWidth = stageWidth < 380 ? 40 : 46;
+    const numLanes = Math.max(3, Math.min(5, Math.floor(stageWidth / (blockWidth + 10))));
     let lane = Math.floor(Math.random() * numLanes);
     if (lane === tetrisState.lastLane && numLanes > 1) {
       lane = (lane + 1 + Math.floor(Math.random() * (numLanes - 1))) % numLanes;
     }
     tetrisState.lastLane = lane;
     const laneWidth = stageWidth / numLanes;
-    const leftPos = Math.round(lane * laneWidth + (laneWidth - 44) / 2);
-    block.style.left = `${Math.max(6, Math.min(stageWidth - 50, leftPos))}px`;
+    const leftPos = Math.round(lane * laneWidth + (laneWidth - blockWidth) / 2);
+    block.style.left = `${Math.max(6, Math.min(stageWidth - (blockWidth + 4), leftPos))}px`;
 
     dom.tetrisStage.appendChild(block);
     tetrisState.fallingBlocks.push(block);
