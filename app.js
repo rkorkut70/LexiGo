@@ -2620,45 +2620,15 @@
     }
 
     const levels = getLevelsForLanguage(langCode);
-    if (!state.profileUnitLevelFilter || (state.profileUnitLevelFilter !== 'ALL' && !levels.includes(state.profileUnitLevelFilter))) {
-      state.profileUnitLevelFilter = 'ALL';
-    }
-
-    // Seviye / Kitap Filtre Sekmelerini Oluştur
     if (tabsEl) {
+      tabsEl.style.display = 'none';
       tabsEl.innerHTML = '';
-
-      // "Tüm Kitaplar" Sekmesi
-      const allBtn = document.createElement('button');
-      allBtn.type = 'button';
-      allBtn.className = `prof-level-tab-btn ${state.profileUnitLevelFilter === 'ALL' ? 'active' : ''}`;
-      allBtn.innerHTML = `<span>📚</span><span>Tüm Kitaplar (${levels.length})</span>`;
-      allBtn.onclick = () => {
-        state.profileUnitLevelFilter = 'ALL';
-        renderStudentUnitProgressUI();
-      };
-      tabsEl.appendChild(allBtn);
-
-      // Her Seviye / Kitap İçin Ayrı Sekme
-      levels.forEach(lvl => {
-        const lvlUnits = allUnits.filter(u => u.seviye === lvl);
-        const meta = getBookMetaForLevel(langCode, lvl, lvlUnits);
-        const btn = document.createElement('button');
-        btn.type = 'button';
-        btn.className = `prof-level-tab-btn ${state.profileUnitLevelFilter === lvl ? 'active' : ''}`;
-        const shortTitle = meta.title.split(' - ')[0].replace('Gateway to the World', 'Gateway');
-        btn.innerHTML = `<span>${meta.icon}</span><span>${lvl} • ${shortTitle}</span>`;
-        btn.onclick = () => {
-          state.profileUnitLevelFilter = lvl;
-          renderStudentUnitProgressUI();
-        };
-        tabsEl.appendChild(btn);
-      });
     }
 
     listEl.innerHTML = '';
 
-    const displayLevels = state.profileUnitLevelFilter === 'ALL' ? levels : [state.profileUnitLevelFilter];
+    // Tüm seviyelerin kitaplarını doğrudan akordeon liste olarak göster
+    const displayLevels = levels;
     const currentActiveLevel = state.userLevel || getLevelForTrack(langCode, state.userTrack);
     const troubledHistory = state.troubledHistoryMap || JSON.parse(localStorage.getItem('lexiq_troubled_history') || '{}');
     const currentTroubled = state.troubledMap || {};
@@ -2711,8 +2681,8 @@
       const isCurrentActiveLevel = lvl === currentActiveLevel;
       const showPromotionBtn = (isBookCompleted || completedUnitsCount === levelUnits.length) && nxtLevel && isCurrentActiveLevel;
 
-      // Akordeon varsayılan açık durumu: Mevcut aktif kitap açık, tek kitap filtresinde açık veya ilk kitap açık
-      const isExpandedDefault = isCurrentActiveLevel || (displayLevels.length === 1) || (state.profileUnitLevelFilter !== 'ALL') || (lvlIdx === 0 && !displayLevels.includes(currentActiveLevel));
+      // Akordeon varsayılan açık durumu: Kullanıcı isteği doğrultusunda tüm kitaplar varsayılan olarak kapalıdır
+      const isExpandedDefault = false;
 
       // Kitap Bölüm Kartı (Akordeon Yapısı)
       const sectionEl = document.createElement('div');
@@ -5459,7 +5429,7 @@ let activeAvatarCategory = 'all';
           dom.cardStatusBadge.textContent = '⚠️ Zorlandın';
           dom.cardStatusBadge.className = 'card-status-badge status-troubled';
         } else {
-          dom.cardStatusBadge.textContent = 'Bekliyor';
+          dom.cardStatusBadge.textContent = 'Öğreniliyor';
           dom.cardStatusBadge.className = 'card-status-badge status-pending';
         }
       }
@@ -5475,7 +5445,7 @@ let activeAvatarCategory = 'all';
       // TERS MOD: Ön yüzde Türkçe Anlam, Arka yüzde Yabancı Kelime
       dom.cardUnitBadge.textContent = '🔄 TERS MOD • ANLAM';
       dom.cardTargetWord.textContent = getWordMeaning(currentWord);
-      dom.cardCategoryHint.textContent = 'Türkçe';
+      if (dom.cardCategoryHint) dom.cardCategoryHint.textContent = 'Türkçe';
       dom.cardPhonetic.style.display = 'none';
       if (currentWord.tur) {
         dom.cardPos.textContent = currentWord.tur.toUpperCase();
@@ -5503,7 +5473,7 @@ let activeAvatarCategory = 'all';
       }
       dom.cardUnitBadge.textContent = unitLabel;
       dom.cardTargetWord.textContent = currentWord.kelime;
-      dom.cardCategoryHint.textContent = LANG_META[currentWord.dil]?.name.split('→')[0].trim() || 'Kelime';
+      if (dom.cardCategoryHint) dom.cardCategoryHint.textContent = LANG_META[currentWord.dil]?.name.split('→')[0].trim() || 'Kelime';
 
       // Fonetik (IPA) ve Sözcük Türü
       if (currentWord.telaffuz) {
@@ -5561,7 +5531,7 @@ let activeAvatarCategory = 'all';
       dom.cardStatusBadge.textContent = 'Öğrenildi ✓';
       dom.cardStatusBadge.className = 'card-status-badge status-learned';
     } else {
-      dom.cardStatusBadge.textContent = 'Bekliyor';
+      dom.cardStatusBadge.textContent = 'Öğreniliyor';
       dom.cardStatusBadge.className = 'card-status-badge status-pending';
     }
 
