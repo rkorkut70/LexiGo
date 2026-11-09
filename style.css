@@ -18566,8 +18566,128 @@ html.screen-fit-compact .welcome-action-guest {
 
 /* 1. Tablet ve Masaüstü Ekranlar (>= 768px): Kelime Arenası ve Tüm Oyun Modları Büyük Ekran Uyumu */
 @media (min-width: 768px) {
-  /* Genel Arena Oyun Sahası: Ekranda 4 Tarafı Eşit ve Dengeli Boşluklar */
-  .arena-active-game-area {
+  /* Kelime Arenası Menü Vitrini: Büyük Ekranda Merkezlenmiş 680px Düzen */
+  #arenaView {
+    max-width: 680px !important;
+    width: 100% !important;
+    margin: 0 auto !important;
+    padding: clamp(20px, 3vh, 32px) clamp(20px, 4vw, 40px) calc(clamp(40px, 7vh, 85px) + env(safe-area-inset-bottom, 20px)) clamp(20px, 4vw, 40px) !important;
+    box-sizing: border-box !important;
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+  }
+
+  #arenaView[style*="display: none"],
+  #arenaView[style*="display:none"] {
+    display: none !important;
+  }
+
+  /* Arena Başlık ve İstatistik Bannerı */
+  .arena-hero-banner {
+    max-width: 680px !important;
+    width: 100% !important;
+    padding: 22px 26px !important;
+    border-radius: 26px !important;
+    margin-bottom: 18px !important;
+    box-sizing: border-box !important;
+  }
+
+  .arena-hero-title {
+    font-size: 1.65rem !important;
+    font-weight: 900 !important;
+  }
+
+  .arena-hero-sub {
+    font-size: 0.95rem !important;
+  }
+
+  .arena-learned-pool-pill {
+    font-size: 0.88rem !important;
+    padding: 5px 14px !important;
+    border-radius: 12px !important;
+  }
+
+  .quick-stat-badge {
+    padding: 10px 16px !important;
+    border-radius: 14px !important;
+  }
+
+  .stat-lbl {
+    font-size: 0.82rem !important;
+  }
+
+  .stat-num {
+    font-size: 1.35rem !important;
+    font-weight: 900 !important;
+  }
+
+  /* 9 Oyun Kartı Listesi (Alt Alta Sıralı) */
+  .arena-games-menu,
+  #arenaGamesMenu {
+    max-width: 680px !important;
+    width: 100% !important;
+    box-sizing: border-box !important;
+  }
+
+  .games-hub-grid {
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 14px !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    box-sizing: border-box !important;
+  }
+
+  .game-hub-card {
+    padding: 18px 22px !important;
+    border-radius: 20px !important;
+    gap: 16px !important;
+    width: 100% !important;
+    box-sizing: border-box !important;
+  }
+
+  .game-3d-icon {
+    width: 52px !important;
+    height: 52px !important;
+  }
+
+  .game-hub-title {
+    font-size: 1.15rem !important;
+    font-weight: 800 !important;
+  }
+
+  .game-req-badge {
+    font-size: 0.82rem !important;
+    padding: 4px 10px !important;
+    border-radius: 10px !important;
+  }
+
+  .game-hub-desc {
+    font-size: 0.90rem !important;
+    line-height: 1.4 !important;
+  }
+
+  .game-hub-play-btn {
+    font-size: 0.95rem !important;
+    font-weight: 800 !important;
+    padding: 10px 20px !important;
+    border-radius: 14px !important;
+    white-space: nowrap !important;
+  }
+
+  /* Aktif Oyun Alanı: Yalnızca oyun çalışırken görünür olmalıdır */
+  .arena-active-game-area[style*="display: none"],
+  .arena-active-game-area[style*="display:none"],
+  #arenaActiveGameArea[style*="display: none"],
+  #arenaActiveGameArea[style*="display:none"],
+  body:not(.arena-game-active) #arenaActiveGameArea,
+  body:not(.arena-game-active) .arena-active-game-area {
+    display: none !important;
+  }
+
+  body.arena-game-active #arenaActiveGameArea,
+  body.arena-game-active .arena-active-game-area {
     display: flex !important;
     flex-direction: column !important;
     align-items: center !important;
