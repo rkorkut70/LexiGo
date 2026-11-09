@@ -8113,34 +8113,17 @@ html:not([data-theme="dark"])[data-card-theme="dark"] .card-face {
   display: none !important;
 }
 
-/* 4. Alt Ortada Az Görünür Açılır Çekmece / Ana Ekran Penceresi */
+/* 4. Alt Ortada Az Görünür Açılır Çekmece / Ana Ekran Penceresi (Kaldırıldı) */
+#floatingNavDock,
 .bottom-drawer-dock,
-.floating-nav-dock {
-  position: fixed !important;
-  bottom: 0 !important;
-  left: 0 !important;
-  right: 0 !important;
-  z-index: 1000 !important;
-  display: flex !important;
-  flex-direction: column !important;
-  align-items: center !important;
+.floating-nav-dock,
+.drawer-panel,
+.drawer-backdrop,
+.drawer-peek-tab {
+  display: none !important;
+  visibility: hidden !important;
   pointer-events: none !important;
 }
-
-.bottom-drawer-dock[style*="display: none"],
-.bottom-drawer-dock[style*="display:none"],
-.floating-nav-dock[style*="display: none"],
-.floating-nav-dock[style*="display:none"] {
-  display: none !important;
-}
-
-/* Oyun ekranı aktifken alttaki drawer menü ve dock tamamen gizlenir */
-body.arena-game-active .bottom-drawer-dock,
-body.arena-game-active .floating-nav-dock,
-body.arena-game-active #floatingNavDock,
-body.arena-game-active .drawer-panel,
-body.arena-game-active .drawer-backdrop,
-body.arena-game-active .drawer-peek-tab {
   display: none !important;
   visibility: hidden !important;
   pointer-events: none !important;
@@ -8426,6 +8409,45 @@ body.arena-game-active .drawer-peek-tab {
 .user-header-btn:hover {
   border-color: var(--accent);
   background: var(--accent-light);
+}
+
+/* Header Ana Sayfa Butonu */
+.home-header-btn {
+  border-color: rgba(37, 99, 235, 0.25);
+  transition: all 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.home-header-btn:hover {
+  border-color: var(--accent);
+  background: rgba(37, 99, 235, 0.1);
+  transform: translateY(-1px);
+}
+
+.home-header-btn:active {
+  transform: translateY(2px);
+}
+
+.home-header-btn.active {
+  background: rgba(37, 99, 235, 0.14);
+  border-color: #2563eb;
+  color: #2563eb;
+  box-shadow: 0 0 10px rgba(37, 99, 235, 0.25);
+}
+
+[data-theme="dark"] .home-header-btn {
+  border-color: rgba(139, 92, 246, 0.35);
+}
+
+[data-theme="dark"] .home-header-btn:hover {
+  border-color: #8b5cf6;
+  background: rgba(139, 92, 246, 0.18);
+}
+
+[data-theme="dark"] .home-header-btn.active {
+  background: rgba(139, 92, 246, 0.25);
+  border-color: #a78bfa;
+  color: #c4b5fd;
+  box-shadow: 0 0 14px rgba(139, 92, 246, 0.35);
 }
 
 #headerUserAvatar {
@@ -12873,6 +12895,59 @@ html:not([data-theme="dark"]) .card-unlearn-pill {
   align-items: center;
   justify-content: space-between;
   gap: 8px;
+  cursor: pointer;
+  user-select: none;
+  padding: 4px 6px;
+  border-radius: 10px;
+  transition: background 0.15s ease;
+}
+
+.prof-book-section-header:hover {
+  background: rgba(99, 102, 241, 0.06);
+}
+
+.prof-book-current-pill {
+  font-size: 0.64rem;
+  font-weight: 800;
+  padding: 1px 7px;
+  border-radius: 999px;
+  background: linear-gradient(135deg, #10b981, #059669);
+  color: #ffffff;
+  line-height: 1.3;
+}
+
+.prof-accordion-chevron {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: rgba(99, 102, 241, 0.08);
+  color: var(--accent, #6366f1);
+  transition: transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
+  flex-shrink: 0;
+}
+
+[data-theme="dark"] .prof-accordion-chevron {
+  background: rgba(99, 102, 241, 0.18);
+  color: #a5b4fc;
+}
+
+.prof-accordion-book.is-collapsed .prof-accordion-chevron svg {
+  transform: rotate(-90deg);
+}
+
+.prof-accordion-book.is-open .prof-accordion-chevron svg {
+  transform: rotate(0deg);
+}
+
+.prof-accordion-book.is-collapsed .prof-book-units-list {
+  display: none !important;
+}
+
+.prof-accordion-book.is-collapsed .prof-book-progress-mini {
+  margin-bottom: 0;
 }
 
 .prof-book-header-left {
@@ -13144,6 +13219,271 @@ html:not([data-theme="dark"]) .card-unlearn-pill {
   background: #f59e0b;
   box-shadow: 0 0 6px rgba(245, 158, 11, 0.9);
   z-index: 2;
+}
+
+/* Ünite Zorlanılan Kelimeler Rozeti */
+.pup-troubled-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  font-size: 0.68rem;
+  font-weight: 700;
+  padding: 1px 7px;
+  border-radius: 999px;
+  margin-left: 6px;
+  line-height: 1.3;
+  vertical-align: middle;
+}
+
+.pup-troubled-pill.is-warn {
+  background: rgba(245, 158, 11, 0.15);
+  color: #b45309;
+  border: 1px solid rgba(245, 158, 11, 0.35);
+}
+
+[data-theme="dark"] .pup-troubled-pill.is-warn {
+  background: rgba(245, 158, 11, 0.25);
+  color: #fbbf24;
+  border-color: rgba(245, 158, 11, 0.45);
+}
+
+.pup-troubled-pill.is-clean {
+  background: rgba(16, 185, 129, 0.1);
+  color: #059669;
+  border: 1px solid rgba(16, 185, 129, 0.25);
+}
+
+[data-theme="dark"] .pup-troubled-pill.is-clean {
+  background: rgba(52, 211, 153, 0.15);
+  color: #34d399;
+  border-color: rgba(52, 211, 153, 0.3);
+}
+
+/* Ünite Akordeon Elemanları */
+.pup-header.pup-accordion-header {
+  cursor: pointer;
+  user-select: none;
+  transition: opacity 0.15s ease;
+}
+
+.pup-header.pup-accordion-header:hover {
+  opacity: 0.9;
+}
+
+.pup-header-right {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-shrink: 0;
+}
+
+.pup-unit-chevron {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  color: var(--text-muted);
+  transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.prof-unit-progress-item.is-details-open .pup-unit-chevron svg {
+  transform: rotate(180deg);
+}
+
+.pup-accordion-details {
+  margin-top: 8px;
+  padding-top: 10px;
+  border-top: 1px dashed var(--border-subtle);
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  animation: pupFadeIn 0.2s ease-out;
+}
+
+@keyframes pupFadeIn {
+  from { opacity: 0; transform: translateY(-4px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.pup-details-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(75px, 1fr));
+  gap: 6px;
+}
+
+.pup-stat-chip {
+  background: var(--bg-card, rgba(0, 0, 0, 0.03));
+  border: 1px solid var(--border-subtle);
+  border-radius: 8px;
+  padding: 5px 8px;
+  font-size: 0.72rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  color: var(--text-main);
+}
+
+.pup-stat-chip.is-learned {
+  border-color: rgba(16, 185, 129, 0.3);
+  color: #10b981;
+}
+
+.pup-stat-chip.is-pending {
+  border-color: rgba(99, 102, 241, 0.25);
+  color: var(--accent, #6366f1);
+}
+
+.pup-stat-chip.is-troubled {
+  border-color: rgba(245, 158, 11, 0.35);
+  color: #d97706;
+}
+
+[data-theme="dark"] .pup-stat-chip.is-troubled {
+  color: #fbbf24;
+}
+
+.pup-stat-chip.is-clean {
+  border-color: rgba(16, 185, 129, 0.25);
+  color: #059669;
+}
+
+.pup-troubled-words-box {
+  background: rgba(245, 158, 11, 0.05);
+  border: 1px solid rgba(245, 158, 11, 0.2);
+  border-radius: 10px;
+  padding: 8px 10px;
+}
+
+[data-theme="dark"] .pup-troubled-words-box {
+  background: rgba(245, 158, 11, 0.08);
+  border-color: rgba(245, 158, 11, 0.25);
+}
+
+.pup-troubled-box-title {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 0.74rem;
+  font-weight: 700;
+  color: #b45309;
+  margin-bottom: 6px;
+  flex-wrap: wrap;
+  gap: 4px;
+}
+
+[data-theme="dark"] .pup-troubled-box-title {
+  color: #fbbf24;
+}
+
+.pup-troubled-box-hint {
+  font-size: 0.65rem;
+  color: var(--text-muted);
+  font-weight: 500;
+}
+
+.pup-troubled-chips-list {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  max-height: 180px;
+  overflow-y: auto;
+}
+
+.pup-troubled-chip {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: var(--bg-surface);
+  border: 1px solid var(--border-subtle);
+  border-radius: 8px;
+  padding: 5px 8px;
+  font-size: 0.76rem;
+  gap: 6px;
+}
+
+.ptc-word {
+  font-weight: 700;
+  color: var(--text-main);
+  font-size: 0.8rem;
+}
+
+.ptc-meaning {
+  font-size: 0.72rem;
+  color: var(--text-muted);
+  margin-left: 6px;
+}
+
+.ptc-meta {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-shrink: 0;
+}
+
+.ptc-badge {
+  font-size: 0.64rem;
+  font-weight: 700;
+  padding: 2px 6px;
+  border-radius: 5px;
+}
+
+.ptc-badge.badge-troubled {
+  background: rgba(245, 158, 11, 0.18);
+  color: #d97706;
+}
+
+[data-theme="dark"] .ptc-badge.badge-troubled {
+  color: #fbbf24;
+}
+
+.ptc-badge.badge-learned {
+  background: rgba(16, 185, 129, 0.16);
+  color: #059669;
+}
+
+[data-theme="dark"] .ptc-badge.badge-learned {
+  color: #34d399;
+}
+
+.ptc-mistakes {
+  font-size: 0.64rem;
+  color: var(--text-muted);
+}
+
+.pup-no-troubled-box {
+  font-size: 0.72rem;
+  color: var(--text-muted);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 8px;
+  background: rgba(16, 185, 129, 0.04);
+  border-radius: 8px;
+}
+
+.pup-study-unit-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  width: 100%;
+  padding: 7px 12px;
+  background: linear-gradient(135deg, #6366f1, #4f46e5);
+  color: #ffffff;
+  font-size: 0.78rem;
+  font-weight: 700;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: transform 0.12s ease;
+  margin-top: 4px;
+}
+
+.pup-study-unit-btn:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 10px rgba(99, 102, 241, 0.3);
 }
 
 /* 5. NASIL ÇALIŞIR & REHBER BANNERI */
@@ -17863,6 +18203,12 @@ html.screen-fit-compact .welcome-action-guest {
   filter: drop-shadow(0 2px 6px rgba(245, 158, 11, 0.55));
 }
 
+.home-header-btn .header-3d-icon {
+  width: 22px;
+  height: 22px;
+  filter: drop-shadow(0 2px 5px rgba(59, 130, 246, 0.45));
+}
+
 .user-header-btn:active .header-3d-icon,
 .xp-header-btn:active .header-3d-icon {
   transform: scale(0.9);
@@ -21730,12 +22076,12 @@ html:not([data-theme="dark"]) .custom-confirm-card .confirm-cancel-btn:hover {
 }
 
 .brand-header-img {
-  height: 34px;
+  height: 26px;
   width: auto;
-  max-width: 140px;
+  max-width: 115px;
   object-fit: contain;
   display: block;
-  border-radius: 8px;
+  border-radius: 6px;
   transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
 }
 
@@ -21747,7 +22093,7 @@ html:not([data-theme="dark"]) .custom-confirm-card .confirm-cancel-btn:hover {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  border-radius: 12px;
+  border-radius: 9px;
   animation: lexigoPulseBadge 3.2s infinite ease-in-out;
   transform-origin: center;
 }
@@ -21755,9 +22101,9 @@ html:not([data-theme="dark"]) .custom-confirm-card .confirm-cancel-btn:hover {
 [data-theme="light"] .brand-logo-badge,
 :root:not([data-theme="dark"]) .brand-logo-badge {
   background: #0c1024;
-  padding: 3px 8px;
+  padding: 2px 6px;
   border: 1px solid rgba(255, 255, 255, 0.15);
-  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.15);
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.12);
 }
 
 .about-brand-img,

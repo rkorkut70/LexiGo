@@ -7,7 +7,7 @@
 (function () {
   'use strict';
 
-  const APP_VERSION = 'v1.9.28';
+  const APP_VERSION = 'v1.9.29';
   const DEFAULT_AVATAR = 'avatar_default';
   const CURRENT_APP_BUILD = 'lexigo_production_live_launch_v1928';
 
@@ -77,6 +77,8 @@
     notebookMap: JSON.parse(localStorage.getItem('lexiq_notebook_words') || '{}'),
     // Oyunlarda hata yapılan "Zorlandıklarım" listesi: { [wordId]: { mistakeCount: number, lastMistakeAt: number, lang: string } }
     troubledMap: JSON.parse(localStorage.getItem('lexiq_troubled_words') || '{}'),
+    // Oyunlarda hata yapılan Zorlandıklarım geçmişi (kümülatif): { [wordId]: { firstAddedAt: number, lastAddedAt: number, mistakeCount: number, lang: string, unite_no: number } }
+    troubledHistoryMap: JSON.parse(localStorage.getItem('lexiq_troubled_history') || '{}'),
     touchStartX: 0,
     touchEndX: 0,
 
@@ -589,6 +591,7 @@
     headerXpText: document.getElementById('headerXpText'),
 
     // Pencereler & Navigasyon
+    headerHomeBtn: document.getElementById('headerHomeBtn'),
     brandHeaderHomeBtn: document.getElementById('brandHeaderHomeBtn'),
     homeView: document.getElementById('homeView'),
     flashcardsView: document.getElementById('flashcardsView'),
@@ -2607,6 +2610,7 @@
     if (!listEl) return;
 
     const langCode = state.activeLanguage || 'EN-TR';
+    const allWords = getWordsData();
     const allUnits = getUnitsData().filter(u => u.dil === langCode);
 
     if (!allUnits || allUnits.length === 0) {
@@ -2655,8 +2659,11 @@
     listEl.innerHTML = '';
 
     const displayLevels = state.profileUnitLevelFilter === 'ALL' ? levels : [state.profileUnitLevelFilter];
+    const currentActiveLevel = state.userLevel || getLevelForTrack(langCode, state.userTrack);
+    const troubledHistory = state.troubledHistoryMap || JSON.parse(localStorage.getItem('lexiq_troubled_history') || '{}');
+    const currentTroubled = state.troubledMap || {};
 
-    displayLevels.forEach(lvl => {
+    displayLevels.forEach((lvl, lvlIdx) => {
       const levelUnits = allUnits.filter(u => u.seviye === lvl);
       if (!levelUnits.length) return;
 
@@ -2667,6 +2674,7 @@
       let bookTotalWords = 0;
       let bookLearnedWords = 0;
       let completedUnitsCount = 0;
+      let bookTroubledCount = 0;
 
       const unitProgressData = levelUnits.map((unit, idx) => {
         const lockInfo = lockMap[unit.unite_no] || { isUnlocked: idx === 0, progress: { percent: 0, isPassed80: false, isPassed75: false, learned: 0, total: 0 } };
@@ -2674,11 +2682,23 @@
         bookTotalWords += prog.total;
         bookLearnedWords += prog.learned;
         if (prog.isPassed80 || prog.isPassed75) completedUnitsCount++;
+
+        // Bu üniteye ait kelimeler
+        const unitWords = allWords.filter(w => w.dil === unit.dil && (!unit.seviye || w.seviye === unit.seviye) && w.unite_no === unit.unite_no);
+        
+        // Bu ünite sürecinde Arenadaki etkinliklerde Zorlandıklarım listesine eklenen TÜM kelimeler (kümülatif geçmiş + mevcut)
+        const troubledWordsInUnit = unitWords.filter(w => Boolean((troubledHistory && troubledHistory[w.id]) || (currentTroubled && currentTroubled[w.id])));
+        const unitTroubledCount = troubledWordsInUnit.length;
+        bookTroubledCount += unitTroubledCount;
+
         return {
           unit,
           idx,
           lockInfo,
           prog,
+          unitWords,
+          troubledWordsInUnit,
+          unitTroubledCount,
           isUnlocked: lockInfo.isUnlocked,
           isPassed: prog.isPassed80 || prog.isPassed75,
           isComplete: prog.total > 0 && prog.learned >= prog.total
@@ -2688,42 +2708,67 @@
       const bookPct = bookTotalWords > 0 ? Math.round((bookLearnedWords / bookTotalWords) * 100) : 0;
       const isBookCompleted = bookPct >= 80;
       const nxtLevel = getNextLevel(langCode, lvl);
-      const isCurrentActiveLevel = lvl === (state.userLevel || getLevelForTrack(langCode, state.userTrack));
+      const isCurrentActiveLevel = lvl === currentActiveLevel;
       const showPromotionBtn = (isBookCompleted || completedUnitsCount === levelUnits.length) && nxtLevel && isCurrentActiveLevel;
 
-      // Kitap Bölüm Kartı
+      // Akordeon varsayılan açık durumu: Mevcut aktif kitap açık, tek kitap filtresinde açık veya ilk kitap açık
+      const isExpandedDefault = isCurrentActiveLevel || (displayLevels.length === 1) || (state.profileUnitLevelFilter !== 'ALL') || (lvlIdx === 0 && !displayLevels.includes(currentActiveLevel));
+
+      // Kitap Bölüm Kartı (Akordeon Yapısı)
       const sectionEl = document.createElement('div');
-      sectionEl.className = 'prof-book-section';
+      sectionEl.className = `prof-book-section prof-accordion-book ${isExpandedDefault ? 'is-open' : 'is-collapsed'}`;
       sectionEl.setAttribute('data-level', lvl);
 
       sectionEl.innerHTML = `
-        <div class="prof-book-section-header">
+        <div class="prof-book-section-header prof-accordion-header" role="button" tabindex="0" title="Kitap ünitelerini aç / kapat">
           <div class="prof-book-header-left">
             <span class="prof-book-icon">${meta.icon}</span>
             <div class="prof-book-info">
               <div class="prof-book-title-row">
                 <span class="prof-book-title">${meta.title}</span>
                 <span class="prof-book-level-badge">${lvl}</span>
+                ${isCurrentActiveLevel ? '<span class="prof-book-current-pill">Aktif Kitap</span>' : ''}
               </div>
-              <div class="prof-book-meta">${levelUnits.length} Ünite • ${bookLearnedWords} / ${bookTotalWords} kelime öğrenildi (${completedUnitsCount}/${levelUnits.length} ünite tamamlandı)</div>
+              <div class="prof-book-meta">
+                ${levelUnits.length} Ünite • ${bookLearnedWords} / ${bookTotalWords} kelime öğrenildi (${completedUnitsCount}/${levelUnits.length} ünite tamamlandı) • ⚠️ ${bookTroubledCount} zorlanılan
+              </div>
             </div>
           </div>
-          <div class="prof-book-header-right" style="display: flex; flex-direction: column; align-items: flex-end; gap: 4px;">
+          <div class="prof-book-header-right">
             <span class="prof-book-pct-badge ${isBookCompleted ? 'is-complete' : ''}">%${bookPct}</span>
-            ${showPromotionBtn ? `<button type="button" class="prof-promote-next-btn" onclick="if(window.showLevelCompleteModal) window.showLevelCompleteModal('${langCode}', '${lvl}', '${nxtLevel}')">${nxtLevel}'e Geç 🚀</button>` : ''}
+            ${showPromotionBtn ? `<button type="button" class="prof-promote-next-btn" onclick="event.stopPropagation(); if(window.showLevelCompleteModal) window.showLevelCompleteModal('${langCode}', '${lvl}', '${nxtLevel}')">${nxtLevel}'e Geç 🚀</button>` : ''}
+            <span class="prof-accordion-chevron" aria-hidden="true" title="Aç / Kapat">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round">
+                <polyline points="6 9 12 15 18 9"></polyline>
+              </svg>
+            </span>
           </div>
         </div>
         <div class="prof-book-progress-mini" title="${meta.title}: %${bookPct} tamamlandı">
           <div class="prof-book-mini-fill" style="width: ${Math.min(100, bookPct)}%;"></div>
         </div>
-        <div class="prof-book-units-list"></div>
+        <div class="prof-book-units-list prof-accordion-body" style="${isExpandedDefault ? 'display: flex;' : 'display: none;'}"></div>
       `;
+
+      // Kitap Akordeon Aç / Kapa Tıklama Olayı
+      const bookHeader = sectionEl.querySelector('.prof-book-section-header');
+      bookHeader.addEventListener('click', (e) => {
+        if (e.target.closest('.prof-promote-next-btn')) return;
+        const isOpen = sectionEl.classList.contains('is-open');
+        sectionEl.classList.toggle('is-open', !isOpen);
+        sectionEl.classList.toggle('is-collapsed', isOpen);
+        const unitsContainer = sectionEl.querySelector('.prof-book-units-list');
+        if (unitsContainer) {
+          unitsContainer.style.display = isOpen ? 'none' : 'flex';
+        }
+      });
 
       const unitsContainer = sectionEl.querySelector('.prof-book-units-list');
 
-      unitProgressData.forEach(({ unit, idx, prog, isUnlocked, isPassed, isComplete }) => {
+      unitProgressData.forEach(({ unit, idx, prog, unitWords, troubledWordsInUnit, unitTroubledCount, isUnlocked, isPassed, isComplete }) => {
         const itemEl = document.createElement('div');
-        itemEl.className = `prof-unit-progress-item ${!isUnlocked ? 'is-locked' : ''} ${isComplete ? 'is-complete' : ''}`;
+        itemEl.className = `prof-unit-progress-item prof-unit-accordion ${!isUnlocked ? 'is-locked' : ''} ${isComplete ? 'is-complete' : ''}`;
+        itemEl.setAttribute('data-unit-no', unit.unite_no);
 
         // Durum Rozeti
         let badgeHtml = '';
@@ -2741,21 +2786,104 @@
         const cleanUnitTitle = unit.unite_adi || unit.baslik || `Ünite ${displayUnitNum}`;
 
         itemEl.innerHTML = `
-          <div class="pup-header">
+          <div class="pup-header pup-accordion-header" role="button" tabindex="0" title="Ünite detayları ve zorlanılan kelimeleri gör">
             <div class="pup-title-wrap">
               <span class="pup-unit-num">${displayUnitNum}</span>
               <div class="pup-names">
                 <span class="pup-title">${cleanUnitTitle}</span>
-                <span class="pup-counts">${prog.learned} / ${prog.total} kelime öğrenildi</span>
+                <span class="pup-counts">
+                  ${prog.learned} / ${prog.total} kelime öğrenildi
+                  <span class="pup-troubled-pill ${unitTroubledCount > 0 ? 'is-warn' : 'is-clean'}" title="Arenadaki oyunlarda bu üniteden zorlanılanlar listesine giren toplam kelime sayısı: ${unitTroubledCount}">
+                    ${unitTroubledCount > 0 ? `⚠️ ${unitTroubledCount} zorlanılan` : `✓ 0 zorlanılan`}
+                  </span>
+                </span>
               </div>
             </div>
-            ${badgeHtml}
+            <div class="pup-header-right">
+              ${badgeHtml}
+              <span class="pup-unit-chevron" aria-hidden="true">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round">
+                  <polyline points="6 9 12 15 18 9"></polyline>
+                </svg>
+              </span>
+            </div>
           </div>
           <div class="pup-bar-track" title="%${prog.percent} tamamlandı (Baraj: %80)">
             <div class="pup-bar-fill" style="width: ${Math.min(100, prog.percent)}%;"></div>
             <div class="pup-bar-threshold" title="%80 Kuralı Eşiği" style="left: 80%;"></div>
           </div>
+
+          <!-- Ünite Akordeon Detay Alanı (Açılır Kapanır) -->
+          <div class="pup-accordion-details" style="display: none;">
+            <div class="pup-details-grid">
+              <div class="pup-stat-chip">
+                <span class="chip-label">Toplam:</span> <strong>${prog.total}</strong>
+              </div>
+              <div class="pup-stat-chip is-learned">
+                <span class="chip-label">Öğrenilen:</span> <strong>${prog.learned}</strong>
+              </div>
+              <div class="pup-stat-chip is-pending">
+                <span class="chip-label">Kalan:</span> <strong>${Math.max(0, prog.total - prog.learned)}</strong>
+              </div>
+              <div class="pup-stat-chip ${unitTroubledCount > 0 ? 'is-troubled' : 'is-clean'}">
+                <span class="chip-label">Zorlanılan:</span> <strong>${unitTroubledCount}</strong>
+              </div>
+            </div>
+
+            ${unitTroubledCount > 0 ? `
+              <div class="pup-troubled-words-box">
+                <div class="pup-troubled-box-title">
+                  <span>⚠️ Arenada Zorlanılan Kelimeler (${unitTroubledCount})</span>
+                  <span class="pup-troubled-box-hint">Bu ünite sürecinde listeye giren kelimeler</span>
+                </div>
+                <div class="pup-troubled-chips-list">
+                  ${troubledWordsInUnit.map(w => {
+                    const isStillTroubled = Boolean(currentTroubled && currentTroubled[w.id]);
+                    const mistakeCount = (troubledHistory[w.id] && troubledHistory[w.id].mistakeCount) || (currentTroubled[w.id] && currentTroubled[w.id].mistakeCount) || 1;
+                    const cleanWord = (w.kelime || '').replace(/"/g, '&quot;');
+                    const cleanMeaning = (w.anlamı || '').replace(/"/g, '&quot;');
+                    return `
+                      <div class="pup-troubled-chip ${isStillTroubled ? 'is-active-troubled' : 'is-mastered'}">
+                        <div class="ptc-main">
+                          <strong class="ptc-word">${cleanWord}</strong>
+                          <span class="ptc-meaning">${cleanMeaning}</span>
+                        </div>
+                        <div class="ptc-meta">
+                          <span class="ptc-badge ${isStillTroubled ? 'badge-troubled' : 'badge-learned'}">${isStillTroubled ? '⚠️ Zorlandıklarım\'da' : '✅ Öğrenildi'}</span>
+                          <span class="ptc-mistakes">${mistakeCount}x hata</span>
+                        </div>
+                      </div>
+                    `;
+                  }).join('')}
+                </div>
+              </div>
+            ` : `
+              <div class="pup-no-troubled-box">
+                <span class="pnt-icon">✨</span>
+                <span>Bu ünitede Arenada henüz zorlanılan kelime bulunmuyor. Harika bir başlangıç!</span>
+              </div>
+            `}
+
+            ${isUnlocked ? `
+              <div class="pup-actions-row">
+                <button type="button" class="pup-study-unit-btn" onclick="if(window.studyUnitFromProfile) window.studyUnitFromProfile(${unit.unite_no}, '${cleanUnitTitle.replace(/'/g, "\\'")}')">
+                  <span>📚</span> Bu Üniteyi Çalış (Kartları Aç)
+                </button>
+              </div>
+            ` : ''}
+          </div>
         `;
+
+        // Ünite Akordeon Tıklama Olayı (Detayları Aç / Kapat)
+        const pupHeader = itemEl.querySelector('.pup-header');
+        pupHeader.addEventListener('click', () => {
+          const isDetailsOpen = itemEl.classList.contains('is-details-open');
+          itemEl.classList.toggle('is-details-open', !isDetailsOpen);
+          const detailsEl = itemEl.querySelector('.pup-accordion-details');
+          if (detailsEl) {
+            detailsEl.style.display = isDetailsOpen ? 'none' : 'flex';
+          }
+        });
 
         unitsContainer.appendChild(itemEl);
       });
@@ -2763,6 +2891,23 @@
       listEl.appendChild(sectionEl);
     });
   }
+
+  // Profil Ekranından Belirli Üniteyi Doğrudan Çalışma Kısayolu
+  window.studyUnitFromProfile = function(unitNo, title) {
+    if (typeof closeStudentProfileModal === 'function') {
+      closeStudentProfileModal();
+    }
+    state.activeUnitNo = unitNo;
+    const allUnits = getUnitsData().filter(u => u.dil === state.activeLanguage);
+    const targetUnit = allUnits.find(u => u.unite_no === unitNo);
+    if (targetUnit) noteUnitStart(targetUnit);
+    state.dailyGoalExtra = 0;
+    state.currentIndex = 0;
+    refreshWordsList();
+    updateHeaderUnitDisplay();
+    switchAppMode('flashcards');
+    showToast(`📚 ${title || 'Ünite ' + unitNo} kartları açıldı`);
+  };
 
   // Ünitenin başlama ve bitiş sürelerini kaydetme
   function noteUnitStart(unit) {
@@ -4770,6 +4915,7 @@ let activeAvatarCategory = 'all';
   function addWordToTroubled(wordObj) {
     if (!wordObj || !wordObj.id) return;
     if (!state.troubledMap) state.troubledMap = {};
+    if (!state.troubledHistoryMap) state.troubledHistoryMap = {};
     const cur = state.troubledMap[wordObj.id] || {
       mistakeCount: 0,
       lang: wordObj.dil || state.activeLanguage
@@ -4778,6 +4924,22 @@ let activeAvatarCategory = 'all';
     cur.lastMistakeAt = Date.now();
     state.troubledMap[wordObj.id] = cur;
     localStorage.setItem('lexiq_troubled_words', JSON.stringify(state.troubledMap));
+
+    // Kümülatif / Tarihsel Zorlanılan Kelimeler Kaydı (Öğrenilse veya çıkarılsa bile asla silinmez)
+    const hist = state.troubledHistoryMap[wordObj.id] || {
+      firstAddedAt: Date.now(),
+      mistakeCount: 0,
+      lang: wordObj.dil || state.activeLanguage,
+      unite_no: wordObj.unite_no || 0,
+      seviye: wordObj.seviye || ''
+    };
+    hist.mistakeCount = (hist.mistakeCount || 0) + 1;
+    hist.lastAddedAt = Date.now();
+    if (wordObj.unite_no) hist.unite_no = wordObj.unite_no;
+    if (wordObj.seviye) hist.seviye = wordObj.seviye;
+    state.troubledHistoryMap[wordObj.id] = hist;
+    localStorage.setItem('lexiq_troubled_history', JSON.stringify(state.troubledHistoryMap));
+
     updateCardCategoryCounters();
     if (typeof window.syncProgressToFirebase === 'function') {
       window.syncProgressToFirebase();
@@ -8208,6 +8370,9 @@ let activeAvatarCategory = 'all';
 
     closeFloatingNavMenu();
     updateFloatingNavItems();
+    if (dom.headerHomeBtn) {
+      dom.headerHomeBtn.classList.toggle('active', mode === 'home');
+    }
     const appHeader = document.querySelector('.app-header');
     if (appHeader) {
       appHeader.style.display = 'flex';
@@ -15351,6 +15516,7 @@ let activeAvatarCategory = 'all';
       const aboutPlayText = document.getElementById('aboutGooglePlayBtnText');
       const aboutWebBtn = document.getElementById('aboutWebUpdateBtn');
       const aboutWebText = document.getElementById('aboutWebUpdateBtnText');
+      const aboutWebHint = document.getElementById('aboutWebUpdateHint');
 
       if (btnEl) {
         btnEl.disabled = true;
@@ -15382,6 +15548,7 @@ let activeAvatarCategory = 'all';
                 aboutWebBtn.style.display = 'flex';
                 if (aboutWebText) aboutWebText.textContent = `Şimdi Güncelle & Yenile (${remoteVer})`;
                 aboutWebBtn.onclick = () => purgeCacheAndReload(remoteVer);
+                if (aboutWebHint) aboutWebHint.style.display = 'block';
               }
             } else {
               aboutStatusMsg.innerHTML = `✅ <strong style="color: #10b981; font-size: 1rem;">LexiGo En Güncel Sürümde (${currentVer})</strong>`;
@@ -15394,6 +15561,7 @@ let activeAvatarCategory = 'all';
                 aboutWebBtn.style.display = 'flex';
                 if (aboutWebText) aboutWebText.textContent = `Önbelleği Temizle & Yenile`;
                 aboutWebBtn.onclick = () => purgeCacheAndReload(currentVer);
+                if (aboutWebHint) aboutWebHint.style.display = 'block';
               }
             }
           }
@@ -15459,7 +15627,7 @@ let activeAvatarCategory = 'all';
               }
               if (forceRefreshBtn) {
                 forceRefreshBtn.style.display = 'block';
-                forceRefreshBtn.innerHTML = `<span>🔄</span><span>Önbelleği Temizle & Yenile</span>`;
+                forceRefreshBtn.innerHTML = `Önbelleği Temizle & Yenile`;
                 forceRefreshBtn.onclick = () => purgeCacheAndReload(currentVer);
               }
               if (notesBox) {
@@ -15477,7 +15645,7 @@ let activeAvatarCategory = 'all';
               if (applyBtn) {
                 applyBtn.style.display = 'block';
                 applyBtn.style.background = 'linear-gradient(135deg, #0284c7, #0369a1)';
-                applyBtn.innerHTML = `<span>🔄</span><span>Önbelleği Temizle & Yenile</span>`;
+                applyBtn.innerHTML = `Önbelleği Temizle & Yenile`;
                 applyBtn.onclick = () => purgeCacheAndReload(currentVer);
               }
               if (forceRefreshBtn) {
@@ -15489,7 +15657,7 @@ let activeAvatarCategory = 'all';
                     ✅ En Güncel Sürümü (${currentVer}) Kullanıyorsunuz
                   </div>
                   <p style="margin: 0; font-size: 0.85rem; color: var(--text-muted); line-height: 1.5;">
-                    Cihazınızdaki sürüm (${currentVer}) son yayınla tam olarak eşleşmektedir.
+                    Cihazınızdaki sürüm (${currentVer}) son yayınla tam olarak eşleşmektedir. Yeni bir içerik veya düzeltme aldığınızda tarayıcı önbelleğini tazelemek için aşağıdaki butonu kullanabilirsiniz.
                   </p>
                 `;
               }
@@ -15618,6 +15786,14 @@ let activeAvatarCategory = 'all';
         }
       } catch (e) {}
     }, 1800);
+
+    // Üst Menü Ana Sayfa Butonu
+    if (dom.headerHomeBtn) {
+      dom.headerHomeBtn.addEventListener('click', (e) => {
+        e.preventDefault();
+        switchAppMode('home');
+      });
+    }
 
     // Alt Sabit Navigasyon Çubuğu (Geriye dönük uyumluluk)
     if (dom.navItemHome) dom.navItemHome.addEventListener('click', () => switchAppMode('home'));

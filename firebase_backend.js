@@ -234,6 +234,20 @@ async function syncUserData(user) {
   const fbTroubledMap = (docData && (docData.troubledMap || docData.troubledWords) && typeof (docData.troubledMap || docData.troubledWords) === 'object') ? (docData.troubledMap || docData.troubledWords) : {};
   const mergedTroubledMap = Object.assign({}, fbTroubledMap, localTroubledMap);
 
+  const localTroubledHistory = JSON.parse(localStorage.getItem('lexiq_troubled_history') || '{}');
+  const fbTroubledHistory = (docData && (docData.troubledHistoryMap || docData.troubledHistory) && typeof (docData.troubledHistoryMap || docData.troubledHistory) === 'object') ? (docData.troubledHistoryMap || docData.troubledHistory) : {};
+  const mergedTroubledHistory = Object.assign({}, fbTroubledHistory, localTroubledHistory);
+  Object.keys(mergedTroubledMap).forEach(id => {
+    if (!mergedTroubledHistory[id]) {
+      mergedTroubledHistory[id] = {
+        firstAddedAt: mergedTroubledMap[id].lastMistakeAt || Date.now(),
+        lastAddedAt: mergedTroubledMap[id].lastMistakeAt || Date.now(),
+        mistakeCount: mergedTroubledMap[id].mistakeCount || 1,
+        lang: mergedTroubledMap[id].lang || 'EN-TR'
+      };
+    }
+  });
+
   const localBadges = JSON.parse(localStorage.getItem('kelime_unlocked_badges') || '[]');
   const fbBadges = (docData && Array.isArray(docData.unlockedBadges)) ? docData.unlockedBadges : [];
   const mergedBadges = Array.from(new Set([...fbBadges, ...localBadges]));
@@ -330,6 +344,7 @@ async function syncUserData(user) {
     learnedMap: mergedLearnedMap,
     notebookMap: mergedNotebookMap,
     troubledMap: mergedTroubledMap,
+    troubledHistoryMap: mergedTroubledHistory,
     unlockedBadges: mergedBadges,
     maxStreak: bestMaxStreak,
     arenaWordsSolved: bestArenaSolved,
@@ -359,9 +374,11 @@ async function syncUserData(user) {
   localStorage.setItem('kelime_learned_map', JSON.stringify(mergedLearnedMap));
   localStorage.setItem('lexiq_notebook_words', JSON.stringify(mergedNotebookMap));
   localStorage.setItem('lexiq_troubled_words', JSON.stringify(mergedTroubledMap));
+  localStorage.setItem('lexiq_troubled_history', JSON.stringify(mergedTroubledHistory));
   if (window.state) {
     window.state.notebookMap = mergedNotebookMap;
     window.state.troubledMap = mergedTroubledMap;
+    window.state.troubledHistoryMap = mergedTroubledHistory;
   }
   localStorage.setItem('kelime_unlocked_badges', JSON.stringify(mergedBadges));
   localStorage.setItem('kelime_max_streak', bestMaxStreak.toString());
@@ -700,6 +717,7 @@ window.syncProgressToFirebase = function(customData, immediate = false) {
       learnedMap: s.learnedMap || JSON.parse(localStorage.getItem('kelime_learned_map') || '{}'),
       notebookMap: s.notebookMap || JSON.parse(localStorage.getItem('lexiq_notebook_words') || '{}'),
       troubledMap: s.troubledMap || JSON.parse(localStorage.getItem('lexiq_troubled_words') || '{}'),
+      troubledHistoryMap: s.troubledHistoryMap || JSON.parse(localStorage.getItem('lexiq_troubled_history') || '{}'),
       unlockedBadges: s.unlockedBadges || JSON.parse(localStorage.getItem('kelime_unlocked_badges') || '[]'),
       maxStreak: (s.maxStreak !== undefined) ? s.maxStreak : (parseInt(localStorage.getItem('kelime_max_streak'), 10) || 0),
       dayStreak: (s.dayStreak !== undefined) ? s.dayStreak : (parseInt(localStorage.getItem('lexiq_day_streak'), 10) || 1),

@@ -1,9 +1,11 @@
 {
-  "version": "v1.9.28",
-  "versionCode": 135,
+  "version": "v1.9.29",
+  "versionCode": 136,
   "releaseDate": "2026-11-09",
   "notes": [
-    "📍 Hakkında Sayfası Güncelleme Denetimi: Güncellemeleri Denetle butonu logonun hemen altına taşındı; Google Play butonu doğrudan Hakkında ekranı içinde görünür hale getirildi.",
-    "🔗 Akıllı Güncelleme Yönlendirmesi: Ekranda beliren güncelleme bildirimlerine dokunulduğunda doğrudan Hakkında sayfasındaki güncelleme merkezine yönlendirme sağlandı."
+    "🏠 Üst Menü Navigasyonu: Üst başlık menüsüne doğrudan 3D Ana Sayfa butonu eklendi; ekranın altındaki açılır çekmece menüsü kaldırıldı.",
+    "✨ Marka & Simge İyileştirmesi: Sol üst köşedeki LexiGo logosu daha kompakt ve zarif boyutlara uyarlandı.",
+    "📖 Akordeon Müfredat Menüsü: Öğrenci profili sayfasındaki kitaplar ve üniteler akordeon menü yapısına kavuşturuldu.",
+    "⚠️ Kümülatif Zorlanılan Kelime Raporu: Her ünite satırında Arenadaki etkinlikler boyunca zorlanılanlar listesine eklenen toplam kelime sayısı detaylı dökümle raporlandı."
   ]
 }
