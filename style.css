@@ -18864,14 +18864,16 @@ html:not([data-theme="dark"]) #aboutModal.full-screen-modal .modal-title,
 
 html:not([data-theme="dark"]) .about-hero-box,
 [data-theme="light"] .about-hero-box {
-  background: rgba(255, 255, 255, 0.7);
-  border: 1px solid rgba(226, 232, 240, 0.8);
+  background: rgba(255, 255, 255, 0.7) !important;
+  border: 1.5px solid rgba(226, 232, 240, 0.8) !important;
+  border-left: 5px solid #2563eb !important;
   box-shadow: 0 4px 16px -2px rgba(15, 23, 42, 0.05);
 }
 
 [data-theme="dark"] .about-hero-box {
-  background: rgba(30, 41, 59, 0.45);
-  border: 1px solid rgba(255, 255, 255, 0.06);
+  background: rgba(30, 41, 59, 0.45) !important;
+  border: 1px solid rgba(255, 255, 255, 0.06) !important;
+  border-left: 5px solid #3b82f6 !important;
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.25);
 }
 
@@ -19006,6 +19008,7 @@ html:not([data-theme="dark"]) .about-dev-card,
 [data-theme="light"] .about-dev-card {
   background: #ffffff !important;
   border: 1.5px solid #e2e8f0 !important;
+  border-left: 5px solid #2563eb !important;
   box-shadow: 0 4px 16px -2px rgba(15, 23, 42, 0.06) !important;
 }
 
@@ -19013,6 +19016,7 @@ html:not([data-theme="dark"]) .about-dev-card,
   background: rgba(17, 24, 39, 0.75) !important;
   backdrop-filter: blur(12px) !important;
   border: 1px solid rgba(255, 255, 255, 0.08) !important;
+  border-left: 5px solid #3b82f6 !important;
   box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4) !important;
 }
 
@@ -19084,12 +19088,14 @@ html:not([data-theme="dark"]) .about-privacy-hub-card,
 [data-theme="light"] .about-privacy-hub-card {
   background: linear-gradient(135deg, #ffffff 0%, #f5f3ff 100%) !important;
   border: 1.5px solid rgba(99, 102, 241, 0.25) !important;
+  border-left: 5px solid #2563eb !important;
   box-shadow: 0 6px 20px -3px rgba(99, 102, 241, 0.1), 0 2px 6px rgba(0, 0, 0, 0.03) !important;
 }
 
 [data-theme="dark"] .about-privacy-hub-card {
   background: linear-gradient(135deg, rgba(30, 41, 59, 0.75), rgba(15, 23, 42, 0.9)) !important;
   border: 1.5px solid rgba(99, 102, 241, 0.35) !important;
+  border-left: 5px solid #3b82f6 !important;
   box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.06) !important;
 }
 
@@ -19291,13 +19297,15 @@ html:not([data-theme="dark"]) .about-footer-note,
 
 html:not([data-theme="dark"]) .about-disclaimer-card,
 [data-theme="light"] .about-disclaimer-card {
-  background: #f8fafc;
-  border: 1px solid #e2e8f0;
+  background: #f8fafc !important;
+  border: 1px solid #e2e8f0 !important;
+  border-left: 5px solid #2563eb !important;
 }
 
 [data-theme="dark"] .about-disclaimer-card {
-  background: rgba(15, 23, 42, 0.55);
-  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: rgba(15, 23, 42, 0.55) !important;
+  border: 1px solid rgba(255, 255, 255, 0.08) !important;
+  border-left: 5px solid #3b82f6 !important;
 }
 
 .about-disclaimer-header {
@@ -22033,7 +22041,28 @@ html:not([data-theme="dark"]) .card-troubled-pill {
 }
 
 /* ==========================================================================
-   HAKKINDA MODALI: BÜYÜK EKRAN, DESKTOP VE TABLET TAM UYUMU (2 SÜTUNLU DENGELİ GRID VE TİPOGRAFİ)
+   HAKKINDA KUTULARI SOL MAVİ ŞERİT (ADÜ YDYO KARTI İLE BİREBİR AYNI STİLDE)
+   ========================================================================== */
+.about-hero-box,
+.about-update-hero-card,
+.about-school-card,
+.about-dev-card,
+.about-privacy-hub-card,
+.about-disclaimer-card {
+  border-left: 5px solid #2563eb !important;
+}
+
+[data-theme="dark"] .about-hero-box,
+[data-theme="dark"] .about-update-hero-card,
+[data-theme="dark"] .about-school-card,
+[data-theme="dark"] .about-dev-card,
+[data-theme="dark"] .about-privacy-hub-card,
+[data-theme="dark"] .about-disclaimer-card {
+  border-left: 5px solid #3b82f6 !important;
+}
+
+/* ==========================================================================
+   HAKKINDA MODALI: BÜYÜK EKRAN UYUMU (KÜÇÜK EKRANDAKİ GİBİ ALT ALTA VE BÜYÜK TİPOGRAFİ)
    ========================================================================== */
 @media (min-width: 768px) {
   #aboutModal.full-screen-modal {
@@ -22043,7 +22072,7 @@ html:not([data-theme="dark"]) .card-troubled-pill {
     height: 100% !important;
     height: 100vh !important;
     height: 100dvh !important;
-    padding: clamp(20px, 4vh, 48px) clamp(24px, 5vw, 64px) !important;
+    padding: clamp(20px, 4vh, 48px) clamp(20px, 4vw, 48px) !important;
     background: rgba(10, 12, 24, 0.78) !important;
     backdrop-filter: blur(16px) !important;
     -webkit-backdrop-filter: blur(16px) !important;
@@ -22060,11 +22089,11 @@ html:not([data-theme="dark"]) .card-troubled-pill {
   }
 
   #aboutModal.full-screen-modal .about-modal-card {
-    max-width: 880px !important;
+    max-width: 660px !important;
     width: 100% !important;
     height: auto !important;
     max-height: calc(100dvh - clamp(40px, 8vh, 96px)) !important;
-    border-radius: 28px !important;
+    border-radius: 26px !important;
     margin: auto !important;
     overflow: hidden !important;
     display: flex !important;
@@ -22090,7 +22119,7 @@ html:not([data-theme="dark"]) .card-troubled-pill {
   #aboutModal.full-screen-modal .about-modal-header {
     max-width: 100% !important;
     width: 100% !important;
-    padding: 16px 28px !important;
+    padding: 16px 24px !important;
     border-bottom: 1px solid var(--border-subtle) !important;
   }
 
@@ -22105,29 +22134,29 @@ html:not([data-theme="dark"]) .card-troubled-pill {
     border-radius: 12px !important;
   }
 
-  /* Body 2 Sütunlu Dengeli Grid */
+  /* Body: Küçük ekrandaki gibi alt alta sıralama */
   #aboutModal.full-screen-modal .about-modal-body {
     max-width: 100% !important;
     width: 100% !important;
     margin: 0 !important;
-    padding: 22px 28px !important;
-    display: grid !important;
-    grid-template-columns: repeat(2, 1fr) !important;
-    gap: 16px !important;
-    align-items: stretch !important;
+    padding: 20px 24px 24px 24px !important;
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 14px !important;
+    overflow-y: auto !important;
+    box-sizing: border-box !important;
   }
 
-  /* Brand / Hero Box Tam Genişlik */
+  /* Brand / Hero Box */
   .about-hero-box {
-    grid-column: 1 / -1 !important;
-    padding: 18px 24px !important;
-    border-radius: 22px !important;
-    gap: 8px !important;
+    padding: 16px 20px !important;
+    border-radius: 20px !important;
+    gap: 6px !important;
   }
 
   .about-brand-img {
-    height: 48px !important;
-    max-height: 48px !important;
+    height: 46px !important;
+    max-height: 46px !important;
   }
 
   .about-version-pill {
@@ -22137,25 +22166,24 @@ html:not([data-theme="dark"]) .card-troubled-pill {
   }
 
   .about-tagline {
-    font-size: 1.12rem !important;
+    font-size: 1.10rem !important;
     font-weight: 700 !important;
     margin-top: 4px !important;
   }
 
   /* Güncelleme Denetleme Kartı */
   .about-update-hero-card {
-    display: flex !important;
-    flex-direction: column !important;
-    justify-content: center !important;
-    padding: 16px 20px !important;
-    border-radius: 20px !important;
+    padding: 16px 18px !important;
+    border-radius: 18px !important;
+    margin-top: 0 !important;
+    margin-bottom: 0 !important;
   }
 
   .about-check-update-btn {
-    font-size: 1.05rem !important;
+    font-size: 1.02rem !important;
     font-weight: 800 !important;
-    padding: 15px 22px !important;
-    border-radius: 16px !important;
+    padding: 14px 20px !important;
+    border-radius: 14px !important;
   }
 
   .about-check-update-btn .btn-icon {
@@ -22163,7 +22191,7 @@ html:not([data-theme="dark"]) .card-troubled-pill {
   }
 
   .about-update-status-msg {
-    font-size: 0.98rem !important;
+    font-size: 0.96rem !important;
     line-height: 1.5 !important;
   }
 
@@ -22171,7 +22199,7 @@ html:not([data-theme="dark"]) .card-troubled-pill {
   .about-web-update-btn {
     font-size: 1.02rem !important;
     padding: 14px !important;
-    border-radius: 16px !important;
+    border-radius: 14px !important;
   }
 
   #aboutWebUpdateHint {
@@ -22181,16 +22209,16 @@ html:not([data-theme="dark"]) .card-troubled-pill {
 
   /* ADÜ YDYO Kurumsal Bilgi Kartı */
   .about-school-card {
-    padding: 18px 20px !important;
-    border-radius: 20px !important;
+    padding: 16px 18px !important;
+    border-radius: 18px !important;
     gap: 16px !important;
   }
 
   .about-school-logo {
-    width: 56px !important;
-    height: 56px !important;
-    max-width: 56px !important;
-    max-height: 56px !important;
+    width: 52px !important;
+    height: 52px !important;
+    max-width: 52px !important;
+    max-height: 52px !important;
     border-radius: 14px !important;
   }
 
@@ -22203,28 +22231,28 @@ html:not([data-theme="dark"]) .card-troubled-pill {
   .about-school-dept {
     font-size: 0.96rem !important;
     font-weight: 700 !important;
-    margin-top: 4px !important;
+    margin-top: 3px !important;
   }
 
   .about-school-note {
     font-size: 0.88rem !important;
     line-height: 1.55 !important;
-    margin-top: 6px !important;
+    margin-top: 5px !important;
   }
 
   /* Geliştirici Kartı */
   .about-dev-card {
-    padding: 18px 20px !important;
-    border-radius: 20px !important;
+    padding: 16px 18px !important;
+    border-radius: 18px !important;
     gap: 16px !important;
   }
 
   .about-dev-avatar {
-    width: 56px !important;
-    height: 56px !important;
-    min-width: 56px !important;
-    font-size: 1.75rem !important;
-    border-radius: 16px !important;
+    width: 52px !important;
+    height: 52px !important;
+    min-width: 52px !important;
+    font-size: 1.7rem !important;
+    border-radius: 14px !important;
   }
 
   .about-dev-name {
@@ -22234,7 +22262,7 @@ html:not([data-theme="dark"]) .card-troubled-pill {
 
   .about-dev-period {
     font-size: 0.88rem !important;
-    margin-top: 4px !important;
+    margin-top: 3px !important;
   }
 
   .about-dev-emails {
@@ -22249,18 +22277,15 @@ html:not([data-theme="dark"]) .card-troubled-pill {
 
   /* Gizlilik Politikası Kartı */
   .about-privacy-hub-card {
-    padding: 18px 20px !important;
-    border-radius: 20px !important;
-    display: flex !important;
-    flex-direction: column !important;
-    justify-content: space-between !important;
-    gap: 14px !important;
+    padding: 16px 18px !important;
+    border-radius: 18px !important;
+    gap: 12px !important;
   }
 
   .about-privacy-badge-icon {
-    width: 50px !important;
-    height: 50px !important;
-    font-size: 1.45rem !important;
+    width: 48px !important;
+    height: 48px !important;
+    font-size: 1.4rem !important;
     border-radius: 14px !important;
   }
 
@@ -22277,30 +22302,26 @@ html:not([data-theme="dark"]) .card-troubled-pill {
 
   .about-privacy-action-btn {
     font-size: 0.96rem !important;
-    padding: 13px 18px !important;
+    padding: 12px 18px !important;
     font-weight: 800 !important;
     border-radius: 14px !important;
   }
 
   /* Geri Bildirim Buton Satırı */
   .about-feedback-row {
-    display: flex !important;
-    align-items: stretch !important;
     margin-top: 0 !important;
   }
 
   .about-feedback-row #aboutOpenFeedbackBtn {
     font-size: 1.05rem !important;
     font-weight: 800 !important;
-    padding: 16px 24px !important;
-    border-radius: 18px !important;
-    height: 100% !important;
-    min-height: 56px !important;
+    padding: 15px 22px !important;
+    border-radius: 16px !important;
   }
 
   /* Fikri Mülkiyet & Telif Bildirimi Kartı */
   .about-disclaimer-card {
-    padding: 16px 20px !important;
+    padding: 16px 18px !important;
     border-radius: 18px !important;
     margin-top: 0 !important;
   }
@@ -22322,18 +22343,11 @@ html:not([data-theme="dark"]) .card-troubled-pill {
 
   /* Alt Bilgi Notu */
   .about-footer-note {
-    grid-column: 1 / -1 !important;
-    font-size: 0.98rem !important;
+    font-size: 0.96rem !important;
     font-weight: 600 !important;
-    padding: 12px 20px !important;
+    padding: 10px 16px !important;
     text-align: center !important;
-    margin-top: 4px !important;
-  }
-}
-
-@media (min-width: 1024px) {
-  #aboutModal.full-screen-modal .about-modal-card {
-    max-width: 940px !important;
+    margin-top: 2px !important;
   }
 }
 
@@ -23847,6 +23861,7 @@ html:not([data-theme="dark"]) .custom-confirm-card .confirm-cancel-btn:hover {
   border-radius: 18px;
   background: rgba(30, 41, 59, 0.6);
   border: 1.5px solid rgba(59, 130, 246, 0.25);
+  border-left: 5px solid #3b82f6 !important;
   box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
 }
 
@@ -23854,6 +23869,7 @@ html:not([data-theme="dark"]) .custom-confirm-card .confirm-cancel-btn:hover {
 html:not([data-theme="dark"]) .about-update-hero-card {
   background: #ffffff !important;
   border: 1.5px solid #cbd5e1 !important;
+  border-left: 5px solid #2563eb !important;
   box-shadow: 0 4px 16px rgba(0, 0, 0, 0.04) !important;
 }
 
