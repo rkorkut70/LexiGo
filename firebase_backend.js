@@ -1334,3 +1334,25 @@ window.deleteAccountCompletely = async function() {
   window.addEventListener('beforeunload', function() { sendHeartbeat(true); });
 })();
 
+// ==========================================
+// ÇEVRİMDIŞI / ÇEVRİMİÇİ SENKRONİZASYON (OFFLINE -> ONLINE SYNC)
+// ==========================================
+(function initNetworkSyncListeners() {
+  if (typeof window === 'undefined') return;
+
+  window.addEventListener('online', function() {
+    console.log('🌐 Ağ bağlantısı algılandı (online). Çevrimdışı biriken XP ve ilerleme buluta eşitleniyor...');
+    if (window.fbUser) {
+      if (typeof window.syncProgressToFirebase === 'function') {
+        window.syncProgressToFirebase(null, true);
+      }
+      if (typeof window.syncUserData === 'function') {
+        window.syncUserData(window.fbUser);
+      }
+      if (typeof window.showToast === 'function') {
+        window.showToast('🌐 İnternet bağlantısı sağlandı. Çevrimdışı kazandığınız XP ve ilerlemeniz bulutla eşitlendi ✓', 3500);
+      }
+    }
+  });
+})();
+

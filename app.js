@@ -7,9 +7,9 @@
 (function () {
   'use strict';
 
-  const APP_VERSION = 'v1.9.26';
+  const APP_VERSION = 'v1.9.27';
   const DEFAULT_AVATAR = 'avatar_default';
-  const CURRENT_APP_BUILD = 'lexigo_production_live_launch_v1926';
+  const CURRENT_APP_BUILD = 'lexigo_production_live_launch_v1927';
 
   // Sürüm ve oturum güvenliği: Kullanıcı oturumunu ve verilerini asla izinsiz sıfırlama
   try {
