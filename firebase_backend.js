@@ -169,20 +169,23 @@ async function syncUserData(user) {
       } else {
         // Belge Firestore'da yoksa (kullanıcı admin tarafından silinmiş veya yeni kayıt):
         // Cihazdaki eski test kalıntılarının buluta yeniden yüklenmesini kesin olarak engelle!
-        console.warn("Firestore'da kullanıcı belgesi bulunamadı, yerel eski veriler temizleniyor.");
-        localStorage.removeItem('kelime_xp');
-        localStorage.removeItem('kelime_learned_map');
-        localStorage.removeItem('kelime_unlocked_badges');
-        localStorage.removeItem('kelime_max_streak');
-        localStorage.removeItem('kelime_arena_solved');
-        localStorage.removeItem('kelime_game_stats');
-        localStorage.removeItem('kelime_clean_wins');
-        localStorage.removeItem('lexiq_time_cards');
-        localStorage.removeItem('lexiq_time_games');
-        localStorage.removeItem('lexiq_unit_durations');
-        localStorage.removeItem('lexiq_weekly_xp');
-        localStorage.removeItem('lexiq_day_streak');
-        localStorage.removeItem('lexiq_max_day_streak');
+        // ANCAK yeni kayıt akışında veya onboarding modunda yerel ilerlemeyi koru!
+        if (!window.isRegistering && !window.isOnboardingAuthFlow) {
+          console.warn("Firestore'da kullanıcı belgesi bulunamadı, yerel eski veriler temizleniyor.");
+          localStorage.removeItem('kelime_xp');
+          localStorage.removeItem('kelime_learned_map');
+          localStorage.removeItem('kelime_unlocked_badges');
+          localStorage.removeItem('kelime_max_streak');
+          localStorage.removeItem('kelime_arena_solved');
+          localStorage.removeItem('kelime_game_stats');
+          localStorage.removeItem('kelime_clean_wins');
+          localStorage.removeItem('lexiq_time_cards');
+          localStorage.removeItem('lexiq_time_games');
+          localStorage.removeItem('lexiq_unit_durations');
+          localStorage.removeItem('lexiq_weekly_xp');
+          localStorage.removeItem('lexiq_day_streak');
+          localStorage.removeItem('lexiq_max_day_streak');
+        }
       }
     } catch (err) {
       console.warn("Firestore kullanıcı bilgisi okunamadı:", err);
@@ -428,6 +431,7 @@ async function syncUserData(user) {
         learnedMap: mergedLearnedMap,
         notebookMap: mergedNotebookMap,
         troubledMap: mergedTroubledMap,
+        troubledHistoryMap: mergedTroubledHistory,
         unlockedBadges: mergedBadges,
         maxStreak: bestMaxStreak,
         dayStreak: bestDayStreak,
@@ -461,6 +465,7 @@ window.registerWithEmail = async function(email, password, name, avatar, remembe
     return { success: false, error: "Firebase kimlik doğrulama servisi başlatılamadı." };
   }
   try {
+    window.isRegistering = true;
     if (firebase.auth && firebase.auth.Auth && firebase.auth.Auth.Persistence) {
       const persistence = (rememberMe !== false) ? firebase.auth.Auth.Persistence.LOCAL : firebase.auth.Auth.Persistence.SESSION;
       await auth.setPersistence(persistence).catch(e => console.warn("Persistence error:", e));
@@ -531,6 +536,7 @@ window.registerWithEmail = async function(email, password, name, avatar, remembe
         learnedMap: (s.learnedMap) || JSON.parse(localStorage.getItem('kelime_learned_map') || '{}'),
         notebookMap: (s.notebookMap) || JSON.parse(localStorage.getItem('lexiq_notebook_words') || '{}'),
         troubledMap: (s.troubledMap) || JSON.parse(localStorage.getItem('lexiq_troubled_words') || '{}'),
+        troubledHistoryMap: (s.troubledHistoryMap) || JSON.parse(localStorage.getItem('lexiq_troubled_history') || '{}'),
         unlockedBadges: (s.unlockedBadges) || JSON.parse(localStorage.getItem('kelime_unlocked_badges') || '[]'),
         maxStreak: (s.maxStreak !== undefined) ? s.maxStreak : parseInt(localStorage.getItem('kelime_max_streak') || '0', 10),
         arenaWordsSolved: (s.arenaWordsSolved !== undefined) ? s.arenaWordsSolved : parseInt(localStorage.getItem('kelime_arena_solved') || '0', 10),
@@ -564,6 +570,8 @@ window.registerWithEmail = async function(email, password, name, avatar, remembe
   } catch (error) {
     console.error("Kayıt hatası:", error);
     return { success: false, error: getAuthErrorMessage(error) };
+  } finally {
+    window.isRegistering = false;
   }
 };
 

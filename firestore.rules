@@ -31,6 +31,7 @@ rules_version = '2';
 //      - learnedMap: map (optional, dictionary of word IDs to learning status)
 //      - notebookMap: map (optional, dictionary of user notebook saved words)
 //      - troubledMap: map (optional, dictionary of troubled/difficult words)
+//      - troubledHistoryMap: map (optional, dictionary of troubled word mistake history)
 //      - unlockedBadges: list (optional, max 150 items)
 //      - maxStreak: number (optional, >= 0)
 //      - dayStreak: number (optional, >= 0)
@@ -45,6 +46,10 @@ rules_version = '2';
 //      - lastLoginAt: timestamp (optional, session start timestamp)
 //      - isOnline: bool (optional, presence indicator)
 //      - onboarded: bool (optional, onboarding completion flag)
+//      - notebookWords: map (optional, legacy alias for notebookMap)
+//      - troubledWords: map (optional, legacy alias for troubledMap)
+//      - troubledHistory: map (optional, legacy alias for troubledHistoryMap)
+//      - arenaSolved: number (optional, legacy alias for arenaWordsSolved)
 //
 // 2. Collection: tournament_archive
 //    Document ID: {docId} (e.g., '2026-W42_EN-TR')
@@ -100,12 +105,6 @@ service cloud.firestore {
              request.resource.data.uid == request.auth.uid;
     }
 
-    function uidNotModified() {
-      return !('uid' in request.resource.data) ||
-             !('uid' in resource.data) ||
-             request.resource.data.uid == resource.data.uid;
-    }
-
     function hasRequiredFields(data, fields) {
       return data.keys().hasAll(fields);
     }
@@ -128,12 +127,14 @@ service cloud.firestore {
     }
 
     // Helper function to distinguish legacy/test accounts created prior to November 5, 2026 launch date
+    // Uses epoch ms (1793836800000 = 2026-11-05T00:00:00Z) for 100% safe, universal CEL evaluation
     function isLegacyOrTestAccount(userId, data) {
-      return isTestAccount(userId) ||
-             (('createdAt' in data) && (
-               (data.createdAt is timestamp && data.createdAt < timestamp.date(2026, 11, 5)) ||
-               (data.createdAt is number && data.createdAt < 1793836800000)
-             ));
+      return isTestAccount(userId) || (
+        ('createdAt' in data) && (
+          (data.createdAt is timestamp && data.createdAt < timestamp.value(1793836800000)) ||
+          (data.createdAt is number && data.createdAt < 1793836800000)
+        )
+      );
     }
 
     // ===============================================================
@@ -144,9 +145,11 @@ service cloud.firestore {
       return data.keys().hasOnly([
         'uid', 'displayName', 'email', 'avatar', 'track', 'level', 'lang',
         'branch', 'branchLocked', 'weeklyXp', 'weeklyWeekId', 'xp',
-        'learnedMap', 'notebookMap', 'troubledMap', 'unlockedBadges', 'maxStreak', 'dayStreak', 'maxDayStreak',
+        'learnedMap', 'notebookMap', 'troubledMap', 'troubledHistoryMap',
+        'unlockedBadges', 'maxStreak', 'dayStreak', 'maxDayStreak',
         'lastStudyDate', 'arenaWordsSolved', 'gameStats', 'cleanWins',
-        'timeTracking', 'createdAt', 'lastActive', 'lastLoginAt', 'isOnline', 'onboarded'
+        'timeTracking', 'createdAt', 'lastActive', 'lastLoginAt', 'isOnline', 'onboarded',
+        'notebookWords', 'troubledWords', 'troubledHistory', 'arenaSolved'
       ]);
     }
 
@@ -167,6 +170,7 @@ service cloud.firestore {
         (!('learnedMap' in data) || data.learnedMap is map) &&
         (!('notebookMap' in data) || data.notebookMap is map) &&
         (!('troubledMap' in data) || data.troubledMap is map) &&
+        (!('troubledHistoryMap' in data) || data.troubledHistoryMap is map) &&
         (!('unlockedBadges' in data) || (data.unlockedBadges is list && data.unlockedBadges.size() <= 150)) &&
         (!('maxStreak' in data) || (data.maxStreak is number && data.maxStreak >= 0)) &&
         (!('dayStreak' in data) || (data.dayStreak is number && data.dayStreak >= 0)) &&
@@ -180,7 +184,11 @@ service cloud.firestore {
         (!('lastActive' in data) || data.lastActive is timestamp) &&
         (!('lastLoginAt' in data) || data.lastLoginAt is timestamp) &&
         (!('isOnline' in data) || data.isOnline is bool) &&
-        (!('onboarded' in data) || data.onboarded is bool);
+        (!('onboarded' in data) || data.onboarded is bool) &&
+        (!('notebookWords' in data) || data.notebookWords is map) &&
+        (!('troubledWords' in data) || data.troubledWords is map) &&
+        (!('troubledHistory' in data) || data.troubledHistory is map) &&
+        (!('arenaSolved' in data) || (data.arenaSolved is number && data.arenaSolved >= 0));
     }
 
     function areImmutableUserFieldsUnchanged() {
@@ -204,6 +212,7 @@ service cloud.firestore {
     // Bounded XP progression:
     // - Legitimate students registered on or after November 5, 2026: XP and weeklyXP progression allows offline sync batches
     //   without blocking (newData.xp >= 0, newData.weeklyXp >= 0, lifetime XP does not decrease newData.xp >= oldData.xp).
+    // - Race safety on initial registration: if oldData did not have createdAt, allows flexible initialization.
     // - Legacy/test accounts created before November 5, 2026 or on test list: strict bounded +1000 XP per write limit enforced.
     function isValidXpProgression(newData, oldData) {
       return (isLegacyOrTestAccount(request.auth.uid, oldData) || isLegacyOrTestAccount(request.auth.uid, newData)) ? (
@@ -231,7 +240,7 @@ service cloud.firestore {
       ) : (
         (!('xp' in newData) || (
           newData.xp is number && newData.xp >= 0 &&
-          (!('xp' in oldData) || newData.xp >= oldData.xp)
+          (!('xp' in oldData) || newData.xp >= oldData.xp || !('createdAt' in oldData))
         )) &&
         (!('weeklyXp' in newData) || (
           newData.weeklyXp is number && newData.weeklyXp >= 0
