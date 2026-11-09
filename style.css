@@ -22351,6 +22351,793 @@ html:not([data-theme="dark"]) .card-troubled-pill {
   }
 }
 
+/* ==========================================================================
+   GERİ BİLDİRİM KUTULARI SOL MAVİ ŞERİT (ADÜ YDYO KARTI İLE BİREBİR AYNI STİLDE)
+   ========================================================================== */
+.feedback-section-card {
+  border-left: 5px solid #2563eb !important;
+}
+
+html:not([data-theme="dark"]) .feedback-section-card,
+[data-theme="light"] .feedback-section-card {
+  background: #ffffff !important;
+  border: 1.5px solid #e2e8f0 !important;
+  border-left: 5px solid #2563eb !important;
+  box-shadow: 0 4px 16px -2px rgba(15, 23, 42, 0.06) !important;
+}
+
+[data-theme="dark"] .feedback-section-card {
+  background: rgba(17, 24, 39, 0.75) !important;
+  backdrop-filter: blur(12px) !important;
+  border: 1px solid rgba(255, 255, 255, 0.08) !important;
+  border-left: 5px solid #3b82f6 !important;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4) !important;
+}
+
+/* ==========================================================================
+   GERİ BİLDİRİM MODALI: BÜYÜK EKRAN UYUMU (ALT ALTA SIRALAMA, EŞİT BOŞLUKLAR VE BÜYÜK TİPOGRAFİ)
+   ========================================================================== */
+@media (min-width: 768px) {
+  #feedbackModal.full-screen-modal {
+    position: fixed !important;
+    inset: 0 !important;
+    width: 100vw !important;
+    height: 100% !important;
+    height: 100vh !important;
+    height: 100dvh !important;
+    padding: clamp(20px, 4vh, 48px) clamp(20px, 4vw, 48px) !important;
+    background: rgba(10, 12, 24, 0.78) !important;
+    backdrop-filter: blur(16px) !important;
+    -webkit-backdrop-filter: blur(16px) !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    z-index: 200030 !important;
+    box-sizing: border-box !important;
+  }
+
+  html:not([data-theme="dark"]) #feedbackModal.full-screen-modal,
+  [data-theme="light"] #feedbackModal.full-screen-modal {
+    background: rgba(15, 23, 42, 0.45) !important;
+  }
+
+  #feedbackModal.full-screen-modal .feedback-modal-card {
+    max-width: 660px !important;
+    width: 100% !important;
+    height: auto !important;
+    max-height: calc(100dvh - clamp(40px, 8vh, 96px)) !important;
+    border-radius: 26px !important;
+    margin: auto !important;
+    overflow: hidden !important;
+    display: flex !important;
+    flex-direction: column !important;
+    border: 1.5px solid var(--border-color) !important;
+    box-shadow: 0 25px 60px rgba(0, 0, 0, 0.55), 0 0 0 1px rgba(255, 255, 255, 0.08) !important;
+  }
+
+  html:not([data-theme="dark"]) #feedbackModal.full-screen-modal .feedback-modal-card,
+  [data-theme="light"] #feedbackModal.full-screen-modal .feedback-modal-card {
+    background: #ffffff !important;
+    border: 1.5px solid #e2e8f0 !important;
+    box-shadow: 0 25px 60px rgba(15, 23, 42, 0.16), 0 4px 16px rgba(0, 0, 0, 0.06) !important;
+  }
+
+  [data-theme="dark"] #feedbackModal.full-screen-modal .feedback-modal-card {
+    background: #111827 !important;
+    border: 1.5px solid rgba(255, 255, 255, 0.1) !important;
+    box-shadow: 0 25px 60px rgba(0, 0, 0, 0.65), 0 0 0 1px rgba(255, 255, 255, 0.06) !important;
+  }
+
+  /* Header */
+  #feedbackModal.full-screen-modal .feedback-modal-header {
+    max-width: 100% !important;
+    width: 100% !important;
+    padding: 16px 24px !important;
+    border-bottom: 1px solid var(--border-subtle) !important;
+  }
+
+  #feedbackModal.full-screen-modal .modal-title {
+    font-size: 1.30rem !important;
+    font-weight: 800 !important;
+  }
+
+  #feedbackModal.full-screen-modal .modal-subtitle {
+    font-size: 0.90rem !important;
+    margin-top: 2px !important;
+  }
+
+  #feedbackModal.full-screen-modal .feedback-header-icon {
+    font-size: 1.75rem !important;
+  }
+
+  #feedbackModal.full-screen-modal #closeFeedbackModalBtn {
+    width: 38px !important;
+    height: 38px !important;
+    border-radius: 12px !important;
+  }
+
+  /* Body: Küçük ekrandaki gibi alt alta sıralama */
+  #feedbackModal.full-screen-modal .feedback-modal-body {
+    max-width: 100% !important;
+    width: 100% !important;
+    margin: 0 !important;
+    padding: 20px 24px 24px 24px !important;
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 14px !important;
+    overflow-y: auto !important;
+    box-sizing: border-box !important;
+  }
+
+  #feedbackModal.full-screen-modal .feedback-form {
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 14px !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    margin: 0 !important;
+  }
+
+  /* Kartlar */
+  .feedback-section-card {
+    padding: 16px 20px !important;
+    border-radius: 18px !important;
+    gap: 12px !important;
+  }
+
+  .feedback-section-label {
+    font-size: 0.95rem !important;
+    font-weight: 800 !important;
+  }
+
+  /* Seçim Çipleri */
+  .feedback-type-chips {
+    gap: 10px !important;
+  }
+
+  .feedback-chip {
+    padding: 12px 14px !important;
+    border-radius: 14px !important;
+    gap: 12px !important;
+  }
+
+  .feedback-chip .chip-icon {
+    font-size: 1.5rem !important;
+  }
+
+  .feedback-chip .chip-title {
+    font-size: 0.92rem !important;
+    font-weight: 800 !important;
+  }
+
+  .feedback-chip .chip-desc {
+    font-size: 0.78rem !important;
+  }
+
+  /* Textarea */
+  .feedback-textarea {
+    font-size: 0.95rem !important;
+    padding: 14px 16px !important;
+    border-radius: 14px !important;
+    min-height: 125px !important;
+    line-height: 1.6 !important;
+  }
+
+  /* Inputlar */
+  .feedback-grid-2 {
+    gap: 12px !important;
+  }
+
+  .feedback-input {
+    font-size: 0.92rem !important;
+    padding: 12px 14px 12px 42px !important;
+    border-radius: 14px !important;
+  }
+
+  .feedback-input-wrap .input-icon {
+    left: 14px !important;
+    font-size: 1.15rem !important;
+  }
+
+  /* Gönder Butonu */
+  .feedback-submit-btn {
+    font-size: 1.05rem !important;
+    font-weight: 800 !important;
+    padding: 15px 24px !important;
+    border-radius: 16px !important;
+  }
+
+  /* Alt E-posta Notu */
+  .feedback-direct-email {
+    font-size: 0.88rem !important;
+    margin-top: 4px !important;
+  }
+
+  .feedback-mail-link {
+    font-size: 0.90rem !important;
+    font-weight: 700 !important;
+  }
+}
+
+/* ==========================================================================
+   TURNUVA & LİDERLİK MODALI: BÜYÜK EKRAN UYUMU (ALT ALTA SIRALAMA, EŞİT BOŞLUKLAR VE BÜYÜK TİPOGRAFİ)
+   ========================================================================== */
+@media (min-width: 768px) {
+  #leaderboardModal.full-screen-modal,
+  #tournamentGuideModal.full-screen-modal {
+    position: fixed !important;
+    inset: 0 !important;
+    width: 100vw !important;
+    height: 100% !important;
+    height: 100vh !important;
+    height: 100dvh !important;
+    padding: clamp(20px, 4vh, 48px) clamp(20px, 4vw, 48px) !important;
+    background: rgba(10, 12, 24, 0.78) !important;
+    backdrop-filter: blur(16px) !important;
+    -webkit-backdrop-filter: blur(16px) !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    z-index: 200030 !important;
+    box-sizing: border-box !important;
+  }
+
+  html:not([data-theme="dark"]) #leaderboardModal.full-screen-modal,
+  [data-theme="light"] #leaderboardModal.full-screen-modal,
+  html:not([data-theme="dark"]) #tournamentGuideModal.full-screen-modal,
+  [data-theme="light"] #tournamentGuideModal.full-screen-modal {
+    background: rgba(15, 23, 42, 0.45) !important;
+  }
+
+  #leaderboardModal.full-screen-modal .leaderboard-modal-card,
+  #tournamentGuideModal.full-screen-modal .tournament-guide-modal-card {
+    max-width: 680px !important;
+    width: 100% !important;
+    height: auto !important;
+    max-height: calc(100dvh - clamp(40px, 8vh, 96px)) !important;
+    border-radius: 26px !important;
+    margin: auto !important;
+    overflow: hidden !important;
+    display: flex !important;
+    flex-direction: column !important;
+    border: 1.5px solid var(--border-color) !important;
+    box-shadow: 0 25px 60px rgba(0, 0, 0, 0.55), 0 0 0 1px rgba(255, 255, 255, 0.08) !important;
+    position: relative !important;
+  }
+
+  html:not([data-theme="dark"]) #leaderboardModal.full-screen-modal .leaderboard-modal-card,
+  [data-theme="light"] #leaderboardModal.full-screen-modal .leaderboard-modal-card,
+  html:not([data-theme="dark"]) #tournamentGuideModal.full-screen-modal .tournament-guide-modal-card,
+  [data-theme="light"] #tournamentGuideModal.full-screen-modal .tournament-guide-modal-card {
+    background: #ffffff !important;
+    border: 1.5px solid #e2e8f0 !important;
+    box-shadow: 0 25px 60px rgba(15, 23, 42, 0.16), 0 4px 16px rgba(0, 0, 0, 0.06) !important;
+  }
+
+  [data-theme="dark"] #leaderboardModal.full-screen-modal .leaderboard-modal-card,
+  [data-theme="dark"] #tournamentGuideModal.full-screen-modal .tournament-guide-modal-card {
+    background: #111827 !important;
+    border: 1.5px solid rgba(255, 255, 255, 0.1) !important;
+    box-shadow: 0 25px 60px rgba(0, 0, 0, 0.65), 0 0 0 1px rgba(255, 255, 255, 0.06) !important;
+  }
+
+  /* Header */
+  #leaderboardModal.full-screen-modal .leaderboard-modal-header,
+  #tournamentGuideModal.full-screen-modal .tournament-guide-header {
+    max-width: 100% !important;
+    width: 100% !important;
+    padding: 16px 24px !important;
+    border-bottom: 1px solid var(--border-subtle) !important;
+  }
+
+  #leaderboardModal.full-screen-modal .modal-title {
+    font-size: 1.30rem !important;
+    font-weight: 800 !important;
+  }
+
+  #leaderboardModal.full-screen-modal .lb-header-sub {
+    font-size: 0.90rem !important;
+    margin-top: 2px !important;
+  }
+
+  #leaderboardModal.full-screen-modal .lb-header-trophy-badge {
+    width: 44px !important;
+    height: 44px !important;
+    border-radius: 14px !important;
+  }
+
+  #leaderboardModal.full-screen-modal .lb-header-trophy-badge svg {
+    width: 22px !important;
+    height: 22px !important;
+  }
+
+  #leaderboardModal.full-screen-modal #closeLeaderboardModalBtn,
+  #leaderboardModal.full-screen-modal #openTournamentGuideBtn {
+    width: 38px !important;
+    height: 38px !important;
+    border-radius: 12px !important;
+  }
+
+  /* Sekmeler (Tabs Nav) */
+  #leaderboardModal.full-screen-modal .leaderboard-tabs-nav {
+    max-width: 100% !important;
+    width: 100% !important;
+    margin: 10px 0 12px 0 !important;
+    padding: 6px !important;
+    border-radius: 16px !important;
+    gap: 8px !important;
+    box-sizing: border-box !important;
+  }
+
+  #leaderboardModal.full-screen-modal .lb-tab-btn {
+    padding: 10px 12px !important;
+    font-size: 0.88rem !important;
+    font-weight: 800 !important;
+    border-radius: 12px !important;
+    gap: 8px !important;
+  }
+
+  #leaderboardModal.full-screen-modal .lb-tab-svg {
+    width: 18px !important;
+    height: 18px !important;
+  }
+
+  /* Body: Küçük ekrandaki gibi alt alta akış */
+  #leaderboardModal.full-screen-modal .leaderboard-modal-body {
+    max-width: 100% !important;
+    width: 100% !important;
+    margin: 0 !important;
+    padding: 12px 24px 70px 24px !important;
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 12px !important;
+    overflow-y: auto !important;
+    box-sizing: border-box !important;
+  }
+
+  #leaderboardModal.full-screen-modal .leaderboard-modal-body > *,
+  #leaderboardModal.full-screen-modal .lb-panel {
+    max-width: 100% !important;
+    width: 100% !important;
+    margin-left: 0 !important;
+    margin-right: 0 !important;
+  }
+
+  /* Toolbar */
+  .lb-global-toolbar {
+    padding: 10px 14px !important;
+    border-radius: 14px !important;
+    margin-bottom: 12px !important;
+  }
+
+  .lb-toolbar-subtitle {
+    font-size: 0.92rem !important;
+    font-weight: 700 !important;
+  }
+
+  .lb-total-badge {
+    font-size: 0.84rem !important;
+    padding: 3px 10px !important;
+  }
+
+  .lb-page-size-selector select {
+    font-size: 0.86rem !important;
+    padding: 5px 10px !important;
+    border-radius: 10px !important;
+  }
+
+  /* Sıralama Satırları (Leaderboard Items) */
+  .leaderboard-item {
+    padding: 12px 16px !important;
+    border-radius: 16px !important;
+    margin-bottom: 8px !important;
+    gap: 14px !important;
+  }
+
+  .leaderboard-item .lb-rank {
+    width: 32px !important;
+    height: 32px !important;
+    font-size: 0.92rem !important;
+    font-weight: 800 !important;
+    border-radius: 10px !important;
+  }
+
+  .leaderboard-item .lb-avatar,
+  .leaderboard-item .avatar-img-fluid {
+    width: 38px !important;
+    height: 38px !important;
+    min-width: 38px !important;
+  }
+
+  .leaderboard-item .lb-name {
+    font-size: 0.96rem !important;
+    font-weight: 800 !important;
+    line-height: 1.35 !important;
+  }
+
+  .leaderboard-item .lb-badge {
+    font-size: 0.78rem !important;
+    margin-top: 3px !important;
+  }
+
+  .leaderboard-item .lb-score {
+    font-size: 1.05rem !important;
+    font-weight: 900 !important;
+  }
+
+  /* Sınıfım Paneli Akademik Kartı */
+  .lb-collegiate-class-card {
+    padding: 14px 18px !important;
+    border-radius: 16px !important;
+    margin-bottom: 14px !important;
+  }
+
+  .lb-class-crest-icon {
+    width: 42px !important;
+    height: 42px !important;
+    border-radius: 12px !important;
+  }
+
+  .lb-class-crest-icon svg {
+    width: 22px !important;
+    height: 22px !important;
+  }
+
+  .lb-class-title {
+    font-size: 1.02rem !important;
+    font-weight: 800 !important;
+  }
+
+  .lb-class-sub {
+    font-size: 0.84rem !important;
+  }
+
+  /* Düello Kartları & Şube Skorları */
+  .lb-duel-card {
+    padding: 16px 18px !important;
+    border-radius: 16px !important;
+    margin-bottom: 12px !important;
+  }
+
+  .lb-duel-branch-title {
+    font-size: 1.05rem !important;
+    font-weight: 800 !important;
+  }
+
+  /* Kürsü (Spotlight Card) */
+  .lb-honor-spotlight-card {
+    padding: 20px 24px !important;
+    border-radius: 20px !important;
+    margin-bottom: 16px !important;
+  }
+
+  .lb-honor-champ-name {
+    font-size: 1.25rem !important;
+    font-weight: 900 !important;
+  }
+
+  .lb-honor-champ-xp {
+    font-size: 1.15rem !important;
+    font-weight: 900 !important;
+  }
+
+  /* Sayfalama Barı */
+  .lb-pagination-bar {
+    padding: 12px 16px !important;
+    border-radius: 14px !important;
+    margin-top: 14px !important;
+  }
+
+  .lb-pagination-btn {
+    font-size: 0.88rem !important;
+    padding: 8px 14px !important;
+    border-radius: 10px !important;
+  }
+
+  .lb-page-info-pill {
+    font-size: 0.88rem !important;
+    padding: 4px 12px !important;
+  }
+
+  /* Sabit Alt Kullanıcı Barı */
+  #leaderboardModal.full-screen-modal #lbCurrentUserBar {
+    max-width: 100% !important;
+    left: 0 !important;
+    right: 0 !important;
+    padding: 12px 24px !important;
+    border-bottom-left-radius: 26px !important;
+    border-bottom-right-radius: 26px !important;
+    box-sizing: border-box !important;
+  }
+
+  #lbCurrentUserBar #lbMyRankBadge {
+    font-size: 0.95rem !important;
+    font-weight: 900 !important;
+  }
+
+  #lbCurrentUserBar #lbMyAvatar img {
+    width: 32px !important;
+    height: 32px !important;
+  }
+
+  #lbCurrentUserBar #lbMyName {
+    font-size: 0.92rem !important;
+    font-weight: 800 !important;
+  }
+
+  #lbCurrentUserBar #lbMyBranchTag {
+    font-size: 0.78rem !important;
+  }
+
+  #lbCurrentUserBar #lbMyScore {
+    font-size: 1.05rem !important;
+    font-weight: 900 !important;
+  }
+}
+
+/* ==========================================================================
+   ÖĞRENCİ PROFİLİ MODALI: BÜYÜK EKRAN UYUMU (ALT ALTA SIRALAMA, EŞİT BOŞLUKLAR VE BÜYÜK TİPOGRAFİ)
+   ========================================================================== */
+@media (min-width: 768px) {
+  #studentProfileModal.full-screen-modal {
+    position: fixed !important;
+    inset: 0 !important;
+    width: 100vw !important;
+    height: 100% !important;
+    height: 100vh !important;
+    height: 100dvh !important;
+    padding: clamp(20px, 4vh, 48px) clamp(20px, 4vw, 48px) !important;
+    background: rgba(10, 12, 24, 0.78) !important;
+    backdrop-filter: blur(16px) !important;
+    -webkit-backdrop-filter: blur(16px) !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    z-index: 200030 !important;
+    box-sizing: border-box !important;
+  }
+
+  html:not([data-theme="dark"]) #studentProfileModal.full-screen-modal,
+  [data-theme="light"] #studentProfileModal.full-screen-modal {
+    background: rgba(15, 23, 42, 0.45) !important;
+  }
+
+  #studentProfileModal.full-screen-modal .student-profile-modal-card {
+    max-width: 680px !important;
+    width: 100% !important;
+    height: auto !important;
+    max-height: calc(100dvh - clamp(40px, 8vh, 96px)) !important;
+    border-radius: 26px !important;
+    margin: auto !important;
+    overflow: hidden !important;
+    display: flex !important;
+    flex-direction: column !important;
+    border: 1.5px solid var(--border-color) !important;
+    box-shadow: 0 25px 60px rgba(0, 0, 0, 0.55), 0 0 0 1px rgba(255, 255, 255, 0.08) !important;
+  }
+
+  html:not([data-theme="dark"]) #studentProfileModal.full-screen-modal .student-profile-modal-card,
+  [data-theme="light"] #studentProfileModal.full-screen-modal .student-profile-modal-card {
+    background: #ffffff !important;
+    border: 1.5px solid #e2e8f0 !important;
+    box-shadow: 0 25px 60px rgba(15, 23, 42, 0.16), 0 4px 16px rgba(0, 0, 0, 0.06) !important;
+  }
+
+  [data-theme="dark"] #studentProfileModal.full-screen-modal .student-profile-modal-card {
+    background: #111827 !important;
+    border: 1.5px solid rgba(255, 255, 255, 0.1) !important;
+    box-shadow: 0 25px 60px rgba(0, 0, 0, 0.65), 0 0 0 1px rgba(255, 255, 255, 0.06) !important;
+  }
+
+  /* Header */
+  #studentProfileModal.full-screen-modal .student-profile-header {
+    max-width: 100% !important;
+    width: 100% !important;
+    padding: 16px 24px !important;
+    border-bottom: 1px solid var(--border-subtle) !important;
+  }
+
+  #studentProfileModal.full-screen-modal .modal-title {
+    font-size: 1.30rem !important;
+    font-weight: 800 !important;
+  }
+
+  #studentProfileModal.full-screen-modal .modal-subtitle {
+    font-size: 0.90rem !important;
+    margin-top: 2px !important;
+  }
+
+  #studentProfileModal.full-screen-modal .student-profile-badge-icon {
+    width: 44px !important;
+    height: 44px !important;
+    font-size: 1.5rem !important;
+    border-radius: 14px !important;
+  }
+
+  #studentProfileModal.full-screen-modal #closeStudentProfileModalBtn {
+    width: 38px !important;
+    height: 38px !important;
+    border-radius: 12px !important;
+  }
+
+  /* Body: Küçük ekrandaki gibi alt alta akış */
+  #studentProfileModal.full-screen-modal .student-profile-body {
+    max-width: 100% !important;
+    width: 100% !important;
+    margin: 0 !important;
+    padding: 20px 24px 28px 24px !important;
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 14px !important;
+    overflow-y: auto !important;
+    box-sizing: border-box !important;
+  }
+
+  #studentProfileModal.full-screen-modal .student-profile-body > * {
+    max-width: 100% !important;
+    width: 100% !important;
+    margin-left: 0 !important;
+    margin-right: 0 !important;
+  }
+
+  /* 1. Kimlik ve Hero Kartı */
+  .student-hero-card {
+    padding: 18px 20px !important;
+    border-radius: 20px !important;
+    gap: 14px !important;
+  }
+
+  .student-avatar-badge {
+    width: 60px !important;
+    height: 60px !important;
+  }
+
+  .avatar-img-fluid {
+    width: 60px !important;
+    height: 60px !important;
+  }
+
+  .student-hero-user-title {
+    font-size: 0.82rem !important;
+  }
+
+  .student-hero-user-subtitle {
+    font-size: 1.15rem !important;
+    font-weight: 800 !important;
+  }
+
+  .student-login-toggle-btn {
+    font-size: 0.88rem !important;
+    padding: 7px 16px !important;
+    border-radius: 12px !important;
+  }
+
+  .student-track-badge,
+  .student-lang-badge {
+    font-size: 0.82rem !important;
+    padding: 4px 12px !important;
+  }
+
+  .student-name-input {
+    font-size: 0.95rem !important;
+    height: 44px !important;
+  }
+
+  .student-name-save-pill {
+    font-size: 0.88rem !important;
+    padding: 8px 18px !important;
+  }
+
+  .student-account-status {
+    font-size: 0.82rem !important;
+  }
+
+  /* 2. 4'lü İstatistik Sayaç Kartları */
+  .student-stats-grid {
+    gap: 12px !important;
+  }
+
+  .student-stat-card {
+    padding: 14px 12px !important;
+    border-radius: 16px !important;
+  }
+
+  .student-stat-card .stat-icon {
+    font-size: 1.45rem !important;
+  }
+
+  .student-stat-card .stat-val {
+    font-size: 1.40rem !important;
+    font-weight: 900 !important;
+  }
+
+  .student-stat-card .stat-lbl {
+    font-size: 0.78rem !important;
+    font-weight: 700 !important;
+  }
+
+  /* 3. Çalışma & Odaklanma Süreleri Kartı */
+  .student-activity-stats-card {
+    padding: 18px 20px !important;
+    border-radius: 20px !important;
+    gap: 14px !important;
+  }
+
+  .activity-section-title {
+    font-size: 1.05rem !important;
+    font-weight: 800 !important;
+  }
+
+  .activity-section-desc {
+    font-size: 0.86rem !important;
+  }
+
+  .activity-time-grid {
+    gap: 10px !important;
+  }
+
+  .activity-time-item {
+    padding: 12px 14px !important;
+    border-radius: 14px !important;
+  }
+
+  .time-item-label {
+    font-size: 0.80rem !important;
+  }
+
+  .time-item-val {
+    font-size: 1.10rem !important;
+    font-weight: 800 !important;
+  }
+
+  .unit-durations-title {
+    font-size: 0.95rem !important;
+    font-weight: 800 !important;
+  }
+
+  /* 4. Müfredat ve Ünite İlerleme Kartı */
+  .student-unit-progress-card {
+    padding: 18px 20px !important;
+    border-radius: 20px !important;
+    gap: 14px !important;
+  }
+
+  .up-section-title {
+    font-size: 1.05rem !important;
+    font-weight: 800 !important;
+  }
+
+  .up-section-desc {
+    font-size: 0.86rem !important;
+  }
+
+  .up-rule-badge {
+    font-size: 0.82rem !important;
+    padding: 4px 12px !important;
+  }
+
+  /* 5. XP & Rozet Rehber Banner'ı */
+  .student-how-it-works-banner {
+    padding: 16px 20px !important;
+    border-radius: 18px !important;
+  }
+
+  .how-banner-left .how-title {
+    font-size: 1.02rem !important;
+    font-weight: 800 !important;
+  }
+
+  .how-banner-left .how-subtitle {
+    font-size: 0.84rem !important;
+  }
+
+  .how-icon-circle {
+    width: 44px !important;
+    height: 44px !important;
+    font-size: 1.4rem !important;
+  }
+}
+
 /* Hakkında Modal Okul & Kurum Notu Açık Mod Kontrastı */
 [data-theme="light"] .about-school-note,
 html:not([data-theme="dark"]) .about-school-note {
