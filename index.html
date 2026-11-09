@@ -16,7 +16,7 @@
   <meta name="referrer" content="no-referrer">
   <title>LexiGo • Çok Dilli Akıllı Kelime Kartları</title>
   <link rel="icon" type="image/jpeg" href="logo.jpg">
-  <link rel="stylesheet" href="style.css?v=1.9.27">
+  <link rel="stylesheet" href="style.css?v=1.9.28">
 </head>
 <body>
   <div class="app-container">
@@ -1480,7 +1480,7 @@
 
           <div class="welcome-title-row">
             <h1 class="welcome-brand-title">Lexi<span class="brand-go-accent">Go</span></h1>
-            <span class="welcome-version-pill">v1.9.27</span>
+            <span class="welcome-version-pill">v1.9.28</span>
           </div>
 
           <div class="welcome-slogan-text">Her yerde kelime öğren</div>
@@ -2315,10 +2315,37 @@
             <div class="about-logo-badge">
               <img src="assets/icons/lexigo_brand_logo.png" alt="LexiGo" class="about-brand-img" />
             </div>
-            <span class="about-version-pill" id="aboutAppVersion">v1.9.27</span>
+            <span class="about-version-pill" id="aboutAppVersion">v1.9.28</span>
             <span class="about-platform-badge" id="aboutPlatformBadge" style="display: none; font-size: 0.72rem; font-weight: 700; padding: 3px 9px; border-radius: 12px; background: rgba(59,130,246,0.15); color: #3b82f6; border: 1px solid rgba(59,130,246,0.3);"></span>
           </div>
           <p class="about-tagline">Müfredat Tabanlı Çok Dilli Kelime Arenası</p>
+        </div>
+
+        <!-- Güncelleme Denetleme Bölümü (Logonun Hemen Altında) -->
+        <div class="about-update-hero-card" id="aboutUpdateHeroCard">
+          <button type="button" id="aboutCheckUpdateBtn" class="about-check-update-btn">
+            <span class="btn-icon">🔄</span>
+            <span class="btn-text">Güncellemeleri Denetle</span>
+          </button>
+
+          <!-- Denetleme Sonuç ve Eylem Kutusu (Denetle basılınca burada anında belirir) -->
+          <div class="about-update-result-box" id="aboutUpdateResultBox" style="display: none;">
+            <div class="about-update-status-msg" id="aboutUpdateStatusMsg"></div>
+            
+            <div class="about-update-buttons-row" style="display: flex; flex-direction: column; gap: 8px; margin-top: 10px;">
+              <!-- Google Play Butonu (Hakkında sayfasından çıkmaya gerek kalmadan doğrudan görünür) -->
+              <button type="button" id="aboutGooglePlayBtn" class="pill-btn primary-action-btn about-playstore-btn" style="display: none; width: 100%; padding: 13px; font-size: 0.95rem; font-weight: 800; background: linear-gradient(135deg, #0284c7, #0369a1); color: #fff; border: none; border-radius: 14px; box-shadow: 0 4px 16px rgba(2, 132, 199, 0.4); cursor: pointer;">
+                <span>🏪</span>
+                <span id="aboutGooglePlayBtnText">Google Play'den Güncelle</span>
+              </button>
+
+              <!-- Web / iOS için Canlı Yenileme Butonu -->
+              <button type="button" id="aboutWebUpdateBtn" class="pill-btn primary-action-btn about-web-update-btn" style="display: none; width: 100%; padding: 13px; font-size: 0.95rem; font-weight: 800; background: linear-gradient(135deg, #2563eb, #1d4ed8); color: #fff; border: none; border-radius: 14px; box-shadow: 0 4px 16px rgba(37, 99, 235, 0.4); cursor: pointer;">
+                <span>🚀</span>
+                <span id="aboutWebUpdateBtnText">Şimdi Güncelle & Yenile</span>
+              </button>
+            </div>
+          </div>
         </div>
 
         <!-- ADÜ YDYO Kurumsal Bilgi Kartı -->
@@ -2360,13 +2387,9 @@
           </button>
         </div>
 
-        <!-- Hızlı Eylem Butonları -->
-        <div class="about-actions-grid">
-          <button type="button" id="aboutCheckUpdateBtn" class="about-action-btn" style="background: rgba(16,185,129,0.12); color: #10b981; border: 1.5px solid rgba(16,185,129,0.3); font-weight:700;">
-            <span>🔄</span>
-            <span>Güncellemeleri Denetle</span>
-          </button>
-          <button type="button" id="aboutOpenFeedbackBtn" class="about-action-btn primary">
+        <!-- Geri Bildirim Eylem Butonu -->
+        <div class="about-feedback-row" style="margin-top: 4px;">
+          <button type="button" id="aboutOpenFeedbackBtn" class="about-action-btn primary" style="width: 100%; justify-content: center; padding: 13px 18px; border-radius: 14px; font-size: 0.95rem; font-weight: 800;">
             <span>💬</span>
             <span>Geri Bildirim & Hata Bildir</span>
           </button>
@@ -4001,15 +4024,15 @@
       <div class="confirm-icon-wrap" style="font-size: 2.8rem; margin-bottom: 8px;">🎉</div>
       <h3 class="confirm-title" style="font-size: 1.3rem; font-weight: 800; margin: 0 0 6px 0;">LexiGo Güncellendi!</h3>
       <div class="app-update-version-badge" style="display: inline-block; padding: 4px 14px; border-radius: 20px; font-size: 0.84rem; font-weight: 800; margin-bottom: 14px;">
-        Sürüm <span id="appUpdateVersionText">v1.9.27</span>
+        Sürüm <span id="appUpdateVersionText">v1.9.28</span>
       </div>
       <div class="update-notes-box" style="text-align: left; border-radius: 16px; padding: 14px 16px; font-size: 0.88rem; line-height: 1.6; margin-bottom: 18px; max-height: 280px; overflow-y: auto;">
         <div class="update-notes-title" style="font-weight: 800; margin-bottom: 8px; display: flex; align-items: center; gap: 6px;">
           <span>✨</span><span>Bu Sürümdeki Yenilikler</span>
         </div>
         <ul style="margin: 0; padding-left: 20px; display: flex; flex-direction: column; gap: 8px;">
-          <li><strong>⚡ Çevrimdışı (Offline) XP Tam Aktarımı:</strong> İnternetsiz ortamda çalışıp XP biriktiren öğrencilerin tüm puanları, internete bağlandıkları anda hiçbir sınırlamaya veya engellemeye takılmadan buluta eksiksiz aktarılır.</li>
-          <li><strong>🌐 Otomatik Ağ Senkronizasyonu:</strong> Cihaz çevrimdışı durumdan çevrimiçine geçtiğinde ilerleme otomatik olarak bulutla eşitlenir.</li>
+          <li><strong>📍 Hakkında Sayfası Güncelleme Denetimi:</strong> Güncellemeleri Denetle butonu logonun hemen altına taşındı; denetleme yapıldığında Google Play butonu ekrandan çıkmaya gerek kalmadan doğrudan sayfa içinde görünür hale getirildi.</li>
+          <li><strong>🔗 Akıllı Güncelleme Yönlendirmesi:</strong> Ekranda beliren güncelleme bildirimlerine dokunulduğunda doğrudan Hakkında sayfasındaki güncelleme merkezine yönlendirme sağlandı.</li>
         </ul>
       </div>
       <div style="display: flex; flex-direction: column; gap: 8px; width: 100%;">
@@ -4072,11 +4095,11 @@
   <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-storage-compat.js"></script>
-  <script src="firebase_backend.js?v=1.9.27"></script>
+  <script src="firebase_backend.js?v=1.9.28"></script>
 
   <!-- Kelime Verisi ve Uygulama Mantığı (Sadece Standart Vanilla JS) -->
-  <script src="words_data.js?v=1.9.27"></script>
-  <script src="app.js?v=1.9.27"></script>
+  <script src="words_data.js?v=1.9.28"></script>
+  <script src="app.js?v=1.9.28"></script>
 
   </body>
 </html>

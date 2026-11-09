@@ -1,9 +1,9 @@
 {
-  "version": "v1.9.27",
-  "versionCode": 134,
+  "version": "v1.9.28",
+  "versionCode": 135,
   "releaseDate": "2026-11-09",
   "notes": [
-    "⚡ Çevrimdışı (Offline) XP Tam Aktarımı: 5 Kasım 2026 sonrası canlıya çıkan tüm öğrenciler için offline biriken tüm XP puanlarının online olunduğunda sınırsız ve eksiksiz aktarımı sağlandı.",
-    "🌐 Canlı Ağ Senkronizasyonu: İnternet bağlantısı algılandığında biriken tüm ilerlemelerin anında eşitlenmesi sağlandı."
+    "📍 Hakkında Sayfası Güncelleme Denetimi: Güncellemeleri Denetle butonu logonun hemen altına taşındı; Google Play butonu doğrudan Hakkında ekranı içinde görünür hale getirildi.",
+    "🔗 Akıllı Güncelleme Yönlendirmesi: Ekranda beliren güncelleme bildirimlerine dokunulduğunda doğrudan Hakkında sayfasındaki güncelleme merkezine yönlendirme sağlandı."
   ]
 }

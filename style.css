@@ -23108,3 +23108,82 @@ html:not([data-theme="dark"]) .custom-confirm-card .confirm-cancel-btn:hover {
   border-color: #cbd5e1;
   color: #475569;
 }
+
+/* ============================================================
+   HAKKINDA SAYFASI GÜNCELLEME ALANI & MODAL Z-INDEX DÜZELTMESİ
+   ============================================================ */
+#appUpdateModal {
+  z-index: 100060 !important;
+}
+
+.about-update-hero-card {
+  width: 100%;
+  box-sizing: border-box;
+  margin-top: 10px;
+  margin-bottom: 12px;
+  padding: 12px 14px;
+  border-radius: 18px;
+  background: rgba(30, 41, 59, 0.6);
+  border: 1.5px solid rgba(59, 130, 246, 0.25);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+}
+
+[data-theme="light"] .about-update-hero-card,
+html:not([data-theme="dark"]) .about-update-hero-card {
+  background: #ffffff !important;
+  border: 1.5px solid #cbd5e1 !important;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.04) !important;
+}
+
+.about-check-update-btn {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  padding: 13px 18px;
+  border-radius: 14px;
+  font-size: 0.95rem;
+  font-weight: 800;
+  border: 1.5px solid rgba(16, 185, 129, 0.4);
+  background: linear-gradient(135deg, rgba(16, 185, 129, 0.16), rgba(5, 150, 105, 0.22));
+  color: #10b981;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+[data-theme="light"] .about-check-update-btn,
+html:not([data-theme="dark"]) .about-check-update-btn {
+  background: #ecfdf5 !important;
+  color: #047857 !important;
+  border-color: #6ee7b7 !important;
+}
+
+.about-check-update-btn:hover {
+  background: linear-gradient(135deg, rgba(16, 185, 129, 0.24), rgba(5, 150, 105, 0.32));
+  transform: translateY(-1px);
+}
+
+.about-update-result-box {
+  margin-top: 12px;
+  padding-top: 12px;
+  border-top: 1px dashed rgba(226, 232, 240, 0.2);
+}
+
+[data-theme="light"] .about-update-result-box,
+html:not([data-theme="dark"]) .about-update-result-box {
+  border-top-color: #e2e8f0 !important;
+}
+
+.about-update-status-msg {
+  font-size: 0.88rem;
+  font-weight: 700;
+  line-height: 1.5;
+  text-align: center;
+  color: var(--text, #f8fafc);
+}
+
+[data-theme="light"] .about-update-status-msg,
+html:not([data-theme="dark"]) .about-update-status-msg {
+  color: #0f172a !important;
+}

@@ -7,9 +7,9 @@
 (function () {
   'use strict';
 
-  const APP_VERSION = 'v1.9.27';
+  const APP_VERSION = 'v1.9.28';
   const DEFAULT_AVATAR = 'avatar_default';
-  const CURRENT_APP_BUILD = 'lexigo_production_live_launch_v1927';
+  const CURRENT_APP_BUILD = 'lexigo_production_live_launch_v1928';
 
   // Sürüm ve oturum güvenliği: Kullanıcı oturumunu ve verilerini asla izinsiz sıfırlama
   try {
@@ -6950,8 +6950,12 @@ let activeAvatarCategory = 'all';
   }
 
   let toastTimer = null;
-  function showToast(msg, type = '', duration = 2400) {
+  function showToast(msg, type = '', duration = 2400, onClickCallback = null) {
     if (!dom.toast) return;
+    if (typeof type === 'number') {
+      duration = type;
+      type = '';
+    }
     dom.toast.textContent = msg;
     dom.toast.className = 'toast';
     if (type === 'correct') {
@@ -6961,10 +6965,24 @@ let activeAvatarCategory = 'all';
     } else if (type === 'warning') {
       dom.toast.classList.add('toast-warning');
     }
+
+    if (typeof onClickCallback === 'function') {
+      dom.toast.style.cursor = 'pointer';
+      dom.toast.onclick = () => {
+        onClickCallback();
+        dom.toast.classList.remove('show');
+        dom.toast.onclick = null;
+      };
+    } else {
+      dom.toast.style.cursor = 'default';
+      dom.toast.onclick = null;
+    }
+
     dom.toast.classList.add('show');
     clearTimeout(toastTimer);
     toastTimer = setTimeout(() => {
       dom.toast.classList.remove('show');
+      if (dom.toast) dom.toast.onclick = null;
     }, duration);
   }
 
@@ -15321,10 +15339,18 @@ let activeAvatarCategory = 'all';
 
     async function checkAppUpdates(btnEl) {
       const platform = getAppPlatform();
-      const isNativeAndroid = (platform === 'android');
+      const isAndroid = (platform === 'android' || platform === 'android_web' || /android/i.test(navigator.userAgent || ''));
       const isIOS = (platform === 'ios');
       const currentVer = getInstalledAppVersion();
       const currentCode = getInstalledAppVersionCode();
+
+      // Hakkında sayfasındaki logonun hemen altındaki yerleşik kart elementleri
+      const aboutResultBox = document.getElementById('aboutUpdateResultBox');
+      const aboutStatusMsg = document.getElementById('aboutUpdateStatusMsg');
+      const aboutPlayBtn = document.getElementById('aboutGooglePlayBtn');
+      const aboutPlayText = document.getElementById('aboutGooglePlayBtnText');
+      const aboutWebBtn = document.getElementById('aboutWebUpdateBtn');
+      const aboutWebText = document.getElementById('aboutWebUpdateBtnText');
 
       if (btnEl) {
         btnEl.disabled = true;
@@ -15342,6 +15368,37 @@ let activeAvatarCategory = 'all';
           const remoteCode = (data && data.versionCode) ? parseInt(data.versionCode, 10) : 0;
           const isNewVersion = isRemoteVersionNewer(remoteVer, currentVer, remoteCode, currentCode);
 
+          // 1. Hakkında sayfasındaki logonun hemen altındaki alana butonları yerleştir (Ekrandan çıkmadan doğrudan görünür)
+          if (aboutResultBox && aboutStatusMsg) {
+            aboutResultBox.style.display = 'block';
+            if (isNewVersion) {
+              aboutStatusMsg.innerHTML = `🚀 <strong style="color: #38bdf8; font-size: 1rem;">Yeni Sürüm Yayında: ${remoteVer}</strong><br><span style="font-size: 0.82rem; opacity: 0.85;">Mevcut Cihaz Sürümü: ${currentVer}</span>`;
+              if (aboutPlayBtn && isAndroid) {
+                aboutPlayBtn.style.display = 'flex';
+                if (aboutPlayText) aboutPlayText.textContent = `Google Play'den Güncelle (${remoteVer})`;
+                aboutPlayBtn.onclick = () => openGooglePlayStore();
+              }
+              if (aboutWebBtn && !isAndroid) {
+                aboutWebBtn.style.display = 'flex';
+                if (aboutWebText) aboutWebText.textContent = `Şimdi Güncelle & Yenile (${remoteVer})`;
+                aboutWebBtn.onclick = () => purgeCacheAndReload(remoteVer);
+              }
+            } else {
+              aboutStatusMsg.innerHTML = `✅ <strong style="color: #10b981; font-size: 1rem;">LexiGo En Güncel Sürümde (${currentVer})</strong>`;
+              if (aboutPlayBtn && isAndroid) {
+                aboutPlayBtn.style.display = 'flex';
+                if (aboutPlayText) aboutPlayText.textContent = `Google Play Mağazasında Aç`;
+                aboutPlayBtn.onclick = () => openGooglePlayStore();
+              }
+              if (aboutWebBtn && !isAndroid) {
+                aboutWebBtn.style.display = 'flex';
+                if (aboutWebText) aboutWebText.textContent = `Önbelleği Temizle & Yenile`;
+                aboutWebBtn.onclick = () => purgeCacheAndReload(currentVer);
+              }
+            }
+          }
+
+          // 2. appUpdateModal detaylarını hazırla
           const versionText = document.getElementById('appUpdateVersionText');
           if (versionText) versionText.textContent = isNewVersion ? `${currentVer} ➔ ${remoteVer}` : currentVer;
 
@@ -15354,7 +15411,7 @@ let activeAvatarCategory = 'all';
           if (isNewVersion) {
             if (modalIcon) modalIcon.textContent = '🚀';
 
-            if (isNativeAndroid) {
+            if (isAndroid) {
               if (modalTitle) modalTitle.textContent = `🎉 Google Play'de Yeni Sürüm: ${remoteVer}!`;
               if (applyBtn) {
                 applyBtn.style.display = 'block';
@@ -15364,20 +15421,7 @@ let activeAvatarCategory = 'all';
               }
               if (forceRefreshBtn) forceRefreshBtn.style.display = 'none';
               showToast(`🚀 Google Play'de yeni ${remoteVer} sürümü yayında! Dokunarak mağazadan güncelleyebilirsiniz.`, 4500);
-            } else if (isIOS) {
-              if (modalTitle) modalTitle.textContent = `🎉 Yeni iOS Sürümü Mevcut: ${remoteVer}!`;
-              if (applyBtn) {
-                applyBtn.style.display = 'block';
-                applyBtn.style.background = 'linear-gradient(135deg, #2563eb, #1d4ed8)';
-                applyBtn.innerHTML = `<span>🚀</span><span>Şimdi Güncelle & Yenile (${remoteVer})</span>`;
-                applyBtn.onclick = () => purgeCacheAndReload(remoteVer);
-              }
-              if (forceRefreshBtn) {
-                forceRefreshBtn.style.setProperty('display', 'none', 'important');
-              }
-              showToast(`🚀 Yeni ${remoteVer} sürümü hazır! Güncellemek için dokunun.`, 4500);
             } else {
-              // iOS, Web ve Masaüstü Canlı Güncelleme
               if (modalTitle) modalTitle.textContent = `🎉 Yeni Sürüm Yayında: ${remoteVer}!`;
               if (applyBtn) {
                 applyBtn.style.display = 'block';
@@ -15405,7 +15449,7 @@ let activeAvatarCategory = 'all';
             // Sürüm zaten güncel
             if (modalIcon) modalIcon.textContent = '🌟';
 
-            if (isNativeAndroid) {
+            if (isAndroid) {
               if (modalTitle) modalTitle.textContent = '✅ Tebrikler! LexiGo Güncel';
               if (applyBtn) {
                 applyBtn.style.display = 'block';
@@ -15424,12 +15468,11 @@ let activeAvatarCategory = 'all';
                     ✅ En Güncel Sürümü (${currentVer}) Kullanıyorsunuz
                   </div>
                   <p style="margin: 0; font-size: 0.85rem; color: var(--text-muted); line-height: 1.5;">
-                    Cihazınızdaki sürüm (${currentVer}) son yayınla eşleşmektedir. Google Play Store'da yeni yayınlanan bir güncellemeniz varsa aşağıdaki butona dokunarak mağaza sayfasından da kontrol edebilirsiniz.
+                    Cihazınızdaki sürüm (${currentVer}) son yayınla eşleşmektedir. Google Play Store sayfasından da kontrol edebilirsiniz.
                   </p>
                 `;
               }
             } else {
-              // iOS, Safari ve Web: Canlı Önbellek Yenileme Butonu Aktif
               if (modalTitle) modalTitle.textContent = '✅ Tebrikler! LexiGo Güncel';
               if (applyBtn) {
                 applyBtn.style.display = 'block';
@@ -15446,7 +15489,7 @@ let activeAvatarCategory = 'all';
                     ✅ En Güncel Sürümü (${currentVer}) Kullanıyorsunuz
                   </div>
                   <p style="margin: 0; font-size: 0.85rem; color: var(--text-muted); line-height: 1.5;">
-                    Cihazınızdaki sürüm (${currentVer}) son yayınla tam olarak eşleşmektedir. Tüm özellikler, kelimeler ve ders içerikleri günceldir. Dilediğiniz an yukarıdaki butona dokunarak yerel önbelleği tazeleyebilirsiniz.
+                    Cihazınızdaki sürüm (${currentVer}) son yayınla tam olarak eşleşmektedir.
                   </p>
                 `;
               }
@@ -15454,7 +15497,9 @@ let activeAvatarCategory = 'all';
             showToast(`✅ LexiGo en güncel sürümde (${currentVer}).`, 'correct');
           }
 
-          if (appUpdateModal) {
+          // Eğer denetleme Hakkında sayfasındaki butondan yapılmadıysa (örn. Ayarlar Genel sekmesinden) appUpdateModal'ı aç
+          const isFromAboutPage = (btnEl && btnEl.id === 'aboutCheckUpdateBtn');
+          if (!isFromAboutPage && appUpdateModal) {
             appUpdateModal.style.display = 'flex';
             appUpdateModal.classList.add('active');
             playSoundEffect('correct');
@@ -15468,6 +15513,36 @@ let activeAvatarCategory = 'all';
         showToast(`✅ En güncel sürümü (${currentVer}) kullanıyorsunuz.`, 'correct');
       }
     }
+
+    // Güncelleme mesajına tıklandığında doğrudan Hakkında sayfasındaki güncelleme bölümüne yönlendirme
+    function navigateToAboutUpdatePage() {
+      // 1. Ayarlar modalını aç
+      if (typeof openSettingsModal === 'function') {
+        openSettingsModal();
+      } else {
+        const sm = dom.settingsModal || document.getElementById('settingsModal');
+        if (sm) {
+          sm.classList.add('active');
+          sm.style.display = 'flex';
+        }
+      }
+      // 2. Hakkında sekmesini aktif yap
+      if (typeof switchSettingsTab === 'function') {
+        switchSettingsTab('about');
+      }
+      // 3. Logonun altındaki alana odaklan ve otomatik denetle
+      setTimeout(() => {
+        const heroCard = document.getElementById('aboutUpdateHeroCard');
+        if (heroCard) {
+          heroCard.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
+        const checkBtn = document.getElementById('aboutCheckUpdateBtn');
+        if (checkBtn) {
+          checkAppUpdates(checkBtn);
+        }
+      }, 350);
+    }
+    window.navigateToAboutUpdatePage = navigateToAboutUpdatePage;
 
     const forceRefreshCacheBtn = document.getElementById('forceRefreshCacheBtn');
     if (forceRefreshCacheBtn) {
@@ -15486,22 +15561,32 @@ let activeAvatarCategory = 'all';
       const banner = document.createElement('div');
       banner.id = 'iosUpdateBanner';
       banner.className = 'ios-update-banner';
+      banner.style.cursor = 'pointer';
       banner.innerHTML = `
         <div class="ios-update-content">
           <span class="ios-update-icon">🚀</span>
           <div class="ios-update-text">
             <strong>Yeni LexiGo Sürümü (${remoteVer}) Yayında!</strong>
-            <span>Yenilikleri hemen almak için dokunun</span>
+            <span>Detayları görmek ve güncellemek için dokunun</span>
           </div>
         </div>
-        <button type="button" class="ios-update-btn" id="iosUpdateBannerBtn">Hemen Güncelle</button>
+        <button type="button" class="ios-update-btn" id="iosUpdateBannerBtn">İncele & Güncelle</button>
       `;
       document.body.appendChild(banner);
+
+      const handleBannerClick = () => {
+        banner.remove();
+        if (typeof navigateToAboutUpdatePage === 'function') {
+          navigateToAboutUpdatePage();
+        }
+      };
+
+      banner.addEventListener('click', handleBannerClick);
       const btn = document.getElementById('iosUpdateBannerBtn');
       if (btn) {
-        btn.addEventListener('click', () => {
-          banner.remove();
-          purgeCacheAndReload(remoteVer);
+        btn.addEventListener('click', (e) => {
+          e.stopPropagation();
+          handleBannerClick();
         });
       }
     }
@@ -15517,12 +15602,17 @@ let activeAvatarCategory = 'all';
           const remoteCode = (data && data.versionCode) ? parseInt(data.versionCode, 10) : 0;
           if (isRemoteVersionNewer(remoteVer, currentVer, remoteCode, currentCode)) {
             const platform = getAppPlatform();
-            if (platform === 'android') {
-              showToast(`🚀 Google Play'de LexiGo ${remoteVer} güncellemesi hazır! Ayarlar'dan güncelleyebilirsiniz.`, 6000);
+            const isAndroid = (platform === 'android' || platform === 'android_web' || /android/i.test(navigator.userAgent || ''));
+            if (isAndroid) {
+              showToast(`🚀 Google Play'de LexiGo ${remoteVer} hazır! Güncellemek için Hakkında sayfasına dokunun.`, 7000, 'info', () => {
+                navigateToAboutUpdatePage();
+              });
             } else {
               // iOS, Safari ve Web: Canlı Floating Güncelleme Banner'ını ekrana yerleştir
               showAppUpdateBanner(remoteVer);
-              showToast(`🚀 iOS için yeni LexiGo ${remoteVer} sürümü hazır! Güncellemek için banner'a dokunun.`, 7000);
+              showToast(`🚀 Yeni LexiGo ${remoteVer} hazır! İncelemek için dokunun.`, 7000, 'info', () => {
+                navigateToAboutUpdatePage();
+              });
             }
           }
         }
