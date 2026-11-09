@@ -213,24 +213,17 @@ async function syncUserData(user) {
   }
 
   // Güvenli XP & İlerleme Senkronizasyonu:
-  // Eğer Firestore'da belge yoksa veya admin tarafından 0'a sıfırlanmışsa, cihazdaki eski test XP'sinin bulutu ezmesini engelle!
   const localXP = parseInt(localStorage.getItem('kelime_xp') || '0', 10);
   const fbXP = (docData && typeof docData.xp === 'number') ? docData.xp : 0;
-  let bestXP = 0;
-  if (!docData) {
-    bestXP = 0;
-  } else if (docData.xp === 0) {
-    bestXP = 0;
-    localStorage.setItem('kelime_xp', '0');
-    localStorage.setItem('kelime_learned_map', '{}');
-  } else {
-    bestXP = Math.max(fbXP, localXP);
-  }
+  const fbWeeklyXP = (docData && typeof docData.weeklyXp === 'number') ? docData.weeklyXp : 0;
+  // Öğrencinin hayat boyu kazandığı XP en azından haftalık XP kadar olmalıdır.
+  // Yerel hafızadaki XP ile buluttaki en yüksek değer güvenle birleştirilir; asla durup dururken sıfırlanmaz.
+  const bestXP = Math.max(fbXP, fbWeeklyXP, localXP);
 
   // Öğrenilen Kelimeler, Rozetler ve Seri Senkronizasyonu
-  const localLearnedMap = (!docData || docData.xp === 0) ? {} : JSON.parse(localStorage.getItem('kelime_learned_map') || '{}');
+  const localLearnedMap = JSON.parse(localStorage.getItem('kelime_learned_map') || '{}');
   const fbLearnedMap = (docData && docData.learnedMap && typeof docData.learnedMap === 'object') ? docData.learnedMap : {};
-  const mergedLearnedMap = Object.assign({}, fbLearnedMap, localLearnedMap);
+  let mergedLearnedMap = Object.assign({}, fbLearnedMap, localLearnedMap);
 
   // Kelime Defterim (Listem) ve Zorlandıklarım Senkronizasyonu
   const localNotebookMap = JSON.parse(localStorage.getItem('lexiq_notebook_words') || '{}');
@@ -241,32 +234,30 @@ async function syncUserData(user) {
   const fbTroubledMap = (docData && (docData.troubledMap || docData.troubledWords) && typeof (docData.troubledMap || docData.troubledWords) === 'object') ? (docData.troubledMap || docData.troubledWords) : {};
   const mergedTroubledMap = Object.assign({}, fbTroubledMap, localTroubledMap);
 
-  const localBadges = (!docData || docData.xp === 0) ? [] : JSON.parse(localStorage.getItem('kelime_unlocked_badges') || '[]');
+  const localBadges = JSON.parse(localStorage.getItem('kelime_unlocked_badges') || '[]');
   const fbBadges = (docData && Array.isArray(docData.unlockedBadges)) ? docData.unlockedBadges : [];
   const mergedBadges = Array.from(new Set([...fbBadges, ...localBadges]));
 
-  const localMaxStreak = (!docData || docData.xp === 0) ? 0 : parseInt(localStorage.getItem('kelime_max_streak') || '0', 10);
+  const localMaxStreak = parseInt(localStorage.getItem('kelime_max_streak') || '0', 10);
   const fbMaxStreak = (docData && typeof docData.maxStreak === 'number') ? docData.maxStreak : 0;
-  const bestMaxStreak = (!docData || docData.xp === 0) ? fbMaxStreak : Math.max(fbMaxStreak, localMaxStreak);
+  const bestMaxStreak = Math.max(fbMaxStreak, localMaxStreak);
 
-  const localArenaSolved = (!docData || docData.xp === 0) ? 0 : parseInt(localStorage.getItem('kelime_arena_solved') || '0', 10);
+  const localArenaSolved = parseInt(localStorage.getItem('kelime_arena_solved') || '0', 10);
   const fbArenaSolved = (docData && typeof docData.arenaSolved === 'number') ? docData.arenaSolved : 0;
-  const bestArenaSolved = (!docData || docData.xp === 0) ? fbArenaSolved : Math.max(fbArenaSolved, localArenaSolved);
+  const bestArenaSolved = Math.max(fbArenaSolved, localArenaSolved);
 
   // 1. Oyun İstatistikleri (gameStats) Senkronizasyonu
-  const localGameStats = (!docData || docData.xp === 0) ? {} : JSON.parse(localStorage.getItem('kelime_game_stats') || '{}');
+  const localGameStats = JSON.parse(localStorage.getItem('kelime_game_stats') || '{}');
   const fbGameStats = (docData && docData.gameStats && typeof docData.gameStats === 'object') ? docData.gameStats : {};
   const mergedGameStats = Object.assign({}, fbGameStats);
-  if (docData && docData.xp > 0) {
-    for (const [k, v] of Object.entries(localGameStats)) {
-      mergedGameStats[k] = Math.max(mergedGameStats[k] || 0, typeof v === 'number' ? v : 0);
-    }
+  for (const [k, v] of Object.entries(localGameStats)) {
+    mergedGameStats[k] = Math.max(mergedGameStats[k] || 0, typeof v === 'number' ? v : 0);
   }
 
   // 2. Saf Zihin / Kusursuz Galibiyet (cleanWins)
-  const localCleanWins = (!docData || docData.xp === 0) ? 0 : parseInt(localStorage.getItem('kelime_clean_wins') || '0', 10);
+  const localCleanWins = parseInt(localStorage.getItem('kelime_clean_wins') || '0', 10);
   const fbCleanWins = (docData && typeof docData.cleanWins === 'number') ? docData.cleanWins : 0;
-  const bestCleanWins = (!docData || docData.xp === 0) ? fbCleanWins : Math.max(fbCleanWins, localCleanWins);
+  const bestCleanWins = Math.max(fbCleanWins, localCleanWins);
 
   // 3. Çalışma & Zaman Takibi (timeTracking: kartlar, oyunlar, ünite tamamlama süreleri)
   const fbTT = (docData && docData.timeTracking && typeof docData.timeTracking === 'object') ? docData.timeTracking : {};
@@ -283,6 +274,37 @@ async function syncUserData(user) {
     : (fbTT.firstStartedAt || localFirstStart || Date.now());
   const bestRegAt = fbTT.registeredAt || localRegAt || (docData && docData.createdAt ? (docData.createdAt.toMillis ? docData.createdAt.toMillis() : Date.now()) : 0);
   const mergedUnitDurations = Object.assign({}, fbTT.unitDurations || {}, localUnitDurations);
+
+  // Kurtarma (Auto-Recovery) Mekanizması:
+  // Eğer kullanıcının learnedMap'i boşsa ama tamamlanmış üniteleri varsa (örn. EN-TR_A2_u1 vb.):
+  // O ünitelerin kelimelerini words_data üzerinden otomatik olarak mergedLearnedMap'e dahil et!
+  try {
+    const finishedUnitKeys = Object.keys(mergedUnitDurations).filter(k => mergedUnitDurations[k] && mergedUnitDurations[k].finishedAt);
+    if (Object.keys(mergedLearnedMap).length === 0 && finishedUnitKeys.length > 0 && typeof getWordsData === 'function') {
+      const allWords = getWordsData();
+      finishedUnitKeys.forEach(uKey => {
+        const parts = uKey.split('_');
+        if (parts.length >= 3) {
+          const uLang = parts[0];
+          const uLevel = parts[1];
+          const uNum = parseInt(parts[2].replace('u', ''), 10);
+          const matchedWords = allWords.filter(w => w.dil === uLang && (!w.seviye || w.seviye === uLevel) && w.unite_no === uNum);
+          matchedWords.forEach(w => {
+            mergedLearnedMap[w.id] = {
+              learned: true,
+              learnedAt: mergedUnitDurations[uKey].finishedAt || Date.now(),
+              interval: 1,
+              repetitionCount: 1,
+              history: []
+            };
+          });
+        }
+      });
+      console.log('Tamamlanan ünitelerden learnedMap başarıyla kurtarıldı:', Object.keys(mergedLearnedMap).length);
+    }
+  } catch (recErr) {
+    console.warn('Auto-recovery unitDurations warning:', recErr);
+  }
 
   const syncedTimeTracking = {
     cardSeconds: bestCardSeconds,

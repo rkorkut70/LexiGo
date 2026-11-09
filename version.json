@@ -1,9 +1,9 @@
 {
-  "version": "v1.9.25",
-  "versionCode": 132,
-  "releaseDate": "2026-11-08",
+  "version": "v1.9.26",
+  "versionCode": 133,
+  "releaseDate": "2026-11-09",
   "notes": [
-    "☁️ Kelime Defterim Bulut Senkronizasyonu: Deftere eklenen ve oyunlarda hata yapılan kelimeler artık Firebase bulut hesabında saklanır; hesaptan çıkıp tekrar girildiğinde veya cihaz değiştiğinde asla kaybolmaz.",
-    "🛡️ Oturum Güvenliği: Uygulama güncellemelerinde kullanıcının isteği dışında hesaptan atılması engellendi, oturum sürekliliği sağlandı."
+    "💎 Akıllı XP & İlerleme Koruma: Kazanılan haftalık XP ve tamamlanan ünite ilerlemeleri güvenceye alındı; olası senkronizasyon gecikmelerinde puanların sıfırlanması kesin olarak engellendi.",
+    "☁️ Kelime Defterim Bulut Senkronizasyonu: Deftere eklenen ve zorlanılan kelimeler Firebase hesabında saklanır."
   ]
 }
