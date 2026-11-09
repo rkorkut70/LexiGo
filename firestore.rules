@@ -10,9 +10,10 @@ rules_version = '2';
 //    Security Invariants:
 //      - Blacklisted Test Accounts: Specific legacy test accounts (e.g., Ero / rwA3L7DzH5QV9OIopPGQimsDvuA3)
 //        are barred from writes (create/update) to prevent re-polluting the database with test scores.
-//      - Bounded XP Progression: Prevents dumping corrupt or manipulated XP from outdated local caches.
-//        Initial XP on create is capped at 1000, and subsequent updates may not jump by more than +1000 XP per write
-//        (or up to weeklyXp + 500 to allow lifetime XP synchronization).
+//      - Legacy vs. Post-Launch Offline XP Sync: Pre-launch legacy test accounts (created before November 5, 2026
+//        or in the test blacklist) are bounded (+1000 XP per write, <=1000 initial XP) to prevent legacy cache pollution.
+//        Legitimate student accounts registered on or after November 5, 2026 can synchronize legitimate offline-accumulated
+//        XP without restriction (strictly non-negative and monotonic lifetime progression).
 //      - Immutable Fields: `uid` and `createdAt` cannot be altered once stored.
 //    Fields:
 //      - uid: string (optional, must match request.auth.uid) [IMMUTABLE]
@@ -126,6 +127,15 @@ service cloud.firestore {
       );
     }
 
+    // Helper function to distinguish legacy/test accounts created prior to November 5, 2026 launch date
+    function isLegacyOrTestAccount(userId, data) {
+      return isTestAccount(userId) ||
+             (('createdAt' in data) && (
+               (data.createdAt is timestamp && data.createdAt < timestamp.date(2026, 11, 5)) ||
+               (data.createdAt is number && data.createdAt < 1793836800000)
+             ));
+    }
+
     // ===============================================================
     // Domain Validator: users
     // ===============================================================
@@ -178,38 +188,55 @@ service cloud.firestore {
              (!('uid' in resource.data) || !('uid' in request.resource.data) || request.resource.data.uid == resource.data.uid);
     }
 
-    // Initial XP and WeeklyXP caps for new account documents to prevent offline client spoofing
+    // Initial XP validation:
+    // - Legitimate students registered on or after November 5, 2026 can sync full accumulated offline XP.
+    // - Pre-launch legacy test accounts are restricted to strict starting bounds (<= 1000 XP).
     function isValidInitialXp(data) {
-      return (!('xp' in data) || (data.xp is number && (data.xp <= 1000 || ('weeklyXp' in data && data.xp <= data.weeklyXp + 500)))) &&
-             (!('weeklyXp' in data) || (data.weeklyXp is number && data.weeklyXp <= 1000));
+      return isLegacyOrTestAccount(request.auth.uid, data) ? (
+        (!('xp' in data) || (data.xp is number && data.xp >= 0 && (data.xp <= 1000 || ('weeklyXp' in data && data.xp <= data.weeklyXp + 500)))) &&
+        (!('weeklyXp' in data) || (data.weeklyXp is number && data.weeklyXp >= 0 && data.weeklyXp <= 1000))
+      ) : (
+        (!('xp' in data) || (data.xp is number && data.xp >= 0)) &&
+        (!('weeklyXp' in data) || (data.weeklyXp is number && data.weeklyXp >= 0))
+      );
     }
 
-    // Bounded XP rate-limiting on document updates:
-    // - XP may increment by at most +1000 per write operation.
-    // - Lifetime XP is allowed to catch up to weeklyXp + 500 (since authentic weekly XP earned this week allows lifetime XP to catch up, especially if oldData.xp < newData.weeklyXp).
-    // - WeeklyXP may increment by at most +1000 per write operation, or reset to <= 1000 on weekly rollover.
+    // Bounded XP progression:
+    // - Legitimate students registered on or after November 5, 2026: XP and weeklyXP progression allows offline sync batches
+    //   without blocking (newData.xp >= 0, newData.weeklyXp >= 0, lifetime XP does not decrease newData.xp >= oldData.xp).
+    // - Legacy/test accounts created before November 5, 2026 or on test list: strict bounded +1000 XP per write limit enforced.
     function isValidXpProgression(newData, oldData) {
-      return (!('xp' in newData) || (
-               newData.xp is number && (
-                 (!('xp' in oldData) ? newData.xp <= 1000 : newData.xp <= oldData.xp + 1000) ||
-                 ('weeklyXp' in newData && (
-                   newData.xp <= newData.weeklyXp + 500 ||
-                   ((!('xp' in oldData) || oldData.xp < newData.weeklyXp) && newData.xp <= newData.weeklyXp + 1000)
-                 )) ||
-                 ('weeklyXp' in oldData && (
-                   newData.xp <= oldData.weeklyXp + 500 ||
-                   ((!('xp' in oldData) || oldData.xp < oldData.weeklyXp) && newData.xp <= oldData.weeklyXp + 1000)
-                 ))
-               )
-             )) &&
-             (!('weeklyXp' in newData) || (
-               newData.weeklyXp is number && (
-                 (!('weeklyXp' in oldData) ? newData.weeklyXp <= 1000 :
-                   (newData.weeklyXp <= oldData.weeklyXp + 1000 || newData.weeklyXp <= 1000)) ||
-                 ('weeklyWeekId' in newData && 'weeklyWeekId' in oldData &&
-                   newData.weeklyWeekId != oldData.weeklyWeekId && newData.weeklyXp <= 1000)
-               )
-             ));
+      return (isLegacyOrTestAccount(request.auth.uid, oldData) || isLegacyOrTestAccount(request.auth.uid, newData)) ? (
+        (!('xp' in newData) || (
+          newData.xp is number && (
+            (!('xp' in oldData) ? newData.xp <= 1000 : newData.xp <= oldData.xp + 1000) ||
+            ('weeklyXp' in newData && (
+              newData.xp <= newData.weeklyXp + 500 ||
+              ((!('xp' in oldData) || oldData.xp < newData.weeklyXp) && newData.xp <= newData.weeklyXp + 1000)
+            )) ||
+            ('weeklyXp' in oldData && (
+              newData.xp <= oldData.weeklyXp + 500 ||
+              ((!('xp' in oldData) || oldData.xp < oldData.weeklyXp) && newData.xp <= oldData.weeklyXp + 1000)
+            ))
+          )
+        )) &&
+        (!('weeklyXp' in newData) || (
+          newData.weeklyXp is number && (
+            (!('weeklyXp' in oldData) ? newData.weeklyXp <= 1000 :
+              (newData.weeklyXp <= oldData.weeklyXp + 1000 || newData.weeklyXp <= 1000)) ||
+            ('weeklyWeekId' in newData && 'weeklyWeekId' in oldData &&
+              newData.weeklyWeekId != oldData.weeklyWeekId && newData.weeklyXp <= 1000)
+          )
+        ))
+      ) : (
+        (!('xp' in newData) || (
+          newData.xp is number && newData.xp >= 0 &&
+          (!('xp' in oldData) || newData.xp >= oldData.xp)
+        )) &&
+        (!('weeklyXp' in newData) || (
+          newData.weeklyXp is number && newData.weeklyXp >= 0
+        ))
+      );
     }
 
     // ===============================================================
@@ -277,7 +304,7 @@ service cloud.firestore {
 
       // Users can only create their own document matching request.auth.uid
       // Test accounts are forbidden from creating new records.
-      // Initial XP cannot exceed reasonable starting limit (max 1000 XP).
+      // Legitimate accounts created on or after Nov 5, 2026 can initialize full offline XP.
       allow create: if isOwner(userId) &&
                        !isTestAccount(userId) &&
                        uidUnchanged() &&
@@ -286,7 +313,7 @@ service cloud.firestore {
 
       // Users can only update their own document matching request.auth.uid
       // Test accounts are blocked from pushing old corrupted/inflated XP.
-      // XP progression is strictly bounded (max +1000 XP per write or synchronized with weekly XP).
+      // Legitimate students created on/after Nov 5, 2026 can sync full offline batches.
       // Immutable fields (createdAt, uid) are preserved.
       allow update: if isOwner(userId) &&
                        !isTestAccount(userId) &&
