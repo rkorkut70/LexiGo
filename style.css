@@ -13910,88 +13910,221 @@ html:not([data-theme="dark"]) .card-unlearn-pill {
     font-size: 2.4rem !important;
   }
 
-  /* Ana Sayfa: Tablet & Geniş Ekranlarda Mükemmel Orantılı ve Dengeli Düzen */
+  /* Ana Sayfa: Tablet & Geniş Ekranlarda Mükemmel Orantılı ve Dengeli Düzen (Alt Alta Sıralı, Eşit Boşluklar, Büyük Tipografi) */
   .home-container {
-    padding: 24px 28px calc(95px + env(safe-area-inset-bottom, 20px)) 28px !important;
-    display: grid !important;
-    grid-template-columns: 1fr 1fr !important;
-    gap: 18px !important;
-    max-width: 840px !important;
+    padding: clamp(20px, 3vh, 32px) clamp(20px, 4vw, 40px) calc(clamp(40px, 7vh, 85px) + env(safe-area-inset-bottom, 20px)) clamp(20px, 4vw, 40px) !important;
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    justify-content: flex-start !important;
+    gap: 16px !important;
+    max-width: 680px !important;
     width: 100% !important;
     margin: 0 auto !important;
     height: auto !important;
     min-height: 100% !important;
     box-sizing: border-box !important;
-    align-items: stretch !important;
   }
 
+  .home-container > section,
+  .home-container > .home-unit-selector-row {
+    width: 100% !important;
+    max-width: 100% !important;
+    margin: 0 !important;
+  }
+
+  /* 0. Ünite Seçici Çubuğu */
   .home-unit-selector-row {
-    grid-column: 1 / -1 !important;
     width: 100% !important;
-    max-width: 100% !important;
-    margin: 0 !important;
   }
 
+  .home-unit-select-btn {
+    padding: 14px 18px !important;
+    border-radius: 18px !important;
+  }
+
+  .home-unit-icon {
+    font-size: 1.45rem !important;
+  }
+
+  .home-unit-sub {
+    font-size: 0.82rem !important;
+  }
+
+  .home-unit-name {
+    font-size: 1.15rem !important;
+    font-weight: 800 !important;
+  }
+
+  .home-unit-change-tag {
+    font-size: 0.88rem !important;
+    padding: 5px 14px !important;
+    border-radius: 10px !important;
+  }
+
+  /* 1. Üst Bilgi Ekranı (Hero Info Card) */
   .home-hero-card {
-    grid-column: 1 / -1 !important;
-    width: 100% !important;
-    max-width: 100% !important;
-    margin: 0 !important;
-    padding: 24px 32px !important;
+    padding: 24px 28px !important;
     border-radius: 26px !important;
     gap: 14px !important;
   }
 
+  .home-user-greeting .greeting-avatar {
+    width: 46px !important;
+    height: 46px !important;
+  }
+
+  .home-user-greeting .greeting-text {
+    font-size: 1.18rem !important;
+  }
+
+  .home-unit-badge {
+    font-size: 0.88rem !important;
+    padding: 5px 14px !important;
+    border-radius: 12px !important;
+  }
+
   .home-hero-title {
     font-size: 1.85rem !important;
+    font-weight: 900 !important;
   }
 
   .home-hero-desc {
     font-size: 1.05rem !important;
+    line-height: 1.5 !important;
   }
 
   .home-cta-btn {
     height: 56px !important;
-    font-size: 1.08rem !important;
+    font-size: 1.12rem !important;
+    font-weight: 800 !important;
     border-radius: 18px !important;
   }
 
+  .cta-3d-icon {
+    width: 38px !important;
+    height: 38px !important;
+  }
+
+  /* 2. Kelime Arenası Banner Kartı */
   .home-arena-banner-card {
-    grid-column: 1 / 2 !important;
-    width: 100% !important;
-    max-width: 100% !important;
-    margin: 0 !important;
-    padding: 22px 24px !important;
+    padding: 20px 24px !important;
     border-radius: 24px !important;
     display: flex !important;
-    flex-direction: column !important;
+    flex-direction: row !important;
+    align-items: center !important;
     justify-content: space-between !important;
-    align-items: stretch !important;
     gap: 16px !important;
   }
 
-  .home-arena-banner-card .home-arena-go-btn {
-    width: 100% !important;
-    justify-content: center !important;
+  .banner-3d-icon {
+    width: 52px !important;
+    height: 52px !important;
   }
 
+  .home-arena-banner-title {
+    font-size: 1.25rem !important;
+    font-weight: 800 !important;
+  }
+
+  .home-arena-banner-desc {
+    font-size: 0.92rem !important;
+  }
+
+  .home-arena-banner-card .home-arena-go-btn {
+    width: auto !important;
+    font-size: 0.98rem !important;
+    font-weight: 800 !important;
+    padding: 12px 24px !important;
+    border-radius: 14px !important;
+    white-space: nowrap !important;
+    flex-shrink: 0 !important;
+  }
+
+  /* 3. Öğrenme Özeti Paneli (Summary Dashboard Card) */
   .home-daily-progress-card {
-    grid-column: 2 / 3 !important;
-    width: 100% !important;
-    max-width: 100% !important;
-    margin: 0 !important;
-    padding: 22px 24px !important;
-    border-radius: 24px !important;
+    padding: 22px 26px !important;
+    border-radius: 26px !important;
     display: flex !important;
     flex-direction: column !important;
-    justify-content: space-between !important;
-    gap: 14px !important;
+    gap: 16px !important;
   }
 
-  /* Kelime Kartları Tablet Görünümü: Daha geniş ve ergonomik */
-  .card-pure-section {
-    max-width: 600px !important;
-    padding: 12px 20px calc(20px + env(safe-area-inset-bottom, 0px)) 20px !important;
+  .daily-progress-header .stat-3d-icon {
+    width: 38px !important;
+    height: 38px !important;
+  }
+
+  .daily-card-title {
+    font-size: 1.20rem !important;
+    font-weight: 800 !important;
+  }
+
+  .daily-card-subtitle {
+    font-size: 0.88rem !important;
+  }
+
+  .daily-percent-badge {
+    font-size: 0.88rem !important;
+    padding: 5px 14px !important;
+    border-radius: 12px !important;
+  }
+
+  .home-summary-grid {
+    display: grid !important;
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 12px !important;
+  }
+
+  .summary-metric-card {
+    padding: 14px 16px !important;
+    border-radius: 18px !important;
+  }
+
+  .sm-icon {
+    font-size: 1.35rem !important;
+  }
+
+  .sm-label {
+    font-size: 0.84rem !important;
+    font-weight: 700 !important;
+  }
+
+  .sm-card-val strong {
+    font-size: 1.45rem !important;
+    font-weight: 900 !important;
+  }
+
+  .sm-card-val .sm-target {
+    font-size: 0.95rem !important;
+    font-weight: 700 !important;
+  }
+
+  .sm-card-sub {
+    font-size: 0.84rem !important;
+    font-weight: 700 !important;
+  }
+
+  .home-progress-track {
+    height: 8px !important;
+    border-radius: 4px !important;
+  }
+
+  .summary-footer-row {
+    gap: 10px !important;
+    margin-top: 6px !important;
+  }
+
+  .daily-pill {
+    padding: 8px 16px !important;
+    font-size: 0.88rem !important;
+    font-weight: 700 !important;
+    border-radius: 14px !important;
+  }
+
+  .pill-3d-icon {
+    width: 22px !important;
+    height: 22px !important;
   }
 
   .card-action-bar-under {
@@ -21979,14 +22112,342 @@ html:not([data-theme="dark"]) .tg-rule-card,
    LEXIQ UI/UX GELİŞMİŞ İYİLEŞTİRMELER (TABLET PORTRAIT, MODALLAR & TEMALAR)
    ========================================================================== */
 
-/* 1. KARTLAR (FLASHCARDS) TABLET PORTRAIT VE KONTRAST İYİLEŞTİRMELERİ */
+/* ==========================================================================
+   1. KELİME KARTLARI (FLASHCARDS): BÜYÜK EKRAN UYUMU (DENGELİ BOŞLUKLAR, BÜYÜK KART, TİPOGRAFİ VE AKSİYON BUTONLARI)
+   ========================================================================== */
 @media (min-width: 768px) {
+  /* Saf Kart Alanı (Merkezi Bölge): Ekranda 4 Tarafı Eşit ve Dengeli Boşluklarla Merkezleme */
+  .flashcards-pure-view {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    height: 100% !important;
+    overflow: hidden !important;
+    box-sizing: border-box !important;
+  }
+
+  .card-pure-section {
+    max-width: 680px !important;
+    width: 100% !important;
+    margin: auto !important;
+    padding: clamp(14px, 2.5vh, 28px) clamp(20px, 4vw, 40px) calc(clamp(40px, 7vh, 70px) + env(safe-area-inset-bottom, 16px)) clamp(20px, 4vw, 40px) !important;
+    gap: clamp(12px, 2.2vh, 20px) !important;
+    justify-content: center !important;
+    align-items: center !important;
+    box-sizing: border-box !important;
+  }
+
+  /* 1. Üst Filtre ve İstatistik Sekmeleri Barı */
+  .card-filter-tabs-container {
+    max-width: 680px !important;
+    width: 100% !important;
+    gap: 10px !important;
+  }
+
+  .card-tab-buttons {
+    gap: 8px !important;
+  }
+
+  .card-tab-row {
+    height: 40px !important;
+    min-height: 40px !important;
+    gap: 8px !important;
+  }
+
+  .card-tab-btn {
+    font-size: 0.92rem !important;
+    font-weight: 800 !important;
+    border-radius: 14px !important;
+    padding: 0 14px !important;
+  }
+
+  .card-tab-btn .tab-badge {
+    font-size: 0.86rem !important;
+    margin-left: 5px !important;
+  }
+
+  /* Sekme Alt İçerikleri (Günlük Hedef, İlerleme Barı vb.) */
+  .card-tab-content {
+    margin-top: 2px !important;
+  }
+
+  .inline-goal-selector {
+    padding: 8px 16px !important;
+    border-radius: 14px !important;
+    gap: 10px !important;
+  }
+
+  .inline-goal-label {
+    font-size: 0.90rem !important;
+    font-weight: 700 !important;
+  }
+
+  .inline-goal-selector select,
+  #inlineDailyGoalSelect {
+    height: 36px !important;
+    font-size: 0.92rem !important;
+    padding: 4px 12px !important;
+    border-radius: 10px !important;
+  }
+
+  .inline-unit-total {
+    font-size: 0.88rem !important;
+    padding: 4px 12px !important;
+    border-radius: 10px !important;
+  }
+
+  .today-bar-content {
+    padding: 8px 16px !important;
+  }
+
+  .today-bar-title {
+    font-size: 0.90rem !important;
+    font-weight: 800 !important;
+  }
+
+  .today-bar-num {
+    font-size: 1.15rem !important;
+    font-weight: 900 !important;
+  }
+
+  .today-bar-target {
+    font-size: 0.92rem !important;
+    font-weight: 700 !important;
+  }
+
+  .today-bar-track {
+    height: 5px !important;
+    border-radius: 3px !important;
+  }
+
+  /* 2. Dış Ünite & Seviye Barı */
+  .card-outer-unit-bar {
+    max-width: 680px !important;
+    width: 100% !important;
+    padding: 0 4px !important;
+  }
+
+  .card-outer-unit-badge {
+    font-size: 0.88rem !important;
+    font-weight: 800 !important;
+    padding: 4px 14px !important;
+    border-radius: 10px !important;
+  }
+
+  .card-reveal-meaning-btn {
+    font-size: 0.88rem !important;
+    padding: 6px 14px !important;
+    border-radius: 10px !important;
+  }
+
+  /* 3. Kart Sarmalayıcı (Deste) ve Kart Yüzleri */
   .card-pure-section .flashcard-wrapper,
   .flashcard-wrapper {
-    max-width: 520px !important;
+    max-width: 680px !important;
+    width: 100% !important;
+    flex: 1 1 auto !important;
+    min-height: clamp(340px, 48vh, 460px) !important;
+    max-height: clamp(380px, 56vh, 520px) !important;
+    border-radius: 26px !important;
   }
+
+  .card-face {
+    border-radius: 26px !important;
+    padding: 22px 28px !important;
+    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.16) !important;
+  }
+
+  /* Kart Üst Alanı (Öğreniliyor / Defterime Ekle) */
+  .card-top {
+    margin-bottom: 12px !important;
+  }
+
+  .card-status-badge {
+    font-size: 0.86rem !important;
+    padding: 5px 14px !important;
+    border-radius: 12px !important;
+  }
+
+  .card-notebook-btn {
+    font-size: 0.88rem !important;
+    padding: 7px 16px !important;
+    border-radius: 14px !important;
+    gap: 6px !important;
+  }
+
+  .notebook-btn-icon {
+    font-size: 1.05rem !important;
+  }
+
+  .card-back-word-pill {
+    font-size: 1.02rem !important;
+    font-weight: 900 !important;
+    padding: 6px 16px !important;
+    border-radius: 12px !important;
+  }
+
+  /* Kart Orta Alanı (Kelime, Fonetik, Aksan) */
   .card-word {
-    font-size: clamp(2rem, 3.8vw, 2.6rem) !important;
+    font-size: clamp(2.4rem, 4.4vw, 3.4rem) !important;
+    font-weight: 900 !important;
+    letter-spacing: -0.5px !important;
+    line-height: 1.15 !important;
+  }
+
+  .word-meta-row {
+    gap: 10px !important;
+    margin-top: 8px !important;
+  }
+
+  .phonetic-badge,
+  .pos-badge {
+    font-size: 0.92rem !important;
+    padding: 4px 12px !important;
+    border-radius: 10px !important;
+  }
+
+  .audio-controls-row {
+    margin-top: 12px !important;
+  }
+
+  .accent-btn-group {
+    gap: 10px !important;
+  }
+
+  .accent-btn {
+    padding: 9px 18px !important;
+    font-size: 0.94rem !important;
+    font-weight: 800 !important;
+    border-radius: 14px !important;
+    gap: 8px !important;
+  }
+
+  .accent-flag-svg {
+    width: 20px !important;
+    height: 14px !important;
+  }
+
+  .accent-sound-icon {
+    width: 16px !important;
+    height: 16px !important;
+  }
+
+  /* Kart Arka Yüzü (Anlamı ve Örnek Cümle) */
+  .card-meaning {
+    font-size: clamp(1.8rem, 3.4vw, 2.6rem) !important;
+    font-weight: 900 !important;
+    line-height: 1.2 !important;
+  }
+
+  .example-box {
+    padding: 16px 20px !important;
+    border-radius: 18px !important;
+    margin-top: 12px !important;
+    gap: 6px !important;
+  }
+
+  .example-box-label {
+    font-size: 0.82rem !important;
+    font-weight: 800 !important;
+    letter-spacing: 0.5px !important;
+  }
+
+  .example-sentence {
+    font-size: 1.18rem !important;
+    line-height: 1.55 !important;
+    font-weight: 700 !important;
+  }
+
+  .example-translation {
+    font-size: 1.05rem !important;
+    line-height: 1.5 !important;
+  }
+
+  /* Kart Alt Alanı (Çevirme Hapı) */
+  .card-flip-pill {
+    font-size: 0.92rem !important;
+    font-weight: 800 !important;
+    padding: 9px 20px !important;
+    border-radius: 14px !important;
+  }
+
+  .card-flip-pill svg {
+    width: 16px !important;
+    height: 16px !important;
+  }
+
+  /* 4. Kart Altı Aksiyon Çubuğu (Önceki - ÖĞRENDİM - Sonraki) */
+  .card-action-bar-under {
+    max-width: 680px !important;
+    width: 100% !important;
+    gap: 16px !important;
+    margin: 0 auto !important;
+  }
+
+  .card-nav-action-btn {
+    width: 58px !important;
+    height: 58px !important;
+    min-width: 58px !important;
+    border-radius: 18px !important;
+  }
+
+  .card-nav-action-btn svg {
+    width: 26px !important;
+    height: 26px !important;
+    stroke-width: 2.8 !important;
+  }
+
+  .card-main-learned-btn {
+    height: 58px !important;
+    font-size: 1.18rem !important;
+    font-weight: 800 !important;
+    border-radius: 18px !important;
+    gap: 10px !important;
+  }
+
+  .card-main-learned-btn svg {
+    width: 26px !important;
+    height: 26px !important;
+    stroke-width: 2.8 !important;
+  }
+
+  /* 5. Hedef Tamamlandı Kutlama Kartı */
+  .goal-completed-full-view {
+    max-width: 680px !important;
+    width: 100% !important;
+    padding: 32px 36px !important;
+    border-radius: 26px !important;
+  }
+
+  .completed-hero-icon-3d {
+    font-size: 4rem !important;
+  }
+
+  .completed-hero-title {
+    font-size: 1.7rem !important;
+    font-weight: 900 !important;
+  }
+
+  .completed-hero-desc {
+    font-size: 1.08rem !important;
+    line-height: 1.6 !important;
+  }
+
+  .completed-hero-reward-pill {
+    font-size: 0.95rem !important;
+    padding: 10px 20px !important;
+    border-radius: 14px !important;
+  }
+
+  .completed-hero-actions-grid {
+    gap: 12px !important;
+  }
+
+  .card-hero-action-btn {
+    height: 54px !important;
+    font-size: 1.05rem !important;
+    font-weight: 800 !important;
+    border-radius: 16px !important;
   }
 }
 
