@@ -1,4 +1,4 @@
-﻿/**
+/**
  * Çok Dilli Kelime Öğrenme Uygulaması - Temel Mantık ve Deneyim Katmanı
  * Kurallar: .antigravityrules.txt ile %100 uyumludur.
  * Sadece Vanilla JS & Standart Web API'leri kullanılmıştır.
@@ -7,7 +7,7 @@
 (function () {
   'use strict';
 
-  const APP_VERSION = 'v1.9.34';
+  const APP_VERSION = 'v1.9.35';
   const DEFAULT_AVATAR = 'avatar_default';
   const CURRENT_APP_BUILD = 'lexigo_production_live_launch_v1928';
 
@@ -13839,6 +13839,13 @@ let activeAvatarCategory = 'all';
       }
     }
 
+    function formatBranchShort(branchStr) {
+      if (!branchStr || typeof branchStr !== 'string') return '';
+      const clean = branchStr.trim();
+      const match = clean.match(/(\d+)/);
+      return match ? match[1] : clean.replace(/^(İHS|FHS|AHS)\s*/i, '').trim();
+    }
+
     // 4. Genel Okul Sıralaması
     async function renderGlobalLeaderboard(forceRefresh = true) {
       const listContainer = document.getElementById('globalLeaderboardList');
@@ -14033,6 +14040,8 @@ let activeAvatarCategory = 'all';
           const userLang = user.lang || (isMe ? myLang : 'EN-TR');
           const flagIcon = getLangFlag(userLang);
           const langTitle = (typeof LANG_META !== 'undefined' && LANG_META[userLang] && LANG_META[userLang].name) ? LANG_META[userLang].name : userLang;
+          const userBranchShort = formatBranchShort(user.branch || (isMe ? myBranch : ''));
+          const branchBadgeHtml = userBranchShort ? `<span class="lb-class-pill" title="Sınıf: ${userBranchShort}" aria-label="Sınıf ${userBranchShort}">${userBranchShort}</span>` : '';
 
           if (!user.isRanked) {
             // "Henüz Arenaya Katılmayanlar" bölüm ayracı
@@ -14055,6 +14064,7 @@ let activeAvatarCategory = 'all';
                   <div style="display:flex; align-items:center; gap:6px; flex-wrap:wrap;">
                     <div class="lb-name">${user.displayName || 'Öğrenci'}</div>
                     <span class="lb-lang-flag" title="${langTitle}" aria-label="${langTitle}" style="font-size:1.1rem; line-height:1; display:inline-flex; align-items:center; cursor:help;">${flagIcon}</span>
+                    ${branchBadgeHtml}
                     ${isMe ? '<span style="font-size:0.7rem; font-weight:800; color:var(--accent); flex-shrink:0;">(Sen)</span>' : ''}
                   </div>
                   <div class="lb-badge" style="color:var(--text-muted); font-size:0.72rem;">Hazırlanıyor</div>
@@ -14086,6 +14096,7 @@ let activeAvatarCategory = 'all';
                   <div style="display:flex; align-items:center; gap:6px; flex-wrap:wrap;">
                     <div class="lb-name">${user.displayName || 'Öğrenci'}</div>
                     <span class="lb-lang-flag" title="${langTitle}" aria-label="${langTitle}" style="font-size:1.1rem; line-height:1; display:inline-flex; align-items:center; cursor:help;">${flagIcon}</span>
+                    ${branchBadgeHtml}
                     ${isMe ? '<span style="font-size:0.7rem; font-weight:800; color:var(--accent); flex-shrink:0;">(Sen)</span>' : ''}
                   </div>
                   <div class="lb-badge">${badge}</div>
