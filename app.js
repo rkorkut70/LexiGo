@@ -1,4 +1,4 @@
-/**
+﻿/**
  * Çok Dilli Kelime Öğrenme Uygulaması - Temel Mantık ve Deneyim Katmanı
  * Kurallar: .antigravityrules.txt ile %100 uyumludur.
  * Sadece Vanilla JS & Standart Web API'leri kullanılmıştır.
@@ -7,7 +7,7 @@
 (function () {
   'use strict';
 
-  const APP_VERSION = 'v1.9.33';
+  const APP_VERSION = 'v1.9.34';
   const DEFAULT_AVATAR = 'avatar_default';
   const CURRENT_APP_BUILD = 'lexigo_production_live_launch_v1928';
 
