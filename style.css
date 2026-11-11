@@ -10937,10 +10937,10 @@ html:not([data-theme="dark"]) .card-unlearn-pill {
   overflow-y: auto;
   -webkit-overflow-scrolling: touch;
   overscroll-behavior: contain;
-  padding: 2px 2px 4px 2px;
+  padding: 2px 2px calc(env(safe-area-inset-bottom, 24px) + 40px) 2px;
   display: flex;
   flex-direction: column;
-  justify-content: space-evenly;
+  justify-content: flex-start;
   gap: clamp(8px, 1.6vh, 12px);
 }
 
@@ -17629,6 +17629,22 @@ html.screen-fit-compact .welcome-action-guest {
   filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.3)) !important;
 }
 
+#settingsModal .settings-tab-btn .tab-svg-icon {
+  width: 17px !important;
+  height: 17px !important;
+  stroke: currentColor !important;
+  stroke-width: 2.2 !important;
+  fill: none !important;
+  flex-shrink: 0 !important;
+  display: inline-block !important;
+  vertical-align: middle !important;
+  transition: transform 0.2s ease !important;
+}
+
+#settingsModal .settings-tab-btn:hover .tab-svg-icon {
+  transform: scale(1.1) !important;
+}
+
 #settingsModal .settings-tab-btn:hover:not(.active) {
   background: rgba(255, 255, 255, 0.08) !important;
   border-color: rgba(255, 255, 255, 0.16) !important;
@@ -19404,7 +19420,7 @@ html:not([data-theme="dark"]) #aboutModal.full-screen-modal .modal-title,
   min-height: 0 !important;
   overflow-y: auto !important;
   -webkit-overflow-scrolling: touch !important;
-  padding: clamp(16px, 3vh, 28px) clamp(16px, 4vw, 24px) !important;
+  padding: clamp(16px, 3vh, 28px) clamp(16px, 4vw, 24px) calc(env(safe-area-inset-bottom, 24px) + 50px) clamp(16px, 4vw, 24px) !important;
   max-width: 620px !important;
   width: 100% !important;
   margin: 0 auto !important;
@@ -20345,9 +20361,26 @@ html:not([data-theme="dark"]) #settingsModal .settings-modal-card,
 
 html:not([data-theme="dark"]) #settingsModal .settings-header-compact,
 [data-theme="light"] #settingsModal .settings-header-compact {
-  background: #f8fafc !important;
+  background: #ffffff !important;
   border-bottom: 1.5px solid #cbd5e1 !important;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.03) !important;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.04) !important;
+}
+
+html:not([data-theme="dark"]) #settingsModal .modal-title,
+[data-theme="light"] #settingsModal .modal-title,
+html:not([data-theme="dark"]) #settingsModalTitle,
+[data-theme="light"] #settingsModalTitle {
+  color: #0f172a !important;
+  background: none !important;
+  -webkit-background-clip: initial !important;
+  -webkit-text-fill-color: #0f172a !important;
+}
+
+html:not([data-theme="dark"]) #settingsModal .settings-title-sub,
+[data-theme="light"] #settingsModal .settings-title-sub,
+html:not([data-theme="dark"]) #settingsModalSubtitle,
+[data-theme="light"] #settingsModalSubtitle {
+  color: #475569 !important;
 }
 
 html:not([data-theme="dark"]) #settingsModal .settings-header-title-clean,
@@ -20507,7 +20540,9 @@ html:not([data-theme="dark"]) #leaderboardModal.full-screen-modal .lb-tab-btn.ac
 }
 
 html:not([data-theme="dark"]) .leaderboard-item,
-[data-theme="light"] .leaderboard-item {
+[data-theme="light"] .leaderboard-item,
+html:not([data-theme="dark"]) #leaderboardModal.full-screen-modal .leaderboard-item,
+[data-theme="light"] #leaderboardModal.full-screen-modal .leaderboard-item {
   background: #ffffff !important;
   border: 1.5px solid #e2e8f0 !important;
   color: #0f172a !important;
@@ -20515,34 +20550,65 @@ html:not([data-theme="dark"]) .leaderboard-item,
 }
 
 html:not([data-theme="dark"]) .leaderboard-item .lb-name,
-[data-theme="light"] .leaderboard-item .lb-name {
+[data-theme="light"] .leaderboard-item .lb-name,
+html:not([data-theme="dark"]) #leaderboardModal.full-screen-modal .leaderboard-item .lb-name,
+[data-theme="light"] #leaderboardModal.full-screen-modal .leaderboard-item .lb-name {
   color: #0f172a !important;
   font-weight: 700 !important;
 }
 
 html:not([data-theme="dark"]) .leaderboard-item .lb-score,
-[data-theme="light"] .leaderboard-item .lb-score {
+[data-theme="light"] .leaderboard-item .lb-score,
+html:not([data-theme="dark"]) #leaderboardModal.full-screen-modal .leaderboard-item .lb-score,
+[data-theme="light"] #leaderboardModal.full-screen-modal .leaderboard-item .lb-score {
   background: #eff6ff !important;
   color: #1d4ed8 !important;
   border: 1px solid #bfdbfe !important;
 }
 
 html:not([data-theme="dark"]) .leaderboard-item.rank-1,
-[data-theme="light"] .leaderboard-item.rank-1 {
+[data-theme="light"] .leaderboard-item.rank-1,
+html:not([data-theme="dark"]) #leaderboardModal.full-screen-modal .leaderboard-item.rank-1,
+[data-theme="light"] #leaderboardModal.full-screen-modal .leaderboard-item.rank-1 {
   background: linear-gradient(135deg, #fffbeb 0%, #fef3c7 100%) !important;
   border-color: #fde68a !important;
+  border-left: 3px solid #f59e0b !important;
 }
 
 html:not([data-theme="dark"]) .leaderboard-item.rank-2,
-[data-theme="light"] .leaderboard-item.rank-2 {
+[data-theme="light"] .leaderboard-item.rank-2,
+html:not([data-theme="dark"]) #leaderboardModal.full-screen-modal .leaderboard-item.rank-2,
+[data-theme="light"] #leaderboardModal.full-screen-modal .leaderboard-item.rank-2 {
   background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%) !important;
   border-color: #cbd5e1 !important;
+  border-left: 3px solid #94a3b8 !important;
 }
 
 html:not([data-theme="dark"]) .leaderboard-item.rank-3,
-[data-theme="light"] .leaderboard-item.rank-3 {
+[data-theme="light"] .leaderboard-item.rank-3,
+html:not([data-theme="dark"]) #leaderboardModal.full-screen-modal .leaderboard-item.rank-3,
+[data-theme="light"] #leaderboardModal.full-screen-modal .leaderboard-item.rank-3 {
   background: linear-gradient(135deg, #fff7ed 0%, #ffedd5 100%) !important;
   border-color: #fed7aa !important;
+  border-left: 3px solid #b45309 !important;
+}
+
+html:not([data-theme="dark"]) .leaderboard-item.lb-unranked-item,
+[data-theme="light"] .leaderboard-item.lb-unranked-item,
+html:not([data-theme="dark"]) #leaderboardModal.full-screen-modal .leaderboard-item.lb-unranked-item,
+[data-theme="light"] #leaderboardModal.full-screen-modal .leaderboard-item.lb-unranked-item {
+  background: #f8fafc !important;
+  border: 1px solid #e2e8f0 !important;
+  opacity: 0.95 !important;
+}
+
+html:not([data-theme="dark"]) .leaderboard-item .lb-rank,
+[data-theme="light"] .leaderboard-item .lb-rank,
+html:not([data-theme="dark"]) #leaderboardModal.full-screen-modal .leaderboard-item .lb-rank,
+[data-theme="light"] #leaderboardModal.full-screen-modal .leaderboard-item .lb-rank {
+  background: rgba(0, 0, 0, 0.04) !important;
+  border-color: rgba(0, 0, 0, 0.08) !important;
+  color: #64748b !important;
 }
 
 html:not([data-theme="dark"]) #leaderboardModal.full-screen-modal #lbCurrentUserBar,
@@ -23032,7 +23098,7 @@ html:not([data-theme="dark"]) .card-troubled-pill {
     max-width: 100% !important;
     width: 100% !important;
     margin: 0 !important;
-    padding: 20px 24px 24px 24px !important;
+    padding: 20px 24px calc(env(safe-area-inset-bottom, 24px) + 50px) 24px !important;
     display: flex !important;
     flex-direction: column !important;
     gap: 14px !important;
@@ -24153,6 +24219,11 @@ html:not([data-theme="dark"]) .feedback-section-card,
 
   #settingsModal.full-screen-modal .settings-tab-btn .tab-emoji {
     font-size: 1.25rem !important;
+  }
+
+  #settingsModal.full-screen-modal .settings-tab-btn .tab-svg-icon {
+    width: 19px !important;
+    height: 19px !important;
   }
 
   #settingsModal.full-screen-modal .settings-tab-btn .tab-text {
