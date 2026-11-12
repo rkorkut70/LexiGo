@@ -938,6 +938,26 @@
     // Öğrenci Profili Modalı
     studentProfileModal: document.getElementById('studentProfileModal'),
     closeStudentProfileModalBtn: document.getElementById('closeStudentProfileModalBtn'),
+    // Ünite Tamamlama ve Sonraki Üniteye Başlama Modalı
+    unitCompleteModal: document.getElementById('unitCompleteModal'),
+    unitCompleteBadge: document.getElementById('unitCompleteBadge'),
+    unitCompleteTitle: document.getElementById('unitCompleteTitle'),
+    unitCompleteMessage: document.getElementById('unitCompleteMessage'),
+    unitCompleteNextCard: document.getElementById('unitCompleteNextCard'),
+    unitCompleteNextIcon: document.getElementById('unitCompleteNextIcon'),
+    unitCompleteNextSubtitle: document.getElementById('unitCompleteNextSubtitle'),
+    unitCompleteNextTitle: document.getElementById('unitCompleteNextTitle'),
+    unitCompleteNextWordsCount: document.getElementById('unitCompleteNextWordsCount'),
+    confirmNextUnitBtn: document.getElementById('confirmNextUnitBtn'),
+    openUnitListFromCompleteBtn: document.getElementById('openUnitListFromCompleteBtn'),
+    goToArenaFromCompleteBtn: document.getElementById('goToArenaFromCompleteBtn'),
+    closeUnitCompleteModalBtn: document.getElementById('closeUnitCompleteModalBtn'),
+    // Kart Tamamlama İçi Ek Öğeler
+    cardCompletedHeroIcon: document.getElementById('cardCompletedHeroIcon'),
+    cardCompletedHeroTitle: document.getElementById('cardCompletedHeroTitle'),
+    cardCompletedNextUnitGuide: document.getElementById('cardCompletedNextUnitGuide'),
+    cardCompletedRewardText: document.getElementById('cardCompletedRewardText'),
+    cardFullLearnMoreIcon: document.getElementById('cardFullLearnMoreIcon'),
     // Seviye Terfi ve Tamamlama Modalı
     levelCompleteModal: document.getElementById('levelCompleteModal'),
     levelCompleteTitle: document.getElementById('levelCompleteTitle'),
@@ -2922,6 +2942,13 @@
     if (typeof window.syncProgressToFirebase === 'function') {
       window.syncProgressToFirebase(null, true);
     }
+    if (!state.hasPromptedUnitCompleteForUnit) state.hasPromptedUnitCompleteForUnit = {};
+    if (!state.hasPromptedUnitCompleteForUnit[unit.unite_no] && state.activeMode === 'flashcards') {
+      state.hasPromptedUnitCompleteForUnit[unit.unite_no] = true;
+      setTimeout(() => {
+        showUnitCompleteModal(unit);
+      }, 500);
+    }
   }
 
   // Aktif Zaman Sayacı (Kullanıcı etkileşimde ve sekme odaktayken sayar)
@@ -3543,6 +3570,146 @@ let activeAvatarCategory = 'all';
     const modal = document.getElementById('levelCompleteModal');
     if (modal) modal.style.display = 'none';
   }
+
+  /**
+   * Mevcut aktif üniteden sonra gelen bir sonraki üniteyi bulur.
+   */
+  function getNextUnitForCurrent() {
+    const targetLevel = state.userLevel || getLevelForTrack(state.activeLanguage, state.userTrack);
+    const units = getUnitsData().filter(u => u.dil === state.activeLanguage && (!targetLevel || u.seviye === targetLevel));
+    const curIdx = units.findIndex(u => u.unite_no === state.activeUnitNo);
+    if (curIdx !== -1 && curIdx + 1 < units.length) {
+      return units[curIdx + 1];
+    }
+    return null;
+  }
+  window.getNextUnitForCurrent = getNextUnitForCurrent;
+
+  /**
+   * Sonraki üniteyi başlatır, kelimeleri ve başlıkları günceller.
+   */
+  function startNextUnit(nextUnit) {
+    if (!nextUnit) {
+      const targetLevel = state.userLevel || getLevelForTrack(state.activeLanguage, state.userTrack);
+      const nextLvl = getNextLevel(state.activeLanguage, targetLevel);
+      if (nextLvl && typeof showLevelCompleteModal === 'function') {
+        showLevelCompleteModal(state.activeLanguage, targetLevel, nextLvl);
+      } else {
+        openUnitModal();
+      }
+      return;
+    }
+    state.activeUnitNo = nextUnit.unite_no;
+    state.activeFilter = 'pending';
+    localStorage.setItem('kelime_active_filter', 'pending');
+    state.currentIndex = 0;
+    state.dailyGoalExtra = 0;
+    noteUnitStart(nextUnit);
+    refreshWordsList();
+    updateHeaderUnitDisplay();
+    showToast(`🚀 ${nextUnit.baslik || `Ünite ${nextUnit.unite_no}`} başladı! Başarılar!`, 'correct');
+  }
+  window.startNextUnit = startNextUnit;
+
+  /**
+   * Ünite tamamlandığında tebrik eden ve sonraki üniteye nasıl başlanacağını anlatan bilgilendirme modalı.
+   */
+  function showUnitCompleteModal(unit = null) {
+    const modal = document.getElementById('unitCompleteModal');
+    if (!modal) return;
+    const targetLevel = state.userLevel || getLevelForTrack(state.activeLanguage, state.userTrack);
+    const curUnit = unit || getUnitsData().find(u => u.dil === state.activeLanguage && u.unite_no === state.activeUnitNo && (!targetLevel || u.seviye === targetLevel));
+    const unitNum = curUnit ? (curUnit.unite_no || state.activeUnitNo) : state.activeUnitNo;
+    const unitTitle = curUnit ? (curUnit.baslik || `Ünite ${unitNum}`) : `Ünite ${unitNum}`;
+
+    const titleEl = document.getElementById('unitCompleteTitle');
+    const msgEl = document.getElementById('unitCompleteMessage');
+    const nextCardEl = document.getElementById('unitCompleteNextCard');
+    const nextSubtitleEl = document.getElementById('unitCompleteNextSubtitle');
+    const nextTitleEl = document.getElementById('unitCompleteNextTitle');
+    const nextWordsEl = document.getElementById('unitCompleteNextWordsCount');
+    const confirmBtn = document.getElementById('confirmNextUnitBtn');
+    const openListBtn = document.getElementById('openUnitListFromCompleteBtn');
+    const arenaBtn = document.getElementById('goToArenaFromCompleteBtn');
+    const closeBtn = document.getElementById('closeUnitCompleteModalBtn');
+
+    if (titleEl) titleEl.textContent = `Tebrikler! ${unitTitle} Tamamlandı! 🎉`;
+    if (msgEl) {
+      msgEl.innerHTML = `<strong>${unitTitle}</strong> ünitesindeki tüm kelimeleri başarıyla öğrendin.<br>Şimdi sıradaki üniteye geçmeye hazırsın!`;
+    }
+
+    const nextUnit = getNextUnitForCurrent();
+    if (nextUnit) {
+      const nextWords = getWordsData().filter(w => w.dil === state.activeLanguage && w.unite_no === nextUnit.unite_no && (!targetLevel || w.seviye === targetLevel));
+      if (nextCardEl) nextCardEl.style.display = 'flex';
+      if (nextSubtitleEl) nextSubtitleEl.textContent = `Sıradaki Ünite (${nextUnit.seviye || targetLevel})`;
+      if (nextTitleEl) nextTitleEl.textContent = nextUnit.baslik || `Ünite ${nextUnit.unite_no}`;
+      if (nextWordsEl) nextWordsEl.textContent = `${nextWords.length} Yeni kelime seni bekliyor`;
+      if (confirmBtn) {
+        confirmBtn.innerHTML = `<span>Sonraki Üniteye Başla (${nextUnit.baslik || `Ünite ${nextUnit.unite_no}`}) 🚀</span>`;
+        confirmBtn.onclick = (e) => {
+          if (e) { e.preventDefault(); e.stopPropagation(); }
+          closeUnitCompleteModal();
+          startNextUnit(nextUnit);
+        };
+      }
+    } else {
+      const nextLvl = getNextLevel(state.activeLanguage, targetLevel);
+      if (nextCardEl) nextCardEl.style.display = 'flex';
+      if (nextSubtitleEl) nextSubtitleEl.textContent = 'Müfredat Tamamlandı';
+      if (nextTitleEl) nextTitleEl.textContent = nextLvl ? `${nextLvl} Seviyesine Hazırsın!` : 'Tüm Üniteler Tamamlandı!';
+      if (nextWordsEl) nextWordsEl.textContent = nextLvl ? 'Bir sonraki kura terfi edebilirsin' : 'Tebrikler, harika bir başarı!';
+      if (confirmBtn) {
+        confirmBtn.innerHTML = nextLvl ? '<span>Sonraki Seviyeye Geç 🎓</span>' : '<span>Tüm Üniteleri İncele 📚</span>';
+        confirmBtn.onclick = (e) => {
+          if (e) { e.preventDefault(); e.stopPropagation(); }
+          closeUnitCompleteModal();
+          if (nextLvl && typeof showLevelCompleteModal === 'function') {
+            showLevelCompleteModal(state.activeLanguage, targetLevel, nextLvl);
+          } else {
+            openUnitModal();
+          }
+        };
+      }
+    }
+
+    if (openListBtn) {
+      openListBtn.onclick = (e) => {
+        if (e) { e.preventDefault(); e.stopPropagation(); }
+        closeUnitCompleteModal();
+        openUnitModal();
+      };
+    }
+
+    if (arenaBtn) {
+      arenaBtn.onclick = (e) => {
+        if (e) { e.preventDefault(); e.stopPropagation(); }
+        closeUnitCompleteModal();
+        switchAppMode('arena');
+        showGamesMenu();
+      };
+    }
+
+    if (closeBtn) {
+      closeBtn.onclick = (e) => {
+        if (e) { e.preventDefault(); e.stopPropagation(); }
+        closeUnitCompleteModal();
+      };
+    }
+
+    modal.style.display = 'flex';
+    triggerConfettiFx();
+    try {
+      playAudioFeedback('success');
+    } catch (e) {}
+  }
+
+  function closeUnitCompleteModal() {
+    const modal = document.getElementById('unitCompleteModal');
+    if (modal) modal.style.display = 'none';
+  }
+  window.showUnitCompleteModal = showUnitCompleteModal;
+  window.closeUnitCompleteModal = closeUnitCompleteModal;
 
   /**
    * Bir sonraki seviyeye geçişi uygular, profili ve üniteleri günceller.
@@ -5355,15 +5522,72 @@ let activeAvatarCategory = 'all';
           dom.flashcardGoalCompletedView.classList.remove('is-hidden');
           dom.flashcardGoalCompletedView.classList.add('active');
           dom.flashcardGoalCompletedView.style.setProperty('display', 'flex', 'important');
-          if (dom.cardCompletedFullDesc) {
-            if (unlearnedCount === 0) {
-              dom.cardCompletedFullDesc.innerHTML = `Tebrikler! Bu ünitedeki <strong>tüm kelimeleri</strong> başarıyla öğrendin. Şimdi öğrendiğin kelimeleri kalıcı hafızana almak ve refleks haline getirmek için <strong>Kelime Arenası'nda eğlenceli etkinliklerle</strong> pratik yapma zamanı!`;
-            } else {
+
+          const targetLevel = state.userLevel || getLevelForTrack(state.activeLanguage, state.userTrack);
+          const curUnit = getUnitsData().find(u => u.dil === state.activeLanguage && u.unite_no === state.activeUnitNo && (!targetLevel || u.seviye === targetLevel));
+          const unitTitle = curUnit ? (curUnit.baslik || `Ünite ${curUnit.unite_no}`) : `Ünite ${state.activeUnitNo}`;
+          const nextUnit = getNextUnitForCurrent();
+
+          if (unlearnedCount === 0) {
+            if (dom.cardCompletedHeroTitle) {
+              dom.cardCompletedHeroTitle.innerHTML = `🏆 ${unitTitle} Tamamlandı!`;
+            }
+            if (dom.cardCompletedHeroIcon) {
+              dom.cardCompletedHeroIcon.textContent = '🏆';
+            }
+            if (dom.cardCompletedRewardText) {
+              dom.cardCompletedRewardText.textContent = `${unitTitle} içindeki tüm kelimeler başarıyla öğrenildi!`;
+            }
+            if (dom.cardCompletedNextUnitGuide) {
+              dom.cardCompletedNextUnitGuide.style.display = 'block';
+            }
+            if (dom.cardCompletedFullDesc) {
+              let nextActionNote = '';
+              if (nextUnit) {
+                const nextTitle = nextUnit.baslik || `Ünite ${nextUnit.unite_no}`;
+                nextActionNote = `Sıradaki ünite: <strong>${nextTitle}</strong>. Aşağıdaki <strong>'Sonraki Üniteye Başla 🚀'</strong> butonuna dokunabilir veya üst bardaki <strong>Ünite Başlığı</strong> butonuna tıklayarak sıradaki üniteyi seçebilirsin.`;
+              } else {
+                nextActionNote = `Tebrikler! Bu kitaptaki tüm üniteleri bitirdin. Üst kura geçmek için seviye terfi menüsünü kullanabilirsin.`;
+              }
+              dom.cardCompletedFullDesc.innerHTML = `Tebrikler! Bu ünitedeki <strong>tüm kelimeleri</strong> başarıyla öğrendin. Şimdi öğrendiğin kelimeleri kalıcı hafızana almak için <strong>Kelime Arenası</strong>'nda pratik yapabilir veya doğrudan sonraki üniteye başlayabilirsin.<br><br>💡 ${nextActionNote}`;
+            }
+            if (dom.cardFullLearnMoreText) {
+              dom.cardFullLearnMoreText.textContent = nextUnit ? 'Sonraki Üniteye Başla' : 'Sonraki Seviye';
+            }
+            if (dom.cardFullLearnMoreIcon) {
+              dom.cardFullLearnMoreIcon.textContent = nextUnit ? '🚀' : '🎓';
+            }
+
+            // Otomatik Bilgilendirme Modalı: Kullanıcı bu ünitede modalı henüz görmediyse tetikle
+            if (!state.hasPromptedUnitCompleteForUnit) state.hasPromptedUnitCompleteForUnit = {};
+            if (!state.hasPromptedUnitCompleteForUnit[state.activeUnitNo]) {
+              state.hasPromptedUnitCompleteForUnit[state.activeUnitNo] = true;
+              setTimeout(() => {
+                showUnitCompleteModal(curUnit);
+              }, 400);
+            }
+          } else {
+            if (dom.cardCompletedHeroTitle) {
+              dom.cardCompletedHeroTitle.innerHTML = '🎯 Günlük Hedef Tamamlandı!';
+            }
+            if (dom.cardCompletedHeroIcon) {
+              dom.cardCompletedHeroIcon.textContent = '🎯';
+            }
+            if (dom.cardCompletedRewardText) {
+              dom.cardCompletedRewardText.textContent = 'Bugün hedeflenen tüm kelimeler başarıyla tamamlandı!';
+            }
+            if (dom.cardCompletedNextUnitGuide) {
+              dom.cardCompletedNextUnitGuide.style.display = 'none';
+            }
+            if (dom.cardCompletedFullDesc) {
               dom.cardCompletedFullDesc.innerHTML = `Tebrikler! Bugün belirlediğin <strong>${baseGoal} kelimelik</strong> günlük hedefini başarıyla tamamladın. Bu ünitede henüz öğrenilmemiş <strong>${unlearnedCount} kelime</strong> daha var. Dilersen <strong>+5 Kelime Öğren</strong> ile devam edebilir veya <strong>Kelime Arenası</strong>'nda pratik yapabilirsin!`;
             }
-          }
-          if (dom.cardFullLearnMoreText) {
-            dom.cardFullLearnMoreText.textContent = unlearnedCount === 0 ? 'Ünite Tamamlandı 🏆' : '+5 Kelime Öğren';
+            if (dom.cardFullLearnMoreText) {
+              dom.cardFullLearnMoreText.textContent = '+5 Kelime Öğren';
+            }
+            if (dom.cardFullLearnMoreIcon) {
+              dom.cardFullLearnMoreIcon.textContent = '➕';
+            }
           }
         }
         return;
@@ -15950,6 +16174,13 @@ let activeAvatarCategory = 'all';
       });
     }
 
+    // Ünite Tamamlama Modalı Dış Tıklama ile Kapatma
+    if (dom.unitCompleteModal) {
+      dom.unitCompleteModal.addEventListener('click', (e) => {
+        if (e.target === dom.unitCompleteModal) closeUnitCompleteModal();
+      });
+    }
+
     // Arena Oyun Menüsü Seçimi (Games Hub)
     if (dom.gamesHubGrid) {
       dom.gamesHubGrid.addEventListener('click', (e) => {
@@ -16108,7 +16339,12 @@ let activeAvatarCategory = 'all';
         hideDailyGoalCompleteModal();
         const remaining = getUnlearnedWordsCountInActiveUnit();
         if (remaining === 0) {
-          showToast('⚠️ Bu ünitedeki tüm kelimeleri zaten öğrendiniz! Eklenecek başka yeni kelime kalmadı. 🏆', 4000);
+          const nextUnit = getNextUnitForCurrent();
+          if (nextUnit) {
+            startNextUnit(nextUnit);
+          } else {
+            showUnitCompleteModal();
+          }
           return;
         }
         const addCount = 5;
@@ -16189,7 +16425,12 @@ let activeAvatarCategory = 'all';
       dom.cardFullLearnMoreBtn.addEventListener('click', () => {
         const remaining = getUnlearnedWordsCountInActiveUnit();
         if (remaining === 0) {
-          showToast('⚠️ Bu ünitedeki tüm kelimeleri zaten öğrendiniz! Eklenecek başka yeni kelime kalmadı. 🏆', 4000);
+          const nextUnit = getNextUnitForCurrent();
+          if (nextUnit) {
+            startNextUnit(nextUnit);
+          } else {
+            showUnitCompleteModal();
+          }
           return;
         }
         const addCount = 5;
@@ -16199,6 +16440,11 @@ let activeAvatarCategory = 'all';
         state.dailyGoalExtra = (state.dailyGoalExtra || 0) + addCount;
         refreshWordsList();
         showToast(`+${addCount} yeni kelime daha eklendi!`);
+      });
+    }
+    if (dom.cardCompletedNextUnitGuide) {
+      dom.cardCompletedNextUnitGuide.addEventListener('click', () => {
+        showUnitCompleteModal();
       });
     }
     if (dom.cardFullReviewLearnedBtn) {
