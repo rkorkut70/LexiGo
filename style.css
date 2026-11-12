@@ -12071,8 +12071,12 @@ html:not([data-theme="dark"]) .card-unlearn-pill {
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 1.35rem;
+  color: var(--accent, #6366f1);
   flex-shrink: 0;
+}
+
+.student-profile-badge-icon svg {
+  display: block;
 }
 
 .student-profile-titles {
@@ -12196,17 +12200,20 @@ html:not([data-theme="dark"]) .card-unlearn-pill {
   position: absolute;
   bottom: -2px;
   right: -2px;
-  width: 20px;
-  height: 20px;
+  width: 22px;
+  height: 22px;
   background: var(--accent, #6366f1);
   color: #ffffff;
   border-radius: 50%;
-  font-size: 0.64rem;
   display: flex;
   align-items: center;
   justify-content: center;
   border: 2px solid var(--bg-card);
   box-shadow: 0 2px 6px rgba(0, 0, 0, 0.25);
+}
+
+.avatar-edit-icon svg {
+  display: block;
 }
 
 .student-hero-user-meta {
@@ -12336,9 +12343,12 @@ html:not([data-theme="dark"]) .card-unlearn-pill {
 .student-name-icon {
   position: absolute;
   left: 12px;
-  font-size: 0.95rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--text-muted);
   pointer-events: none;
-  opacity: 0.6;
+  opacity: 0.75;
 }
 
 .student-name-input {
@@ -12437,8 +12447,20 @@ html:not([data-theme="dark"]) .card-unlearn-pill {
 }
 
 .student-security-icon {
-  font-size: 1.2rem;
+  width: 36px;
+  height: 36px;
+  border-radius: 10px;
+  background: rgba(139, 92, 246, 0.12);
+  color: #8b5cf6;
+  border: 1px solid rgba(139, 92, 246, 0.22);
+  display: flex;
+  align-items: center;
+  justify-content: center;
   flex-shrink: 0;
+}
+
+.student-security-icon svg {
+  display: block;
 }
 
 .student-security-texts {
@@ -12560,8 +12582,20 @@ html:not([data-theme="dark"]) .card-unlearn-pill {
 }
 
 .student-stat-card .stat-icon {
-  font-size: clamp(1.2rem, 2.4vh, 1.4rem);
-  margin-bottom: 2px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 28px;
+  margin-bottom: 4px;
+}
+
+.stat-card-learned .stat-icon { color: #3b82f6; }
+.stat-card-xp .stat-icon { color: #f59e0b; }
+.stat-card-streak .stat-icon { color: #ef4444; }
+.stat-card-badges .stat-icon { color: #10b981; }
+
+.student-stat-card .stat-icon svg {
+  display: block;
 }
 
 .student-stat-card .stat-val {
@@ -12612,8 +12646,19 @@ html:not([data-theme="dark"]) .card-unlearn-pill {
 }
 
 .activity-header-icon {
-  font-size: 1.35rem;
-  line-height: 1;
+  width: 32px;
+  height: 32px;
+  border-radius: 9px;
+  background: rgba(99, 102, 241, 0.12);
+  color: var(--accent, #6366f1);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.activity-header-icon svg {
+  display: block;
 }
 
 .activity-section-title {
@@ -12644,6 +12689,10 @@ html:not([data-theme="dark"]) .card-unlearn-pill {
   cursor: pointer;
   color: var(--text-muted);
   transition: all 0.25s ease;
+}
+
+.activity-stats-refresh-btn svg {
+  display: block;
 }
 
 .activity-stats-refresh-btn:hover {
@@ -12677,8 +12726,39 @@ html:not([data-theme="dark"]) .card-unlearn-pill {
 }
 
 .time-item-icon {
-  font-size: 1.3rem;
+  width: 34px;
+  height: 34px;
+  border-radius: 9px;
+  background: rgba(99, 102, 241, 0.1);
+  color: var(--accent, #6366f1);
+  display: flex;
+  align-items: center;
+  justify-content: center;
   flex-shrink: 0;
+}
+
+.time-item-icon svg {
+  display: block;
+}
+
+.activity-time-item:nth-child(1) .time-item-icon {
+  background: rgba(59, 130, 246, 0.12);
+  color: #3b82f6;
+}
+
+.activity-time-item:nth-child(2) .time-item-icon {
+  background: rgba(139, 92, 246, 0.12);
+  color: #8b5cf6;
+}
+
+.activity-time-item:nth-child(3) .time-item-icon {
+  background: rgba(16, 185, 129, 0.12);
+  color: #10b981;
+}
+
+.activity-time-item:nth-child(4) .time-item-icon {
+  background: rgba(245, 158, 11, 0.12);
+  color: #f59e0b;
 }
 
 .time-item-details {
@@ -12726,7 +12806,14 @@ html:not([data-theme="dark"]) .card-unlearn-pill {
 }
 
 .unit-durations-icon {
-  font-size: 0.95rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: #f59e0b;
+}
+
+.unit-durations-icon svg {
+  display: block;
 }
 
 .unit-durations-list {
@@ -12816,8 +12903,19 @@ html:not([data-theme="dark"]) .card-unlearn-pill {
 }
 
 .up-header-icon {
-  font-size: 1.35rem;
-  line-height: 1.2;
+  width: 32px;
+  height: 32px;
+  border-radius: 9px;
+  background: rgba(59, 130, 246, 0.12);
+  color: #3b82f6;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.up-header-icon svg {
+  display: block;
 }
 
 .up-section-title {
@@ -13641,8 +13739,12 @@ html:not([data-theme="dark"]) .card-unlearn-pill {
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 1.25rem;
+  color: var(--accent, #6366f1);
   flex-shrink: 0;
+}
+
+.how-icon-circle svg {
+  display: block;
 }
 
 .how-texts {
@@ -20513,9 +20615,23 @@ html:not([data-theme="dark"]) #tournamentGuideModal.full-screen-modal .tournamen
 
 html:not([data-theme="dark"]) #leaderboardModal .modal-title,
 [data-theme="light"] #leaderboardModal .modal-title,
+html:not([data-theme="dark"]) #leaderboardModal.full-screen-modal .modal-title,
+[data-theme="light"] #leaderboardModal.full-screen-modal .modal-title,
 html:not([data-theme="dark"]) #tournamentGuideModal .modal-title,
-[data-theme="light"] #tournamentGuideModal .modal-title {
+[data-theme="light"] #tournamentGuideModal .modal-title,
+html:not([data-theme="dark"]) #tournamentGuideModal.full-screen-modal .modal-title,
+[data-theme="light"] #tournamentGuideModal.full-screen-modal .modal-title {
   color: #0f172a !important;
+  background: none !important;
+  -webkit-background-clip: initial !important;
+  -webkit-text-fill-color: #0f172a !important;
+}
+
+html:not([data-theme="dark"]) #leaderboardModal .lb-header-sub,
+[data-theme="light"] #leaderboardModal .lb-header-sub,
+html:not([data-theme="dark"]) #leaderboardModal.full-screen-modal .lb-header-sub,
+[data-theme="light"] #leaderboardModal.full-screen-modal .lb-header-sub {
+  color: #475569 !important;
 }
 
 html:not([data-theme="dark"]) #leaderboardModal.full-screen-modal .leaderboard-tabs-nav,

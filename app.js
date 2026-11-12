@@ -7,7 +7,7 @@
 (function () {
   'use strict';
 
-  const APP_VERSION = 'v1.9.37';
+  const APP_VERSION = 'v1.9.38';
   const DEFAULT_AVATAR = 'avatar_default';
   const CURRENT_APP_BUILD = 'lexigo_production_live_launch_v1928';
 
@@ -2287,15 +2287,18 @@
   function updateStudentProfileBranchBadge() {
     const branchBadge = document.getElementById('profHeroBranchBadge');
     if (!branchBadge) return;
+    const schoolSvg = '<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align: -1px; margin-right: 5px;"><path d="M3 21h18"/><path d="M5 21V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v16"/><line x1="9" y1="9" x2="9.01" y2="9"/><line x1="15" y1="9" x2="15.01" y2="9"/><line x1="9" y1="13" x2="9.01" y2="13"/><line x1="15" y1="13" x2="15.01" y2="13"/><path d="M11 21v-4a1 1 0 0 1 1-1h0a1 1 0 0 1 1 1v4"/></svg>';
     if (state.userBranch) {
-      branchBadge.textContent = `🏫 Şube: ${state.userBranch}`;
+      branchBadge.innerHTML = `${schoolSvg}Şube: ${state.userBranch}`;
       branchBadge.style.display = 'inline-flex';
+      branchBadge.style.alignItems = 'center';
       branchBadge.style.cursor = 'default';
       branchBadge.title = 'Resmi Sınıf / Şubeniz Kilitli';
       branchBadge.onclick = null;
     } else {
-      branchBadge.innerHTML = '🏫 Sınıf Seç (İsteğe Bağlı) ➕';
+      branchBadge.innerHTML = `${schoolSvg}Sınıf Seç (İsteğe Bağlı)`;
       branchBadge.style.display = 'inline-flex';
+      branchBadge.style.alignItems = 'center';
       branchBadge.style.cursor = 'pointer';
       branchBadge.title = 'Sınıf/Şube Seçimi (İsteğe Bağlı & Kalıcı)';
       branchBadge.onclick = () => {
@@ -2559,10 +2562,12 @@
           row.className = 'unit-duration-row';
           const nameSpan = document.createElement('span');
           nameSpan.className = 'unit-duration-name';
-          nameSpan.innerHTML = `<span>📘 ${info.unitTitle || key}</span> <span class="unit-duration-badge">${info.lang || ''} ${info.level || ''}</span>`;
+          const bookSvg = '<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align: -2px; margin-right: 4px; color: #3b82f6;"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>';
+          nameSpan.innerHTML = `<span>${bookSvg}${info.unitTitle || key}</span> <span class="unit-duration-badge">${info.lang || ''} ${info.level || ''}</span>`;
           const timeSpan = document.createElement('span');
           timeSpan.className = 'unit-duration-time';
-          timeSpan.textContent = `⏱️ ${formatSecondsToHuman(info.durationSeconds || 0)}`;
+          const clockSvg = '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align: -1px; margin-right: 4px; color: #6366f1;"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>';
+          timeSpan.innerHTML = `${clockSvg}${formatSecondsToHuman(info.durationSeconds || 0)}`;
           row.appendChild(nameSpan);
           row.appendChild(timeSpan);
           unitListEl.appendChild(row);

@@ -16,7 +16,7 @@
   <meta name="referrer" content="no-referrer">
   <title>LexiGo • Çok Dilli Akıllı Kelime Kartları</title>
   <link rel="icon" type="image/jpeg" href="logo.jpg">
-  <link rel="stylesheet" href="style.css?v=1.9.37">
+  <link rel="stylesheet" href="style.css?v=1.9.38">
 </head>
 <body>
   <div class="app-container">
@@ -1445,7 +1445,7 @@
 
           <div class="welcome-title-row">
             <h1 class="welcome-brand-title">Lexi<span class="brand-go-accent">Go</span></h1>
-            <span class="welcome-version-pill">v1.9.37</span>
+            <span class="welcome-version-pill">v1.9.38</span>
           </div>
 
           <div class="welcome-slogan-text">Her yerde kelime öğren</div>
@@ -2280,7 +2280,7 @@
             <div class="about-logo-badge">
               <img src="assets/icons/lexigo_brand_logo.png" alt="LexiGo" class="about-brand-img" />
             </div>
-            <span class="about-version-pill" id="aboutAppVersion">v1.9.37</span>
+            <span class="about-version-pill" id="aboutAppVersion">v1.9.38</span>
             <span class="about-platform-badge" id="aboutPlatformBadge" style="display: none; font-size: 0.72rem; font-weight: 700; padding: 3px 9px; border-radius: 12px; background: rgba(59,130,246,0.15); color: #3b82f6; border: 1px solid rgba(59,130,246,0.3);"></span>
           </div>
           <p class="about-tagline">Müfredat Tabanlı Çok Dilli Kelime Arenası</p>
@@ -2795,7 +2795,12 @@
     <div class="modal-card student-profile-modal-card">
       <div class="modal-header student-profile-header">
         <div class="student-profile-title-wrap">
-          <div class="student-profile-badge-icon" aria-hidden="true">🎓</div>
+          <div class="student-profile-badge-icon" aria-hidden="true">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M22 10v6M2 10l10-5 10 5-10 5z"/>
+              <path d="M6 12v5c3 3 9 3 12 0v-5"/>
+            </svg>
+          </div>
           <div class="student-profile-titles">
             <h2 class="modal-title">Öğrenci Profili</h2>
             <p class="modal-subtitle">Akademik Gelişim &amp; Performans Portfolyosu</p>
@@ -2817,7 +2822,12 @@
             <div class="student-hero-identity">
               <button type="button" class="student-avatar-badge student-avatar-clickable" id="profHeroAvatarBtn" title="Avatarı Değiştir">
                 <span id="profHeroAvatar"><img src="assets/avatars/avatar_default.jpg" class="avatar-img-fluid" alt="Avatar"></span>
-                <span class="avatar-edit-icon" title="Avatarı Değiştir">✏️</span>
+                <span class="avatar-edit-icon" title="Avatarı Değiştir">
+                  <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M12 20h9"/>
+                    <path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/>
+                  </svg>
+                </span>
               </button>
               <div class="student-hero-user-meta">
                 <span class="student-hero-user-title">Akademik Profil</span>
@@ -2833,14 +2843,19 @@
           <!-- Rozetler Satırı: Sınıf / Seviye, Turnuva Şubesi ve Dil -->
           <div class="student-hero-badges-row">
             <span class="student-track-badge" id="profHeroTrackBadge">4A (A2 Temel)</span>
-            <span class="student-track-badge student-branch-pill" id="profHeroBranchBadge">🏫 Şube: -</span>
+            <span class="student-track-badge student-branch-pill" id="profHeroBranchBadge"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align: -1px; margin-right: 5px;"><path d="M3 21h18"/><path d="M5 21V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v16"/><line x1="9" y1="9" x2="9.01" y2="9"/><line x1="15" y1="9" x2="15.01" y2="9"/><line x1="9" y1="13" x2="9.01" y2="13"/><line x1="15" y1="13" x2="15.01" y2="13"/><path d="M11 21v-4a1 1 0 0 1 1-1h0a1 1 0 0 1 1 1v4"/></svg>Şube: -</span>
             <span class="student-lang-badge" id="profHeroLangBadge">🇬🇧 İngilizce</span>
           </div>
 
           <!-- İsim Düzenleme Alanı -->
           <div class="student-name-edit-wrap">
             <div class="student-name-input-group">
-              <span class="student-name-icon">👤</span>
+              <span class="student-name-icon">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+                  <circle cx="12" cy="7" r="4"/>
+                </svg>
+              </span>
               <input type="text" id="profNameInput" class="student-name-input" placeholder="Öğrenci Adı" maxlength="20" title="Öğrenci Adı">
             </div>
             <button type="button" id="profSaveBtn" class="student-name-save-pill" title="Değişiklikleri Kaydet">
@@ -2858,7 +2873,12 @@
           <!-- Şifre Değiştirme ve Güvenlik Kartı (Giriş Yapmış Hesaplar İçin) -->
           <div class="student-security-card" id="profSecurityCard" style="display: none;">
             <div class="student-security-info">
-              <span class="student-security-icon">🔐</span>
+              <span class="student-security-icon">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
+                  <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+                </svg>
+              </span>
               <div class="student-security-texts">
                 <strong class="student-security-title">Hesap Güvenliği</strong>
                 <span class="student-security-subtitle">Giriş şifrenizi dilediğiniz zaman güncelleyin</span>
@@ -2873,22 +2893,40 @@
         <!-- 2. TEMEL AKADEMİK METRİKLER (4'LÜ SAYAÇ KARTLARI) -->
         <div class="student-stats-grid">
           <div class="student-stat-card stat-card-learned">
-            <span class="stat-icon">📚</span>
+            <span class="stat-icon" aria-hidden="true">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/>
+                <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/>
+              </svg>
+            </span>
             <div class="stat-val" id="profStatLearned">0</div>
             <div class="stat-lbl">Öğrenilen Kelime</div>
           </div>
           <div class="student-stat-card stat-card-xp">
-            <span class="stat-icon">⭐</span>
+            <span class="stat-icon" aria-hidden="true">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="rgba(245, 158, 11, 0.2)" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>
+              </svg>
+            </span>
             <div class="stat-val" id="profStatXp">0</div>
             <div class="stat-lbl">Toplam XP</div>
           </div>
           <div class="student-stat-card stat-card-streak">
-            <span class="stat-icon">🔥</span>
+            <span class="stat-icon" aria-hidden="true">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="rgba(239, 68, 68, 0.2)" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.072-2.143-.224-4.054 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.153.433-2.294 1-3a2.5 2.5 0 0 0 2.5 2.5z"/>
+              </svg>
+            </span>
             <div class="stat-val" id="profStatStreak">0</div>
             <div class="stat-lbl">En İyi Seri</div>
           </div>
           <div class="student-stat-card stat-card-badges">
-            <span class="stat-icon">🎖️</span>
+            <span class="stat-icon" aria-hidden="true">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="12" cy="8" r="6"/>
+                <path d="M15.477 12.89 17 22l-5-3-5 3 1.523-9.11"/>
+              </svg>
+            </span>
             <div class="stat-val" id="profStatBadges">0 / 36</div>
             <div class="stat-lbl">Kazanılan Rozet</div>
           </div>
@@ -2898,18 +2936,34 @@
         <div class="student-activity-stats-card">
           <div class="activity-stats-header">
             <div class="activity-stats-title-row">
-              <span class="activity-header-icon">⏱️</span>
+              <span class="activity-header-icon" aria-hidden="true">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <circle cx="12" cy="12" r="10"/>
+                  <polyline points="12 6 12 12 16 14"/>
+                </svg>
+              </span>
               <div>
                 <h4 class="activity-section-title">Çalışma &amp; Odaklanma Süreleri</h4>
                 <p class="activity-section-desc">Etkinlik bazlı zaman kullanımı ve oturum kayıtları</p>
               </div>
             </div>
-            <button type="button" id="refreshStatsBtn" class="activity-stats-refresh-btn" title="İstatistikleri Senkronize Et">🔄</button>
+            <button type="button" id="refreshStatsBtn" class="activity-stats-refresh-btn" title="İstatistikleri Senkronize Et" aria-label="İstatistikleri Senkronize Et">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M23 4v6h-6"/>
+                <path d="M1 20v-6h6"/>
+                <path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/>
+              </svg>
+            </button>
           </div>
 
           <div class="activity-time-grid">
             <div class="activity-time-item">
-              <span class="time-item-icon">🃏</span>
+              <span class="time-item-icon" aria-hidden="true">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <rect x="2" y="7" width="16" height="14" rx="2"/>
+                  <path d="M6 3h12a2 2 0 0 1 2 2v12"/>
+                </svg>
+              </span>
               <div class="time-item-details">
                 <span class="time-item-label">Kelime Kartları</span>
                 <span class="time-item-val" id="profTimeCards">0 dk</span>
@@ -2917,7 +2971,14 @@
             </div>
 
             <div class="activity-time-item">
-              <span class="time-item-icon">🎮</span>
+              <span class="time-item-icon" aria-hidden="true">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <rect x="2" y="6" width="20" height="12" rx="6"/>
+                  <path d="M6 12h4m-2-2v4"/>
+                  <line x1="15" y1="11" x2="15.01" y2="11"/>
+                  <line x1="18" y1="13" x2="18.01" y2="13"/>
+                </svg>
+              </span>
               <div class="time-item-details">
                 <span class="time-item-label">Oyun &amp; Pratik</span>
                 <span class="time-item-val" id="profTimeGames">0 dk</span>
@@ -2925,7 +2986,12 @@
             </div>
 
             <div class="activity-time-item">
-              <span class="time-item-icon">🚀</span>
+              <span class="time-item-icon" aria-hidden="true">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1z"/>
+                  <line x1="4" y1="22" x2="4" y2="15"/>
+                </svg>
+              </span>
               <div class="time-item-details">
                 <span class="time-item-label">İlk Başlama</span>
                 <span class="time-item-val" id="profStartDate">-</span>
@@ -2933,7 +2999,14 @@
             </div>
 
             <div class="activity-time-item">
-              <span class="time-item-icon">📝</span>
+              <span class="time-item-icon" aria-hidden="true">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <rect x="3" y="4" width="18" height="18" rx="2" ry="2"/>
+                  <line x1="16" y1="2" x2="16" y2="6"/>
+                  <line x1="8" y1="2" x2="8" y2="6"/>
+                  <line x1="3" y1="10" x2="21" y2="10"/>
+                </svg>
+              </span>
               <div class="time-item-details">
                 <span class="time-item-label">Kayıt Tarihi</span>
                 <span class="time-item-val" id="profRegDate">Misafir</span>
@@ -2944,7 +3017,15 @@
           <!-- Ünite Tamamlama Süreleri -->
           <div class="activity-unit-durations-section">
             <div class="unit-durations-header">
-              <span class="unit-durations-icon">🏆</span>
+              <span class="unit-durations-icon" aria-hidden="true">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"/>
+                  <path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"/>
+                  <path d="M4 22h16"/>
+                  <path d="M10 14.66V17c0 .55-.45 1-1 1H8v4h8v-4h-1c-.55 0-1-.45-1-1v-2.34"/>
+                  <path d="M18 2H6v7a6 6 0 0 0 12 0V2z"/>
+                </svg>
+              </span>
               <span class="unit-durations-title">Ünite Tamamlama Kayıtları</span>
             </div>
             <div class="unit-durations-list" id="profUnitDurationsList">
@@ -2957,7 +3038,12 @@
         <div class="student-unit-progress-card">
           <div class="unit-progress-card-header">
             <div class="unit-progress-title-wrap">
-              <span class="up-header-icon">📖</span>
+              <span class="up-header-icon" aria-hidden="true">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/>
+                  <path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/>
+                </svg>
+              </span>
               <div>
                 <h4 class="up-section-title">Müfredat ve Ünite İlerlemesi</h4>
                 <p class="up-section-desc">Sonraki üniteyi açmak için mevcut üniteyi en az <strong>%80</strong> oranında tamamlayın.</p>
@@ -2975,7 +3061,12 @@
         <!-- 5. XP VE ROZET SİSTEMİ REHBERİ -->
         <div class="student-how-it-works-banner" id="profOpenBadgesGuideBtn" title="XP ve Rozet Kurallarını İncele">
           <div class="how-banner-left">
-            <div class="how-icon-circle">🎖️</div>
+            <div class="how-icon-circle" aria-hidden="true">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="12" cy="8" r="6"/>
+                <path d="M15.477 12.89 17 22l-5-3-5 3 1.523-9.11"/>
+              </svg>
+            </div>
             <div class="how-texts">
               <div class="how-title">XP, Seviye ve Rozet Sistemi Nasıl İşler?</div>
               <div class="how-subtitle">Kelime öğrenme +10 XP • İpucu kullanımı -5 XP • Rozet Kriterleri</div>
@@ -4007,7 +4098,7 @@
       <div class="confirm-icon-wrap" style="font-size: 2.8rem; margin-bottom: 8px;">🎉</div>
       <h3 class="confirm-title" style="font-size: 1.3rem; font-weight: 800; margin: 0 0 6px 0;">LexiGo Güncellendi!</h3>
       <div class="app-update-version-badge" style="display: inline-block; padding: 4px 14px; border-radius: 20px; font-size: 0.84rem; font-weight: 800; margin-bottom: 14px;">
-        Sürüm <span id="appUpdateVersionText">v1.9.37</span>
+        Sürüm <span id="appUpdateVersionText">v1.9.38</span>
       </div>
       <div class="update-notes-box" style="text-align: left; border-radius: 16px; padding: 14px 16px; font-size: 0.88rem; line-height: 1.6; margin-bottom: 18px; max-height: 280px; overflow-y: auto;">
         <div class="update-notes-title" style="font-weight: 800; margin-bottom: 8px; display: flex; align-items: center; gap: 6px;">
@@ -4081,11 +4172,11 @@
   <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-storage-compat.js"></script>
-  <script src="firebase_backend.js?v=1.9.37"></script>
+  <script src="firebase_backend.js?v=1.9.38"></script>
 
   <!-- Kelime Verisi ve Uygulama Mantığı (Sadece Standart Vanilla JS) -->
-  <script src="words_data.js?v=1.9.37"></script>
-  <script src="app.js?v=1.9.37"></script>
+  <script src="words_data.js?v=1.9.38"></script>
+  <script src="app.js?v=1.9.38"></script>
 
   </body>
 </html>
