@@ -549,9 +549,16 @@
               <span class="next-unit-guide-icon">💡</span>
               <span class="next-unit-guide-title">Sonraki Üniteye Nasıl Başlarsın?</span>
             </div>
-            <p class="next-unit-guide-desc">
-              Aşağıdaki <strong>'Sonraki Üniteye Başla 🚀'</strong> butonuna tıklayarak doğrudan sıradaki üniteye geçebilir veya ekranın en üstündeki <strong>Ünite Başlığı</strong> rozetine tıklayıp dilediğiniz üniteyi seçebilirsiniz.
-            </p>
+            <div class="next-unit-guide-steps">
+              <div class="guide-step-item">
+                <span class="guide-step-pill">1</span>
+                <div class="guide-step-content">Aşağıdaki <strong>'Sonraki Üniteye Başla 🚀'</strong> butonuna dokunabilir,</div>
+              </div>
+              <div class="guide-step-item">
+                <span class="guide-step-pill">2</span>
+                <div class="guide-step-content">Veya üst bardaki <strong>Ünite Başlığı</strong> rozetine dokunup dilediğin üniteyi seçebilirsin.</div>
+              </div>
+            </div>
           </div>
 
           <!-- Başarı & Pekiştirme Öneri Çubuğu (Kompakt 3D Kart) -->
@@ -3958,15 +3965,15 @@
 
   <!-- ÜNİTE TAMAMLAMA VE BİR SONRAKİ ÜNİTEYE BAŞLAMA REHBERİ MODALI -->
   <div id="unitCompleteModal" class="modal-overlay full-screen-modal" style="display: none; z-index: 10060;">
-    <div class="modal-card celebration-modal-card unit-complete-modal-card" style="max-width: 440px; text-align: center; padding: 26px 20px;">
-      <div class="confirm-icon-wrap" style="font-size: 3.2rem; margin-bottom: 6px;">🏆</div>
-      <span class="pill-badge" id="unitCompleteBadge" style="display: inline-block; padding: 4px 14px; border-radius: 999px; background: rgba(59, 130, 246, 0.15); color: #3b82f6; font-weight: 800; font-size: 0.82rem; margin-bottom: 10px; border: 1px solid rgba(59, 130, 246, 0.3);">
+    <div class="modal-card celebration-modal-card unit-complete-modal-card">
+      <div class="confirm-icon-wrap" style="font-size: 2.6rem; margin-bottom: 2px;">🏆</div>
+      <span class="pill-badge" id="unitCompleteBadge" style="display: inline-block; padding: 3px 12px; border-radius: 999px; background: rgba(59, 130, 246, 0.15); color: #3b82f6; font-weight: 800; font-size: 0.78rem; border: 1px solid rgba(59, 130, 246, 0.3);">
         ÜNİTE TAMAMLANDI
       </span>
-      <h3 class="confirm-title" id="unitCompleteTitle" style="font-size: 1.30rem; font-weight: 800; margin: 0 0 8px 0;">
+      <h3 class="confirm-title" id="unitCompleteTitle" style="font-size: 1.20rem; font-weight: 800; margin: 0;">
         Tebrikler! Üniteyi Tamamladın! 🎉
       </h3>
-      <p class="confirm-message" id="unitCompleteMessage" style="font-size: 0.88rem; line-height: 1.5; color: var(--text-muted); margin: 0 0 16px 0;">
+      <p class="confirm-message" id="unitCompleteMessage" style="font-size: 0.84rem; line-height: 1.4; color: var(--text-muted); margin: 0;">
         Bu ünitedeki tüm kelimeleri başarıyla öğrendin. Artık bir sonraki üniteye geçmeye hazırsın!
       </p>
 
@@ -3984,27 +3991,38 @@
       <div class="unit-complete-guide-box">
         <div class="guide-box-header">
           <span class="guide-box-icon">💡</span>
-          <strong>Sonraki Üniteye Nasıl Başlayabilirsin?</strong>
+          <strong>Sonraki Üniteye Nasıl Başlarsın?</strong>
         </div>
-        <ul class="guide-box-list">
-          <li><strong>Hemen Başla:</strong> Aşağıdaki <em>'Sonraki Üniteye Başla'</em> butonuna dokunarak doğrudan sıradaki üniteye geçebilirsiniz.</li>
-          <li><strong>Ünite Menüsünden Seç:</strong> Ekranın en üstünde yer alan <em>'Ünite Başlığı'</em> butonuna dokunarak açılan listeden açık olan dilediğiniz üniteye geçebilirsiniz.</li>
-          <li><strong>Öğrenci Portfolyosu:</strong> Profil sayfanızdan tüm kitap ve ünite tamamlama oranlarınızı dilediğiniz an inceleyebilirsiniz.</li>
-        </ul>
+        <div class="guide-steps-list">
+          <div class="guide-step-item">
+            <span class="guide-step-pill">1</span>
+            <div class="guide-step-content">
+              Aşağıdaki <strong>'Sonraki Üniteye Başla 🚀'</strong> butonuna dokunarak doğrudan başlayabilirsin.
+            </div>
+          </div>
+          <div class="guide-step-item">
+            <span class="guide-step-pill">2</span>
+            <div class="guide-step-content">
+              Ekranın en üstündeki <strong>Ünite Başlığı</strong> rozetine dokunarak dilediğin üniteyi seçebilirsin.
+            </div>
+          </div>
+        </div>
       </div>
 
       <!-- Aksiyon Butonları -->
-      <div class="confirm-actions-row" style="display: flex; flex-direction: column; gap: 9px; width: 100%;">
-        <button type="button" class="pill-btn primary-action-btn" id="confirmNextUnitBtn" style="width: 100%; padding: 12px 16px; font-size: 0.95rem; font-weight: 800; background: linear-gradient(135deg, #3b82f6, #2563eb); color: #fff; border: none; border-radius: 14px; box-shadow: 0 4px 16px rgba(37, 99, 235, 0.35); cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px;">
+      <div class="unit-complete-actions-wrap">
+        <button type="button" class="pill-btn primary-action-btn unit-complete-main-btn" id="confirmNextUnitBtn">
           <span>Sonraki Üniteye Başla 🚀</span>
         </button>
-        <button type="button" class="pill-btn secondary-btn" id="openUnitListFromCompleteBtn" style="width: 100%; padding: 10px 14px; font-size: 0.86rem; font-weight: 700; border-radius: 14px; cursor: pointer;">
-          📚 Tüm Üniteleri Listele
-        </button>
-        <button type="button" class="pill-btn secondary-btn" id="goToArenaFromCompleteBtn" style="width: 100%; padding: 10px 14px; font-size: 0.86rem; font-weight: 700; border-radius: 14px; cursor: pointer;">
-          🎮 Kelime Arenası'nda Pekiştir
-        </button>
-        <button type="button" class="pill-btn text-link-btn" id="closeUnitCompleteModalBtn" style="width: 100%; padding: 8px; font-size: 0.82rem; font-weight: 600; color: var(--text-muted); background: none; border: none; cursor: pointer;">
+        <div class="unit-complete-sub-actions">
+          <button type="button" class="pill-btn secondary-btn" id="openUnitListFromCompleteBtn">
+            📚 Ünite Listesi
+          </button>
+          <button type="button" class="pill-btn secondary-btn" id="goToArenaFromCompleteBtn">
+            🎮 Kelime Arenası
+          </button>
+        </div>
+        <button type="button" class="pill-btn text-link-btn" id="closeUnitCompleteModalBtn" style="padding: 6px; font-size: 0.80rem; font-weight: 600; color: var(--text-muted); background: none; border: none; cursor: pointer;">
           Kapat / Kartlarda Kal
         </button>
       </div>

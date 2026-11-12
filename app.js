@@ -5542,14 +5542,10 @@ let activeAvatarCategory = 'all';
               dom.cardCompletedNextUnitGuide.style.display = 'block';
             }
             if (dom.cardCompletedFullDesc) {
-              let nextActionNote = '';
-              if (nextUnit) {
-                const nextTitle = nextUnit.baslik || `Ünite ${nextUnit.unite_no}`;
-                nextActionNote = `Sıradaki ünite: <strong>${nextTitle}</strong>. Aşağıdaki <strong>'Sonraki Üniteye Başla 🚀'</strong> butonuna dokunabilir veya üst bardaki <strong>Ünite Başlığı</strong> butonuna tıklayarak sıradaki üniteyi seçebilirsin.`;
-              } else {
-                nextActionNote = `Tebrikler! Bu kitaptaki tüm üniteleri bitirdin. Üst kura geçmek için seviye terfi menüsünü kullanabilirsin.`;
-              }
-              dom.cardCompletedFullDesc.innerHTML = `Tebrikler! Bu ünitedeki <strong>tüm kelimeleri</strong> başarıyla öğrendin. Şimdi öğrendiğin kelimeleri kalıcı hafızana almak için <strong>Kelime Arenası</strong>'nda pratik yapabilir veya doğrudan sonraki üniteye başlayabilirsin.<br><br>💡 ${nextActionNote}`;
+              const nextTitle = nextUnit ? (nextUnit.baslik || `Ünite ${nextUnit.unite_no}`) : '';
+              dom.cardCompletedFullDesc.innerHTML = nextUnit
+                ? `Tebrikler! Bu ünitedeki <strong>tüm kelimeleri</strong> öğrendin. Sıradaki ünite: <strong>${nextTitle}</strong>.`
+                : `Tebrikler! Bu kitaptaki <strong>tüm üniteleri</strong> başarıyla tamamladın.`;
             }
             if (dom.cardFullLearnMoreText) {
               dom.cardFullLearnMoreText.textContent = nextUnit ? 'Sonraki Üniteye Başla' : 'Sonraki Seviye';
