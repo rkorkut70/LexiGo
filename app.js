@@ -1240,6 +1240,7 @@
           if (versionText) versionText.textContent = APP_VERSION;
           if (updateModalEl) {
             updateModalEl.style.display = 'flex';
+            updateModalEl.classList.add('active');
             playSoundEffect('celebration');
           } else {
             showToast(`🎉 LexiGo ${APP_VERSION} sürümüne güncellendi! Yenilikler hazır.`, 'correct');
@@ -15898,9 +15899,13 @@ let activeAvatarCategory = 'all';
             showToast(`✅ LexiGo en güncel sürümde (${currentVer}).`, 'correct');
           }
 
-          // Eğer denetleme Hakkında sayfasındaki butondan yapılmadıysa (örn. Ayarlar Genel sekmesinden) appUpdateModal'ı aç
+          // Yeni sürüm varsa her durumda appUpdateModal'ı açarak kullanıcıya yenilikleri ve güncelle butonunu göster
           const isFromAboutPage = (btnEl && btnEl.id === 'aboutCheckUpdateBtn');
-          if (!isFromAboutPage && appUpdateModal) {
+          if (isNewVersion && appUpdateModal) {
+            appUpdateModal.style.display = 'flex';
+            appUpdateModal.classList.add('active');
+            playSoundEffect('correct');
+          } else if (!isFromAboutPage && appUpdateModal) {
             appUpdateModal.style.display = 'flex';
             appUpdateModal.classList.add('active');
             playSoundEffect('correct');
@@ -16004,14 +16009,20 @@ let activeAvatarCategory = 'all';
           if (isRemoteVersionNewer(remoteVer, currentVer, remoteCode, currentCode)) {
             const platform = getAppPlatform();
             const isAndroid = (platform === 'android' || platform === 'android_web' || /android/i.test(navigator.userAgent || ''));
+            
+            // Tüm platformlarda (Android dahil) kalıcı kayan güncelleme banner'ı göster
+            showAppUpdateBanner(remoteVer);
+
             if (isAndroid) {
-              showToast(`🚀 Google Play'de LexiGo ${remoteVer} hazır! Güncellemek için Hakkında sayfasına dokunun.`, 7000, 'info', () => {
+              // Android Native Sistem Bildirim Çubuğuna da bildirim gönder
+              if (window.AndroidTTS && typeof window.AndroidTTS.sendUpdateNotification === 'function') {
+                try { window.AndroidTTS.sendUpdateNotification(); } catch (e) { console.warn('System notification error:', e); }
+              }
+              showToast(`🚀 Google Play'de LexiGo ${remoteVer} hazır! Güncellemek için dokunun.`, 8000, 'info', () => {
                 navigateToAboutUpdatePage();
               });
             } else {
-              // iOS, Safari ve Web: Canlı Floating Güncelleme Banner'ını ekrana yerleştir
-              showAppUpdateBanner(remoteVer);
-              showToast(`🚀 Yeni LexiGo ${remoteVer} hazır! İncelemek için dokunun.`, 7000, 'info', () => {
+              showToast(`🚀 Yeni LexiGo ${remoteVer} hazır! İncelemek için dokunun.`, 8000, 'info', () => {
                 navigateToAboutUpdatePage();
               });
             }

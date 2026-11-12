@@ -1,11 +1,12 @@
 {
-  "version": "v1.9.29",
-  "versionCode": 136,
-  "releaseDate": "2026-11-09",
+  "version": "v1.9.40",
+  "versionCode": 147,
+  "releaseDate": "2026-11-12",
   "notes": [
-    "🏠 Üst Menü Navigasyonu: Üst başlık menüsüne doğrudan 3D Ana Sayfa butonu eklendi; ekranın altındaki açılır çekmece menüsü kaldırıldı.",
-    "✨ Marka & Simge İyileştirmesi: Sol üst köşedeki LexiGo logosu daha kompakt ve zarif boyutlara uyarlandı.",
-    "📖 Akordeon Müfredat Menüsü: Öğrenci profili sayfasındaki kitaplar ve üniteler akordeon menü yapısına kavuşturuldu.",
-    "⚠️ Kümülatif Zorlanılan Kelime Raporu: Her ünite satırında Arenadaki etkinlikler boyunca zorlanılanlar listesine eklenen toplam kelime sayısı detaylı dökümle raporlandı."
+    "Turnuva & Liderler Ekranı: Şube seçimi ve sınıf liderlik butonlarındaki eski simgeler kaldırıldı, arayüz sadeleştirildi.",
+    "Şube Seçim Modalı: Açılır penceredeki okul simgesi kaldırılarak modern görünüme uyarlandı.",
+    "Ünite Tamamlama Rehberi: Ünite bittiğinde bir sonraki üniteye nasıl başlanacağını gösteren rehber ve akıllı yönlendirme eklendi.",
+    "Öğrenci Profili: Profil sekmeleri ve detay simgeleri yenilenerek modernize edildi.",
+    "Performans & Stabilite: Canlı sürüm denetimi ve anlık Google Play bildirim sistemi güçlendirildi."
   ]
 }
