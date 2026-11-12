@@ -7,7 +7,7 @@
 (function () {
   'use strict';
 
-  const APP_VERSION = 'v1.9.38';
+  const APP_VERSION = 'v1.9.39';
   const DEFAULT_AVATAR = 'avatar_default';
   const CURRENT_APP_BUILD = 'lexigo_production_live_launch_v1928';
 
@@ -12890,23 +12890,22 @@ let activeAvatarCategory = 'all';
         if (listContainer) {
           listContainer.innerHTML = `
             <div style="text-align:center; padding: 30px 15px; color: var(--text-muted);">
-              <div style="font-size: 2rem; margin-bottom: 8px;">🏫</div>
-              <strong style="color: var(--text-main); display: block; margin-bottom: 6px;">Henüz Şuben Belirlenmedi</strong>
-              <p style="font-size: 0.8rem; margin-bottom: 12px;">Sınıf içi haftalık liderlik tablosunu görmek için şubeni seçmelisin.</p>
-              <button type="button" class="pill-btn primary-action-btn" id="renderClassOpenBranchBtn" style="padding: 8px 18px; font-size: 0.84rem;">Şubemi Seç ➔</button>
+              <strong style="color: var(--text-main); display: block; margin-bottom: 6px; font-size: 1.05rem;">Henüz Şuben Seçilmedi</strong>
+              <p style="font-size: 0.8rem; margin-bottom: 14px;">Sınıf içi haftalık liderlik tablosunu görmek için şubeni seçmelisin.</p>
+              <button type="button" class="pill-btn primary-action-btn" id="renderClassOpenBranchBtn" style="padding: 8px 18px; font-size: 0.84rem;">Şubemi Seç</button>
             </div>
           `;
           const btn = document.getElementById('renderClassOpenBranchBtn');
           if (btn) btn.onclick = openSelectBranchModal;
         }
-        if (branchBadge) branchBadge.textContent = '🏫 Şube: Seçilmedi';
+        if (branchBadge) branchBadge.textContent = 'Şube: Seçilmedi';
         if (trackBadge) trackBadge.textContent = 'Lütfen şubenizi belirleyin';
         if (countBadge) countBadge.textContent = '0 Öğrenci';
         return;
       }
 
       const branchObj = (window.SCHOOL_BRANCHES || []).find(b => b.code === state.userBranch);
-      if (branchBadge) branchBadge.textContent = `🏫 Şube: ${state.userBranch}`;
+      if (branchBadge) branchBadge.textContent = `Şube: ${state.userBranch}`;
       if (trackBadge) trackBadge.textContent = branchObj ? `${branchObj.trackName} (${branchObj.level} Seviyesi)` : 'Hazırlık Sınıfı';
 
       if (listContainer) {
@@ -13244,8 +13243,8 @@ let activeAvatarCategory = 'all';
                   rankB.style.opacity = '1';
                 }
                 if (avB) {
-                  avB.innerHTML = '🏫';
-                  avB.style.fontSize = '1.2rem';
+                  avB.innerHTML = '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c3 3 9 3 12 0v-5"/></svg>';
+                  avB.style.fontSize = '1rem';
                 }
                 if (nameB) nameB.textContent = `Şuben: ${myB.code}`;
                 if (tagB) tagB.textContent = `👥 ${myB.activeStudentCount || myB.studentCount} Öğrenci`;
@@ -13264,8 +13263,8 @@ let activeAvatarCategory = 'all';
                   rankB.style.opacity = '0.7';
                 }
                 if (avB) {
-                  avB.innerHTML = '🏫';
-                  avB.style.fontSize = '1.2rem';
+                  avB.innerHTML = '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c3 3 9 3 12 0v-5"/></svg>';
+                  avB.style.fontSize = '1rem';
                 }
                 if (nameB) nameB.textContent = `Şuben: ${state.userBranch}`;
                 if (tagB) tagB.textContent = `Henüz Arenada Yarışmadı`;
@@ -14459,7 +14458,7 @@ let activeAvatarCategory = 'all';
         const confirmed = await showAppConfirm({
           title: 'Resmi Şubeni Onayla',
           message: confirmMsg,
-          icon: '🏫',
+          icon: '🎓',
           okText: 'Evet, Şubemi Kilitle',
           cancelText: 'Vazgeç',
           isDanger: false
