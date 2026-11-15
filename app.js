@@ -14770,12 +14770,53 @@ let activeAvatarCategory = 'all';
           return;
         }
 
-        let levelNotice = '';
-        if (campusClass.level && state.userLevel && campusClass.level !== state.userLevel) {
-          levelNotice = `\n\n📌 Bilgi: Bu sınıf ${campusClass.level} seviyesindedir (Mevcut seviyeniz: ${state.userLevel}). Sınıfa katıldıktan sonra "Ünite Seçimi" menüsündeki sekmelerden hem ${state.userLevel} hem de ${campusClass.level} kitaplarına dilediğiniz gibi erişebilirsiniz.`;
+        // ===============================================================
+        // LEXIGO CAMPUS SEVİYE KORUMA VE UYUŞMA BARİYERİ (LEVEL GUARD)
+        // ===============================================================
+        const studentLevel = state.userLevel || getLevelForTrack(state.activeLanguage, state.userTrack) || 'A2';
+        const classLevel = campusClass.level || '';
+
+        // Kural: Öğrenci A2 iken henüz A2 kitabını tamamlamadıysa B1 sınıfına bağlanamaz
+        if ((classLevel === 'B1' || classLevel === 'B1+') && studentLevel === 'A2') {
+          const allA2Units = getUnitsData().filter(u => u.dil === state.activeLanguage && u.seviye === 'A2');
+          const isA2Completed = allA2Units.length > 0 && allA2Units.every(u => {
+            const p = getUnitProgress(u, state.activeLanguage);
+            return p.isPassed80 || p.isPassed75;
+          });
+
+          if (!isA2Completed) {
+            if (modalClassPinFeedback) {
+              modalClassPinFeedback.style.display = 'block';
+              modalClassPinFeedback.style.color = '#ef4444';
+              modalClassPinFeedback.innerHTML = `<strong>⛔ Seviye Uyumsuzluğu Engellendi:</strong> "${pinVal}" sınıfı <strong>${classLevel}</strong> seviyesindedir. Mevcut seviyeniz <strong>A2</strong> olup henüz A2 kitabındaki tüm üniteleri en az %80 tamamlamadığınız için bu sınıfa katılamazsınız.`;
+            }
+            if (typeof showAppAlert === 'function') {
+              await showAppAlert({
+                title: '⛔ Seviye Uyumsuzluğu Engellendi',
+                message: `Girdiğiniz "${pinVal}" sınıf kodu ${classLevel} seviyesine aittir.\n\nSizin mevcut çalışma seviyeniz: ${studentLevel}.\n\nHenüz A2 kitabındaki tüm üniteleri (%80 barajıyla) tamamlamadığınız için bu sınıfa katılamazsınız.\n\nLütfen kendi seviyenize (A2) ait sınıf kodunu girin veya okutmanınızla iletişime geçin.`,
+                icon: '🚫'
+              });
+            } else {
+              alert(`⛔ Seviye Uyumsuzluğu: "${pinVal}" sınıfı ${classLevel} seviyesindedir. Henüz A2 kitabını tamamlamadığınız için bu sınıfa katılamazsınız.`);
+            }
+            return;
+          }
         }
 
-        const confirmMsg = `Sınıf Bulundu:\n\nSınıf: ${campusClass.name || campusClass.code}\nKitap: ${campusClass.book || 'Müfredat Kitabı'}\nAktif Ünite: ${campusClass.activeUnit || 'Unit 1'}\nÖğrenim Modeli: ${campusClass.learningPolicy || 'Smart Hybrid'}${levelNotice}\n\nBu sınıfa katılmak ve şubenizi "${pinVal}" olarak kaydetmek istiyor musunuz?`;
+        // B1 öğrencisi bir A2 sınıfına katılmak isterse açık teyit iste
+        if (studentLevel === 'B1' && classLevel === 'A2') {
+          const downgradeConfirmed = await showAppConfirm({
+            title: 'Seviye Uyarısı',
+            message: `Girdiğiniz "${pinVal}" sınıfı A2 seviyesindedir. Sizin mevcut seviyeniz ise B1'dir.\n\nBir alt seviyedeki sınıfa katılmak istediğinize emin misiniz?`,
+            icon: '⚠️',
+            okText: 'Evet, Katıl',
+            cancelText: 'Vazgeç',
+            isDanger: true
+          });
+          if (!downgradeConfirmed) return;
+        }
+
+        const confirmMsg = `Sınıf Bulundu:\n\nSınıf: ${campusClass.name || campusClass.code}\nKitap: ${campusClass.book || 'Müfredat Kitabı'}\nAktif Ünite: ${campusClass.activeUnit || 'Unit 1'}\nÖğrenim Modeli: ${campusClass.learningPolicy || 'Smart Hybrid'}\nSeviye: ${classLevel || studentLevel}\n\nBu sınıfa katılmak ve şubenizi "${pinVal}" olarak kaydetmek istiyor musunuz?`;
 
         const confirmed = await showAppConfirm({
           title: 'Sınıfa Katıl',
@@ -14797,7 +14838,8 @@ let activeAvatarCategory = 'all';
           await window.updateUserBranch(pinVal, campusClass);
         }
 
-        if (campusClass.level) {
+        // Eğer öğrenci sınıfın seviyesini hak etmişse veya seviyeler uyuşuyorsa güncelle, aksi halde öğrencinin mevcut seviyesini koru
+        if (campusClass.level && (campusClass.level === studentLevel || isLevelUnlocked(state.activeLanguage, campusClass.level))) {
           state.userLevel = campusClass.level;
           localStorage.setItem('lexiq_user_level', campusClass.level);
           if (state.activeLanguage === 'EN-TR') {
