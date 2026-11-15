@@ -14728,7 +14728,7 @@ let activeAvatarCategory = 'all';
     const cancelBranchBtn = document.getElementById('cancelBranchModalBtn');
     if (cancelBranchBtn) cancelBranchBtn.addEventListener('click', closeSelectBranchModal);
 
-    // Okutman Sınıf PIN Kodu İle Bağlanma (LexiGo Campus Entegrasyonu)
+    // Sınıf PIN Kodu İle Bağlanma (LexiGo Campus Entegrasyonu)
     const btnConnectCampusPin = document.getElementById('btnConnectCampusPin');
     const modalClassPinInput = document.getElementById('modalClassPinInput');
     const modalClassPinFeedback = document.getElementById('modalClassPinFeedback');
@@ -14740,7 +14740,7 @@ let activeAvatarCategory = 'all';
           if (modalClassPinFeedback) {
             modalClassPinFeedback.style.display = 'block';
             modalClassPinFeedback.style.color = '#ef4444';
-            modalClassPinFeedback.textContent = 'Lütfen okutmanınızın paylaştığı sınıf kodunu girin.';
+            modalClassPinFeedback.textContent = 'Lütfen sınıf PIN kodunu girin.';
           }
           return;
         }
@@ -14775,7 +14775,7 @@ let activeAvatarCategory = 'all';
           levelNotice = `\n\n📌 Bilgi: Bu sınıf ${campusClass.level} seviyesindedir (Mevcut seviyeniz: ${state.userLevel}). Sınıfa katıldıktan sonra "Ünite Seçimi" menüsündeki sekmelerden hem ${state.userLevel} hem de ${campusClass.level} kitaplarına dilediğiniz gibi erişebilirsiniz.`;
         }
 
-        const confirmMsg = `Okutman Sınıfı Bulundu:\n\nSınıf: ${campusClass.name || campusClass.code}\nKitap: ${campusClass.book || 'Müfredat Kitabı'}\nAktif Ünite: ${campusClass.activeUnit || 'Unit 1'}\nÖğrenim Modeli: ${campusClass.learningPolicy || 'Smart Hybrid'}${levelNotice}\n\nBu sınıfa katılmak ve şubenizi "${pinVal}" olarak kaydetmek istiyor musunuz?`;
+        const confirmMsg = `Sınıf Bulundu:\n\nSınıf: ${campusClass.name || campusClass.code}\nKitap: ${campusClass.book || 'Müfredat Kitabı'}\nAktif Ünite: ${campusClass.activeUnit || 'Unit 1'}\nÖğrenim Modeli: ${campusClass.learningPolicy || 'Smart Hybrid'}${levelNotice}\n\nBu sınıfa katılmak ve şubenizi "${pinVal}" olarak kaydetmek istiyor musunuz?`;
 
         const confirmed = await showAppConfirm({
           title: 'Sınıfa Katıl',
