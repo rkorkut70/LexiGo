@@ -2267,6 +2267,24 @@
         </div>
       </div>
 
+      <!-- VEYA OKUTMAN SINIF PIN KODU İLE BAĞLANMA -->
+      <div style="margin: 18px 0; border-top: 1px dashed var(--border-color); padding-top: 14px; text-align: left;">
+        <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 6px;">
+          <span style="font-size: 0.82rem; font-weight: 800; color: var(--accent); text-transform: uppercase; letter-spacing: 0.5px;">
+            🎓 veya Okutman Sınıf PIN Kodu:
+          </span>
+          <span style="font-size: 0.72rem; color: var(--text-muted);">Örn: HU-B101</span>
+        </div>
+        <div style="display: flex; gap: 8px;">
+          <input type="text" id="modalClassPinInput" placeholder="Sınıf Kodu (Örn: HU-B101)" 
+                 style="flex: 1; padding: 10px 14px; font-size: 0.95rem; font-weight: 800; font-family: monospace; text-transform: uppercase; border-radius: 10px; border: 2px solid var(--border-color); background: var(--bg-card); color: var(--text-main); outline: none;">
+          <button type="button" id="btnConnectCampusPin" class="pill-btn primary-action-btn" style="padding: 10px 16px; font-size: 0.85rem; font-weight: 800; white-space: nowrap;">
+            Kodu Doğrula
+          </button>
+        </div>
+        <div id="modalClassPinFeedback" style="font-size: 0.78rem; margin-top: 6px; display: none;"></div>
+      </div>
+
       <div class="select-branch-actions">
         <button type="button" id="cancelBranchModalBtn" class="pill-btn secondary-btn select-branch-cancel-btn">Daha Sonra</button>
         <button type="button" id="confirmBranchModalBtn" class="pill-btn primary-action-btn select-branch-confirm-btn">Şubemi Onayla ➔</button>
@@ -2610,6 +2628,9 @@
           </svg>
         </button>
       </div>
+
+      <!-- Kitap / Seviye Sekmeleri (A2, B1, B1+ vb.) -->
+      <div class="unit-modal-tabs-bar" id="unitModalTabsBar"></div>
 
       <div class="modal-options-list" id="unitOptionsList">
         <!-- JS ile doldurulacak -->
@@ -4255,11 +4276,11 @@
   <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-storage-compat.js"></script>
-  <script src="firebase_backend.js?v=1.9.40"></script>
+  <script src="firebase_backend.js?v=1.9.41"></script>
 
   <!-- Kelime Verisi ve Uygulama Mantığı (Sadece Standart Vanilla JS) -->
-  <script src="words_data.js?v=1.9.40"></script>
-  <script src="app.js?v=1.9.40"></script>
+  <script src="words_data.js?v=1.9.41"></script>
+  <script src="app.js?v=1.9.41"></script>
 
   </body>
 </html>

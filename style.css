@@ -26699,3 +26699,85 @@ html:not([data-theme="dark"]) .about-update-status-msg {
   background: rgba(59, 130, 246, 0.14);
   border-color: rgba(59, 130, 246, 0.38);
 }
+
+/* Kitap / Seviye Sekmeleri (Ünite Seçim Modalı) */
+.unit-modal-tabs-bar {
+  display: flex;
+  gap: 8px;
+  margin: 10px 0 16px 0;
+  overflow-x: auto;
+  padding: 4px 2px;
+  scrollbar-width: none;
+  -webkit-overflow-scrolling: touch;
+}
+.unit-modal-tabs-bar::-webkit-scrollbar {
+  display: none;
+}
+.unit-modal-tab-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 8px 14px;
+  border-radius: 12px;
+  font-size: 0.86rem;
+  font-weight: 700;
+  background: var(--bg-card, #1e2230);
+  border: 1.5px solid var(--border-color, rgba(255, 255, 255, 0.12));
+  color: var(--text-muted, #94a3b8);
+  cursor: pointer;
+  white-space: nowrap;
+  transition: all 0.2s ease;
+  user-select: none;
+}
+.unit-modal-tab-btn:hover {
+  border-color: var(--accent, #3b82f6);
+  color: var(--text-main, #f8fafc);
+}
+.unit-modal-tab-btn.active {
+  background: linear-gradient(135deg, rgba(59, 130, 246, 0.18), rgba(37, 99, 235, 0.28));
+  border-color: var(--accent, #3b82f6);
+  color: #3b82f6;
+  box-shadow: 0 2px 8px rgba(59, 130, 246, 0.22);
+}
+[data-theme="dark"] .unit-modal-tab-btn.active {
+  color: #60a5fa;
+}
+.unit-modal-tab-btn.locked {
+  opacity: 0.65;
+}
+.unit-modal-tab-btn .tab-badge {
+  font-size: 0.72rem;
+  font-weight: 800;
+  padding: 2px 6px;
+  border-radius: 6px;
+  background: rgba(0, 0, 0, 0.08);
+}
+[data-theme="dark"] .unit-modal-tab-btn .tab-badge {
+  background: rgba(255, 255, 255, 0.1);
+}
+.unit-modal-tab-btn.active .tab-badge {
+  background: rgba(59, 130, 246, 0.25);
+  color: #2563eb;
+}
+[data-theme="dark"] .unit-modal-tab-btn.active .tab-badge {
+  color: #93c5fd;
+}
+.unit-modal-level-locked-banner {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 14px;
+  border-radius: 12px;
+  background: rgba(245, 158, 11, 0.1);
+  border: 1px solid rgba(245, 158, 11, 0.3);
+  color: #d97706;
+  font-size: 0.85rem;
+  font-weight: 600;
+  margin-bottom: 12px;
+  line-height: 1.4;
+}
+[data-theme="dark"] .unit-modal-level-locked-banner {
+  color: #fbbf24;
+  background: rgba(245, 158, 11, 0.15);
+  border-color: rgba(245, 158, 11, 0.35);
+}

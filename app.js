@@ -922,6 +922,7 @@
     unitModalTitle: document.getElementById('unitModalTitle'),
     unitModalSubtitle: document.getElementById('unitModalSubtitle'),
     closeUnitModalBtn: document.getElementById('closeUnitModalBtn'),
+    unitModalTabsBar: document.getElementById('unitModalTabsBar'),
     unitOptionsList: document.getElementById('unitOptionsList'),
     badgesModal: document.getElementById('badgesModal'),
     closeBadgesModalBtn: document.getElementById('closeBadgesModalBtn'),
@@ -1130,6 +1131,7 @@
     setupEventListeners();
     updateArenaHeaderAndStats();
     updateArenaBadgeDot();
+
     updateUserProfileUI();
     updateHeaderUnitDisplay();
     dismissArenaIdlePrompt();
@@ -1865,7 +1867,8 @@
           state.isOnboarded = imported.isOnboarded;
           localStorage.setItem('lexiq_user_onboarded', imported.isOnboarded ? 'true' : 'false');
         }
-        updateUserProfileUI();
+
+    updateUserProfileUI();
 
         if (imported.learnedMap && typeof imported.learnedMap === 'object') {
           state.learnedMap = imported.learnedMap;
@@ -2018,6 +2021,7 @@
     }
 
     refreshWordsList();
+
     updateUserProfileUI();
     closeSettingsModal();
     playSoundEffect('correct');
@@ -2310,12 +2314,40 @@
     if (!branchBadge) return;
     const schoolSvg = '<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align: -1px; margin-right: 5px;"><path d="M3 21h18"/><path d="M5 21V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v16"/><line x1="9" y1="9" x2="9.01" y2="9"/><line x1="15" y1="9" x2="15.01" y2="9"/><line x1="9" y1="13" x2="9.01" y2="13"/><line x1="15" y1="13" x2="15.01" y2="13"/><path d="M11 21v-4a1 1 0 0 1 1-1h0a1 1 0 0 1 1 1v4"/></svg>';
     if (state.userBranch) {
-      branchBadge.innerHTML = `${schoolSvg}Şube: ${state.userBranch}`;
+      branchBadge.innerHTML = `${schoolSvg}Şube: ${state.userBranch} <span style="font-size:0.75rem;opacity:0.8;margin-left:4px;">(Değiştir / Ayrıl)</span>`;
       branchBadge.style.display = 'inline-flex';
       branchBadge.style.alignItems = 'center';
-      branchBadge.style.cursor = 'default';
-      branchBadge.title = 'Resmi Sınıf / Şubeniz Kilitli';
-      branchBadge.onclick = null;
+      branchBadge.style.cursor = 'pointer';
+      branchBadge.title = 'Resmi Sınıf / Şubeniz. Sınıftan ayrılmak veya değiştirmek için dokunun.';
+      branchBadge.onclick = async () => {
+        let confirmed = false;
+        if (typeof showAppConfirm === 'function') {
+          confirmed = await showAppConfirm({
+            title: 'Sınıftan Ayrıl',
+            message: `Şu an "${state.userBranch}" sınıfına bağlısınız.\n\nSınıftan ayrılmak ve şube kilidinizi kaldırmak istiyor musunuz?`,
+            icon: '🏫',
+            okText: 'Evet, Sınıftan Ayrıl',
+            cancelText: 'Vazgeç',
+            isDanger: true
+          });
+        } else {
+          confirmed = window.confirm(`"${state.userBranch}" sınıfından ayrılmak istiyor musunuz?`);
+        }
+        if (confirmed) {
+          state.userBranch = '';
+          state.branchLocked = false;
+          localStorage.removeItem('lexiq_user_branch');
+          localStorage.removeItem('lexiq_branch_locked');
+          if (typeof window.updateUserBranch === 'function') {
+            await window.updateUserBranch('');
+          }
+          if (typeof window.updateFirebaseProfile === 'function') {
+            window.updateFirebaseProfile(state.userName, state.userAvatar, state.userTrack, state.userLevel, state.activeLanguage);
+          }
+          updateStudentProfileBranchBadge();
+          showToast('Sınıf bağlantısı kaldırıldı. Şimdi bireysel olarak veya farklı bir sınıfla devam edebilirsiniz.');
+        }
+      };
     } else {
       branchBadge.innerHTML = `${schoolSvg}Sınıf Seç (İsteğe Bağlı)`;
       branchBadge.style.display = 'inline-flex';
@@ -2896,7 +2928,20 @@
     state.activeUnitNo = unitNo;
     const allUnits = getUnitsData().filter(u => u.dil === state.activeLanguage);
     const targetUnit = allUnits.find(u => u.unite_no === unitNo);
-    if (targetUnit) noteUnitStart(targetUnit);
+    if (targetUnit) {
+      noteUnitStart(targetUnit);
+      if (targetUnit.seviye && targetUnit.seviye !== state.userLevel) {
+        state.userLevel = targetUnit.seviye;
+        localStorage.setItem('lexiq_user_level', state.userLevel);
+        if (state.activeLanguage === 'EN-TR') {
+          state.userTrack = state.userLevel === 'A2' ? '4A' : '4B';
+          localStorage.setItem('lexiq_user_track', state.userTrack);
+        }
+        if (typeof window.updateFirebaseProfile === 'function') {
+          window.updateFirebaseProfile(state.userName, state.userAvatar, state.userTrack, state.userLevel, state.activeLanguage);
+        }
+      }
+    }
     state.dailyGoalExtra = 0;
     state.currentIndex = 0;
     refreshWordsList();
@@ -3261,7 +3306,8 @@ let activeAvatarCategory = 'all';
 
     // Genel UI güncelle (üst bar avatarı, vb.)
     if (typeof updateUserProfileUI === 'function') {
-      updateUserProfileUI();
+
+    updateUserProfileUI();
     } else if (typeof window.updateUserProfileUI === 'function') {
       window.updateUserProfileUI();
     }
@@ -3576,8 +3622,15 @@ let activeAvatarCategory = 'all';
    * Mevcut aktif üniteden sonra gelen bir sonraki üniteyi bulur.
    */
   function getNextUnitForCurrent() {
-    const targetLevel = state.userLevel || getLevelForTrack(state.activeLanguage, state.userTrack);
-    const units = getUnitsData().filter(u => u.dil === state.activeLanguage && (!targetLevel || u.seviye === targetLevel));
+    let targetLevel = state.userLevel || getLevelForTrack(state.activeLanguage, state.userTrack);
+    const allUnits = getUnitsData().filter(u => u.dil === state.activeLanguage);
+    const curUnitObj = allUnits.find(u => u.unite_no === state.activeUnitNo);
+    if (curUnitObj && curUnitObj.seviye && curUnitObj.seviye !== targetLevel) {
+      targetLevel = curUnitObj.seviye;
+      state.userLevel = targetLevel;
+      localStorage.setItem('lexiq_user_level', targetLevel);
+    }
+    const units = allUnits.filter(u => !targetLevel || u.seviye === targetLevel);
     const curIdx = units.findIndex(u => u.unite_no === state.activeUnitNo);
     if (curIdx !== -1 && curIdx + 1 < units.length) {
       return units[curIdx + 1];
@@ -3601,6 +3654,17 @@ let activeAvatarCategory = 'all';
       return;
     }
     state.activeUnitNo = nextUnit.unite_no;
+    if (nextUnit.seviye && nextUnit.seviye !== state.userLevel) {
+      state.userLevel = nextUnit.seviye;
+      localStorage.setItem('lexiq_user_level', state.userLevel);
+      if (state.activeLanguage === 'EN-TR') {
+        state.userTrack = state.userLevel === 'A2' ? '4A' : '4B';
+        localStorage.setItem('lexiq_user_track', state.userTrack);
+      }
+      if (typeof window.updateFirebaseProfile === 'function') {
+        window.updateFirebaseProfile(state.userName, state.userAvatar, state.userTrack, state.userLevel, state.activeLanguage);
+      }
+    }
     state.activeFilter = 'pending';
     localStorage.setItem('kelime_active_filter', 'pending');
     state.currentIndex = 0;
@@ -3743,6 +3807,7 @@ let activeAvatarCategory = 'all';
       window.updateFirebaseProfile(state.userName, state.userAvatar, state.userTrack, state.userLevel, state.activeLanguage);
     }
 
+
     updateUserProfileUI();
     refreshWordsList();
     triggerConfettiFx();
@@ -3784,6 +3849,31 @@ let activeAvatarCategory = 'all';
   }
 
   /**
+   * Bir dilin belirli bir seviyesinin (örneğin A2, B1, B1+) kullanıcı için açık olup olmadığını belirler.
+   * Kural: Kullanıcının kayıtlı/mevcut seviyesi ve geçmiş seviyeler daima açıktır.
+   * Üst seviyeler ise ancak bir önceki seviyenin tüm üniteleri en az %75 tamamlandığında açılır.
+   */
+  function isLevelUnlocked(langCode, targetLevel) {
+    const levels = getLevelsForLanguage(langCode);
+    const targetIdx = levels.indexOf(targetLevel);
+    if (targetIdx <= 0) return true; // İlk seviye daima açıktır
+    
+    const currentLevel = state.userLevel || getLevelForTrack(langCode, state.userTrack);
+    const currentIdx = levels.indexOf(currentLevel);
+    if (currentIdx >= targetIdx) return true;
+    
+    // Önceki seviyedeki tüm ünitelerin tamamlanıp tamamlanmadığını kontrol et
+    const prevLevel = levels[targetIdx - 1];
+    const prevUnits = getUnitsData().filter(u => u.dil === langCode && u.seviye === prevLevel);
+    if (!prevUnits.length) return true;
+    return prevUnits.every(u => {
+      const prog = getUnitProgress(u, langCode);
+      return prog.isPassed80 || prog.isPassed75;
+    });
+  }
+  window.isLevelUnlocked = isLevelUnlocked;
+
+  /**
    * Müfredat / Kur bazında tüm ünitelerin kilit durumlarını hesaplar.
    * Kural 4: 1. ünite daima açıktır. Sonraki ünite (i), bir önceki ünite (i-1) en az %80 tamamlandığında açılır.
    * Kullanıcı kilidi açılmış tüm geçmiş ünitelere serbestçe geri dönebilir.
@@ -3791,17 +3881,39 @@ let activeAvatarCategory = 'all';
   function getUnitLockStatusMap(langCode = state.activeLanguage, level = null) {
     const targetLevel = level || state.userLevel || getLevelForTrack(langCode, state.userTrack);
     const units = getUnitsData().filter(u => u.dil === langCode && (!targetLevel || u.seviye === targetLevel));
+    const levels = getLevelsForLanguage(langCode);
+    const targetIdx = levels.indexOf(targetLevel);
+    const currentLevel = state.userLevel || getLevelForTrack(langCode, state.userTrack);
+    const currentIdx = levels.indexOf(currentLevel);
+    const levelUnlocked = isLevelUnlocked(langCode, targetLevel);
+    const isPastCompletedLevel = levelUnlocked && (currentIdx > targetIdx);
     
     const lockMap = {};
     
     units.forEach((u, idx) => {
       const progress = getUnitProgress(u, langCode);
-      if (idx === 0) {
-        // İlk ünite (Starter / Unit 1 / Kapitel 1) daima açıktır
+      if (!levelUnlocked) {
+        lockMap[u.unite_no] = {
+          isUnlocked: false,
+          progress,
+          prevUnit: idx > 0 ? units[idx - 1] : null,
+          isLevelLocked: true
+        };
+      } else if (isPastCompletedLevel) {
+        // Geçmiş tamamlanmış seviyelerin tüm üniteleri tekrar için daima açıktır
         lockMap[u.unite_no] = {
           isUnlocked: true,
           progress,
-          prevUnit: null
+          prevUnit: idx > 0 ? units[idx - 1] : null,
+          isLevelLocked: false
+        };
+      } else if (idx === 0) {
+        // Açık seviyenin ilk ünitesi (Starter / Unit 1 / Kapitel 1) daima açıktır
+        lockMap[u.unite_no] = {
+          isUnlocked: true,
+          progress,
+          prevUnit: null,
+          isLevelLocked: false
         };
       } else {
         const prevUnit = units[idx - 1];
@@ -3811,7 +3923,8 @@ let activeAvatarCategory = 'all';
         lockMap[u.unite_no] = {
           isUnlocked,
           progress,
-          prevUnit
+          prevUnit,
+          isLevelLocked: false
         };
       }
     });
@@ -3930,8 +4043,23 @@ let activeAvatarCategory = 'all';
       localStorage.setItem('lexiq_user_track', userData.track);
     }
     if (userData.level) {
-      state.userLevel = userData.level;
-      localStorage.setItem('lexiq_user_level', userData.level);
+      let resolvedLvl = userData.level;
+      // Otomatik seviye düzeltmesi: Eğer öğrencinin şubesi 4A veya seviyesi A2 olup henüz tüm A2'yi bitirmediyse B1 olamaz
+      if (userData.track === '4A' && resolvedLvl === 'B1') {
+        const a2Units = getUnitsData().filter(u => u.dil === (userData.lang || state.activeLanguage || 'EN-TR') && u.seviye === 'A2');
+        const isA2Finished = a2Units.length > 0 && a2Units.every(u => {
+          const p = getUnitProgress(u, userData.lang || state.activeLanguage || 'EN-TR');
+          return p.isPassed80 || p.isPassed75;
+        });
+        if (!isA2Finished) {
+          resolvedLvl = 'A2';
+          if (typeof window.updateFirebaseProfile === 'function') {
+            window.updateFirebaseProfile(userData.displayName || state.userName, userData.avatar || state.userAvatar, '4A', 'A2', userData.lang || state.activeLanguage);
+          }
+        }
+      }
+      state.userLevel = resolvedLvl;
+      localStorage.setItem('lexiq_user_level', resolvedLvl);
     }
     if (userData.branch) {
       state.userBranch = userData.branch;
@@ -4024,6 +4152,13 @@ let activeAvatarCategory = 'all';
         obModal.classList.remove('active');
         obModal.style.display = 'none';
       }
+    }
+
+    // Eğer mevcut aktif ünite kullanıcının geçerli seviyesine ait değilse (örn. seviye A2 iken ünite B1 kalmışsa), seviyenin en yüksek açık ünitesine geri al
+    const currentUnitsForLevel = getUnitsData().filter(u => u.dil === state.activeLanguage && u.seviye === state.userLevel);
+    if (currentUnitsForLevel.length > 0 && !currentUnitsForLevel.some(u => u.unite_no === state.activeUnitNo)) {
+      const highest = getHighestUnlockedUnit(state.activeLanguage, state.userLevel);
+      state.activeUnitNo = highest.unite_no;
     }
 
     updateUserProfileUI();
@@ -4324,6 +4459,7 @@ let activeAvatarCategory = 'all';
     if (dom.inlineDailyGoalSelect) {
       dom.inlineDailyGoalSelect.value = String(state.dailyGoal);
     }
+
 
     updateUserProfileUI();
     refreshWordsList();
@@ -4929,6 +5065,7 @@ let activeAvatarCategory = 'all';
     localStorage.setItem('lexiq_user_onboarded', 'true');
     localStorage.setItem('kelime_active_lang', state.activeLanguage);
     localStorage.setItem('kelime_daily_goal', state.dailyGoal);
+
 
     updateUserProfileUI();
     if (typeof window.updateFirebaseProfile === 'function') {
@@ -6890,49 +7027,102 @@ let activeAvatarCategory = 'all';
     }
   }
 
-  function openUnitModal() {
-    console.log("openUnitModal tetiklendi!");
+  function openUnitModal(selectedLevel = null) {
+    console.log("openUnitModal tetiklendi!", selectedLevel);
     syncLearnedMapFromStorage();
-    // Seçilen kura ve seviyeye göre üniteleri kesin filtrele (4A ve 4B tam yalıtımı)
-    const targetLevel = state.userLevel || getLevelForTrack(state.activeLanguage, state.userTrack);
-    const allUnits = getUnitsData().filter(u => u.dil === state.activeLanguage);
-    const units = targetLevel ? allUnits.filter(u => u.seviye === targetLevel) : allUnits;
 
-    let bookName = 'Müfredat';
-    if (state.activeLanguage === 'EN-TR') {
-      bookName = `Gateway to the World ${targetLevel || 'A2'}`;
-    } else if (state.activeLanguage === 'DE-TR') {
-      bookName = `Netzwerk neu ${targetLevel || 'A1'}`;
-    } else if (state.activeLanguage === 'FR-TR') {
-      bookName = `Français ${targetLevel || 'A1'}`;
+    const levels = getLevelsForLanguage(state.activeLanguage);
+    const activeLevel = state.userLevel || getLevelForTrack(state.activeLanguage, state.userTrack);
+    
+    // Eğer parametre ile seviye gelmediyse mevcut seviyeyi veya varsa son görüntülenen seviyeyi kullan
+    let viewingLevel = selectedLevel || state.modalViewingLevel || activeLevel || (levels.length > 0 ? levels[0] : 'A2');
+    if (!levels.includes(viewingLevel)) {
+      viewingLevel = levels[0] || 'A2';
     }
+    state.modalViewingLevel = viewingLevel;
+
+    // 1. Kitap / Seviye Sekmelerini Render Et
+    if (dom.unitModalTabsBar) {
+      dom.unitModalTabsBar.innerHTML = '';
+      if (levels.length > 1) {
+        dom.unitModalTabsBar.style.display = 'flex';
+        levels.forEach(lvl => {
+          const isLvlUnlocked = isLevelUnlocked(state.activeLanguage, lvl);
+          const tabBtn = document.createElement('button');
+          tabBtn.type = 'button';
+          const isCurrentActive = lvl === viewingLevel;
+          tabBtn.className = 'unit-modal-tab-btn ' + (isCurrentActive ? 'active ' : '') + (!isLvlUnlocked ? 'locked' : '');
+          
+          let tabIcon = '📘';
+          if (lvl.includes('B1+')) tabIcon = '📙';
+          else if (lvl.includes('B1')) tabIcon = '📗';
+          else if (lvl.includes('A2')) tabIcon = '📘';
+          else if (lvl.includes('A1')) tabIcon = '📕';
+
+          tabBtn.innerHTML = '<span>' + tabIcon + '</span> <span>' + lvl + '</span>' + (!isLvlUnlocked ? ' <span style="font-size:0.75rem; opacity:0.8;">🔒</span>' : '');
+          tabBtn.title = isLvlUnlocked ? (lvl + ' Kitabı Üniteleri') : (lvl + ' Kitabı (Henüz Kilitli)');
+          
+          tabBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            if (lvl !== viewingLevel) {
+              openUnitModal(lvl);
+            }
+          });
+          dom.unitModalTabsBar.appendChild(tabBtn);
+        });
+      } else {
+        dom.unitModalTabsBar.style.display = 'none';
+      }
+    }
+
+    // 2. Başlık ve Alt Metin
+    const allUnits = getUnitsData().filter(u => u.dil === state.activeLanguage);
+    const units = allUnits.filter(u => u.seviye === viewingLevel);
+    const viewingMeta = getBookMetaForLevel(state.activeLanguage, viewingLevel, units);
+    const bookName = viewingMeta.title || ('Gateway to the World ' + viewingLevel);
 
     if (dom.unitModalTitle) {
-      dom.unitModalTitle.textContent = `📚 ${bookName} Üniteleri`;
+      dom.unitModalTitle.textContent = '📚 ' + bookName + ' Üniteleri';
     }
     if (dom.unitModalSubtitle) {
-      dom.unitModalSubtitle.textContent = 'Çalışmak istediğiniz üniteyi seçin. Sonraki üniteyi açabilmek için mevcut ünitenin en az %80\'ini tamamlamalısınız.';
+      dom.unitModalSubtitle.textContent = "Çalışmak istediğiniz üniteyi seçin. Sonraki üniteyi açabilmek için mevcut ünitenin en az %80'ini tamamlamalısınız.";
     }
 
     const allWords = getWordsData();
-    const lockMap = getUnitLockStatusMap(state.activeLanguage, targetLevel);
+    const isCurrentLevelUnlocked = isLevelUnlocked(state.activeLanguage, viewingLevel);
+    const lockMap = getUnitLockStatusMap(state.activeLanguage, viewingLevel);
     dom.unitOptionsList.innerHTML = '';
 
-    const nextLevel = getNextLevel(state.activeLanguage, targetLevel);
+    // Eğer seviyenin kendisi kilitliyse bilgilendirme banner'ı göster
+    if (!isCurrentLevelUnlocked) {
+      const lockedBanner = document.createElement('div');
+      lockedBanner.className = 'unit-modal-level-locked-banner';
+      lockedBanner.innerHTML = `
+        <div style="font-size: 2rem; flex-shrink: 0;">🔒</div>
+        <div style="flex: 1;">
+          <div style="font-weight: 800; font-size: 0.95rem; color: #dc2626;">${viewingLevel} Seviyesi Henüz Kilitli!</div>
+          <div style="font-size: 0.82rem; color: var(--text-muted); margin-top: 3px;">Bu kitaptaki üniteleri açabilmek için bir önceki seviyedeki tüm üniteleri en az %80 oranında tamamlamalısınız.</div>
+        </div>
+      `;
+      dom.unitOptionsList.appendChild(lockedBanner);
+    }
+
+    // Seviye Terfi Banner'ı (Tüm üniteler %80+ geçilmişse ve sonraki seviye varsa)
+    const nextLevel = getNextLevel(state.activeLanguage, viewingLevel);
     const allUnitsPassed = units.length > 0 && units.every(u => {
       const p = getUnitProgress(u, state.activeLanguage);
       return p.isPassed80 || p.isPassed75;
     });
 
-    if (allUnitsPassed && nextLevel) {
-      const nextUnits = getUnitsData().filter(u => u.dil === state.activeLanguage && u.seviye === nextLevel);
+    if (allUnitsPassed && nextLevel && isCurrentLevelUnlocked) {
+      const nextUnits = allUnits.filter(u => u.seviye === nextLevel);
       const nextMeta = getBookMetaForLevel(state.activeLanguage, nextLevel, nextUnits);
       const promoBanner = document.createElement('div');
       promoBanner.className = 'level-promotion-banner';
       promoBanner.innerHTML = `
         <div style="font-size: 2.2rem; flex-shrink: 0;">🎓</div>
         <div style="flex: 1; min-width: 0;">
-          <div style="font-weight: 800; font-size: 0.95rem; color: #10b981;">Tebrikler! ${targetLevel} Seviyesini Tamamladın! 🎉</div>
+          <div style="font-weight: 800; font-size: 0.95rem; color: #10b981;">Tebrikler! ${viewingLevel} Seviyesini Tamamladın! 🎉</div>
           <div style="font-size: 0.82rem; color: var(--text-muted); margin-top: 2px;">Sonraki kitap: <strong>${nextMeta.title}</strong></div>
         </div>
         <button type="button" class="pill-btn primary-action-btn" id="modalPromoNextBtn" style="padding: 9px 14px; font-size: 0.85rem; font-weight: 800; background: linear-gradient(135deg, #10b981, #059669); color: #fff; border: none; border-radius: 12px; white-space: nowrap; cursor: pointer;">${nextLevel}'e Geç 🚀</button>
@@ -6941,19 +7131,19 @@ let activeAvatarCategory = 'all';
       if (promoBtn) {
         promoBtn.addEventListener('click', (e) => {
           e.stopPropagation();
-          closeUnitModal();
-          showLevelCompleteModal(state.activeLanguage, targetLevel, nextLevel);
+          openUnitModal(nextLevel);
         });
       }
       dom.unitOptionsList.appendChild(promoBanner);
     }
 
+    // 3. Ünite Kartlarını Listele
     units.forEach((u, idx) => {
       const card = document.createElement('div');
       const isEnglish = u.dil === 'EN-TR';
       const isActive = u.unite_no === state.activeUnitNo;
       const statusInfo = lockMap[u.unite_no] || { isUnlocked: idx === 0, progress: { percent: 0, isPassed75: false } };
-      const isUnlocked = statusInfo.isUnlocked;
+      const isUnlocked = isCurrentLevelUnlocked && statusInfo.isUnlocked;
 
       card.className = `unit-option-card ${isActive ? 'active-unit' : ''} ${!isUnlocked ? 'unit-card-locked' : ''}`;
       if (isEnglish) card.setAttribute('lang', 'en');
@@ -6966,24 +7156,24 @@ let activeAvatarCategory = 'all';
       const percent = totalTarget > 0 ? Math.round((learnedCount / totalTarget) * 100) : 0;
       const isCompleted = totalTarget > 0 && learnedCount === totalTarget;
 
-      const levelCode = u.seviye || targetLevel || '';
-      let cleanTitle = u.unite_adi || u.baslik || `Ünite ${u.unite_no}`;
+      const levelCode = u.seviye || viewingLevel || '';
+      let cleanTitle = u.unite_adi || u.baslik || ('Ünite ' + u.unite_no);
       if (cleanTitle.includes('•')) {
         cleanTitle = cleanTitle.split('•')[1].trim();
       }
       if (u.dil === 'DE-TR' && !cleanTitle.toLowerCase().startsWith('kapitel')) {
-        cleanTitle = `Kapitel ${idx + 1}: ${cleanTitle}`;
+        cleanTitle = 'Kapitel ' + (idx + 1) + ': ' + cleanTitle;
       }
 
       let statBadgeHtml = '';
       if (!isUnlocked) {
-        statBadgeHtml = `<span class="unit-stat-badge locked">🔒 Kilitli (%80 Gerekli)</span>`;
+        statBadgeHtml = '<span class="unit-stat-badge locked">🔒 Kilitli (%80 Gerekli)</span>';
       } else if (isCompleted) {
-        statBadgeHtml = `<span class="unit-stat-badge completed">✓ Tamamlandı (%100)</span>`;
+        statBadgeHtml = '<span class="unit-stat-badge completed">✓ Tamamlandı (%100)</span>';
       } else if (percent >= 80) {
-        statBadgeHtml = `<span class="unit-stat-badge completed">✓ Açıldı (%${percent})</span>`;
+        statBadgeHtml = '<span class="unit-stat-badge completed">✓ Açıldı (%' + percent + ')</span>';
       } else {
-        statBadgeHtml = `<span class="unit-stat-badge">${learnedCount} / ${totalTarget} (%${percent})</span>`;
+        statBadgeHtml = '<span class="unit-stat-badge">' + learnedCount + ' / ' + totalTarget + ' (%' + percent + ')</span>';
       }
 
       card.innerHTML = `
@@ -7010,17 +7200,32 @@ let activeAvatarCategory = 'all';
 
       card.addEventListener('click', () => {
         if (!isUnlocked) {
-          showToast('🔒 Bu ünite henüz kilitli! Açabilmek için önceki ünitedeki kelimelerin en az %80\'ini öğrenmelisiniz.');
+          showToast("🔒 Bu ünite henüz kilitli! Açabilmek için önceki ünitedeki kelimelerin en az %80'ini öğrenmelisiniz.");
           return;
         }
         state.activeUnitNo = u.unite_no;
         noteUnitStart(u);
         state.dailyGoalExtra = 0;
         state.currentIndex = 0;
+
+        // Seviye ve kur geçişini güncelle ve Firebase ile senkronize et
+        if (u.seviye && u.seviye !== state.userLevel) {
+          state.userLevel = u.seviye;
+          localStorage.setItem('lexiq_user_level', state.userLevel);
+          if (state.activeLanguage === 'EN-TR') {
+            state.userTrack = state.userLevel === 'A2' ? '4A' : '4B';
+            localStorage.setItem('lexiq_user_track', state.userTrack);
+          }
+          if (typeof window.updateFirebaseProfile === 'function') {
+            window.updateFirebaseProfile(state.userName, state.userAvatar, state.userTrack, state.userLevel, state.activeLanguage);
+          }
+          if (typeof updateUserProfileUI === 'function') updateUserProfileUI();
+        }
+
         refreshWordsList();
         updateHeaderUnitDisplay();
         closeUnitModal();
-        showToast(`📚 ${levelCode ? levelCode + ' - ' : ''}${cleanTitle} seçildi`);
+        showToast('📚 ' + (levelCode ? levelCode + ' - ' : '') + cleanTitle + ' seçildi');
       });
 
       dom.unitOptionsList.appendChild(card);
@@ -7028,6 +7233,7 @@ let activeAvatarCategory = 'all';
 
     dom.unitModal.classList.add('active');
   }
+  window.openUnitModal = openUnitModal;
 
   function closeUnitModal() {
     dom.unitModal.classList.remove('active');
@@ -7692,6 +7898,7 @@ let activeAvatarCategory = 'all';
     localStorage.setItem('lexiq_last_study_date', today);
     checkBadgeUnlocks();
     if (dom.homeStatStreak) dom.homeStatStreak.textContent = `🔥 ${state.dayStreak} Gün Seri`;
+
     updateUserProfileUI();
     if (typeof window.syncProgressToFirebase === 'function') window.syncProgressToFirebase();
   }
@@ -8589,7 +8796,8 @@ let activeAvatarCategory = 'all';
       state.activeGame = null;
       window.scrollTo(0, 0);
       updateHomeScreenUI();
-      updateUserProfileUI();
+
+    updateUserProfileUI();
 
       // Ana sayfaya dönüldüğünde eğer yardım turu henüz tamamlanmadıysa ve açık modal veya bekleyen seri sözü yoksa başlat
       if (!localStorage.getItem('lexiq_tour_completed')) {
@@ -12239,7 +12447,8 @@ let activeAvatarCategory = 'all';
       obState.name = val;
       state.userName = val;
       localStorage.setItem('lexiq_user_name', val);
-      updateUserProfileUI();
+
+    updateUserProfileUI();
       goToOnboardingStep(2);
     }
 
@@ -14490,7 +14699,8 @@ let activeAvatarCategory = 'all';
           window.updateFirebaseProfile(state.userName, state.userAvatar, state.userTrack, state.userLevel, state.activeLanguage);
         }
 
-        updateUserProfileUI();
+
+    updateUserProfileUI();
         if (typeof updateStudentProfileBranchBadge === 'function') {
           updateStudentProfileBranchBadge();
         }
@@ -14517,6 +14727,101 @@ let activeAvatarCategory = 'all';
 
     const cancelBranchBtn = document.getElementById('cancelBranchModalBtn');
     if (cancelBranchBtn) cancelBranchBtn.addEventListener('click', closeSelectBranchModal);
+
+    // Okutman Sınıf PIN Kodu İle Bağlanma (LexiGo Campus Entegrasyonu)
+    const btnConnectCampusPin = document.getElementById('btnConnectCampusPin');
+    const modalClassPinInput = document.getElementById('modalClassPinInput');
+    const modalClassPinFeedback = document.getElementById('modalClassPinFeedback');
+
+    if (btnConnectCampusPin && modalClassPinInput) {
+      btnConnectCampusPin.addEventListener('click', async () => {
+        const pinVal = modalClassPinInput.value.trim().toUpperCase();
+        if (!pinVal) {
+          if (modalClassPinFeedback) {
+            modalClassPinFeedback.style.display = 'block';
+            modalClassPinFeedback.style.color = '#ef4444';
+            modalClassPinFeedback.textContent = 'Lütfen okutmanınızın paylaştığı sınıf kodunu girin.';
+          }
+          return;
+        }
+
+        btnConnectCampusPin.disabled = true;
+        btnConnectCampusPin.textContent = 'Doğrulanıyor...';
+        if (modalClassPinFeedback) {
+          modalClassPinFeedback.style.display = 'block';
+          modalClassPinFeedback.style.color = '#3b82f6';
+          modalClassPinFeedback.textContent = 'Sınıf kodu aranıyor...';
+        }
+
+        let campusClass = null;
+        if (typeof window.lookupCampusClassByPin === 'function') {
+          campusClass = await window.lookupCampusClassByPin(pinVal);
+        }
+
+        btnConnectCampusPin.disabled = false;
+        btnConnectCampusPin.textContent = 'Kodu Doğrula';
+
+        if (!campusClass) {
+          if (modalClassPinFeedback) {
+            modalClassPinFeedback.style.display = 'block';
+            modalClassPinFeedback.style.color = '#ef4444';
+            modalClassPinFeedback.textContent = `"${pinVal}" koduna ait aktif bir sınıf bulunamadı. Lütfen kontrol edin.`;
+          }
+          return;
+        }
+
+        let levelNotice = '';
+        if (campusClass.level && state.userLevel && campusClass.level !== state.userLevel) {
+          levelNotice = `\n\n📌 Bilgi: Bu sınıf ${campusClass.level} seviyesindedir (Mevcut seviyeniz: ${state.userLevel}). Sınıfa katıldıktan sonra "Ünite Seçimi" menüsündeki sekmelerden hem ${state.userLevel} hem de ${campusClass.level} kitaplarına dilediğiniz gibi erişebilirsiniz.`;
+        }
+
+        const confirmMsg = `Okutman Sınıfı Bulundu:\n\nSınıf: ${campusClass.name || campusClass.code}\nKitap: ${campusClass.book || 'Müfredat Kitabı'}\nAktif Ünite: ${campusClass.activeUnit || 'Unit 1'}\nÖğrenim Modeli: ${campusClass.learningPolicy || 'Smart Hybrid'}${levelNotice}\n\nBu sınıfa katılmak ve şubenizi "${pinVal}" olarak kaydetmek istiyor musunuz?`;
+
+        const confirmed = await showAppConfirm({
+          title: 'Sınıfa Katıl',
+          message: confirmMsg,
+          icon: '🎓',
+          okText: 'Evet, Sınıfa Katıl',
+          cancelText: 'Vazgeç',
+          isDanger: false
+        });
+
+        if (!confirmed) return;
+
+        state.userBranch = pinVal;
+        state.branchLocked = true;
+        localStorage.setItem('lexiq_user_branch', pinVal);
+        localStorage.setItem('lexiq_branch_locked', 'true');
+
+        if (typeof window.updateUserBranch === 'function') {
+          await window.updateUserBranch(pinVal, campusClass);
+        }
+
+        if (campusClass.level) {
+          state.userLevel = campusClass.level;
+          localStorage.setItem('lexiq_user_level', campusClass.level);
+          if (state.activeLanguage === 'EN-TR') {
+            state.userTrack = campusClass.level === 'A2' ? '4A' : '4B';
+            localStorage.setItem('lexiq_user_track', state.userTrack);
+          }
+        }
+
+        if (typeof window.updateFirebaseProfile === 'function') {
+          window.updateFirebaseProfile(state.userName, state.userAvatar, state.userTrack, state.userLevel, state.activeLanguage);
+        }
+
+        updateUserProfileUI();
+        if (typeof updateStudentProfileBranchBadge === 'function') {
+          updateStudentProfileBranchBadge();
+        }
+        if (typeof populateProfileSettingsTab === 'function') {
+          populateProfileSettingsTab();
+        }
+
+        closeSelectBranchModal();
+        showToast(`🎉 "${pinVal}" sınıfına başarıyla katıldınız! Ünite Seçimi menüsünden dilediğiniz kitabı açabilirsiniz.`, 4500);
+      });
+    }
 
     const openBranchAlertBtn = document.getElementById('lbOpenBranchModalBtn');
     if (openBranchAlertBtn) openBranchAlertBtn.addEventListener('click', openSelectBranchModal);
@@ -14782,7 +15087,8 @@ let activeAvatarCategory = 'all';
         window.isStreakPledgeActive = false;
         if (typeof endTour === 'function') endTour(false);
 
-        updateUserProfileUI();
+
+    updateUserProfileUI();
         updateArenaHeaderAndStats();
         if (dom.headerXpText) dom.headerXpText.textContent = '0';
         if (dom.arenaXpText) dom.arenaXpText.textContent = '0';
@@ -14878,7 +15184,8 @@ let activeAvatarCategory = 'all';
               state.userName = name;
               localStorage.setItem('lexiq_user_name', name);
               obState.name = name;
-              updateUserProfileUI();
+
+    updateUserProfileUI();
             }
 
             // Yeni kayıt olan kullanıcı için onboarding henüz tamamlanmadı: Kesinlikle Dil ve Kur seçimine yönlendir
@@ -14922,7 +15229,8 @@ let activeAvatarCategory = 'all';
               setLanguage(targetLang, false);
             }
 
-            updateUserProfileUI();
+
+    updateUserProfileUI();
             updateArenaHeaderAndStats();
             populateProfileSettingsTab();
             refreshWordsList();
@@ -15101,7 +15409,8 @@ let activeAvatarCategory = 'all';
         state.userEmail = user.email;
         localStorage.setItem('lexiq_user_email', user.email);
       }
-      updateUserProfileUI();
+
+    updateUserProfileUI();
       const leaderboardAuthStatus = document.getElementById('leaderboardAuthStatus');
       if (leaderboardAuthStatus) {
         leaderboardAuthStatus.style.display = 'none';
@@ -15170,7 +15479,8 @@ let activeAvatarCategory = 'all';
       localStorage.setItem('lexiq_unit_start_times', '{}');
 
       // Arayüz sayaçlarını ve ekranlarını sıfırla
-      updateUserProfileUI();
+
+    updateUserProfileUI();
       updateArenaHeaderAndStats();
       if (dom.headerXpText) dom.headerXpText.textContent = '0';
       if (dom.arenaXpText) dom.arenaXpText.textContent = '0';
