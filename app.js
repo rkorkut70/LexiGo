@@ -17790,3 +17790,26 @@ let activeAvatarCategory = 'all';
     init();
   }
 })();
+
+  // Kullanıcının doğrudan A2'ye dönmesini ve varsa sınıftan ayrılmasını sağlayan yardımcı fonksiyon
+  window.leaveCampusClass = function() {
+    state.userBranch = '';
+    state.branchLocked = false;
+    state.userLevel = 'A2';
+    state.userTrack = '4A';
+    state.activeUnitNo = 4;
+    localStorage.removeItem('lexiq_user_branch');
+    localStorage.removeItem('lexiq_branch_locked');
+    localStorage.setItem('lexiq_user_level', 'A2');
+    localStorage.setItem('lexiq_user_track', '4A');
+    localStorage.setItem('lexiq_active_unit', '4');
+    if (typeof window.updateUserBranch === 'function') {
+      window.updateUserBranch('');
+    }
+    if (typeof window.updateFirebaseProfile === 'function') {
+      window.updateFirebaseProfile(state.userName, state.userAvatar, '4A', 'A2', state.activeLanguage || 'EN-TR');
+    }
+    alert('Sınıf bağlantınız kaldırıldı ve A2 seviyesine (Unit 3) başarıyla döndürüldünüz!');
+    location.reload();
+  };
+  window.resetToA2 = window.leaveCampusClass;
