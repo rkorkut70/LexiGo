@@ -606,16 +606,6 @@ window.registerWithEmail = async function(email, password, name, avatar, remembe
       localStorage.removeItem('lexiq_remember_email');
     }
 
-    if (db && user) {
-      db.collection('users').doc(user.uid).set({
-        platform: getClientPlatform(),
-        lastPlatform: getClientPlatform(),
-        userAgent: (typeof navigator !== 'undefined' ? navigator.userAgent : '') || '',
-        lastLoginAt: firebase.firestore.FieldValue.serverTimestamp(),
-        lastActive: firebase.firestore.FieldValue.serverTimestamp()
-      }, { merge: true }).catch(() => {});
-    }
-
     if (window.state) {
       window.state.userName = trimmedName;
       window.state.userEmail = email;
