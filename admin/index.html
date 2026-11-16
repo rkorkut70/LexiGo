@@ -2450,24 +2450,28 @@
             '</div>' +
           '</td>' +
           '<td>' + platformBadge + '</td>' +
-          '<td>' +
-            branchBadge +
-            '<span class="tag-pill tag-track" style="display:inline-block; margin-top:2px;">' + u.lang + ' • ' + u.track + '</span>' +
-          '</td>' +
-          '<td>' +
-            '<div>' +
-              '<strong style="color:var(--text); font-size:0.82rem;">' + u.level + '</strong>' +
-              '<span class="tag-pill tag-unit" style="display:block; width:fit-content; margin-top:2px;">Ünite ' + u.unitNo + '</span>' +
+          '<td style="white-space: nowrap;">' +
+            '<div style="display:inline-flex; align-items:center; gap:6px;">' +
+              branchBadge +
+              '<span class="tag-pill tag-track">' + u.lang + ' • ' + u.track + '</span>' +
             '</div>' +
           '</td>' +
-          '<td>' +
-            '<span class="tag-pill tag-xp">' + (u.xp || 0).toLocaleString('tr-TR') + ' XP</span>' +
-            '<span class="tag-pill tag-words" style="display:inline-block; margin-top:2px;">' + u.learnedCount + ' Kelime</span>' +
+          '<td style="white-space: nowrap;">' +
+            '<div style="display:inline-flex; align-items:center; gap:6px;">' +
+              '<strong style="color:var(--text); font-size:0.82rem;">' + u.level + '</strong>' +
+              '<span class="tag-pill tag-unit">Ünite ' + u.unitNo + '</span>' +
+            '</div>' +
           '</td>' +
-          '<td>' +
-            '<div>' +
-              '<span class="tag-pill tag-streak">' + (u.dayStreak || u.maxStreak) + ' Gün Seri</span>' +
-              '<span style="display:block; font-size:0.7rem; color:var(--text-dim); margin-top:2px; font-weight:600;">Hedef: ' + u.dailyGoal + '/gün</span>' +
+          '<td style="white-space: nowrap;">' +
+            '<div style="display:inline-flex; align-items:center; gap:5px;">' +
+              '<span class="tag-pill tag-xp">' + (u.xp || 0).toLocaleString('tr-TR') + ' XP</span>' +
+              '<span class="tag-pill tag-words">' + u.learnedCount + ' Kelime</span>' +
+            '</div>' +
+          '</td>' +
+          '<td style="white-space: nowrap;">' +
+            '<div style="display:inline-flex; align-items:center; gap:5px;">' +
+              '<span class="tag-pill tag-streak">' + (u.dayStreak || u.maxStreak) + ' Gün</span>' +
+              '<span style="font-size:0.72rem; color:var(--text-dim); font-weight:600;">(' + u.dailyGoal + '/gün)</span>' +
             '</div>' +
           '</td>' +
           '<td>' +
@@ -2611,9 +2615,11 @@
             '</div>' +
           '</td>' +
           '<td>' + platformBadge + '</td>' +
-          '<td>' +
-            branchBadge +
-            '<span class="tag-pill tag-track" style="display:inline-block; margin-top:2px;">' + u.lang + ' • ' + u.track + ' (' + u.level + ')</span>' +
+          '<td style="white-space: nowrap;">' +
+            '<div style="display:inline-flex; align-items:center; gap:6px;">' +
+              branchBadge +
+              '<span class="tag-pill tag-track">' + u.lang + ' • ' + u.track + ' (' + u.level + ')</span>' +
+            '</div>' +
           '</td>' +
           '<td>' +
             '<div class="date-meta-cell">' +
