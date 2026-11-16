@@ -1,12 +1,11 @@
 ﻿{
-    "version":  "v1.9.42",
-    "versionCode":  149,
+    "version":  "v1.9.43",
+    "versionCode":  150,
     "releaseDate":  "2026-11-16",
     "notes":  [
-                  "Turnuva \u0026 Liderler EkranÄ±: Åube seÃ§imi ve sÄ±nÄ±f liderlik butonlarÄ±ndaki simgeler sadeleÅŸtirildi.",
-                  "Åube SeÃ§im ModalÄ±: AÃ§Ä±lÄ±r penceredeki okul simgesi kaldÄ±rÄ±larak modern gÃ¶rÃ¼nÃ¼me uyarlandÄ±.",
-                  "Ãœnite Tamamlama Rehberi: Bir sonraki Ã¼niteye baÅŸlama yÃ¶nlendirmesi eklendi.",
-                  "Ã–ÄŸrenci Profili: Modernize edilmiÅŸ rozet ve gÃ¶stergeler.",
-                  "Performans \u0026 Stabilite: CanlÄ± sÃ¼rÃ¼m denetimi ve anlÄ±k bildirim sistemi gÃ¼Ã§lendirildi."
+                  "Güncelleme Bildirimleri: Toast bildirimine dokunulduğunda doğrudan Hakkında güncelleme sayfasına geçiş sağlandı.",
+                  "Tıklama İyileştirmesi: Bildirime dokunulduğunda arkadaki ünite kartına kazaen tıklanması engellendi.",
+                  "Katman Hiyerarşisi: Güncelleme ve Hakkında ekranlarının açık pencerelerin altında kalması giderildi.",
+                  "Performans & Stabilite: Hızlı, kararlı ve kesintisiz çalışma deneyimi."
               ]
 }
