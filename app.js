@@ -7073,6 +7073,13 @@ let activeAvatarCategory = 'all';
               openUnitModal(lvl);
             }
           });
+          if (isCurrentActive) {
+            setTimeout(() => {
+              try {
+                tabBtn.scrollIntoView({ behavior: 'smooth', inline: 'center', block: 'nearest' });
+              } catch (e) {}
+            }, 60);
+          }
           dom.unitModalTabsBar.appendChild(tabBtn);
         });
       } else {
@@ -7236,12 +7243,20 @@ let activeAvatarCategory = 'all';
       dom.unitOptionsList.appendChild(card);
     });
 
-    dom.unitModal.classList.add('active');
+    dom.unitModal.style.display = 'flex';
+    requestAnimationFrame(() => {
+      dom.unitModal.classList.add('active');
+    });
   }
   window.openUnitModal = openUnitModal;
 
   function closeUnitModal() {
     dom.unitModal.classList.remove('active');
+    setTimeout(() => {
+      if (!dom.unitModal.classList.contains('active')) {
+        dom.unitModal.style.display = 'none';
+      }
+    }, 200);
   }
 
   // ==========================================
