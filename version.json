@@ -1,9 +1,11 @@
 {
-  "version": "v1.9.44",
-  "versionCode": 151,
-  "releaseDate": "2026-11-16",
-  "notes": [
-    "Platform ve Cihaz Takip Altyapısı (iOS, Android, Web) optimize edildi.",
-    "Performans ve Canlı Senkronizasyon İyileştirmeleri."
-  ]
+    "version":  "v1.9.44",
+    "versionCode":  151,
+    "releaseDate":  "2026-11-16",
+    "notes":  [
+                  "Ünite Seçim Ekranı: Seviye seçme butonları modern segmented pill tasarımına kavuşturuldu; kesilme ve taşma giderildi.",
+                  "Mobil Uyum: Başlık ve seviye butonları dikeyde büzülmeye karşı sabitlendi, ekran ortalama iyileştirildi.",
+                  "Güncelleme Bildirimleri: Toast bildirimine dokunulduğunda doğrudan Hakkında güncelleme sayfasına geçiş sağlandı.",
+                  "Performans & Stabilite: Hızlı, kararlı ve kesintisiz çalışma deneyimi."
+              ]
 }
