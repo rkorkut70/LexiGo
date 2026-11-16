@@ -108,6 +108,26 @@ function getAuthErrorMessage(error) {
 }
 window.getAuthErrorMessage = getAuthErrorMessage;
 
+// Platform Tespiti (iOS, Android, Web)
+function getClientPlatform() {
+  if (typeof window.getAppPlatform === 'function') {
+    const p = window.getAppPlatform();
+    return p === 'android_web' ? 'android' : p;
+  }
+  if (window.AndroidTTS && typeof window.AndroidTTS.getAppVersion === 'function') {
+    return 'android';
+  }
+  const ua = (navigator.userAgent || '') + ' ' + (navigator.vendor || '');
+  if (/iPhone|iPad|iPod/i.test(ua) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1)) {
+    return 'ios';
+  }
+  if (/android/i.test(ua)) {
+    return 'android';
+  }
+  return 'web';
+}
+window.getClientPlatform = getClientPlatform;
+
 // Auth Durumunu Dinle
 if (auth) {
   let isInitialAuthCheck = true;
@@ -441,6 +461,9 @@ async function syncUserData(user) {
         gameStats: mergedGameStats,
         cleanWins: bestCleanWins,
         timeTracking: syncedTimeTracking,
+        platform: getClientPlatform(),
+        lastPlatform: getClientPlatform(),
+        userAgent: (typeof navigator !== 'undefined' ? navigator.userAgent : '') || '',
         lastActive: firebase.firestore.FieldValue.serverTimestamp(),
         lastLoginAt: firebase.firestore.FieldValue.serverTimestamp()
       }, { merge: true });
@@ -490,6 +513,16 @@ window.registerWithEmail = async function(email, password, name, avatar, remembe
     } else {
       localStorage.setItem('lexiq_remember_me', 'false');
       localStorage.removeItem('lexiq_remember_email');
+    }
+
+    if (db && user) {
+      db.collection('users').doc(user.uid).set({
+        platform: getClientPlatform(),
+        lastPlatform: getClientPlatform(),
+        userAgent: (typeof navigator !== 'undefined' ? navigator.userAgent : '') || '',
+        lastLoginAt: firebase.firestore.FieldValue.serverTimestamp(),
+        lastActive: firebase.firestore.FieldValue.serverTimestamp()
+      }, { merge: true }).catch(() => {});
     }
 
     if (window.state) {
@@ -543,6 +576,9 @@ window.registerWithEmail = async function(email, password, name, avatar, remembe
         gameStats: regGameStats,
         cleanWins: regCleanWins,
         timeTracking: regTimeTracking,
+        platform: getClientPlatform(),
+        lastPlatform: getClientPlatform(),
+        userAgent: (typeof navigator !== 'undefined' ? navigator.userAgent : '') || '',
         createdAt: firebase.firestore.FieldValue.serverTimestamp(),
         lastActive: firebase.firestore.FieldValue.serverTimestamp()
       }, { merge: true });
@@ -595,6 +631,16 @@ window.loginWithEmail = async function(email, password, rememberMe = true) {
     } else {
       localStorage.setItem('lexiq_remember_me', 'false');
       localStorage.removeItem('lexiq_remember_email');
+    }
+
+    if (db && user) {
+      db.collection('users').doc(user.uid).set({
+        platform: getClientPlatform(),
+        lastPlatform: getClientPlatform(),
+        userAgent: (typeof navigator !== 'undefined' ? navigator.userAgent : '') || '',
+        lastLoginAt: firebase.firestore.FieldValue.serverTimestamp(),
+        lastActive: firebase.firestore.FieldValue.serverTimestamp()
+      }, { merge: true }).catch(() => {});
     }
 
     await syncUserData(user);
@@ -736,6 +782,9 @@ window.syncProgressToFirebase = function(customData, immediate = false) {
       gameStats: Object.assign({}, localGameStats, (s.gameStats || {})),
       cleanWins: Math.max(s.cleanWins || 0, localCleanWins),
       timeTracking: timeTrackingPayload,
+      platform: getClientPlatform(),
+      lastPlatform: getClientPlatform(),
+      userAgent: (typeof navigator !== 'undefined' ? navigator.userAgent : '') || '',
       lastActive: firebase.firestore.FieldValue.serverTimestamp()
     };
     if (customData && typeof customData === 'object') {
@@ -997,12 +1046,15 @@ window.fetchClassDuels = async function(lang) {
 };
 
 // 3. Kullanıcının Şubesini Belirle ve Kilitle (Tek Seferlik Seçim)
-window.updateUserBranch = async function(branchCode) {
+window.updateUserBranch = async function(branchCode, campusMeta = null) {
   if (!branchCode) return false;
   try {
     const curWeek = window.getCurrentWeekId ? window.getCurrentWeekId() : '2026-W42';
     localStorage.setItem('lexiq_user_branch', branchCode);
     localStorage.setItem('lexiq_branch_locked', 'true');
+    if (campusMeta) {
+      localStorage.setItem('lexigo_campus_enrolled_meta', JSON.stringify(campusMeta));
+    }
 
     if (window.appState) {
       window.appState.userBranch = branchCode;
@@ -1010,10 +1062,34 @@ window.updateUserBranch = async function(branchCode) {
     }
 
     if (window.fbUser && db) {
-      await db.collection('users').doc(window.fbUser.uid).set({
+      const updatePayload = {
         branch: branchCode,
         branchLocked: true,
         lastActive: firebase.firestore.FieldValue.serverTimestamp()
+      };
+      if (campusMeta) {
+        updatePayload.campusClassId = campusMeta.id || '';
+        updatePayload.campusClassName = campusMeta.name || '';
+        updatePayload.campusLearningPolicy = campusMeta.learningPolicy || 'smart_hybrid';
+        updatePayload.campusActiveBook = campusMeta.book || '';
+        updatePayload.campusActiveUnit = campusMeta.activeUnit || '';
+      }
+      await db.collection('users').doc(window.fbUser.uid).set(updatePayload, { merge: true });
+
+      // Ayrıca Campus yönetim portalının dinlediği 'campus_students' koleksiyonuna da kaydet
+      const studentNo = (window.fbUser.email && window.fbUser.email.includes('@')) 
+        ? window.fbUser.email.split('@')[0] 
+        : (window.fbUser.uid.substring(0, 8));
+      
+      await db.collection('campus_students').doc(`${branchCode}_${studentNo}`).set({
+        class_code: branchCode,
+        student_number: studentNo,
+        full_name: (window.state && window.state.userName) || window.fbUser.displayName || 'Öğrenci',
+        weekly_completion_rate: (window.state && window.state.weeklyProgress) || 0,
+        words_learned: (window.state && window.state.learnedWordsCount) || 0,
+        srs_score: 80,
+        uid: window.fbUser.uid,
+        last_active: firebase.firestore.FieldValue.serverTimestamp()
       }, { merge: true });
     }
     return true;
@@ -1021,6 +1097,73 @@ window.updateUserBranch = async function(branchCode) {
     console.warn("Şube güncellenemedi:", e);
     return false;
   }
+};
+
+/**
+ * PIN Kodu ile LexiGo Campus sınıfını sorgular
+ */
+window.lookupCampusClassByPin = async function(pinCode) {
+  const cleanPin = (pinCode || '').trim().toUpperCase();
+  if (!cleanPin) return null;
+
+  // 1. Canlı Firestore Sorgusu
+  if (db) {
+    try {
+      const snap = await db.collection('campus_classes').where('code', '==', cleanPin).limit(1).get();
+      if (!snap.empty) {
+        return { id: snap.docs[0].id, ...snap.docs[0].data() };
+      }
+    } catch (err) {
+      console.warn("Campus PIN Firestore arama hatası:", err);
+    }
+  }
+
+  // 2. Standart Varsayılan Mock Sınıflar (Firestore henüz boş veya offline ise)
+  const defaultClasses = {
+    'HU-B101': {
+      id: 'cls_01',
+      code: 'HU-B101',
+      name: 'Track 2 / Section 01 (English Prep)',
+      lang: 'en',
+      level: 'B1',
+      learningPolicy: 'smart_hybrid',
+      book: 'Navigate B1+ Intermediate',
+      activeUnit: 'Unit 4: Technology & Society',
+      unitNumber: 4
+    },
+    'HU-B102': {
+      id: 'cls_02',
+      code: 'HU-B102',
+      name: 'Track 1 / Section 04',
+      lang: 'en',
+      level: 'A2',
+      learningPolicy: 'bilingual',
+      book: 'Gateway to the World A2',
+      activeUnit: 'Unit 2: Daily Routines',
+      unitNumber: 2
+    },
+    'HU-DE-B101': {
+      id: 'cls_04',
+      code: 'HU-DE-B101',
+      name: 'Almanca Hazırlık / Şube 01',
+      lang: 'de',
+      level: 'B1',
+      learningPolicy: 'smart_hybrid',
+      book: 'Menschen B1 Deutsch',
+      activeUnit: 'Einheit 1: Umwelt & Alltag',
+      unitNumber: 1
+    }
+  };
+
+  if (defaultClasses[cleanPin]) {
+    // Sınıfı Firestore'a da anında yaz
+    if (db) {
+      db.collection('campus_classes').doc(defaultClasses[cleanPin].id).set(defaultClasses[cleanPin]).catch(() => {});
+    }
+    return defaultClasses[cleanPin];
+  }
+
+  return null;
 };
 
 // 4. Şeref Kürsüsü ve Yıl Sonu Şampiyonluk Arşivi
@@ -1333,6 +1476,8 @@ window.deleteAccountCompletely = async function() {
     try {
       db.collection('users').doc(window.fbUser.uid).set({
         isOnline: !isLeaving,
+        platform: getClientPlatform(),
+        lastPlatform: getClientPlatform(),
         lastActive: firebase.firestore.FieldValue.serverTimestamp()
       }, { merge: true }).catch(function() {});
     } catch(e) {}
