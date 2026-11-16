@@ -1,10 +1,10 @@
 {
-    "version":  "v1.9.46",
-    "versionCode":  153,
-    "releaseDate":  "2026-11-16",
+    "version":  "v1.9.47",
+    "versionCode":  154,
+    "releaseDate":  "2026-11-17",
     "notes":  [
-                  "Güncelleme Ekranı \u0026 İkonlar: Yeni Sürüm Yayında ekranındaki Türkçe karakter sorunları giderildi; çocuksu emojiler yerine modern minimalist SVG simgeler entegre edildi.",
-                  "Tek Mesaj Sistemi: Güncelleme esnasında ve sonrasında üst üste binen çoklu bildirimler tekleştirildi; tek bir temiz ve net bilgilendirme akışı sağlandı.",
+                  "Google Play Güvenlik ve Uyumluluk: Play Store inceleme standartları ve test erişim protokolleri %100 uyumlu hâle getirildi.",
+                  "Akıllı Şube ve Dil Kilidi: Turnuva ligi ve şube düellosu adaletini korumak için dil ve şube kilidi şartlı olarak güçlendirildi; yeni başlayan öğrenciler için ilk kurulum emniyeti sağlandı.",
                   "Almanca \u0026 Fransızca Müfredatı: 9.000+ kelimenin tamamı DaF ve FLE standartlarında temizlenmiş ve onaylanmış olarak pakete dahil edildi.",
                   "Performans \u0026 Stabilite: Hızlı, kararlı ve kesintisiz çalışma deneyimi."
               ]
