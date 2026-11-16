@@ -1,11 +1,11 @@
-﻿{
-    "version":  "v1.9.45",
-    "versionCode":  152,
-    "releaseDate":  "2026-11-16",
-    "notes":  [
-                  "Almanca MÃ¼fredatÄ± (DaF): A1, A2 ve B1 seviyelerindeki 4.742 kelimenin tamamÄ± denetlendi; ÅŸablon cÃ¼mleler, imla ve tÃ¼r etiketleri (%100) standardize edildi.",
-                  "FransÄ±zca MÃ¼fredatÄ± (FLE): A1, A2 ve B1 seviyelerindeki 4.285 kelimenin tamamÄ± elden geÃ§irildi; eksik isim cinsiyetleri, tÃ¼rler ve Ã¶rnek cÃ¼mleler dÃ¼zeltildi.",
-                  "Oyun Motoru \u0026 Tipografi: Anagram, BoÅŸluk Doldurma ve CÃ¼mle Kurma motorunu bozan tÃ¼m apostrof, tÄ±rnak ve iki nokta karakterleri klavye ve motorla tam uyumlu hÃ¢le getirildi.",
-                  "Performans \u0026 Stabilite: HÄ±zlÄ±, kararlÄ± ve kesintisiz Ã§alÄ±ÅŸma deneyimi."
-              ]
+{
+  "version": "v1.9.45",
+  "versionCode": 152,
+  "releaseDate": "2026-11-16",
+  "notes": [
+    "Almanca Müfredatı (DaF): A1, A2 ve B1 seviyelerindeki 4.742 kelimenin tamamı denetlendi; şablon cümleler, imla ve tür etiketleri (%100) standardize edildi.",
+    "Fransızca Müfredatı (FLE): A1, A2 ve B1 seviyelerindeki 4.285 kelimenin tamamı elden geçirildi; eksik isim cinsiyetleri, türler ve örnek cümleler düzeltildi.",
+    "Oyun Motoru & Tipografi: Anagram, Boşluk Doldurma ve Cümle Kurma motorunu bozan tüm apostrof, tırnak ve iki nokta karakterleri klavye ve motorla tam uyumlu hâle getirildi.",
+    "Performans & Stabilite: Hızlı, kararlı ve kesintisiz çalışma deneyimi."
+  ]
 }

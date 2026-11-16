@@ -1240,19 +1240,30 @@
     // Uygulama Sürüm Güncelleme Bildirimi Kontrolü
     function checkAndNotifyAppUpdate() {
       const lastSeenVersion = localStorage.getItem('lexiq_last_seen_version');
-      if (lastSeenVersion && lastSeenVersion !== APP_VERSION) {
+      const justUpdated = sessionStorage.getItem('lexigo_just_updated_msg');
+      if (justUpdated) {
+        sessionStorage.removeItem('lexigo_just_updated_msg');
+        sessionStorage.setItem('lexigo_suppress_update_banner_session', 'true');
+      }
+
+      const isVersionChanged = lastSeenVersion && (lastSeenVersion !== APP_VERSION);
+
+      if (justUpdated || isVersionChanged) {
+        sessionStorage.setItem('lexigo_suppress_update_banner_session', 'true');
         setTimeout(() => {
           const updateModalEl = document.getElementById('appUpdateModal');
           const versionText = document.getElementById('appUpdateVersionText');
           if (versionText) versionText.textContent = APP_VERSION;
           if (updateModalEl) {
+            // Sadece TEK BİR bildirim arayüzü: Modal açılır; eşzamanlı veya arka arkaya toast fırlatılmaz
             updateModalEl.style.display = 'flex';
             updateModalEl.classList.add('active');
             playSoundEffect('celebration');
           } else {
-            showToast(`🎉 LexiGo ${APP_VERSION} sürümüne güncellendi! Yenilikler hazır.`, 'correct');
+            // Modal DOM'da yoksa sadece tek bir sade toast gösterilir
+            showToast(`✅ LexiGo ${APP_VERSION} sürümüne başarıyla güncellendi!`, 'correct', 4000);
           }
-        }, 1100);
+        }, 900);
       }
       localStorage.setItem('lexiq_last_seen_version', APP_VERSION);
     }
@@ -16021,7 +16032,13 @@ let activeAvatarCategory = 'all';
         if (ghRes.ok) {
           const ghJson = await ghRes.json();
           if (ghJson && ghJson.content) {
-            const decoded = JSON.parse(atob(ghJson.content.replace(/\s/g, '')));
+            const binaryStr = atob(ghJson.content.replace(/\s/g, ''));
+            const bytes = new Uint8Array(binaryStr.length);
+            for (let i = 0; i < binaryStr.length; i++) {
+              bytes[i] = binaryStr.charCodeAt(i);
+            }
+            const decodedStr = new TextDecoder('utf-8').decode(bytes);
+            const decoded = JSON.parse(decodedStr);
             if (decoded && (decoded.version || decoded.versionCode)) {
               return decoded;
             }
@@ -16137,6 +16154,7 @@ let activeAvatarCategory = 'all';
         if (targetVersion) {
           localStorage.setItem('lexiq_last_seen_version', targetVersion);
         }
+        sessionStorage.setItem('lexigo_just_updated_msg', targetVersion || APP_VERSION);
       } catch (e) {
         console.warn('Cache purge error:', e);
       }
@@ -16182,7 +16200,20 @@ let activeAvatarCategory = 'all';
           if (aboutResultBox && aboutStatusMsg) {
             aboutResultBox.style.display = 'block';
             if (isNewVersion) {
-              aboutStatusMsg.innerHTML = `🚀 <strong style="color: #38bdf8; font-size: 1rem;">Yeni Sürüm Yayında: ${remoteVer}</strong><br><span style="font-size: 0.82rem; opacity: 0.85;">Mevcut Cihaz Sürümü: ${currentVer}</span>`;
+              aboutStatusMsg.innerHTML = `
+                <div style="display: flex; align-items: center; gap: 8px; justify-content: center; margin-bottom: 4px;">
+                  <span style="display: inline-flex; align-items: center; justify-content: center; width: 26px; height: 26px; border-radius: 8px; background: rgba(56,189,248,0.2); color: #38bdf8;">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round">
+                      <path d="M21 12a9 9 0 0 0-9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/>
+                      <path d="M3 3v5h5"/>
+                      <path d="M3 12a9 9 0 0 0 9 9 9.75 9.75 0 0 0 6.74-2.74L21 16"/>
+                      <path d="M16 21h5v-5"/>
+                    </svg>
+                  </span>
+                  <strong style="color: #38bdf8; font-size: 1rem;">Yeni Sürüm Yayında: ${remoteVer}</strong>
+                </div>
+                <span style="font-size: 0.82rem; opacity: 0.85;">Mevcut Cihaz Sürümü: ${currentVer}</span>
+              `;
               if (aboutPlayBtn && isAndroid) {
                 aboutPlayBtn.style.display = 'flex';
                 if (aboutPlayText) aboutPlayText.textContent = `Google Play'den Güncelle (${remoteVer})`;
@@ -16190,12 +16221,21 @@ let activeAvatarCategory = 'all';
               }
               if (aboutWebBtn && !isAndroid) {
                 aboutWebBtn.style.display = 'flex';
-                if (aboutWebText) aboutWebText.textContent = `Şimdi Güncelle & Yenile (${remoteVer})`;
+                if (aboutWebText) aboutWebText.textContent = `Şimdi Güncelle ve Yenile (${remoteVer})`;
                 aboutWebBtn.onclick = () => purgeCacheAndReload(remoteVer);
                 if (aboutWebHint) aboutWebHint.style.display = 'block';
               }
             } else {
-              aboutStatusMsg.innerHTML = `✅ <strong style="color: #10b981; font-size: 1rem;">LexiGo En Güncel Sürümde (${currentVer})</strong>`;
+              aboutStatusMsg.innerHTML = `
+                <div style="display: flex; align-items: center; gap: 8px; justify-content: center;">
+                  <span style="display: inline-flex; align-items: center; justify-content: center; width: 26px; height: 26px; border-radius: 8px; background: rgba(16,185,129,0.2); color: #10b981;">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                      <polyline points="20 6 9 17 4 12"/>
+                    </svg>
+                  </span>
+                  <strong style="color: #10b981; font-size: 1rem;">LexiGo En Güncel Sürümde (${currentVer})</strong>
+                </div>
+              `;
               if (aboutPlayBtn && isAndroid) {
                 aboutPlayBtn.style.display = 'flex';
                 if (aboutPlayText) aboutPlayText.textContent = `Google Play Mağazasında Aç`;
@@ -16203,7 +16243,7 @@ let activeAvatarCategory = 'all';
               }
               if (aboutWebBtn && !isAndroid) {
                 aboutWebBtn.style.display = 'flex';
-                if (aboutWebText) aboutWebText.textContent = `Önbelleği Temizle & Yenile`;
+                if (aboutWebText) aboutWebText.textContent = `Önbelleği Temizle ve Yenile`;
                 aboutWebBtn.onclick = () => purgeCacheAndReload(currentVer);
                 if (aboutWebHint) aboutWebHint.style.display = 'block';
               }
@@ -16221,36 +16261,67 @@ let activeAvatarCategory = 'all';
           const forceRefreshBtn = document.getElementById('forceRefreshCacheBtn');
 
           if (isNewVersion) {
-            if (modalIcon) modalIcon.textContent = '🚀';
+            if (modalIcon) {
+              modalIcon.innerHTML = `
+                <div style="width: 64px; height: 64px; border-radius: 20px; background: linear-gradient(135deg, #0284c7, #2563eb, #6366f1); display: flex; align-items: center; justify-content: center; box-shadow: 0 8px 24px rgba(37, 99, 235, 0.35); color: #fff;">
+                  <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M21 12a9 9 0 0 0-9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/>
+                    <path d="M3 3v5h5"/>
+                    <path d="M3 12a9 9 0 0 0 9 9 9.75 9.75 0 0 0 6.74-2.74L21 16"/>
+                    <path d="M16 21h5v-5"/>
+                  </svg>
+                </div>
+              `;
+            }
 
             if (isAndroid) {
-              if (modalTitle) modalTitle.textContent = `🎉 Google Play'de Yeni Sürüm: ${remoteVer}!`;
+              if (modalTitle) modalTitle.textContent = `Google Play'de Yeni Sürüm: ${remoteVer}`;
               if (applyBtn) {
                 applyBtn.style.display = 'block';
                 applyBtn.style.background = 'linear-gradient(135deg, #0284c7, #0369a1)';
-                applyBtn.innerHTML = `<span>🚀</span><span>Google Play'den Güncelle (${remoteVer})</span>`;
+                applyBtn.innerHTML = `
+                  <span style="display: inline-flex; align-items: center; justify-content: center; gap: 8px;">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
+                      <path d="M3 3.5l14 8.5-14 8.5V3.5z"/>
+                    </svg>
+                    <span>Google Play'den Güncelle (${remoteVer})</span>
+                  </span>
+                `;
                 applyBtn.onclick = () => openGooglePlayStore();
               }
               if (forceRefreshBtn) forceRefreshBtn.style.display = 'none';
-              showToast(`🚀 Google Play'de yeni ${remoteVer} sürümü yayında! Dokunarak mağazadan güncelleyebilirsiniz.`, 4500);
             } else {
-              if (modalTitle) modalTitle.textContent = `🎉 Yeni Sürüm Yayında: ${remoteVer}!`;
+              if (modalTitle) modalTitle.textContent = `Yeni Sürüm Yayında: ${remoteVer}`;
               if (applyBtn) {
                 applyBtn.style.display = 'block';
                 applyBtn.style.background = 'linear-gradient(135deg, #2563eb, #1d4ed8)';
-                applyBtn.innerHTML = `<span>🚀</span><span>Şimdi Güncelle & Yenile (${remoteVer})</span>`;
+                applyBtn.innerHTML = `
+                  <span style="display: inline-flex; align-items: center; justify-content: center; gap: 8px;">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round">
+                      <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                      <polyline points="7 10 12 15 17 10"/>
+                      <line x1="12" y1="15" x2="12" y2="3"/>
+                    </svg>
+                    <span>Şimdi Güncelle ve Yenile (${remoteVer})</span>
+                  </span>
+                `;
                 applyBtn.onclick = () => purgeCacheAndReload(remoteVer);
               }
               if (forceRefreshBtn) {
                 forceRefreshBtn.style.setProperty('display', 'none', 'important');
               }
-              showToast(`🚀 Yeni ${remoteVer} sürümü mevcut! Güncellemek için butona dokunun.`, 4500);
             }
 
             if (notesBox && data.notes && Array.isArray(data.notes)) {
               notesBox.innerHTML = `
-                <div style="font-weight: 800; margin-bottom: 8px; color: #fbbf24; display: flex; align-items: center; gap: 6px;">
-                  <span>✨</span><span>${remoteVer} Sürümündeki Yenilikler</span>
+                <div style="font-weight: 800; margin-bottom: 8px; color: #38bdf8; display: flex; align-items: center; gap: 6px;">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                    <polyline points="14 2 14 8 20 8"/>
+                    <line x1="16" y1="13" x2="8" y2="13"/>
+                    <line x1="16" y1="17" x2="8" y2="17"/>
+                  </svg>
+                  <span>${remoteVer} Sürümündeki Yenilikler</span>
                 </div>
                 <ul style="margin: 0; padding-left: 20px; display: flex; flex-direction: column; gap: 8px;">
                   ${data.notes.map(n => `<li>${n}</li>`).join('')}
@@ -16259,25 +16330,52 @@ let activeAvatarCategory = 'all';
             }
           } else {
             // Sürüm zaten güncel
-            if (modalIcon) modalIcon.textContent = '🌟';
+            if (modalIcon) {
+              modalIcon.innerHTML = `
+                <div style="width: 64px; height: 64px; border-radius: 20px; background: linear-gradient(135deg, #059669, #10b981); display: flex; align-items: center; justify-content: center; box-shadow: 0 8px 24px rgba(16, 185, 129, 0.35); color: #fff;">
+                  <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                    <polyline points="20 6 9 17 4 12"/>
+                  </svg>
+                </div>
+              `;
+            }
 
             if (isAndroid) {
-              if (modalTitle) modalTitle.textContent = '✅ Tebrikler! LexiGo Güncel';
+              if (modalTitle) modalTitle.textContent = 'LexiGo En Güncel Sürümde';
               if (applyBtn) {
                 applyBtn.style.display = 'block';
                 applyBtn.style.background = 'linear-gradient(135deg, #0284c7, #0369a1)';
-                applyBtn.innerHTML = `<span>🏪</span><span>Google Play Mağazasında Aç</span>`;
+                applyBtn.innerHTML = `
+                  <span style="display: inline-flex; align-items: center; justify-content: center; gap: 8px;">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
+                      <path d="M3 3.5l14 8.5-14 8.5V3.5z"/>
+                    </svg>
+                    <span>Google Play Mağazasında Aç</span>
+                  </span>
+                `;
                 applyBtn.onclick = () => openGooglePlayStore();
               }
               if (forceRefreshBtn) {
                 forceRefreshBtn.style.display = 'block';
-                forceRefreshBtn.innerHTML = `Önbelleği Temizle & Yenile`;
+                forceRefreshBtn.innerHTML = `
+                  <span style="display: inline-flex; align-items: center; justify-content: center; gap: 6px;">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                      <polyline points="1 4 1 10 7 10"/>
+                      <polyline points="23 20 23 14 17 14"/>
+                      <path d="M20.49 9A9 9 0 0 0 5.64 5.64L1 10m22 4l-4.64 4.36A9 9 0 0 1 3.51 15"/>
+                    </svg>
+                    <span>Önbelleği Temizle ve Yenile</span>
+                  </span>
+                `;
                 forceRefreshBtn.onclick = () => purgeCacheAndReload(currentVer);
               }
               if (notesBox) {
                 notesBox.innerHTML = `
-                  <div style="font-weight: 700; color: #10b981; margin-bottom: 6px;">
-                    ✅ En Güncel Sürümü (${currentVer}) Kullanıyorsunuz
+                  <div style="font-weight: 700; color: #10b981; margin-bottom: 6px; display: flex; align-items: center; gap: 6px;">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                      <polyline points="20 6 9 17 4 12"/>
+                    </svg>
+                    <span>En Güncel Sürümü (${currentVer}) Kullanıyorsunuz</span>
                   </div>
                   <p style="margin: 0; font-size: 0.85rem; color: var(--text-muted); line-height: 1.5;">
                     Cihazınızdaki sürüm (${currentVer}) son yayınla eşleşmektedir. Google Play Store sayfasından da kontrol edebilirsiniz.
@@ -16285,11 +16383,20 @@ let activeAvatarCategory = 'all';
                 `;
               }
             } else {
-              if (modalTitle) modalTitle.textContent = '✅ Tebrikler! LexiGo Güncel';
+              if (modalTitle) modalTitle.textContent = 'LexiGo En Güncel Sürümde';
               if (applyBtn) {
                 applyBtn.style.display = 'block';
                 applyBtn.style.background = 'linear-gradient(135deg, #0284c7, #0369a1)';
-                applyBtn.innerHTML = `Önbelleği Temizle & Yenile`;
+                applyBtn.innerHTML = `
+                  <span style="display: inline-flex; align-items: center; justify-content: center; gap: 8px;">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round">
+                      <polyline points="1 4 1 10 7 10"/>
+                      <polyline points="23 20 23 14 17 14"/>
+                      <path d="M20.49 9A9 9 0 0 0 5.64 5.64L1 10m22 4l-4.64 4.36A9 9 0 0 1 3.51 15"/>
+                    </svg>
+                    <span>Önbelleği Temizle ve Yenile</span>
+                  </span>
+                `;
                 applyBtn.onclick = () => purgeCacheAndReload(currentVer);
               }
               if (forceRefreshBtn) {
@@ -16297,8 +16404,11 @@ let activeAvatarCategory = 'all';
               }
               if (notesBox) {
                 notesBox.innerHTML = `
-                  <div style="font-weight: 700; color: #10b981; margin-bottom: 6px;">
-                    ✅ En Güncel Sürümü (${currentVer}) Kullanıyorsunuz
+                  <div style="font-weight: 700; color: #10b981; margin-bottom: 6px; display: flex; align-items: center; gap: 6px;">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                      <polyline points="20 6 9 17 4 12"/>
+                    </svg>
+                    <span>En Güncel Sürümü (${currentVer}) Kullanıyorsunuz</span>
                   </div>
                   <p style="margin: 0; font-size: 0.85rem; color: var(--text-muted); line-height: 1.5;">
                     Cihazınızdaki sürüm (${currentVer}) son yayınla tam olarak eşleşmektedir. Yeni bir içerik veya düzeltme aldığınızda tarayıcı önbelleğini tazelemek için aşağıdaki butonu kullanabilirsiniz.
@@ -16306,10 +16416,11 @@ let activeAvatarCategory = 'all';
                 `;
               }
             }
+            // Sürüm zaten güncel olduğunda sadece Hakkında sayfasından basılmışsa tek bir temiz toast ver
             showToast(`✅ LexiGo en güncel sürümde (${currentVer}).`, 'correct');
           }
 
-          // Yeni sürüm varsa her durumda appUpdateModal'ı açarak kullanıcıya yenilikleri ve güncelle butonunu göster
+          // Yeni sürüm varsa modalı aç (ekstradan arkada toast fırlatılmaz, tek bildirim kuralı)
           const isFromAboutPage = (btnEl && btnEl.id === 'aboutCheckUpdateBtn');
           if (isNewVersion && appUpdateModal) {
             appUpdateModal.style.display = 'flex';
@@ -16394,7 +16505,14 @@ let activeAvatarCategory = 'all';
       banner.style.cursor = 'pointer';
       banner.innerHTML = `
         <div class="ios-update-content">
-          <span class="ios-update-icon">🚀</span>
+          <span class="ios-update-icon" style="display: inline-flex; align-items: center; justify-content: center; width: 34px; height: 34px; border-radius: 10px; background: rgba(255,255,255,0.2); color: #fff;">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M21 12a9 9 0 0 0-9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/>
+              <path d="M3 3v5h5"/>
+              <path d="M3 12a9 9 0 0 0 9 9 9.75 9.75 0 0 0 6.74-2.74L21 16"/>
+              <path d="M16 21h5v-5"/>
+            </svg>
+          </span>
           <div class="ios-update-text">
             <strong>Yeni LexiGo Sürümü (${remoteVer}) Yayında!</strong>
             <span>Detayları görmek ve güncellemek için dokunun</span>
@@ -16435,6 +16553,10 @@ let activeAvatarCategory = 'all';
     // Arka planda uzaktan sürüm kontrolü (özellikle Android ve iOS / Safari PWA kullanıcıları için)
     setTimeout(async () => {
       try {
+        // Kullanıcı az önce güncellediyse bu oturumda tekrar güncelleme bildirimi gösterme
+        if (sessionStorage.getItem('lexigo_suppress_update_banner_session')) {
+          return;
+        }
         const data = await fetchRemoteVersion();
         if (data && (data.version || data.versionCode)) {
           const currentVer = getInstalledAppVersion();
@@ -16445,7 +16567,8 @@ let activeAvatarCategory = 'all';
             const platform = getAppPlatform();
             const isAndroid = (platform === 'android' || platform === 'android_web' || /android/i.test(navigator.userAgent || ''));
             
-            // Tüm platformlarda (Android dahil) kalıcı kayan güncelleme banner'ı göster
+            // Tüm platformlarda TEK BİR bildirim olarak kalıcı kayan güncelleme banner'ı göster
+            // Alta ekstra bir toast fırlatılmaz; tek mesaj kuralı uygulanır
             showAppUpdateBanner(remoteVer);
 
             if (isAndroid) {
@@ -16453,18 +16576,11 @@ let activeAvatarCategory = 'all';
               if (window.AndroidTTS && typeof window.AndroidTTS.sendUpdateNotification === 'function') {
                 try { window.AndroidTTS.sendUpdateNotification(); } catch (e) { console.warn('System notification error:', e); }
               }
-              showToast(`🚀 Google Play'de LexiGo ${remoteVer} hazır! Güncellemek için dokunun.`, 'info', 9000, () => {
-                navigateToAboutUpdatePage();
-              });
-            } else {
-              showToast(`🚀 Yeni LexiGo ${remoteVer} hazır! İncelemek için dokunun.`, 'info', 9000, () => {
-                navigateToAboutUpdatePage();
-              });
             }
           }
         }
       } catch (e) {}
-    }, 1800);
+    }, 2500);
 
     // Üst Menü Ana Sayfa Butonu
     if (dom.headerHomeBtn) {
