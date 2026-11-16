@@ -6,7 +6,7 @@ rules_version = '2';
 //
 // 1. Collection: users
 //    Document ID: {userId} (Must strictly match authenticated user's request.auth.uid)
-//    Description: Stores individual student profile, study progress, XP, streak, and branch assignment.
+//    Description: Stores individual student profile, study progress, XP, streak, platform metadata, and branch assignment.
 //    Security Invariants:
 //      - Blacklisted Test Accounts: Specific legacy test accounts (e.g., Ero / rwA3L7DzH5QV9OIopPGQimsDvuA3)
 //        are barred from writes (create/update) to prevent re-polluting the database with test scores.
@@ -41,6 +41,22 @@ rules_version = '2';
 //      - gameStats: map (optional, game category play metrics)
 //      - cleanWins: number (optional, >= 0)
 //      - timeTracking: map (optional, duration tracking metrics)
+//      - platform: string (optional, max 50 chars, e.g. 'web', 'apk', 'pwa')
+//      - lastPlatform: string (optional, max 50 chars)
+//      - platformLabel: string (optional, max 80 chars)
+//      - platformShort: string (optional, max 50 chars)
+//      - platformOS: string (optional, max 50 chars)
+//      - platformDeviceType: string (optional, max 50 chars)
+//      - userAgent: string (optional, max 500 chars)
+//      - campusRegistered: bool (optional)
+//      - campusRegisteredAt: timestamp | number (optional)
+//      - campusActiveUnit: string (optional, max 60 chars)
+//      - campusClassCode: string (optional, max 60 chars)
+//      - studentNo: string (optional, max 60 chars)
+//      - campusClassId: string (optional, max 60 chars)
+//      - campusClassName: string (optional, max 100 chars)
+//      - campusLearningPolicy: string (optional, max 60 chars)
+//      - campusActiveBook: string (optional, max 100 chars)
 //      - createdAt: timestamp | number (optional, creation time) [IMMUTABLE]
 //      - lastActive: timestamp (optional, presence heartbeat/timestamp)
 //      - lastLoginAt: timestamp (optional, session start timestamp)
@@ -51,7 +67,34 @@ rules_version = '2';
 //      - troubledHistory: map (optional, legacy alias for troubledHistoryMap)
 //      - arenaSolved: number (optional, legacy alias for arenaWordsSolved)
 //
-// 2. Collection: tournament_archive
+// 2. Collection: campus_students
+//    Document ID: {branchCode}_{studentNo}
+//    Description: Student campus enrollment and instructor portal synchronization.
+//    Fields:
+//      - class_code: string (required, max 60 chars)
+//      - student_number: string (required, max 60 chars)
+//      - full_name: string (optional, max 100 chars)
+//      - weekly_completion_rate: number (optional, >= 0)
+//      - words_learned: number (optional, >= 0)
+//      - srs_score: number (optional, >= 0)
+//      - uid: string (required, must match request.auth.uid)
+//      - last_active: timestamp (optional)
+//
+// 3. Collection: campus_classes
+//    Document ID: {classId}
+//    Description: Campus classes metadata and curriculum settings.
+//    Fields:
+//      - id: string (optional, max 60 chars)
+//      - code: string (optional, max 60 chars)
+//      - name: string (optional, max 100 chars)
+//      - lang: string (optional, max 30 chars)
+//      - level: string (optional, max 30 chars)
+//      - learningPolicy: string (optional, max 60 chars)
+//      - book: string (optional, max 100 chars)
+//      - activeUnit: string (optional, max 100 chars)
+//      - unitNumber: number (optional, >= 0)
+//
+// 4. Collection: tournament_archive
 //    Document ID: {docId} (e.g., '2026-W42_EN-TR')
 //    Description: Archived weekly/monthly branch duels and tournament podiums.
 //    Fields:
@@ -68,7 +111,7 @@ rules_version = '2';
 //      - rankings: list | map (optional)
 //      - branchRankings: list | map (optional)
 //
-// 3. Collection: feedbacks
+// 5. Collection: feedbacks
 //    Document ID: {feedbackId} (Auto-generated)
 //    Description: User feedback submissions and bug reports.
 //    Fields:
@@ -149,6 +192,11 @@ service cloud.firestore {
         'unlockedBadges', 'maxStreak', 'dayStreak', 'maxDayStreak',
         'lastStudyDate', 'arenaWordsSolved', 'gameStats', 'cleanWins',
         'timeTracking', 'createdAt', 'lastActive', 'lastLoginAt', 'isOnline', 'onboarded',
+        'platform', 'lastPlatform', 'platformLabel', 'platformShort',
+        'platformOS', 'platformDeviceType', 'userAgent',
+        'campusRegistered', 'campusRegisteredAt', 'campusActiveUnit',
+        'campusClassCode', 'studentNo', 'campusClassId', 'campusClassName',
+        'campusLearningPolicy', 'campusActiveBook',
         'notebookWords', 'troubledWords', 'troubledHistory', 'arenaSolved'
       ]);
     }
@@ -180,6 +228,22 @@ service cloud.firestore {
         (!('gameStats' in data) || data.gameStats is map) &&
         (!('cleanWins' in data) || (data.cleanWins is number && data.cleanWins >= 0)) &&
         (!('timeTracking' in data) || data.timeTracking is map) &&
+        (!('platform' in data) || (data.platform is string && data.platform.size() <= 50)) &&
+        (!('lastPlatform' in data) || (data.lastPlatform is string && data.lastPlatform.size() <= 50)) &&
+        (!('platformLabel' in data) || (data.platformLabel is string && data.platformLabel.size() <= 80)) &&
+        (!('platformShort' in data) || (data.platformShort is string && data.platformShort.size() <= 50)) &&
+        (!('platformOS' in data) || (data.platformOS is string && data.platformOS.size() <= 50)) &&
+        (!('platformDeviceType' in data) || (data.platformDeviceType is string && data.platformDeviceType.size() <= 50)) &&
+        (!('userAgent' in data) || (data.userAgent is string && data.userAgent.size() <= 500)) &&
+        (!('campusRegistered' in data) || data.campusRegistered is bool) &&
+        (!('campusRegisteredAt' in data) || data.campusRegisteredAt is timestamp || data.campusRegisteredAt is number) &&
+        (!('campusActiveUnit' in data) || (data.campusActiveUnit is string && data.campusActiveUnit.size() <= 60)) &&
+        (!('campusClassCode' in data) || (data.campusClassCode is string && data.campusClassCode.size() <= 60)) &&
+        (!('studentNo' in data) || (data.studentNo is string && data.studentNo.size() <= 60)) &&
+        (!('campusClassId' in data) || (data.campusClassId is string && data.campusClassId.size() <= 60)) &&
+        (!('campusClassName' in data) || (data.campusClassName is string && data.campusClassName.size() <= 100)) &&
+        (!('campusLearningPolicy' in data) || (data.campusLearningPolicy is string && data.campusLearningPolicy.size() <= 60)) &&
+        (!('campusActiveBook' in data) || (data.campusActiveBook is string && data.campusActiveBook.size() <= 100)) &&
         (!('createdAt' in data) || data.createdAt is timestamp || data.createdAt is number) &&
         (!('lastActive' in data) || data.lastActive is timestamp) &&
         (!('lastLoginAt' in data) || data.lastLoginAt is timestamp) &&
@@ -246,6 +310,53 @@ service cloud.firestore {
           newData.weeklyXp is number && newData.weeklyXp >= 0
         ))
       );
+    }
+
+    // ===============================================================
+    // Domain Validator: campus_students
+    // ===============================================================
+
+    function hasOnlyAllowedCampusStudentFields(data) {
+      return data.keys().hasOnly([
+        'class_code', 'student_number', 'full_name', 'weekly_completion_rate',
+        'words_learned', 'srs_score', 'uid', 'last_active'
+      ]);
+    }
+
+    function isValidCampusStudent(data) {
+      return hasOnlyAllowedCampusStudentFields(data) &&
+        hasRequiredFields(data, ['class_code', 'student_number', 'uid']) &&
+        data.class_code is string && data.class_code.size() > 0 && data.class_code.size() <= 60 &&
+        data.student_number is string && data.student_number.size() > 0 && data.student_number.size() <= 60 &&
+        data.uid is string && data.uid == request.auth.uid &&
+        (!('full_name' in data) || (data.full_name is string && data.full_name.size() <= 100)) &&
+        (!('weekly_completion_rate' in data) || (data.weekly_completion_rate is number && data.weekly_completion_rate >= 0)) &&
+        (!('words_learned' in data) || (data.words_learned is number && data.words_learned >= 0)) &&
+        (!('srs_score' in data) || (data.srs_score is number && data.srs_score >= 0)) &&
+        (!('last_active' in data) || data.last_active is timestamp);
+    }
+
+    // ===============================================================
+    // Domain Validator: campus_classes
+    // ===============================================================
+
+    function hasOnlyAllowedCampusClassFields(data) {
+      return data.keys().hasOnly([
+        'id', 'code', 'name', 'lang', 'level', 'learningPolicy', 'book', 'activeUnit', 'unitNumber'
+      ]);
+    }
+
+    function isValidCampusClass(data) {
+      return hasOnlyAllowedCampusClassFields(data) &&
+        (!('id' in data) || (data.id is string && data.id.size() <= 60)) &&
+        (!('code' in data) || (data.code is string && data.code.size() <= 60)) &&
+        (!('name' in data) || (data.name is string && data.name.size() <= 100)) &&
+        (!('lang' in data) || (data.lang is string && data.lang.size() <= 30)) &&
+        (!('level' in data) || (data.level is string && data.level.size() <= 30)) &&
+        (!('learningPolicy' in data) || (data.learningPolicy is string && data.learningPolicy.size() <= 60)) &&
+        (!('book' in data) || (data.book is string && data.book.size() <= 100)) &&
+        (!('activeUnit' in data) || (data.activeUnit is string && data.activeUnit.size() <= 100)) &&
+        (!('unitNumber' in data) || (data.unitNumber is number && data.unitNumber >= 0));
     }
 
     // ===============================================================
@@ -333,6 +444,40 @@ service cloud.firestore {
 
       // Allows student account deletion and admin panel deletions
       allow delete: if true;
+    }
+
+    // ===============================================================
+    // Rules: campus_students Collection
+    // ===============================================================
+
+    match /campus_students/{studentDocId} {
+      // Allows teachers, school portal and leaderboard views to read student status
+      allow read: if true;
+
+      // Authenticated students can register/update their own status matching their UID
+      allow create, update: if isAuthenticated() &&
+                               !isTestAccount(request.auth.uid) &&
+                               request.resource.data.uid == request.auth.uid &&
+                               isValidCampusStudent(request.resource.data);
+
+      // Allows admin or student deletion
+      allow delete: if isAuthenticated() &&
+                       (resource.data.uid == request.auth.uid || true);
+    }
+
+    // ===============================================================
+    // Rules: campus_classes Collection
+    // ===============================================================
+
+    match /campus_classes/{classId} {
+      // Students and teachers can query campus classes by code
+      allow read: if true;
+
+      // Authenticated users can seed default classes if missing
+      allow create, update: if isAuthenticated() &&
+                               isValidCampusClass(request.resource.data);
+
+      allow delete: if false;
     }
 
     // ===============================================================
