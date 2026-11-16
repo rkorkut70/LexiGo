@@ -602,8 +602,12 @@
     }
     table {
       width: 100%;
-      border-collapse: collapse;
+      border-collapse: separate;
+      border-spacing: 0;
       text-align: left;
+    }
+    table.resizable-table {
+      table-layout: fixed;
     }
     th {
       background: var(--bg-surface);
@@ -612,15 +616,31 @@
       font-weight: 700;
       text-transform: uppercase;
       letter-spacing: 0.3px;
-      padding: 7px 7px;
+      padding: 0;
       border-bottom: 1px solid var(--border);
       white-space: nowrap;
+      position: relative;
+      box-sizing: border-box;
+    }
+    .th-content {
+      padding: 7px 7px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      display: flex;
+      align-items: center;
+      gap: 3px;
+      width: 100%;
+      box-sizing: border-box;
+    }
+    .th-cb .th-content {
+      justify-content: center;
+      padding: 7px 2px;
     }
     th.sortable-th {
       cursor: pointer;
       user-select: none;
       transition: background-color 0.15s ease, color 0.15s ease;
-      position: relative;
     }
     th.sortable-th:hover {
       background: rgba(59, 130, 246, 0.1);
@@ -643,12 +663,47 @@
       color: var(--primary);
       font-weight: 800;
     }
+    .col-resizer {
+      position: absolute;
+      top: 0;
+      right: 0;
+      width: 8px;
+      bottom: 0;
+      cursor: col-resize;
+      user-select: none;
+      z-index: 15;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      touch-action: none;
+    }
+    .col-resizer::after {
+      content: '';
+      width: 2px;
+      height: 60%;
+      background: var(--border);
+      border-radius: 2px;
+      transition: background-color 0.15s ease, height 0.15s ease;
+    }
+    .col-resizer:hover::after,
+    .col-resizer.is-resizing::after {
+      background: #3b82f6;
+      height: 100%;
+      box-shadow: 0 0 6px rgba(59, 130, 246, 0.7);
+    }
+    body.col-resizing-active,
+    body.col-resizing-active * {
+      cursor: col-resize !important;
+      user-select: none !important;
+    }
     td {
       padding: 6px 7px;
       border-bottom: 1px solid var(--border-subtle);
       font-size: 0.77rem;
       color: var(--text);
       vertical-align: middle;
+      overflow: hidden;
+      box-sizing: border-box;
     }
     tr:hover td {
       background: rgba(37, 99, 235, 0.03);
@@ -693,7 +748,8 @@
       align-items: center;
       gap: 7px;
       min-width: 0;
-      max-width: 175px;
+      width: 100%;
+      overflow: hidden;
     }
     .user-avatar-bubble {
       width: 26px;
@@ -708,6 +764,11 @@
       flex-shrink: 0;
       box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
     }
+    .user-cell-info {
+      min-width: 0;
+      flex: 1;
+      overflow: hidden;
+    }
     .user-meta-name {
       font-weight: 700;
       font-size: 0.79rem;
@@ -715,7 +776,7 @@
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
-      max-width: 135px;
+      width: 100%;
       line-height: 1.2;
     }
     .user-meta-email {
@@ -724,7 +785,7 @@
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
-      max-width: 135px;
+      width: 100%;
       line-height: 1.2;
       margin-top: 1px;
     }
@@ -1257,6 +1318,12 @@
             <option value="branch_asc">Şube (A-Z)</option>
             <option value="created_desc">Kayıt Tarihi (En Yeni)</option>
           </select>
+
+          <!-- Sütun Genişliklerini Sıfırla -->
+          <button type="button" class="btn btn-secondary" id="resetStudentsColWidthsBtn" onclick="resetColWidths('students')" title="Sütun genişliklerini varsayılana sıfırla" style="padding: 6px 11px; font-size: 0.74rem; font-weight: 600; white-space: nowrap; display: inline-flex; align-items: center; gap: 5px;">
+            <span class="ui-icon ui-icon-xs"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"></path><polyline points="3 3 3 8 8 8"></polyline></svg></span>
+            <span>Genişlikleri Sıfırla</span>
+          </button>
         </div>
       </div>
 
@@ -1282,21 +1349,61 @@
       <!-- Students Table -->
       <div class="table-card">
         <div class="table-container">
-          <table data-sort-table="students">
+          <table class="resizable-table" data-sort-table="students" id="studentsTable">
+            <colgroup id="studentsColgroup">
+              <col style="width: 36px;">
+              <col style="width: 240px;">
+              <col style="width: 105px;">
+              <col style="width: 115px;">
+              <col style="width: 85px;">
+              <col style="width: 110px;">
+              <col style="width: 85px;">
+              <col style="width: 120px;">
+              <col style="width: 95px;">
+              <col style="width: 85px;">
+            </colgroup>
             <thead>
               <tr>
-                <th style="width: 28px; text-align: center;">
-                  <input type="checkbox" id="selectAllCheckbox" class="user-cb" title="Tümünü Seç / Kaldır">
+                <th class="th-cb" style="text-align: center;">
+                  <div class="th-content">
+                    <input type="checkbox" id="selectAllCheckbox" class="user-cb" title="Tümünü Seç / Kaldır">
+                  </div>
                 </th>
-                <th class="sortable-th" data-table="students" data-key="name" style="max-width:175px;" title="Öğrenci ismine göre sırala">Öğrenci <span class="sort-icon">⇅</span></th>
-                <th class="sortable-th" data-table="students" data-key="platform" style="width:90px;" title="Giriş kanalına göre sırala">Kanal <span class="sort-icon">⇅</span></th>
-                <th class="sortable-th" data-table="students" data-key="branch" style="width:90px;" title="Şube koduna göre sırala">Şube & Hedef <span class="sort-icon">⇅</span></th>
-                <th class="sortable-th" data-table="students" data-key="level" style="width:75px;" title="Kur ve üniteye göre sırala">Seviye <span class="sort-icon">⇅</span></th>
-                <th class="sortable-th active-sort" data-table="students" data-key="xp" style="width:85px;" title="XP puanına göre sırala">İlerleme <span class="sort-icon">▼</span></th>
-                <th class="sortable-th" data-table="students" data-key="streak" style="width:75px;" title="Seri gününe göre sırala">Seri <span class="sort-icon">⇅</span></th>
-                <th class="sortable-th" data-table="students" data-key="activity" style="width:95px;" title="Son giriş ve oturum aktifliğine göre sırala">Giriş / Aktiflik <span class="sort-icon">⇅</span></th>
-                <th class="sortable-th" data-table="students" data-key="time" style="width:80px;" title="Toplam süreye göre sırala">Süre <span class="sort-icon">⇅</span></th>
-                <th class="th-actions-sticky" style="width: 75px; text-align: center;">İşlemler</th>
+                <th class="sortable-th" data-table="students" data-key="name" title="Öğrenci ismine göre sırala">
+                  <div class="th-content"><span>Öğrenci</span> <span class="sort-icon">⇅</span></div>
+                  <div class="col-resizer" title="Genişletmek / daraltmak için sürükleyin, sıfırlamak için çift tıklayın"></div>
+                </th>
+                <th class="sortable-th" data-table="students" data-key="platform" title="Giriş kanalına göre sırala">
+                  <div class="th-content"><span>Kanal</span> <span class="sort-icon">⇅</span></div>
+                  <div class="col-resizer" title="Genişletmek / daraltmak için sürükleyin, sıfırlamak için çift tıklayın"></div>
+                </th>
+                <th class="sortable-th" data-table="students" data-key="branch" title="Şube koduna göre sırala">
+                  <div class="th-content"><span>Şube & Hedef</span> <span class="sort-icon">⇅</span></div>
+                  <div class="col-resizer" title="Genişletmek / daraltmak için sürükleyin, sıfırlamak için çift tıklayın"></div>
+                </th>
+                <th class="sortable-th" data-table="students" data-key="level" title="Kur ve üniteye göre sırala">
+                  <div class="th-content"><span>Seviye</span> <span class="sort-icon">⇅</span></div>
+                  <div class="col-resizer" title="Genişletmek / daraltmak için sürükleyin, sıfırlamak için çift tıklayın"></div>
+                </th>
+                <th class="sortable-th active-sort" data-table="students" data-key="xp" title="XP puanına göre sırala">
+                  <div class="th-content"><span>İlerleme</span> <span class="sort-icon">▼</span></div>
+                  <div class="col-resizer" title="Genişletmek / daraltmak için sürükleyin, sıfırlamak için çift tıklayın"></div>
+                </th>
+                <th class="sortable-th" data-table="students" data-key="streak" title="Seri gününe göre sırala">
+                  <div class="th-content"><span>Seri</span> <span class="sort-icon">⇅</span></div>
+                  <div class="col-resizer" title="Genişletmek / daraltmak için sürükleyin, sıfırlamak için çift tıklayın"></div>
+                </th>
+                <th class="sortable-th" data-table="students" data-key="activity" title="Son giriş ve oturum aktifliğine göre sırala">
+                  <div class="th-content"><span>Giriş / Aktiflik</span> <span class="sort-icon">⇅</span></div>
+                  <div class="col-resizer" title="Genişletmek / daraltmak için sürükleyin, sıfırlamak için çift tıklayın"></div>
+                </th>
+                <th class="sortable-th" data-table="students" data-key="time" title="Toplam süreye göre sırala">
+                  <div class="th-content"><span>Süre</span> <span class="sort-icon">⇅</span></div>
+                  <div class="col-resizer" title="Genişletmek / daraltmak için sürükleyin, sıfırlamak için çift tıklayın"></div>
+                </th>
+                <th class="th-actions-sticky" style="text-align: center;">
+                  <div class="th-content" style="justify-content: center;"><span>İşlemler</span></div>
+                </th>
               </tr>
             </thead>
             <tbody id="studentsTableBody">
@@ -1439,24 +1546,67 @@
             <option value="created_asc">Kayıt Tarihi (En Eski)</option>
             <option value="name_asc">İsim (A-Z)</option>
           </select>
+
+          <!-- Sütun Genişliklerini Sıfırla -->
+          <button type="button" class="btn btn-secondary" id="resetTimeColWidthsBtn" onclick="resetColWidths('time')" title="Sütun genişliklerini varsayılana sıfırla" style="padding: 6px 11px; font-size: 0.74rem; font-weight: 600; white-space: nowrap; display: inline-flex; align-items: center; gap: 5px;">
+            <span class="ui-icon ui-icon-xs"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"></path><polyline points="3 3 3 8 8 8"></polyline></svg></span>
+            <span>Genişlikleri Sıfırla</span>
+          </button>
         </div>
       </div>
 
       <!-- Time Tracking Table -->
       <div class="table-card">
         <div class="table-container">
-          <table data-sort-table="time">
+          <table class="resizable-table" data-sort-table="time" id="timeTrackingTable">
+            <colgroup id="timeColgroup">
+              <col style="width: 240px;">
+              <col style="width: 105px;">
+              <col style="width: 115px;">
+              <col style="width: 90px;">
+              <col style="width: 120px;">
+              <col style="width: 95px;">
+              <col style="width: 90px;">
+              <col style="width: 120px;">
+              <col style="width: 75px;">
+            </colgroup>
             <thead>
               <tr>
-                <th class="sortable-th" data-table="time" data-key="name" style="max-width:175px;" title="Öğrenci ismine göre sırala">Öğrenci <span class="sort-icon">⇅</span></th>
-                <th class="sortable-th" data-table="time" data-key="platform" style="width:90px;" title="Giriş kanalına göre sırala">Kanal <span class="sort-icon">⇅</span></th>
-                <th class="sortable-th" data-table="time" data-key="branch" style="width:90px;" title="Şube ve dile göre sırala">Şube & Dil <span class="sort-icon">⇅</span></th>
-                <th class="sortable-th" data-table="time" data-key="created" style="width:75px;" title="Kayıt tarihine göre sırala">Kayıt <span class="sort-icon">⇅</span></th>
-                <th class="sortable-th" data-table="time" data-key="active" style="width:95px;" title="Son giriş ve oturum aktifliğine göre sırala">Son Giriş <span class="sort-icon">⇅</span></th>
-                <th class="sortable-th active-sort" data-table="time" data-key="totalTime" style="width:75px;" title="Toplam süreye göre sırala">Toplam Süre <span class="sort-icon">▼</span></th>
-                <th class="sortable-th" data-table="time" data-key="distribution" style="width:80px;" title="Kart ve pratik süresi dengesine göre sırala">Dağılım <span class="sort-icon">⇅</span></th>
-                <th class="sortable-th" data-table="time" data-key="units" style="width:95px;" title="Çalışılan ünite sayısına göre sırala">Üniteler <span class="sort-icon">⇅</span></th>
-                <th class="th-actions-sticky" style="text-align: center; width: 65px;">İşlem</th>
+                <th class="sortable-th" data-table="time" data-key="name" title="Öğrenci ismine göre sırala">
+                  <div class="th-content"><span>Öğrenci</span> <span class="sort-icon">⇅</span></div>
+                  <div class="col-resizer" title="Genişletmek / daraltmak için sürükleyin, sıfırlamak için çift tıklayın"></div>
+                </th>
+                <th class="sortable-th" data-table="time" data-key="platform" title="Giriş kanalına göre sırala">
+                  <div class="th-content"><span>Kanal</span> <span class="sort-icon">⇅</span></div>
+                  <div class="col-resizer" title="Genişletmek / daraltmak için sürükleyin, sıfırlamak için çift tıklayın"></div>
+                </th>
+                <th class="sortable-th" data-table="time" data-key="branch" title="Şube ve dile göre sırala">
+                  <div class="th-content"><span>Şube & Dil</span> <span class="sort-icon">⇅</span></div>
+                  <div class="col-resizer" title="Genişletmek / daraltmak için sürükleyin, sıfırlamak için çift tıklayın"></div>
+                </th>
+                <th class="sortable-th" data-table="time" data-key="created" title="Kayıt tarihine göre sırala">
+                  <div class="th-content"><span>Kayıt</span> <span class="sort-icon">⇅</span></div>
+                  <div class="col-resizer" title="Genişletmek / daraltmak için sürükleyin, sıfırlamak için çift tıklayın"></div>
+                </th>
+                <th class="sortable-th" data-table="time" data-key="active" title="Son giriş ve oturum aktifliğine göre sırala">
+                  <div class="th-content"><span>Son Giriş</span> <span class="sort-icon">⇅</span></div>
+                  <div class="col-resizer" title="Genişletmek / daraltmak için sürükleyin, sıfırlamak için çift tıklayın"></div>
+                </th>
+                <th class="sortable-th active-sort" data-table="time" data-key="totalTime" title="Toplam süreye göre sırala">
+                  <div class="th-content"><span>Toplam Süre</span> <span class="sort-icon">▼</span></div>
+                  <div class="col-resizer" title="Genişletmek / daraltmak için sürükleyin, sıfırlamak için çift tıklayın"></div>
+                </th>
+                <th class="sortable-th" data-table="time" data-key="distribution" title="Kart ve pratik süresi dengesine göre sırala">
+                  <div class="th-content"><span>Dağılım</span> <span class="sort-icon">⇅</span></div>
+                  <div class="col-resizer" title="Genişletmek / daraltmak için sürükleyin, sıfırlamak için çift tıklayın"></div>
+                </th>
+                <th class="sortable-th" data-table="time" data-key="units" title="Çalışılan ünite sayısına göre sırala">
+                  <div class="th-content"><span>Üniteler</span> <span class="sort-icon">⇅</span></div>
+                  <div class="col-resizer" title="Genişletmek / daraltmak için sürükleyin, sıfırlamak için çift tıklayın"></div>
+                </th>
+                <th class="th-actions-sticky" style="text-align: center;">
+                  <div class="th-content" style="justify-content: center;"><span>İşlem</span></div>
+                </th>
               </tr>
             </thead>
             <tbody id="timeTrackingTableBody">
@@ -2024,9 +2174,169 @@
       }
     }
 
+    // ========================================================
+    // TABLO SÜTUN GENİŞLİKLERİ VE BOYUTLANDIRMA (COLUMN RESIZER)
+    // ========================================================
+    const DEFAULT_COL_WIDTHS = {
+      students: [36, 240, 105, 115, 85, 110, 85, 120, 95, 85],
+      time: [240, 105, 115, 90, 120, 95, 90, 120, 75]
+    };
+
+    const STORAGE_KEYS = {
+      students: 'lexiq_admin_col_widths_students_v3',
+      time: 'lexiq_admin_col_widths_time_v3'
+    };
+
+    function getSavedColWidths(tableName) {
+      try {
+        const raw = localStorage.getItem(STORAGE_KEYS[tableName]);
+        if (raw) {
+          const parsed = JSON.parse(raw);
+          if (Array.isArray(parsed) && parsed.length === DEFAULT_COL_WIDTHS[tableName].length) {
+            return parsed.map((w, i) => {
+              const minW = (i === 0 && tableName === 'students') ? 32 : 55;
+              return Math.max(minW, Number(w) || DEFAULT_COL_WIDTHS[tableName][i]);
+            });
+          }
+        }
+      } catch (e) {
+        console.warn('Sütun genişlikleri okunamadı:', e);
+      }
+      return [...DEFAULT_COL_WIDTHS[tableName]];
+    }
+
+    function saveColWidths(tableName, widths) {
+      try {
+        localStorage.setItem(STORAGE_KEYS[tableName], JSON.stringify(widths));
+      } catch (e) {
+        console.warn('Sütun genişlikleri kaydedilemedi:', e);
+      }
+    }
+
+    function applyColWidths(tableName, widths) {
+      const table = document.querySelector(`table[data-sort-table="${tableName}"]`);
+      if (!table) return;
+      const colgroup = table.querySelector('colgroup');
+      if (!colgroup) return;
+      const cols = colgroup.querySelectorAll('col');
+      const ths = table.querySelectorAll('thead th');
+      
+      let total = 0;
+      widths.forEach((w, idx) => {
+        const minW = (idx === 0 && tableName === 'students') ? 32 : 55;
+        const clamped = Math.max(minW, Number(w) || minW);
+        if (cols[idx]) cols[idx].style.width = clamped + 'px';
+        if (ths[idx]) ths[idx].style.width = clamped + 'px';
+        total += clamped;
+      });
+
+      const container = table.closest('.table-container');
+      if (container && total > container.clientWidth) {
+        table.style.width = total + 'px';
+      } else {
+        table.style.width = '100%';
+      }
+    }
+
+    window.resetColWidths = function(tableName) {
+      try {
+        localStorage.removeItem(STORAGE_KEYS[tableName]);
+      } catch (e) {}
+      const defaults = [...DEFAULT_COL_WIDTHS[tableName]];
+      applyColWidths(tableName, defaults);
+      showToast(tableName === 'students' ? 'Öğrenci tablosu sütun genişlikleri sıfırlandı.' : 'Süre tablosu sütun genişlikleri sıfırlandı.', 'info');
+    };
+
+    function initTableColumnResizing() {
+      ['students', 'time'].forEach(tableName => {
+        const table = document.querySelector(`table[data-sort-table="${tableName}"]`);
+        if (!table) return;
+
+        // Sayfa açılışında kayıtlı veya varsayılan genişlikleri uygula
+        const initialWidths = getSavedColWidths(tableName);
+        applyColWidths(tableName, initialWidths);
+
+        const resizers = table.querySelectorAll('.col-resizer');
+        resizers.forEach(resizer => {
+          const th = resizer.closest('th');
+          if (!th) return;
+
+          // Çift tıklama: bu tablonun sütunlarını varsayılana sıfırla
+          resizer.addEventListener('dblclick', (e) => {
+            e.stopPropagation();
+            e.preventDefault();
+            resetColWidths(tableName);
+          });
+
+          // Sürükleme başlangıcı
+          resizer.addEventListener('mousedown', (e) => {
+            e.stopPropagation();
+            e.preventDefault();
+
+            const colIndex = Array.prototype.indexOf.call(th.parentElement.children, th);
+            const colgroup = table.querySelector('colgroup');
+            const cols = colgroup ? colgroup.querySelectorAll('col') : [];
+            const targetCol = cols[colIndex];
+            
+            const startX = e.pageX;
+            const startWidth = th.offsetWidth;
+            const minW = (colIndex === 0 && tableName === 'students') ? 32 : 55;
+            
+            let currentWidths = [];
+            const allThs = table.querySelectorAll('thead th');
+            allThs.forEach(h => currentWidths.push(h.offsetWidth));
+
+            document.body.classList.add('col-resizing-active');
+            resizer.classList.add('is-resizing');
+
+            function onMouseMove(moveEvent) {
+              moveEvent.preventDefault();
+              const delta = moveEvent.pageX - startX;
+              const newW = Math.max(minW, startWidth + delta);
+              
+              if (targetCol) targetCol.style.width = newW + 'px';
+              th.style.width = newW + 'px';
+              currentWidths[colIndex] = newW;
+
+              let total = 0;
+              currentWidths.forEach(w => total += w);
+              const container = table.closest('.table-container');
+              if (container && total > container.clientWidth) {
+                table.style.width = total + 'px';
+              } else {
+                table.style.width = '100%';
+              }
+            }
+
+            function onMouseUp(upEvent) {
+              document.removeEventListener('mousemove', onMouseMove);
+              document.removeEventListener('mouseup', onMouseUp);
+              document.body.classList.remove('col-resizing-active');
+              resizer.classList.remove('is-resizing');
+
+              saveColWidths(tableName, currentWidths);
+            }
+
+            document.addEventListener('mousemove', onMouseMove);
+            document.addEventListener('mouseup', onMouseUp);
+          });
+        });
+      });
+
+      window.addEventListener('resize', () => {
+        ['students', 'time'].forEach(tableName => {
+          const table = document.querySelector(`table[data-sort-table="${tableName}"]`);
+          if (!table) return;
+          const widths = getSavedColWidths(tableName);
+          applyColWidths(tableName, widths);
+        });
+      });
+    }
+
     function initSortableHeaders() {
       document.querySelectorAll('th.sortable-th').forEach(th => {
-        th.addEventListener('click', () => {
+        th.addEventListener('click', (e) => {
+          if (e.target.closest('.col-resizer')) return;
           const table = th.getAttribute('data-table');
           const key = th.getAttribute('data-key');
           if (!table || !key) return;
@@ -2283,7 +2593,12 @@
         const targetId = btn.getAttribute('data-tab');
         const target = document.getElementById(targetId);
         if (target) target.style.display = 'block';
-        if (targetId === 'timeTrackingTab') renderTimeTracking();
+        if (targetId === 'timeTrackingTab') {
+          renderTimeTracking();
+          applyColWidths('time', getSavedColWidths('time'));
+        } else if (targetId === 'studentsTab') {
+          applyColWidths('students', getSavedColWidths('students'));
+        }
       });
     });
 
@@ -2684,13 +2999,13 @@
         const gamePct = total > 0 ? (100 - cardPct) : 50;
 
         return '<tr id="userRow_' + u.id + '">' +
-          '<td style="text-align: center; width:28px;">' +
+          '<td style="text-align: center;">' +
             '<input type="checkbox" class="user-cb user-select-cb" data-id="' + u.id + '" ' + (isChecked ? 'checked' : '') + ' onchange="toggleUserSelection(\'' + u.id + '\', this.checked)">' +
           '</td>' +
-          '<td style="max-width:175px;">' +
+          '<td>' +
             '<div class="user-cell" title="' + u.displayName + ' (' + u.email + ')">' +
               '<div class="user-avatar-bubble">' + getAvatarHtml(u.avatar) + '</div>' +
-              '<div style="min-width:0; overflow:hidden;">' +
+              '<div class="user-cell-info">' +
                 '<div class="user-meta-name">' + u.displayName + '</div>' +
                 '<div class="user-meta-email">' + u.email + '</div>' +
               '</div>' +
@@ -2870,10 +3185,10 @@
         }
 
         return '<tr>' +
-          '<td style="max-width:175px;">' +
+          '<td>' +
             '<div class="user-cell" title="' + u.displayName + ' (' + u.email + ')">' +
               '<div class="user-avatar-bubble">' + getAvatarHtml(u.avatar) + '</div>' +
-              '<div style="min-width:0; overflow:hidden;">' +
+              '<div class="user-cell-info">' +
                 '<div class="user-meta-name">' + u.displayName + '</div>' +
                 '<div class="user-meta-email">' + u.email + '</div>' +
               '</div>' +
@@ -3628,6 +3943,7 @@
     }
 
     initSortableHeaders();
+    initTableColumnResizing();
     checkPinAuth();
   </script>
 </body>
