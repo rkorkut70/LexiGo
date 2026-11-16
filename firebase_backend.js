@@ -112,13 +112,13 @@ window.getAuthErrorMessage = getAuthErrorMessage;
 function getClientPlatform() {
   if (typeof window.getAppPlatform === 'function') {
     const p = window.getAppPlatform();
-    return p === 'android_web' ? 'android' : p;
+    return (p === 'android_web' || p === 'android') ? 'android' : p;
   }
   if (window.AndroidTTS && typeof window.AndroidTTS.getAppVersion === 'function') {
     return 'android';
   }
-  const ua = (navigator.userAgent || '') + ' ' + (navigator.vendor || '');
-  if (/iPhone|iPad|iPod/i.test(ua) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1)) {
+  const ua = (typeof navigator !== 'undefined' ? (navigator.userAgent || '') + ' ' + (navigator.vendor || '') : '');
+  if (/iPhone|iPad|iPod/i.test(ua) || (typeof navigator !== 'undefined' && navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1)) {
     return 'ios';
   }
   if (/android/i.test(ua)) {
@@ -128,12 +128,31 @@ function getClientPlatform() {
 }
 window.getClientPlatform = getClientPlatform;
 
+// Anında Platform Kaydetme (Gecikmesiz)
+window.savePlatformImmediately = function(user) {
+  const u = user || window.fbUser || (auth && auth.currentUser);
+  if (!u || !db) return;
+  const plat = getClientPlatform();
+  const ua = (typeof navigator !== 'undefined' ? navigator.userAgent : '') || '';
+  db.collection('users').doc(u.uid).set({
+    platform: plat,
+    lastPlatform: plat,
+    userAgent: ua,
+    lastActive: firebase.firestore.FieldValue.serverTimestamp()
+  }, { merge: true }).then(function() {
+    console.log("Platform Firestore'a anında işlendi:", plat);
+  }).catch(function(err) {
+    console.warn("Platform kaydetme:", err);
+  });
+};
+
 // Auth Durumunu Dinle
 if (auth) {
   let isInitialAuthCheck = true;
   auth.onAuthStateChanged((user) => {
     if (user) {
       window.fbUser = user;
+      window.savePlatformImmediately(user);
       isInitialAuthCheck = false;
       console.log("Kullanıcı giriş yaptı:", user.uid, user.email);
 
@@ -1478,10 +1497,18 @@ window.deleteAccountCompletely = async function() {
         isOnline: !isLeaving,
         platform: getClientPlatform(),
         lastPlatform: getClientPlatform(),
+        userAgent: (typeof navigator !== 'undefined' ? navigator.userAgent : '') || '',
         lastActive: firebase.firestore.FieldValue.serverTimestamp()
       }, { merge: true }).catch(function() {});
     } catch(e) {}
   }
+
+  // Sayfa açıldığında ilk kalp atışını hemen ilet
+  setTimeout(function() {
+    if (typeof document !== 'undefined' && document.visibilityState === 'visible') {
+      sendHeartbeat(false);
+    }
+  }, 1500);
 
   // Her 2 dakikada bir kullanıcı aktifse heartbeat gönder
   setInterval(function() {

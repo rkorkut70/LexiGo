@@ -7,7 +7,7 @@
 (function () {
   'use strict';
 
-  const APP_VERSION = 'v1.9.43';
+  const APP_VERSION = 'v1.9.44';
   const DEFAULT_AVATAR = 'avatar_default';
   const CURRENT_APP_BUILD = 'lexigo_production_live_launch_v1928';
 
@@ -1158,6 +1158,11 @@
     } catch (e) {}
 
     // Firebase oturum verisi önceden geldiyse veya oturum açıksa hemen senkronize et
+    try {
+      if (typeof window.savePlatformImmediately === 'function') {
+        window.savePlatformImmediately();
+      }
+    } catch (e) {}
     if (window.cachedFbUserData && typeof applyUserData === 'function') {
       applyUserData(window.cachedFbUserData);
     } else if (window.fbUser && typeof window.syncUserData === 'function') {
@@ -16047,15 +16052,13 @@ let activeAvatarCategory = 'all';
 
       // 3. Android Cihaz (Tarayıcı veya yerel paket)
       if (/android/i.test(ua)) {
-        if (window.location.protocol === 'file:' || window.location.origin === 'file://') {
-          return 'android';
-        }
-        return 'android_web';
+        return 'android';
       }
 
       // 4. Genel Web / Masaüstü
       return 'web';
     }
+    window.getAppPlatform = getAppPlatform;
 
     function openGooglePlayStore() {
       if (window.AndroidTTS && typeof window.AndroidTTS.openPlayStore === 'function') {

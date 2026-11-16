@@ -1,11 +1,9 @@
-﻿{
-    "version":  "v1.9.43",
-    "versionCode":  150,
-    "releaseDate":  "2026-11-16",
-    "notes":  [
-                  "Güncelleme Bildirimleri: Toast bildirimine dokunulduğunda doğrudan Hakkında güncelleme sayfasına geçiş sağlandı.",
-                  "Tıklama İyileştirmesi: Bildirime dokunulduğunda arkadaki ünite kartına kazaen tıklanması engellendi.",
-                  "Katman Hiyerarşisi: Güncelleme ve Hakkında ekranlarının açık pencerelerin altında kalması giderildi.",
-                  "Performans & Stabilite: Hızlı, kararlı ve kesintisiz çalışma deneyimi."
-              ]
+{
+  "version": "v1.9.44",
+  "versionCode": 151,
+  "releaseDate": "2026-11-16",
+  "notes": [
+    "Platform ve Cihaz Takip Altyapısı (iOS, Android, Web) optimize edildi.",
+    "Performans ve Canlı Senkronizasyon İyileştirmeleri."
+  ]
 }
