@@ -7514,12 +7514,25 @@ let activeAvatarCategory = 'all';
   }
 
   let toastTimer = null;
-  function showToast(msg, type = '', duration = 2400, onClickCallback = null) {
+  function showToast(msg, arg2 = '', arg3 = 2400, arg4 = null) {
     if (!dom.toast) return;
-    if (typeof type === 'number') {
-      duration = type;
-      type = '';
+
+    let type = '';
+    let duration = 2400;
+    let onClickCallback = null;
+
+    // Parametreleri akıllıca çözümle (type, duration, callback herhangi bir sırada gelebilir)
+    const extraArgs = [arg2, arg3, arg4];
+    for (const a of extraArgs) {
+      if (typeof a === 'function') {
+        onClickCallback = a;
+      } else if (typeof a === 'number') {
+        duration = a;
+      } else if (typeof a === 'string' && a !== '') {
+        type = a;
+      }
     }
+
     dom.toast.textContent = msg;
     dom.toast.className = 'toast';
     if (type === 'correct') {
@@ -7528,24 +7541,51 @@ let activeAvatarCategory = 'all';
       dom.toast.classList.add('toast-wrong');
     } else if (type === 'warning') {
       dom.toast.classList.add('toast-warning');
+    } else if (type === 'info') {
+      dom.toast.classList.add('toast-info');
     }
 
     if (typeof onClickCallback === 'function') {
+      dom.toast.classList.add('toast-clickable');
       dom.toast.style.cursor = 'pointer';
-      dom.toast.onclick = () => {
-        onClickCallback();
+      dom.toast.style.pointerEvents = 'auto';
+
+      const handleToastClick = (e) => {
+        if (e) {
+          e.preventDefault();
+          e.stopPropagation();
+        }
         dom.toast.classList.remove('show');
+        dom.toast.classList.remove('toast-clickable');
+        dom.toast.style.pointerEvents = '';
         dom.toast.onclick = null;
+        try {
+          onClickCallback(e);
+        } catch (err) {
+          console.warn('Toast click error:', err);
+        }
       };
+
+      dom.toast.onclick = handleToastClick;
     } else {
+      dom.toast.classList.remove('toast-clickable');
       dom.toast.style.cursor = 'default';
-      dom.toast.onclick = null;
+      dom.toast.style.pointerEvents = '';
+      dom.toast.onclick = (e) => {
+        // Tıklanamayan toast ekrandayken altındaki elemana kazaen tıklanmasını önle
+        if (e) {
+          e.preventDefault();
+          e.stopPropagation();
+        }
+      };
     }
 
     dom.toast.classList.add('show');
     clearTimeout(toastTimer);
     toastTimer = setTimeout(() => {
       dom.toast.classList.remove('show');
+      dom.toast.classList.remove('toast-clickable');
+      dom.toast.style.pointerEvents = '';
       if (dom.toast) dom.toast.onclick = null;
     }, duration);
   }
@@ -16274,20 +16314,34 @@ let activeAvatarCategory = 'all';
 
     // Güncelleme mesajına tıklandığında doğrudan Hakkında sayfasındaki güncelleme bölümüne yönlendirme
     function navigateToAboutUpdatePage() {
-      // 1. Ayarlar modalını aç
-      if (typeof openSettingsModal === 'function') {
-        openSettingsModal();
+      // 1. Varsa açık olan diğer tam ekran modalları kapat
+      const sm = dom.settingsModal || document.getElementById('settingsModal');
+      if (sm) {
+        sm.classList.remove('active');
+        sm.style.display = 'none';
+      }
+      const spm = document.getElementById('studentProfileModal');
+      if (spm) {
+        spm.classList.remove('active');
+        spm.style.display = 'none';
+      }
+      const fm = document.getElementById('feedbackModal');
+      if (fm) {
+        fm.classList.remove('active');
+        fm.style.display = 'none';
+      }
+
+      // 2. Hakkında modalını aç
+      if (typeof openAboutModal === 'function') {
+        openAboutModal();
       } else {
-        const sm = dom.settingsModal || document.getElementById('settingsModal');
-        if (sm) {
-          sm.classList.add('active');
-          sm.style.display = 'flex';
+        const abm = document.getElementById('aboutModal');
+        if (abm) {
+          abm.style.display = 'flex';
+          abm.classList.add('active');
         }
       }
-      // 2. Hakkında sekmesini aktif yap
-      if (typeof switchSettingsTab === 'function') {
-        switchSettingsTab('about');
-      }
+
       // 3. Logonun altındaki alana odaklan ve otomatik denetle
       setTimeout(() => {
         const heroCard = document.getElementById('aboutUpdateHeroCard');
@@ -16298,7 +16352,7 @@ let activeAvatarCategory = 'all';
         if (checkBtn) {
           checkAppUpdates(checkBtn);
         }
-      }, 350);
+      }, 300);
     }
     window.navigateToAboutUpdatePage = navigateToAboutUpdatePage;
 
@@ -16332,7 +16386,11 @@ let activeAvatarCategory = 'all';
       `;
       document.body.appendChild(banner);
 
-      const handleBannerClick = () => {
+      const handleBannerClick = (e) => {
+        if (e) {
+          e.preventDefault();
+          e.stopPropagation();
+        }
         banner.remove();
         if (typeof navigateToAboutUpdatePage === 'function') {
           navigateToAboutUpdatePage();
@@ -16340,11 +16398,18 @@ let activeAvatarCategory = 'all';
       };
 
       banner.addEventListener('click', handleBannerClick);
+      banner.addEventListener('touchend', (e) => {
+        handleBannerClick(e);
+      }, { passive: false });
+
       const btn = document.getElementById('iosUpdateBannerBtn');
       if (btn) {
         btn.addEventListener('click', (e) => {
-          e.stopPropagation();
-          handleBannerClick();
+          if (e) {
+            e.preventDefault();
+            e.stopPropagation();
+          }
+          handleBannerClick(e);
         });
       }
     }
@@ -16370,11 +16435,11 @@ let activeAvatarCategory = 'all';
               if (window.AndroidTTS && typeof window.AndroidTTS.sendUpdateNotification === 'function') {
                 try { window.AndroidTTS.sendUpdateNotification(); } catch (e) { console.warn('System notification error:', e); }
               }
-              showToast(`🚀 Google Play'de LexiGo ${remoteVer} hazır! Güncellemek için dokunun.`, 8000, 'info', () => {
+              showToast(`🚀 Google Play'de LexiGo ${remoteVer} hazır! Güncellemek için dokunun.`, 'info', 9000, () => {
                 navigateToAboutUpdatePage();
               });
             } else {
-              showToast(`🚀 Yeni LexiGo ${remoteVer} hazır! İncelemek için dokunun.`, 8000, 'info', () => {
+              showToast(`🚀 Yeni LexiGo ${remoteVer} hazır! İncelemek için dokunun.`, 'info', 9000, () => {
                 navigateToAboutUpdatePage();
               });
             }

@@ -2518,6 +2518,24 @@ html, body {
   transform: translateX(-50%) translateY(0) scale(1);
 }
 
+.toast.toast-clickable,
+.toast.show.toast-clickable {
+  pointer-events: auto !important;
+  cursor: pointer !important;
+}
+
+body:has(#iosUpdateBanner) .toast,
+#iosUpdateBanner ~ .toast {
+  top: calc(env(safe-area-inset-top, 0px) + 84px) !important;
+}
+
+.toast.toast-info {
+  background: linear-gradient(135deg, #0369a1 0%, #0284c7 60%, #38bdf8 100%) !important;
+  border: 2px solid #7dd3fc !important;
+  box-shadow: 0 14px 38px rgba(0, 0, 0, 0.55), 0 0 24px rgba(56, 189, 248, 0.45) !important;
+  color: #f0f9ff !important;
+}
+
 .toast.toast-correct {
   background: linear-gradient(135deg, #064e3b 0%, #065f46 60%, #047857 100%) !important;
   border: 2px solid #34d399 !important;
@@ -22251,7 +22269,8 @@ html:not([data-theme="dark"]) .tg-rule-card,
   transform: translateX(-50%);
   width: calc(100% - 24px);
   max-width: 440px;
-  z-index: 10080;
+  z-index: 200090 !important;
+  pointer-events: auto !important;
   background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
   border: 1.5px solid rgba(56, 189, 248, 0.55);
   border-radius: 16px;
@@ -26408,8 +26427,20 @@ html:not([data-theme="dark"]) .custom-confirm-card .confirm-cancel-btn:hover {
 /* ============================================================
    HAKKINDA SAYFASI GÜNCELLEME ALANI & MODAL Z-INDEX DÜZELTMESİ
    ============================================================ */
-#appUpdateModal {
-  z-index: 100060 !important;
+#aboutModal.modal-overlay,
+#aboutModal.full-screen-modal {
+  z-index: 200050 !important;
+}
+
+#aboutModal.modal-overlay.active,
+#aboutModal.full-screen-modal.active {
+  z-index: 200050 !important;
+}
+
+#appUpdateModal,
+#appUpdateModal.modal-overlay,
+#appUpdateModal.modal-overlay.active {
+  z-index: 200080 !important;
 }
 
 .about-update-hero-card {
