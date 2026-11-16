@@ -7,7 +7,7 @@
 (function () {
   'use strict';
 
-  const APP_VERSION = 'v1.9.44';
+  const APP_VERSION = 'v1.9.45';
   const DEFAULT_AVATAR = 'avatar_default';
   const CURRENT_APP_BUILD = 'lexigo_production_live_launch_v1928';
 

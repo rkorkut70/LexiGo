@@ -1,11 +1,11 @@
-{
-    "version":  "v1.9.44",
-    "versionCode":  151,
+﻿{
+    "version":  "v1.9.45",
+    "versionCode":  152,
     "releaseDate":  "2026-11-16",
     "notes":  [
-                  "Ünite Seçim Ekranı: Seviye seçme butonları modern segmented pill tasarımına kavuşturuldu; kesilme ve taşma giderildi.",
-                  "Mobil Uyum: Başlık ve seviye butonları dikeyde büzülmeye karşı sabitlendi, ekran ortalama iyileştirildi.",
-                  "Güncelleme Bildirimleri: Toast bildirimine dokunulduğunda doğrudan Hakkında güncelleme sayfasına geçiş sağlandı.",
-                  "Performans & Stabilite: Hızlı, kararlı ve kesintisiz çalışma deneyimi."
+                  "Almanca MÃ¼fredatÄ± (DaF): A1, A2 ve B1 seviyelerindeki 4.742 kelimenin tamamÄ± denetlendi; ÅŸablon cÃ¼mleler, imla ve tÃ¼r etiketleri (%100) standardize edildi.",
+                  "FransÄ±zca MÃ¼fredatÄ± (FLE): A1, A2 ve B1 seviyelerindeki 4.285 kelimenin tamamÄ± elden geÃ§irildi; eksik isim cinsiyetleri, tÃ¼rler ve Ã¶rnek cÃ¼mleler dÃ¼zeltildi.",
+                  "Oyun Motoru \u0026 Tipografi: Anagram, BoÅŸluk Doldurma ve CÃ¼mle Kurma motorunu bozan tÃ¼m apostrof, tÄ±rnak ve iki nokta karakterleri klavye ve motorla tam uyumlu hÃ¢le getirildi.",
+                  "Performans \u0026 Stabilite: HÄ±zlÄ±, kararlÄ± ve kesintisiz Ã§alÄ±ÅŸma deneyimi."
               ]
 }
