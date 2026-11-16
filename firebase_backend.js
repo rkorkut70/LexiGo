@@ -108,40 +108,112 @@ function getAuthErrorMessage(error) {
 }
 window.getAuthErrorMessage = getAuthErrorMessage;
 
-// Platform Tespiti (iOS, Android, Web)
-function getClientPlatform() {
-  if (typeof window.getAppPlatform === 'function') {
-    const p = window.getAppPlatform();
-    return (p === 'android_web' || p === 'android') ? 'android' : p;
-  }
-  if (window.AndroidTTS && typeof window.AndroidTTS.getAppVersion === 'function') {
-    return 'android';
-  }
+// Ayrıntılı Giriş Kanalı & Platform Tespiti (Google Play, iOS Web, Android Web, Windows, macOS, Linux)
+function getClientPlatformDetails() {
   const ua = (typeof navigator !== 'undefined' ? (navigator.userAgent || '') + ' ' + (navigator.vendor || '') : '');
-  if (/iPhone|iPad|iPod/i.test(ua) || (typeof navigator !== 'undefined' && navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1)) {
-    return 'ios';
+  const platformStr = (typeof navigator !== 'undefined' ? (navigator.platform || '') : '');
+
+  // 1. Google Play Store / Android Yerel Paketi (Java AndroidTTS köprüsü, yerel dosya veya custom UA)
+  const isAndroidNative = (typeof window !== 'undefined' && window.AndroidTTS) ||
+                          (typeof window !== 'undefined' && window.AndroidSTT) ||
+                          (typeof window !== 'undefined' && (window.location.protocol === 'file:' || window.location.origin === 'file://')) ||
+                          /LexiGo-App|LexiGoNative|wv\)/i.test(ua);
+
+  if (isAndroidNative) {
+    return {
+      channel: 'play_store',
+      label: 'Google Play (Uygulama)',
+      shortLabel: 'Google Play',
+      os: 'Android App',
+      deviceType: 'app'
+    };
   }
-  if (/android/i.test(ua)) {
-    return 'android';
+
+  // 2. iOS Cihazları (iPhone, iPad, iPod veya iPadOS masaüstü modu)
+  const isIOS = /iPhone|iPad|iPod/i.test(ua) || (platformStr === 'MacIntel' && typeof navigator !== 'undefined' && navigator.maxTouchPoints > 1);
+  if (isIOS) {
+    return {
+      channel: 'ios_web',
+      label: 'iOS Web (Safari)',
+      shortLabel: 'iOS Web',
+      os: 'iOS',
+      deviceType: 'mobile_web'
+    };
   }
-  return 'web';
+
+  // 3. Android Web Tarayıcı (Chrome, Samsung Internet vb.)
+  if (/Android/i.test(ua)) {
+    return {
+      channel: 'android_web',
+      label: 'Android Web (Tarayıcı)',
+      shortLabel: 'Android Web',
+      os: 'Android Web',
+      deviceType: 'mobile_web'
+    };
+  }
+
+  // 4. Masaüstü / Bilgisayar Tarayıcıları (Windows, Mac, Linux)
+  if (/Windows/i.test(ua) || /Win32|Win64/i.test(platformStr)) {
+    return {
+      channel: 'windows_web',
+      label: 'Windows Web',
+      shortLabel: 'Windows',
+      os: 'Windows',
+      deviceType: 'desktop'
+    };
+  }
+
+  if (/Macintosh|Mac OS X/i.test(ua) || /MacIntel/i.test(platformStr)) {
+    return {
+      channel: 'mac_web',
+      label: 'macOS Web',
+      shortLabel: 'macOS',
+      os: 'macOS',
+      deviceType: 'desktop'
+    };
+  }
+
+  if (/Linux/i.test(ua) || /Linux/i.test(platformStr)) {
+    return {
+      channel: 'linux_web',
+      label: 'Linux Web',
+      shortLabel: 'Linux',
+      os: 'Linux',
+      deviceType: 'desktop'
+    };
+  }
+
+  return {
+    channel: 'desktop_web',
+    label: 'Masaüstü Web',
+    shortLabel: 'Web',
+    os: 'Web',
+    deviceType: 'desktop'
+  };
 }
+
+function getClientPlatform() {
+  return getClientPlatformDetails().channel;
+}
+window.getClientPlatformDetails = getClientPlatformDetails;
 window.getClientPlatform = getClientPlatform;
 
 // Anında Platform Kaydetme (Gecikmesiz)
 window.savePlatformImmediately = function(user) {
   const u = user || window.fbUser || (auth && auth.currentUser);
   if (!u || !db) return;
-  const plat = getClientPlatform();
+  const p = getClientPlatformDetails();
   const ua = (typeof navigator !== 'undefined' ? navigator.userAgent : '') || '';
   db.collection('users').doc(u.uid).set({
-    platform: plat,
-    lastPlatform: plat,
+    platform: p.channel,
+    platformLabel: p.label,
+    platformShort: p.shortLabel,
+    platformOS: p.os,
+    platformDeviceType: p.deviceType,
+    lastPlatform: p.channel,
     userAgent: ua,
     lastActive: firebase.firestore.FieldValue.serverTimestamp()
-  }, { merge: true }).then(function() {
-    console.log("Platform Firestore'a anında işlendi:", plat);
-  }).catch(function(err) {
+  }, { merge: true }).catch(function(err) {
     console.warn("Platform kaydetme:", err);
   });
 };
@@ -803,6 +875,10 @@ window.syncProgressToFirebase = function(customData, immediate = false) {
       timeTracking: timeTrackingPayload,
       platform: getClientPlatform(),
       lastPlatform: getClientPlatform(),
+      platformLabel: getClientPlatformDetails().label,
+      platformShort: getClientPlatformDetails().shortLabel,
+      platformOS: getClientPlatformDetails().os,
+      platformDeviceType: getClientPlatformDetails().deviceType,
       userAgent: (typeof navigator !== 'undefined' ? navigator.userAgent : '') || '',
       lastActive: firebase.firestore.FieldValue.serverTimestamp()
     };
@@ -1497,6 +1573,7 @@ window.deleteAccountCompletely = async function() {
         isOnline: !isLeaving,
         platform: getClientPlatform(),
         lastPlatform: getClientPlatform(),
+        platformLabel: getClientPlatformDetails().label,
         userAgent: (typeof navigator !== 'undefined' ? navigator.userAgent : '') || '',
         lastActive: firebase.firestore.FieldValue.serverTimestamp()
       }, { merge: true }).catch(function() {});

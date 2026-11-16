@@ -409,12 +409,14 @@
       background: rgba(255, 255, 255, 0.08);
       margin-top: 4px;
     }
-    .bar-seg-web { background: #3b82f6; height: 100%; transition: width 0.3s; }
-    .bar-seg-android { background: #10b981; height: 100%; transition: width 0.3s; }
-    .bar-seg-ios { background: #a855f7; height: 100%; transition: width 0.3s; }
+    .bar-seg-play { background: #10b981; height: 100%; transition: width 0.3s; }
+    .bar-seg-ios { background: #94a3b8; height: 100%; transition: width 0.3s; }
     [data-theme="light"] .bar-seg-ios { background: #0f172a; }
+    .bar-seg-android { background: #06b6d4; height: 100%; transition: width 0.3s; }
+    .bar-seg-desktop { background: #3b82f6; height: 100%; transition: width 0.3s; }
+    .bar-seg-legacy { background: #475569; height: 100%; transition: width 0.3s; }
 
-    /* PLATFORM ROZETLERİ (iOS, Android, Web) */
+    /* PLATFORM ROZETLERİ (Google Play, iOS, Android Web, Masaüstü) */
     .platform-badge {
       display: inline-flex;
       align-items: center;
@@ -432,15 +434,35 @@
       height: 13px;
       fill: currentColor;
     }
+    .platform-play {
+      background: rgba(16, 185, 129, 0.16);
+      color: #34d399;
+      border: 1px solid rgba(16, 185, 129, 0.38);
+    }
+    [data-theme="light"] .platform-play {
+      background: #ecfdf5;
+      color: #065f46;
+      border: 1px solid #6ee7b7;
+    }
     .platform-ios {
-      background: rgba(248, 250, 252, 0.09);
+      background: rgba(248, 250, 252, 0.11);
       color: #f1f5f9;
-      border: 1px solid rgba(248, 250, 252, 0.25);
+      border: 1px solid rgba(248, 250, 252, 0.28);
     }
     [data-theme="light"] .platform-ios {
       background: #0f172a;
       color: #ffffff;
       border: 1px solid #0f172a;
+    }
+    .platform-android-web {
+      background: rgba(6, 182, 212, 0.14);
+      color: #22d3ee;
+      border: 1px solid rgba(6, 182, 212, 0.35);
+    }
+    [data-theme="light"] .platform-android-web {
+      background: #ecfeff;
+      color: #0e7490;
+      border: 1px solid #a5f3fc;
     }
     .platform-android {
       background: rgba(16, 185, 129, 0.12);
@@ -452,15 +474,55 @@
       color: #047857;
       border: 1px solid #a7f3d0;
     }
-    .platform-web {
-      background: rgba(59, 130, 246, 0.12);
+    .platform-windows {
+      background: rgba(59, 130, 246, 0.14);
       color: #60a5fa;
-      border: 1px solid rgba(59, 130, 246, 0.28);
+      border: 1px solid rgba(59, 130, 246, 0.32);
     }
-    [data-theme="light"] .platform-web {
+    [data-theme="light"] .platform-windows {
       background: #eff6ff;
       color: #1d4ed8;
       border: 1px solid #bfdbfe;
+    }
+    .platform-mac {
+      background: rgba(168, 85, 247, 0.14);
+      color: #c084fc;
+      border: 1px solid rgba(168, 85, 247, 0.32);
+    }
+    [data-theme="light"] .platform-mac {
+      background: #faf5ff;
+      color: #6b21a8;
+      border: 1px solid #e9d5ff;
+    }
+    .platform-linux {
+      background: rgba(245, 158, 11, 0.14);
+      color: #fbbf24;
+      border: 1px solid rgba(245, 158, 11, 0.32);
+    }
+    [data-theme="light"] .platform-linux {
+      background: #fffbeb;
+      color: #b45309;
+      border: 1px solid #fde68a;
+    }
+    .platform-desktop, .platform-web {
+      background: rgba(99, 102, 241, 0.12);
+      color: #818cf8;
+      border: 1px solid rgba(99, 102, 241, 0.28);
+    }
+    [data-theme="light"] .platform-desktop, [data-theme="light"] .platform-web {
+      background: #eef2ff;
+      color: #4338ca;
+      border: 1px solid #c7d2fe;
+    }
+    .platform-legacy {
+      background: rgba(100, 116, 139, 0.12);
+      color: #94a3b8;
+      border: 1px solid rgba(100, 116, 139, 0.25);
+    }
+    [data-theme="light"] .platform-legacy {
+      background: #f1f5f9;
+      color: #64748b;
+      border: 1px solid #cbd5e1;
     }
 
     /* FILTERS & CONTROLS ROW */
@@ -1011,26 +1073,36 @@
       <div class="platform-dist-left">
         <div class="platform-dist-title">GİRİŞ KANALI DAĞILIMI:</div>
         <div class="platform-dist-pills" id="platformDistPills">
-          <span class="platform-badge platform-web">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="2" y1="12" x2="22" y2="12"></line><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path></svg>
-            Web: <strong id="distCountWeb" style="margin-left:3px;">0 (%0)</strong>
+          <span class="platform-badge platform-play" title="Google Play Store üzerinden indirilmiş Android uygulaması">
+            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M3.6 2.27c-.37.38-.6.94-.6 1.63v16.2c0 .69.23 1.25.6 1.63l.09.08 9.07-9.07v-.22L3.69 2.19l-.09.08zm11.66 9.51l-2.59-2.59v-.38l2.59-2.59.06.03 3.07 1.74c.88.5.88 1.32 0 1.82l-3.07 1.74-.06.23zm-.93.93l-8.14 8.14c.31.33.82.37 1.41.04l9.32-5.3-2.59-2.88zm0-1.42l2.59-2.88-9.32-5.3c-.59-.33-1.1-.29-1.41.04l8.14 8.14z"/></svg>
+            Google Play: <strong id="distCountPlay" style="margin-left:3px;">0 (%0)</strong>
           </span>
-          <span class="platform-badge platform-android">
-            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M6 18c0 .55.45 1 1 1h1v3.5c0 .83.67 1.5 1.5 1.5s1.5-.67 1.5-1.5V19h2v3.5c0 .83.67 1.5 1.5 1.5s1.5-.67 1.5-1.5V19h1c.55 0 1-.45 1-1V8H6v10zM3.5 8C2.67 8 2 8.67 2 9.5v7c0 .83.67 1.5 1.5 1.5S5 17.33 5 16.5v-7C5 8.67 4.33 8 3.5 8zm17 0c-.83 0-1.5.67-1.5 1.5v7c0 .83.67 1.5 1.5 1.5s1.5-.67 1.5-1.5v-7c0-.83-.67-1.5-1.5-1.5zm-4.97-4.84l1.3-1.3c.2-.2.2-.51 0-.71-.2-.2-.51-.2-.71 0l-1.48 1.48C13.85 2.23 12.95 2 12 2c-.96 0-1.86.23-2.66.63L7.85 1.15c-.2-.2-.51-.2-.71 0-.2.2-.2.51 0 .71l1.31 1.31C6.73 4.19 5.5 6.01 5.5 8h13c0-1.99-1.23-3.81-2.97-4.84zM9 6c-.55 0-1-.45-1-1s.45-1 1-1 1 .45 1 1-.45 1-1 1zm6 0c-.55 0-1-.45-1-1s.45-1 1-1 1 .45 1 1-.45 1-1 1z"/></svg>
-            Android: <strong id="distCountAndroid" style="margin-left:3px;">0 (%0)</strong>
-          </span>
-          <span class="platform-badge platform-ios">
+          <span class="platform-badge platform-ios" title="Apple iPhone / iPad Safari veya mobil tarayıcı">
             <svg viewBox="0 0 24 24" fill="currentColor"><path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.81-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M15.97 6.37c.61-.75 1.04-1.8 0.92-2.87-.93.04-2.02.63-2.67 1.39-.58.67-.99 1.74-.86 2.78 1.04.08 2.06-.54 2.61-1.3z"/></svg>
-            iOS: <strong id="distCountIos" style="margin-left:3px;">0 (%0)</strong>
+            iOS Web: <strong id="distCountIos" style="margin-left:3px;">0 (%0)</strong>
+          </span>
+          <span class="platform-badge platform-android-web" title="Android telefon / tablet mobil web tarayıcısı">
+            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M6 18c0 .55.45 1 1 1h1v3.5c0 .83.67 1.5 1.5 1.5s1.5-.67 1.5-1.5V19h2v3.5c0 .83.67 1.5 1.5 1.5s1.5-.67 1.5-1.5V19h1c.55 0 1-.45 1-1V8H6v10zM3.5 8C2.67 8 2 8.67 2 9.5v7c0 .83.67 1.5 1.5 1.5S5 17.33 5 16.5v-7C5 8.67 4.33 8 3.5 8zm17 0c-.83 0-1.5.67-1.5 1.5v7c0 .83.67 1.5 1.5 1.5s1.5-.67 1.5-1.5v-7c0-.83-.67-1.5-1.5-1.5zm-4.97-4.84l1.3-1.3c.2-.2.2-.51 0-.71-.2-.2-.51-.2-.71 0l-1.48 1.48C13.85 2.23 12.95 2 12 2c-.96 0-1.86.23-2.66.63L7.85 1.15c-.2-.2-.51-.2-.71 0-.2.2-.2.51 0 .71l1.31 1.31C6.73 4.19 5.5 6.01 5.5 8h13c0-1.99-1.23-3.81-2.97-4.84zM9 6c-.55 0-1-.45-1-1s.45-1 1-1 1 .45 1 1-.45 1-1 1zm6 0c-.55 0-1-.45-1-1s.45-1 1-1 1 .45 1 1-.45 1-1 1z"/></svg>
+            Android Web: <strong id="distCountAndroid" style="margin-left:3px;">0 (%0)</strong>
+          </span>
+          <span class="platform-badge platform-desktop" title="Windows, Mac, Linux masaüstü bilgisayar tarayıcıları">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect><line x1="8" y1="21" x2="16" y2="21"></line><line x1="12" y1="17" x2="12" y2="21"></line></svg>
+            Masaüstü Web: <strong id="distCountDesktop" style="margin-left:3px;">0 (%0)</strong>
+          </span>
+          <span class="platform-badge platform-legacy" id="pillLegacyWrap" style="display:none;" title="Kanal takip güncellemesinden önceki eski kayıtlar">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="2" y1="12" x2="22" y2="12"></line><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path></svg>
+            Eski Kayıt: <strong id="distCountLegacy" style="margin-left:3px;">0 (%0)</strong>
           </span>
         </div>
       </div>
       <div class="platform-dist-bar-wrap">
         <div style="font-size:0.72rem; color:var(--text-dim); text-align:right;">Dağılım Oranı</div>
         <div class="platform-multi-bar" id="platformMultiBar">
-          <div class="bar-seg-web" id="barSegWeb" style="width: 33%;" title="Web"></div>
-          <div class="bar-seg-android" id="barSegAndroid" style="width: 33%;" title="Android"></div>
-          <div class="bar-seg-ios" id="barSegIos" style="width: 34%;" title="iOS"></div>
+          <div class="bar-seg-play" id="barSegPlay" style="width: 0%;" title="Google Play"></div>
+          <div class="bar-seg-ios" id="barSegIos" style="width: 0%;" title="iOS Web"></div>
+          <div class="bar-seg-android" id="barSegAndroid" style="width: 0%;" title="Android Web"></div>
+          <div class="bar-seg-desktop" id="barSegDesktop" style="width: 0%;" title="Masaüstü Web"></div>
+          <div class="bar-seg-legacy" id="barSegLegacy" style="width: 0%;" title="Eski Kayıt"></div>
         </div>
       </div>
     </div>
@@ -1050,9 +1122,14 @@
           <!-- Platform / Kanal Filtresi -->
           <select id="filterPlatform" class="select-input">
             <option value="all">Tüm Kanallar (Platform)</option>
-            <option value="web">Web Tarayıcı</option>
-            <option value="android">Android</option>
-            <option value="ios">Apple iOS</option>
+            <option value="play_store">Google Play (Uygulama)</option>
+            <option value="ios_web">iOS Web (Apple)</option>
+            <option value="android_web">Android Web (Tarayıcı)</option>
+            <option value="desktop_all">Tüm Masaüstü (PC)</option>
+            <option value="windows_web">Windows Web</option>
+            <option value="mac_web">macOS Web</option>
+            <option value="linux_web">Linux Web</option>
+            <option value="legacy_web">Web (Eski Kayıt)</option>
           </select>
 
           <!-- Şube Filtresi -->
@@ -1237,9 +1314,14 @@
           <!-- Platform Filtresi -->
           <select id="filterTimePlatform" class="select-input">
             <option value="all">Tüm Kanallar (Platform)</option>
-            <option value="web">Web Tarayıcı</option>
-            <option value="android">Android</option>
-            <option value="ios">Apple iOS</option>
+            <option value="play_store">Google Play (Uygulama)</option>
+            <option value="ios_web">iOS Web (Apple)</option>
+            <option value="android_web">Android Web (Tarayıcı)</option>
+            <option value="desktop_all">Tüm Masaüstü (PC)</option>
+            <option value="windows_web">Windows Web</option>
+            <option value="mac_web">macOS Web</option>
+            <option value="linux_web">Linux Web</option>
+            <option value="legacy_web">Web (Eski Kayıt)</option>
           </select>
 
           <!-- Şube Filtresi -->
@@ -1717,43 +1799,109 @@
       });
     }
 
-    // SVG Simgeler
+    // SVG Simgeler (Profesyonel, Modern Arayüz)
     const SVG = {
+      playStore: '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M3.6 2.27c-.37.38-.6.94-.6 1.63v16.2c0 .69.23 1.25.6 1.63l.09.08 9.07-9.07v-.22L3.69 2.19l-.09.08zm11.66 9.51l-2.59-2.59v-.38l2.59-2.59.06.03 3.07 1.74c.88.5.88 1.32 0 1.82l-3.07 1.74-.06.23zm-.93.93l-8.14 8.14c.31.33.82.37 1.41.04l9.32-5.3-2.59-2.88zm0-1.42l2.59-2.88-9.32-5.3c-.59-.33-1.1-.29-1.41.04l8.14 8.14z"/></svg>',
       apple: '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.81-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M15.97 6.37c.61-.75 1.04-1.8 0.92-2.87-.93.04-2.02.63-2.67 1.39-.58.67-.99 1.74-.86 2.78 1.04.08 2.06-.54 2.61-1.3z"/></svg>',
       android: '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M6 18c0 .55.45 1 1 1h1v3.5c0 .83.67 1.5 1.5 1.5s1.5-.67 1.5-1.5V19h2v3.5c0 .83.67 1.5 1.5 1.5s1.5-.67 1.5-1.5V19h1c.55 0 1-.45 1-1V8H6v10zM3.5 8C2.67 8 2 8.67 2 9.5v7c0 .83.67 1.5 1.5 1.5S5 17.33 5 16.5v-7C5 8.67 4.33 8 3.5 8zm17 0c-.83 0-1.5.67-1.5 1.5v7c0 .83.67 1.5 1.5 1.5s1.5-.67 1.5-1.5v-7c0-.83-.67-1.5-1.5-1.5zm-4.97-4.84l1.3-1.3c.2-.2.2-.51 0-.71-.2-.2-.51-.2-.71 0l-1.48 1.48C13.85 2.23 12.95 2 12 2c-.96 0-1.86.23-2.66.63L7.85 1.15c-.2-.2-.51-.2-.71 0-.2.2-.2.51 0 .71l1.31 1.31C6.73 4.19 5.5 6.01 5.5 8h13c0-1.99-1.23-3.81-2.97-4.84zM9 6c-.55 0-1-.45-1-1s.45-1 1-1 1 .45 1 1-.45 1-1 1zm6 0c-.55 0-1-.45-1-1s.45-1 1-1 1 .45 1 1-.45 1-1 1z"/></svg>',
+      windows: '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M3 5.48L10.38 4.4v7.06H3V5.48zm0 13.04l7.38 1.08v-7.06H3v5.98zm8.62 1.26L21 21.3V11.46h-9.38v8.32zm0-15.56v8.24H21V2.7L11.62 4.22z"/></svg>',
+      linux: '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M12.5 2c-3.04 0-5.5 2.46-5.5 5.5v1.2C5.35 9.4 4 10.97 4 12.87c0 1.76 1.14 3.25 2.73 3.76-.04.45-.07.91-.07 1.37 0 3.31 2.39 4 5.34 4 2.95 0 5.34-.69 5.34-4 0-.46-.03-.92-.07-1.37 1.59-.51 2.73-2 2.73-3.76 0-1.9-1.35-3.47-3-4.17V7.5C17 4.46 14.54 2 12.5 2z"/></svg>',
+      desktop: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect><line x1="8" y1="21" x2="16" y2="21"></line><line x1="12" y1="17" x2="12" y2="21"></line></svg>',
       globe: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="2" y1="12" x2="22" y2="12"></line><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path></svg>',
       trash: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>'
     };
 
-    // Platform Çözümleyici (iOS, Android, Web)
+    // Platform ve Giriş Kanalı Çözümleyici (Google Play, iOS Web, Android Web, Windows, macOS, Linux)
     function resolveUserPlatform(d) {
-      if (!d) return { platform: 'web', isExplicit: false };
-      let plat = (d.platform || d.lastPlatform || '').toLowerCase().trim();
-      if (plat === 'android' || plat === 'android_web') return { platform: 'android', isExplicit: true };
-      if (plat === 'ios') return { platform: 'ios', isExplicit: true };
-      if (plat === 'web') return { platform: 'web', isExplicit: true };
+      if (!d) return { platform: 'legacy_web', label: 'Web (İlk Giriş Bekleniyor)', shortLabel: 'Eski Kayıt', isExplicit: false };
 
-      // Fallback: User-Agent veya timeTracking
+      const plat = (d.platform || d.lastPlatform || '').toLowerCase().trim();
+      const platOS = (d.platformOS || '').toLowerCase().trim();
+      const platLabel = (d.platformLabel || '').toLowerCase().trim();
+      const platDeviceType = (d.platformDeviceType || '').toLowerCase().trim();
+
+      // 1. Google Play Store / Yerel Android Uygulaması
+      if (plat === 'play_store' || plat === 'android_native' || plat === 'google_play' ||
+          platOS.includes('android app') || platLabel.includes('play') || platDeviceType === 'app') {
+        return { platform: 'play_store', label: 'Google Play (Uygulama)', shortLabel: 'Google Play', isExplicit: true };
+      }
+
+      // 2. iOS Web (Safari / iPhone / iPad)
+      if (plat === 'ios_web' || plat === 'ios') {
+        return { platform: 'ios_web', label: 'iOS Web (Safari)', shortLabel: 'iOS Web', isExplicit: true };
+      }
+
+      // 3. Android Web (Mobil Chrome vb.)
+      if (plat === 'android_web' || (plat === 'android' && platDeviceType !== 'app')) {
+        return { platform: 'android_web', label: 'Android Web (Tarayıcı)', shortLabel: 'Android Web', isExplicit: true };
+      }
+
+      // 4. Masaüstü / PC Tarayıcıları
+      if (plat === 'windows_web' || plat === 'windows') {
+        return { platform: 'windows_web', label: 'Windows Web', shortLabel: 'Windows', isExplicit: true };
+      }
+      if (plat === 'mac_web' || plat === 'macos' || plat === 'mac') {
+        return { platform: 'mac_web', label: 'macOS Web', shortLabel: 'macOS', isExplicit: true };
+      }
+      if (plat === 'linux_web' || plat === 'linux') {
+        return { platform: 'linux_web', label: 'Linux Web', shortLabel: 'Linux', isExplicit: true };
+      }
+      if (plat === 'desktop_web' || plat === 'desktop') {
+        return { platform: 'desktop_web', label: 'Masaüstü Web', shortLabel: 'Masaüstü', isExplicit: true };
+      }
+
+      // 5. User-Agent ve TimeTracking fallback analizi
       const ua = ((d.userAgent || d.lastUserAgent || '') + ' ' + (d.timeTracking && d.timeTracking.userAgent ? d.timeTracking.userAgent : '')).toLowerCase();
-      if (/iphone|ipad|ipod/i.test(ua)) return { platform: 'ios', isExplicit: true };
-      if (/android/i.test(ua)) return { platform: 'android', isExplicit: true };
-      return { platform: 'web', isExplicit: false };
+      if (ua.length > 5) {
+        if (ua.includes('lexigo-app') || (ua.includes('android') && (ua.includes('; wv') || ua.includes('version/4.0')))) {
+          return { platform: 'play_store', label: 'Google Play (Uygulama)', shortLabel: 'Google Play', isExplicit: true };
+        }
+        if (/iphone|ipad|ipod/i.test(ua)) {
+          return { platform: 'ios_web', label: 'iOS Web (Safari)', shortLabel: 'iOS Web', isExplicit: true };
+        }
+        if (/android/i.test(ua)) {
+          return { platform: 'android_web', label: 'Android Web (Tarayıcı)', shortLabel: 'Android Web', isExplicit: true };
+        }
+        if (/windows|win32|win64/i.test(ua)) {
+          return { platform: 'windows_web', label: 'Windows Web', shortLabel: 'Windows', isExplicit: true };
+        }
+        if (/macintosh|mac os x/i.test(ua)) {
+          return { platform: 'mac_web', label: 'macOS Web', shortLabel: 'macOS', isExplicit: true };
+        }
+        if (/linux/i.test(ua)) {
+          return { platform: 'linux_web', label: 'Linux Web', shortLabel: 'Linux', isExplicit: true };
+        }
+        return { platform: 'desktop_web', label: 'Masaüstü Web', shortLabel: 'Masaüstü', isExplicit: true };
+      }
+
+      // 6. Eski Kayıt (Kanal bilgisi henüz düşmemiş)
+      return { platform: 'legacy_web', label: 'Web (İlk Giriş Bekleniyor)', shortLabel: 'Eski Kayıt', isExplicit: false };
     }
 
     function getPlatformBadgeHtml(platformInfo) {
-      const p = typeof platformInfo === 'string' ? platformInfo : (platformInfo?.platform || 'web');
-      const isExplicit = typeof platformInfo === 'object' ? platformInfo.isExplicit : true;
+      const info = (typeof platformInfo === 'object' && platformInfo !== null) 
+        ? platformInfo 
+        : resolveUserPlatform({ platform: platformInfo });
+      const p = info.platform || 'legacy_web';
 
-      if (p === 'ios') {
-        return '<span class="platform-badge platform-ios" title="Apple iOS Cihazı">' + SVG.apple + '<span>iOS</span></span>';
+      switch (p) {
+        case 'play_store':
+          return '<span class="platform-badge platform-play" title="Google Play Store üzerinden indirilmiş Android uygulaması">' + SVG.playStore + '<span>Google Play</span></span>';
+        case 'ios_web':
+          return '<span class="platform-badge platform-ios" title="Apple iPhone / iPad Safari veya mobil tarayıcı">' + SVG.apple + '<span>iOS Web</span></span>';
+        case 'android_web':
+          return '<span class="platform-badge platform-android-web" title="Android telefon / tablet mobil web tarayıcısı">' + SVG.android + '<span>Android Web</span></span>';
+        case 'windows_web':
+          return '<span class="platform-badge platform-windows" title="Windows Bilgisayar Web Tarayıcısı">' + SVG.windows + '<span>Windows</span></span>';
+        case 'mac_web':
+          return '<span class="platform-badge platform-mac" title="Mac / macOS Bilgisayar Web Tarayıcısı">' + SVG.apple + '<span>macOS</span></span>';
+        case 'linux_web':
+          return '<span class="platform-badge platform-linux" title="Linux Bilgisayar Web Tarayıcısı">' + SVG.linux + '<span>Linux</span></span>';
+        case 'desktop_web':
+          return '<span class="platform-badge platform-desktop" title="Masaüstü Web Tarayıcısı">' + SVG.desktop + '<span>Masaüstü</span></span>';
+        default:
+          return '<span class="platform-badge platform-legacy" title="Eski Kayıt: Kullanıcı yeni güncellemeden önce girmiştir. Uygulamayı ilk açtığında cihazı (Google Play / iOS / Android / PC) otomatik olarak netleşecektir.">' + SVG.globe + '<span>Web (İlk Giriş Bekleniyor)</span></span>';
       }
-      if (p === 'android') {
-        return '<span class="platform-badge platform-android" title="Google Android Cihazı">' + SVG.android + '<span>Android</span></span>';
-      }
-      if (!isExplicit) {
-        return '<span class="platform-badge platform-web" style="opacity:0.85;" title="Eski Kayıt: Kullanıcı yeni güncellemeden önce girmiştir. Uygulamayı ilk açtığında cihazı (Android / iOS / Web) otomatik netleşecektir.">' + SVG.globe + '<span>Web (İlk Giriş Bekleniyor)</span></span>';
-      }
-      return '<span class="platform-badge platform-web" title="Web Tarayıcı">' + SVG.globe + '<span>Web</span></span>';
     }
 
     // Durum Değişkenleri
@@ -2270,34 +2418,54 @@
       const bugCount = rawFeedbacks.filter(f => f.type === 'bug').length;
       document.getElementById('statBugCount').textContent = bugCount + " hata bildirimi";
 
-      // Platform / Kanal Dağılımı Hesaplama
-      let countWeb = 0;
-      let countAndroid = 0;
+      // Platform / Kanal Dağılımı Hesaplama (Google Play, iOS Web, Android Web, Masaüstü Web, Eski Kayıt)
+      let countPlay = 0;
       let countIos = 0;
+      let countAndroid = 0;
+      let countDesktop = 0;
+      let countLegacy = 0;
 
       rawUsers.forEach(u => {
-        if (u.platform === 'ios') countIos++;
-        else if (u.platform === 'android') countAndroid++;
-        else countWeb++;
+        const p = u.platform;
+        if (p === 'play_store') countPlay++;
+        else if (p === 'ios_web') countIos++;
+        else if (p === 'android_web') countAndroid++;
+        else if (['windows_web', 'mac_web', 'linux_web', 'desktop_web'].includes(p)) countDesktop++;
+        else countLegacy++;
       });
 
-      const pctWeb = totalUsers > 0 ? Math.round((countWeb / totalUsers) * 100) : 0;
+      const pctPlay = totalUsers > 0 ? Math.round((countPlay / totalUsers) * 100) : 0;
+      const pctIos = totalUsers > 0 ? Math.round((countIos / totalUsers) * 100) : 0;
       const pctAndroid = totalUsers > 0 ? Math.round((countAndroid / totalUsers) * 100) : 0;
-      const pctIos = totalUsers > 0 ? (100 - pctWeb - pctAndroid) : 0;
+      const pctDesktop = totalUsers > 0 ? Math.round((countDesktop / totalUsers) * 100) : 0;
+      const pctLegacy = totalUsers > 0 ? Math.max(0, 100 - pctPlay - pctIos - pctAndroid - pctDesktop) : 0;
 
-      const distCountWebEl = document.getElementById('distCountWeb');
-      if (distCountWebEl) distCountWebEl.textContent = countWeb + " (%" + pctWeb + ")";
-      const distCountAndroidEl = document.getElementById('distCountAndroid');
-      if (distCountAndroidEl) distCountAndroidEl.textContent = countAndroid + " (%" + pctAndroid + ")";
+      const distCountPlayEl = document.getElementById('distCountPlay');
+      if (distCountPlayEl) distCountPlayEl.textContent = countPlay + " (%" + pctPlay + ")";
       const distCountIosEl = document.getElementById('distCountIos');
       if (distCountIosEl) distCountIosEl.textContent = countIos + " (%" + pctIos + ")";
+      const distCountAndroidEl = document.getElementById('distCountAndroid');
+      if (distCountAndroidEl) distCountAndroidEl.textContent = countAndroid + " (%" + pctAndroid + ")";
+      const distCountDesktopEl = document.getElementById('distCountDesktop');
+      if (distCountDesktopEl) distCountDesktopEl.textContent = countDesktop + " (%" + pctDesktop + ")";
+      const distCountLegacyEl = document.getElementById('distCountLegacy');
+      if (distCountLegacyEl) distCountLegacyEl.textContent = countLegacy + " (%" + pctLegacy + ")";
 
-      const barSegWeb = document.getElementById('barSegWeb');
-      if (barSegWeb) barSegWeb.style.width = pctWeb + '%';
-      const barSegAndroid = document.getElementById('barSegAndroid');
-      if (barSegAndroid) barSegAndroid.style.width = pctAndroid + '%';
+      const pillLegacyWrap = document.getElementById('pillLegacyWrap');
+      if (pillLegacyWrap) {
+        pillLegacyWrap.style.display = countLegacy > 0 ? 'inline-flex' : 'none';
+      }
+
+      const barSegPlay = document.getElementById('barSegPlay');
+      if (barSegPlay) barSegPlay.style.width = pctPlay + '%';
       const barSegIos = document.getElementById('barSegIos');
       if (barSegIos) barSegIos.style.width = pctIos + '%';
+      const barSegAndroid = document.getElementById('barSegAndroid');
+      if (barSegAndroid) barSegAndroid.style.width = pctAndroid + '%';
+      const barSegDesktop = document.getElementById('barSegDesktop');
+      if (barSegDesktop) barSegDesktop.style.width = pctDesktop + '%';
+      const barSegLegacy = document.getElementById('barSegLegacy');
+      if (barSegLegacy) barSegLegacy.style.width = pctLegacy + '%';
 
       // Aktiflik
       const now = new Date();
@@ -2364,7 +2532,26 @@
                               u.email.toLowerCase().includes(search) || 
                               (u.branch && u.branch.toLowerCase().includes(search));
         
-        const matchesPlatform = platformFilter === 'all' || u.platform === platformFilter;
+        let matchesPlatform = true;
+        if (platformFilter === 'play_store') {
+          matchesPlatform = u.platform === 'play_store';
+        } else if (platformFilter === 'ios_web') {
+          matchesPlatform = u.platform === 'ios_web';
+        } else if (platformFilter === 'android_web') {
+          matchesPlatform = u.platform === 'android_web';
+        } else if (platformFilter === 'desktop_all') {
+          matchesPlatform = ['windows_web', 'mac_web', 'linux_web', 'desktop_web'].includes(u.platform);
+        } else if (platformFilter === 'windows_web') {
+          matchesPlatform = u.platform === 'windows_web';
+        } else if (platformFilter === 'mac_web') {
+          matchesPlatform = u.platform === 'mac_web';
+        } else if (platformFilter === 'linux_web') {
+          matchesPlatform = u.platform === 'linux_web';
+        } else if (platformFilter === 'legacy_web') {
+          matchesPlatform = u.platform === 'legacy_web' || !u.platformInfo?.isExplicit;
+        } else if (platformFilter !== 'all') {
+          matchesPlatform = u.platform === platformFilter;
+        }
         const matchesLang = langFilter === 'all' || u.lang === langFilter;
         
         let matchesBranch = true;
@@ -2391,7 +2578,7 @@
           case 'name':
             return mult * (a.displayName || '').localeCompare(b.displayName || '', 'tr', { sensitivity: 'base' });
           case 'platform':
-            return mult * (a.platform || '').localeCompare(b.platform || '');
+            return mult * (a.platformInfo?.label || a.platform || '').localeCompare(b.platformInfo?.label || b.platform || '', 'tr');
           case 'branch':
             return mult * (a.branch || 'zzz').localeCompare(b.branch || 'zzz', 'tr');
           case 'level':
@@ -2522,7 +2709,26 @@
                               u.email.toLowerCase().includes(search) || 
                               (u.branch && u.branch.toLowerCase().includes(search));
         
-        const matchesPlatform = platformFilter === 'all' || u.platform === platformFilter;
+        let matchesPlatform = true;
+        if (platformFilter === 'play_store') {
+          matchesPlatform = u.platform === 'play_store';
+        } else if (platformFilter === 'ios_web') {
+          matchesPlatform = u.platform === 'ios_web';
+        } else if (platformFilter === 'android_web') {
+          matchesPlatform = u.platform === 'android_web';
+        } else if (platformFilter === 'desktop_all') {
+          matchesPlatform = ['windows_web', 'mac_web', 'linux_web', 'desktop_web'].includes(u.platform);
+        } else if (platformFilter === 'windows_web') {
+          matchesPlatform = u.platform === 'windows_web';
+        } else if (platformFilter === 'mac_web') {
+          matchesPlatform = u.platform === 'mac_web';
+        } else if (platformFilter === 'linux_web') {
+          matchesPlatform = u.platform === 'linux_web';
+        } else if (platformFilter === 'legacy_web') {
+          matchesPlatform = u.platform === 'legacy_web' || !u.platformInfo?.isExplicit;
+        } else if (platformFilter !== 'all') {
+          matchesPlatform = u.platform === platformFilter;
+        }
 
         let matchesBranch = true;
         if (branchFilter === 'none') {
@@ -2555,7 +2761,7 @@
           case 'name':
             return mult * (a.displayName || '').localeCompare(b.displayName || '', 'tr', { sensitivity: 'base' });
           case 'platform':
-            return mult * (a.platform || '').localeCompare(b.platform || '');
+            return mult * (a.platformInfo?.label || a.platform || '').localeCompare(b.platformInfo?.label || b.platform || '', 'tr');
           case 'branch':
             return mult * (a.branch || 'zzz').localeCompare(b.branch || 'zzz', 'tr');
           case 'created':
@@ -2786,9 +2992,11 @@
 
       const channelInfo = document.getElementById('modalChannelInfo');
       if (channelInfo) {
-        const isExp = u.platformInfo ? u.platformInfo.isExplicit : true;
-        const platName = u.platform === 'ios' ? 'Apple iOS' : (u.platform === 'android' ? 'Google Android' : (isExp ? 'Web Tarayıcı' : 'Web (İlk Giriş Bekleniyor)'));
-        channelInfo.innerHTML = getPlatformBadgeHtml(u.platformInfo || u.platform) + ' <span style="font-size:0.75rem; color:var(--text-dim); margin-left:4px;">(' + platName + ')</span>';
+        const info = u.platformInfo || resolveUserPlatform(u);
+        const uaText = u.userAgent ? `<div style="font-size:0.7rem; color:var(--text-dim); margin-top:4px; word-break:break-all; font-family:monospace; background:var(--bg-input); padding:4px 8px; border-radius:6px; border:1px solid var(--border);">${u.userAgent}</div>` : '';
+        channelInfo.innerHTML = getPlatformBadgeHtml(info) + 
+          ' <strong style="font-size:0.8rem; color:var(--text); margin-left:6px;">' + info.label + '</strong>' +
+          uaText;
       }
 
       document.getElementById('modalDetailCreatedAt').textContent = u.createdAtFormatted;
@@ -3125,7 +3333,7 @@
       rawUsers.forEach(u => {
         const cardMins = Math.round((u.cardSeconds || 0) / 60);
         const gameMins = Math.round((u.gameSeconds || 0) / 60);
-        const platLabel = u.platform === 'ios' ? 'iOS' : (u.platform === 'android' ? 'Android' : 'Web');
+        const platLabel = u.platformInfo?.label || u.platform || 'Web';
         csv += '"' + u.displayName + '";"' + u.email + '";"' + platLabel + '";"' + (u.branch || 'Şubesiz') + '";"' + u.lang + '";"' + u.track + '";"' + u.level + '";' + u.unitNo + ';' + u.dailyGoal + ';' + u.streakPledgeDays + ';' + u.xp + ';' + u.learnedCount + ';' + (u.dayStreak || 1) + ';' + (u.maxStreak || 0) + ';' + cardMins + ';' + gameMins + ';' + (u.arenaWordsSolved || 0) + ';' + (u.cleanWins || 0) + ';"' + u.createdAtOnly + '";"' + u.lastActiveFormatted + '";"' + u.id + '"\n';
       });
 
@@ -3149,7 +3357,7 @@
         const cardMins = Math.round((u.cardSeconds || 0) / 60);
         const gameMins = Math.round((u.gameSeconds || 0) / 60);
         const totalMins = Math.round((u.totalSeconds || 0) / 60);
-        const platLabel = u.platform === 'ios' ? 'iOS' : (u.platform === 'android' ? 'Android' : 'Web');
+        const platLabel = u.platformInfo?.label || u.platform || 'Web';
 
         let unitDetailStr = '';
         if (u.unitDurations && typeof u.unitDurations === 'object') {
