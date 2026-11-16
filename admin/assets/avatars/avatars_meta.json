@@ -1,0 +1,130 @@
+[
+  {
+    "category": "Kampüs & Akademik Yaşam",
+    "icon": "🎓",
+    "avatars": [
+      { "id": "avatar_1_1", "name": "Edebiyat & Dil Öğrencisi", "src": "assets/avatars/avatar_1_1.jpg" },
+      { "id": "avatar_1_2", "name": "Mühendislik & Teknoloji", "src": "assets/avatars/avatar_1_2.jpg" },
+      { "id": "avatar_1_3", "name": "Mimarlık & Tasarım", "src": "assets/avatars/avatar_1_3.jpg" },
+      { "id": "avatar_1_4", "name": "Tıp & Sağlık Öğrencisi", "src": "assets/avatars/avatar_1_4.jpg" },
+      { "id": "avatar_1_5", "name": "Mezun Genç Akademisyen", "src": "assets/avatars/avatar_1_5.jpg" },
+      { "id": "avatar_1_6", "name": "Hukuk & Münazara Lideri", "src": "assets/avatars/avatar_1_6.jpg" },
+      { "id": "avatar_1_7", "name": "Kampüs & Doğa Gezgini", "src": "assets/avatars/avatar_1_7.jpg" },
+      { "id": "avatar_1_8", "name": "Gece Kuşu Araştırmacı", "src": "assets/avatars/avatar_1_8.jpg" },
+      { "id": "avatar_1_9", "name": "Güzel Sanatlar Öğrencisi", "src": "assets/avatars/avatar_1_9.jpg" },
+      { "id": "avatar_1_10", "name": "Sosyal Bilimler Okuru", "src": "assets/avatars/avatar_1_10.jpg" }
+    ]
+  },
+  {
+    "category": "Kütüphane & Çalışma Odaklıları",
+    "icon": "📚",
+    "avatars": [
+      { "id": "avatar_2_1", "name": "Kahve Kolik Öğrenci", "src": "assets/avatars/avatar_2_1.jpg" },
+      { "id": "avatar_2_2", "name": "Titiz Not Tutucu", "src": "assets/avatars/avatar_2_2.jpg" },
+      { "id": "avatar_2_3", "name": "Gece Kuşu Kapüşonlu", "src": "assets/avatars/avatar_2_3.jpg" },
+      { "id": "avatar_2_4", "name": "Kitap Kurdu", "src": "assets/avatars/avatar_2_4.jpg" },
+      { "id": "avatar_2_5", "name": "Zen Kulaklıklı Çalışan", "src": "assets/avatars/avatar_2_5.jpg" },
+      { "id": "avatar_2_6", "name": "Sınavzede Maratoncu", "src": "assets/avatars/avatar_2_6.jpg" },
+      { "id": "avatar_2_7", "name": "Sözlük Okuyucusu", "src": "assets/avatars/avatar_2_7.jpg" },
+      { "id": "avatar_2_8", "name": "Kelime Kartı Çalışanı", "src": "assets/avatars/avatar_2_8.jpg" },
+      { "id": "avatar_2_9", "name": "Dijital Düzenleyici", "src": "assets/avatars/avatar_2_9.jpg" },
+      { "id": "avatar_2_10", "name": "Erken Sabah Kütüphanecisi", "src": "assets/avatars/avatar_2_10.jpg" }
+    ]
+  },
+  {
+    "category": "Seyyah & Erasmus Keşifleri",
+    "icon": "✈️",
+    "avatars": [
+      { "id": "avatar_3_1", "name": "Sırt Çantalı Gezgin", "src": "assets/avatars/avatar_3_1.jpg" },
+      { "id": "avatar_3_2", "name": "Tren Camı Yolcusu", "src": "assets/avatars/avatar_3_2.jpg" },
+      { "id": "avatar_3_3", "name": "Retro Kameralı Kaşif", "src": "assets/avatars/avatar_3_3.jpg" },
+      { "id": "avatar_3_4", "name": "Değişim Öğrencisi", "src": "assets/avatars/avatar_3_4.jpg" },
+      { "id": "avatar_3_5", "name": "Havaalanı Yolcusu", "src": "assets/avatars/avatar_3_5.jpg" },
+      { "id": "avatar_3_6", "name": "Kartpostal Yazarı", "src": "assets/avatars/avatar_3_6.jpg" },
+      { "id": "avatar_3_7", "name": "Doğa Yürüyüşçüsü", "src": "assets/avatars/avatar_3_7.jpg" },
+      { "id": "avatar_3_8", "name": "Çok Dilli Kılavuz Okuru", "src": "assets/avatars/avatar_3_8.jpg" },
+      { "id": "avatar_3_9", "name": "Bereli Feribot Yolcusu", "src": "assets/avatars/avatar_3_9.jpg" },
+      { "id": "avatar_3_10", "name": "Dünya Vatandaşı", "src": "assets/avatars/avatar_3_10.jpg" }
+    ]
+  },
+  {
+    "category": "İngiliz Kültürü & Dil İkonları",
+    "icon": "🇬🇧",
+    "avatars": [
+      { "id": "avatar_4_1", "name": "Londra Sokak Stili", "src": "assets/avatars/avatar_4_1.jpg" },
+      { "id": "avatar_4_2", "name": "Oxford Kütüphanecisi", "src": "assets/avatars/avatar_4_2.jpg" },
+      { "id": "avatar_4_3", "name": "Modern Sherlock", "src": "assets/avatars/avatar_4_3.jpg" },
+      { "id": "avatar_4_4", "name": "Münazara Kulübü Lideri", "src": "assets/avatars/avatar_4_4.jpg" },
+      { "id": "avatar_4_5", "name": "Shakespeare Şairi", "src": "assets/avatars/avatar_4_5.jpg" },
+      { "id": "avatar_4_6", "name": "Cambridge Kürekçisi", "src": "assets/avatars/avatar_4_6.jpg" },
+      { "id": "avatar_4_7", "name": "İkindi Çayı Tutkunu", "src": "assets/avatars/avatar_4_7.jpg" },
+      { "id": "avatar_4_8", "name": "Plak Koleksiyoncusu", "src": "assets/avatars/avatar_4_8.jpg" },
+      { "id": "avatar_4_9", "name": "Gotik Edebiyat Okuru", "src": "assets/avatars/avatar_4_9.jpg" },
+      { "id": "avatar_4_10", "name": "Deri Evraklı Hatip", "src": "assets/avatars/avatar_4_10.jpg" }
+    ]
+  },
+  {
+    "category": "Fransız Kültürü & Sanat Ruhu",
+    "icon": "🇫🇷",
+    "avatars": [
+      { "id": "avatar_5_1", "name": "Paris Kafe Müdavimi", "src": "assets/avatars/avatar_5_1.jpg" },
+      { "id": "avatar_5_2", "name": "Seine Kıyısı Kitapçısı", "src": "assets/avatars/avatar_5_2.jpg" },
+      { "id": "avatar_5_3", "name": "Montmartre Ressamı", "src": "assets/avatars/avatar_5_3.jpg" },
+      { "id": "avatar_5_4", "name": "Yeni Dalga Sinemacısı", "src": "assets/avatars/avatar_5_4.jpg" },
+      { "id": "avatar_5_5", "name": "Modern Felsefe Düşünürü", "src": "assets/avatars/avatar_5_5.jpg" },
+      { "id": "avatar_5_6", "name": "Kruvasanlı Pastacı", "src": "assets/avatars/avatar_5_6.jpg" },
+      { "id": "avatar_5_7", "name": "Akordeonlu Sokak Sanatçısı", "src": "assets/avatars/avatar_5_7.jpg" },
+      { "id": "avatar_5_8", "name": "Mimari Eskizci", "src": "assets/avatars/avatar_5_8.jpg" },
+      { "id": "avatar_5_9", "name": "Sorbonne Araştırmacısı", "src": "assets/avatars/avatar_5_9.jpg" },
+      { "id": "avatar_5_10", "name": "Zarif Moda Tasarımcısı", "src": "assets/avatars/avatar_5_10.jpg" }
+    ]
+  },
+  {
+    "category": "Alman Kültürü & Düşünce Dünyası",
+    "icon": "🇩🇪",
+    "avatars": [
+      { "id": "avatar_6_1", "name": "Berlin Şehir Bisikletçisi", "src": "assets/avatars/avatar_6_1.jpg" },
+      { "id": "avatar_6_2", "name": "Bauhaus Tasarımcısı", "src": "assets/avatars/avatar_6_2.jpg" },
+      { "id": "avatar_6_3", "name": "Alpler Yürüyüşçüsü", "src": "assets/avatars/avatar_6_3.jpg" },
+      { "id": "avatar_6_4", "name": "Derin Düşünceli Felsefeci", "src": "assets/avatars/avatar_6_4.jpg" },
+      { "id": "avatar_6_5", "name": "Orkestra Kemancısı", "src": "assets/avatars/avatar_6_5.jpg" },
+      { "id": "avatar_6_6", "name": "Endüstriyel Tasarımcı", "src": "assets/avatars/avatar_6_6.jpg" },
+      { "id": "avatar_6_7", "name": "Goethe Esintili Edebiyatçı", "src": "assets/avatars/avatar_6_7.jpg" },
+      { "id": "avatar_6_8", "name": "Kitabevi Sahibi Öğrenci", "src": "assets/avatars/avatar_6_8.jpg" },
+      { "id": "avatar_6_9", "name": "Laboratuvar Kimyacısı", "src": "assets/avatars/avatar_6_9.jpg" },
+      { "id": "avatar_6_10", "name": "Orman & Ekoloji Araştırmacısı", "src": "assets/avatars/avatar_6_10.jpg" }
+    ]
+  },
+  {
+    "category": "Yurt Hayatı & Sınav Günleri",
+    "icon": "☕",
+    "avatars": [
+      { "id": "avatar_7_1", "name": "Rahat Sweatshirt'lü", "src": "assets/avatars/avatar_7_1.jpg" },
+      { "id": "avatar_7_2", "name": "Podcast & Sesli Kitap Dinleyicisi", "src": "assets/avatars/avatar_7_2.jpg" },
+      { "id": "avatar_7_3", "name": "Esprili Sınavzede", "src": "assets/avatars/avatar_7_3.jpg" },
+      { "id": "avatar_7_4", "name": "Yurt Gurmesi (Noodle)", "src": "assets/avatars/avatar_7_4.jpg" },
+      { "id": "avatar_7_5", "name": "Dijital Çalışma Sihirbazı", "src": "assets/avatars/avatar_7_5.jpg" },
+      { "id": "avatar_7_6", "name": "Battaniyeli Sabahlayan", "src": "assets/avatars/avatar_7_6.jpg" },
+      { "id": "avatar_7_7", "name": "Pozitif Ev Arkadaşı", "src": "assets/avatars/avatar_7_7.jpg" },
+      { "id": "avatar_7_8", "name": "Sabah Koşucusu Sporcu", "src": "assets/avatars/avatar_7_8.jpg" },
+      { "id": "avatar_7_9", "name": "Akustik Gitarist", "src": "assets/avatars/avatar_7_9.jpg" },
+      { "id": "avatar_7_10", "name": "Çalışma Grubu Lideri", "src": "assets/avatars/avatar_7_10.jpg" }
+    ]
+  },
+  {
+    "category": "Bilge Maskotlar & Edebi Hayvanlar",
+    "icon": "🦊",
+    "avatars": [
+      { "id": "avatar_8_1", "name": "Bilge Baykuş", "src": "assets/avatars/avatar_8_1.jpg" },
+      { "id": "avatar_8_2", "name": "Kurnaz Fransız Tilki", "src": "assets/avatars/avatar_8_2.jpg" },
+      { "id": "avatar_8_3", "name": "Kulaklıklı Meraklı Kedi", "src": "assets/avatars/avatar_8_3.jpg" },
+      { "id": "avatar_8_4", "name": "Hevesli Sırt Çantalı Köpek", "src": "assets/avatars/avatar_8_4.jpg" },
+      { "id": "avatar_8_5", "name": "Kahveci Dingin Ayı", "src": "assets/avatars/avatar_8_5.jpg" },
+      { "id": "avatar_8_6", "name": "Anahtarlı Akıllı Karga", "src": "assets/avatars/avatar_8_6.jpg" },
+      { "id": "avatar_8_7", "name": "Yelekli Çalışkan Porsuk", "src": "assets/avatars/avatar_8_7.jpg" },
+      { "id": "avatar_8_8", "name": "Not Tutucu Kirpi", "src": "assets/avatars/avatar_8_8.jpg" },
+      { "id": "avatar_8_9", "name": "Maceracı Minik Kitap Faresi", "src": "assets/avatars/avatar_8_9.jpg" },
+      { "id": "avatar_8_10", "name": "Çok Dilli Bebek Ejderha", "src": "assets/avatars/avatar_8_10.jpg" }
+    ]
+  }
+]

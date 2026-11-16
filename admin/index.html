@@ -1,0 +1,3354 @@
+<!DOCTYPE html>
+<html lang="tr" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>LexiGo • Yönetici ve Eğitmen Kontrol Paneli (Admin Hub)</title>
+  <link rel="icon" type="image/jpeg" href="logo.jpg">
+  
+  <script src="words_data.js"></script>
+  <!-- Firebase SDKs -->
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
+
+  <style>
+    :root {
+      /* Karanlık Tema (Modern SaaS / Slate Palette) */
+      --bg-main: #0b1120;
+      --bg-card: #111a2e;
+      --bg-surface: #1a253c;
+      --bg-input: #0d1527;
+      --border: #22304d;
+      --border-subtle: #19243b;
+      --text: #f8fafc;
+      --text-muted: #94a3b8;
+      --text-dim: #64748b;
+      --primary: #3b82f6;
+      --primary-hover: #2563eb;
+      --primary-gradient: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
+      --success: #10b981;
+      --warning: #f59e0b;
+      --danger: #ef4444;
+      --purple: #8b5cf6;
+      --cyan: #06b6d4;
+      --radius: 12px;
+      --radius-sm: 8px;
+      --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.2);
+      --shadow: 0 4px 16px -2px rgba(0, 0, 0, 0.35), 0 2px 6px -2px rgba(0, 0, 0, 0.25);
+      --shadow-lg: 0 12px 32px -4px rgba(0, 0, 0, 0.45);
+    }
+
+    [data-theme="light"] {
+      /* Açık Tema (Temiz Kurumsal Gri/Beyaz) */
+      --bg-main: #f8fafc;
+      --bg-card: #ffffff;
+      --bg-surface: #f1f5f9;
+      --bg-input: #ffffff;
+      --border: #e2e8f0;
+      --border-subtle: #edf2f7;
+      --text: #0f172a;
+      --text-muted: #475569;
+      --text-dim: #64748b;
+      --primary: #2563eb;
+      --primary-hover: #1d4ed8;
+      --primary-gradient: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
+      --success: #059669;
+      --warning: #d97706;
+      --danger: #dc2626;
+      --purple: #7c3aed;
+      --cyan: #0891b2;
+      --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+      --shadow: 0 4px 14px -2px rgba(100, 116, 139, 0.12), 0 2px 6px -2px rgba(100, 116, 139, 0.08);
+      --shadow-lg: 0 14px 34px -4px rgba(100, 116, 139, 0.18);
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Inter, Helvetica, Arial, sans-serif; }
+
+    body {
+      background-color: var(--bg-main);
+      color: var(--text);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      transition: background-color 0.2s ease, color 0.2s ease;
+      font-size: 14px;
+      line-height: 1.5;
+    }
+
+    /* SVG UI ICONS */
+    .ui-icon {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 16px;
+      height: 16px;
+      vertical-align: middle;
+      flex-shrink: 0;
+    }
+    .ui-icon svg {
+      width: 100%;
+      height: 100%;
+      display: block;
+    }
+    .ui-icon-lg {
+      width: 20px;
+      height: 20px;
+    }
+
+    /* HEADER */
+    header {
+      background: var(--bg-card);
+      border-bottom: 1px solid var(--border);
+      padding: 10px 18px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      box-shadow: var(--shadow-sm);
+      gap: 12px;
+    }
+
+    .brand-group {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .brand-logo {
+      width: 36px;
+      height: 36px;
+      border-radius: 8px;
+      object-fit: cover;
+      box-shadow: 0 2px 8px rgba(37, 99, 235, 0.25);
+      border: 1px solid var(--border);
+    }
+    .brand-title {
+      font-size: 1.12rem;
+      font-weight: 800;
+      letter-spacing: -0.4px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .brand-title span { color: var(--primary); }
+    .badge-admin {
+      background: rgba(139, 92, 246, 0.14);
+      color: var(--purple);
+      border: 1px solid rgba(139, 92, 246, 0.28);
+      font-size: 0.7rem;
+      font-weight: 700;
+      padding: 2px 8px;
+      border-radius: 6px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    .badge-ver {
+      background: rgba(16, 185, 129, 0.12);
+      color: var(--success);
+      border: 1px solid rgba(16, 185, 129, 0.25);
+      font-size: 0.7rem;
+      font-weight: 700;
+      padding: 2px 7px;
+      border-radius: 6px;
+    }
+
+    .header-actions {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .status-pill {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 0.8rem;
+      font-weight: 600;
+      color: var(--text-muted);
+      background: var(--bg-surface);
+      padding: 6px 12px;
+      border-radius: 8px;
+      border: 1px solid var(--border);
+    }
+    .dot-live {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--success);
+      box-shadow: 0 0 8px var(--success);
+      animation: pulseDot 2s infinite;
+    }
+    @keyframes pulseDot { 0%, 100% { opacity: 1; } 50% { opacity: 0.4; } }
+
+    /* PROFESSIONAL BUTTONS */
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 7px;
+      background: var(--primary-gradient);
+      color: white;
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      padding: 7px 14px;
+      border-radius: var(--radius-sm);
+      font-size: 0.84rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.15s ease;
+      text-decoration: none;
+      box-shadow: var(--shadow-sm);
+    }
+    .btn:hover { filter: brightness(1.08); transform: translateY(-1px); }
+    .btn:active { transform: translateY(0); filter: brightness(0.95); }
+    
+    .btn-secondary {
+      background: var(--bg-surface);
+      border: 1px solid var(--border);
+      color: var(--text);
+      box-shadow: var(--shadow-sm);
+    }
+    .btn-secondary:hover { background: var(--bg-card); border-color: var(--text-muted); }
+
+    .btn-success {
+      background: linear-gradient(135deg, #059669 0%, #047857 100%);
+      color: white;
+      border: 1px solid rgba(255, 255, 255, 0.15);
+    }
+    .btn-danger {
+      background: linear-gradient(135deg, #dc2626 0%, #b91c1c 100%) !important;
+      color: white !important;
+      border: 1px solid rgba(255, 255, 255, 0.15) !important;
+    }
+    .btn-danger:hover {
+      background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%) !important;
+    }
+
+    .btn-theme {
+      background: var(--bg-surface);
+      border: 1px solid var(--border);
+      color: var(--text);
+      padding: 7px 11px;
+      border-radius: var(--radius-sm);
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.15s;
+    }
+    .btn-theme:hover { background: var(--bg-card); }
+
+    .bulk-action-bar {
+      display: none;
+      align-items: center;
+      justify-content: space-between;
+      background: rgba(239, 68, 68, 0.08);
+      border: 1px solid rgba(239, 68, 68, 0.3);
+      border-radius: var(--radius-sm);
+      padding: 9px 16px;
+      margin-bottom: 14px;
+    }
+    .user-cb {
+      width: 16px;
+      height: 16px;
+      accent-color: var(--primary);
+      cursor: pointer;
+    }
+
+    /* NAVIGATION TABS */
+    .tabs-bar {
+      display: flex;
+      gap: 4px;
+      background: var(--bg-card);
+      padding: 6px 14px;
+      border-bottom: 1px solid var(--border);
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+    }
+    .tab-btn {
+      background: transparent;
+      border: none;
+      color: var(--text-muted);
+      padding: 8px 14px;
+      font-size: 0.84rem;
+      font-weight: 600;
+      border-radius: var(--radius-sm);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      transition: all 0.15s ease;
+      white-space: nowrap;
+    }
+    .tab-btn:hover { color: var(--text); background: var(--bg-surface); }
+    .tab-btn.active {
+      color: white;
+      background: var(--primary-gradient);
+      box-shadow: 0 2px 8px rgba(37, 99, 235, 0.3);
+    }
+    .tab-counter {
+      background: rgba(255, 255, 255, 0.2);
+      font-size: 0.68rem;
+      padding: 1px 6px;
+      border-radius: 10px;
+      font-weight: 700;
+    }
+
+    /* MAIN CONTAINER */
+    .container {
+      max-width: 100%;
+      width: 100%;
+      margin: 0;
+      padding: 14px 16px;
+      flex: 1;
+      box-sizing: border-box;
+    }
+
+    /* OVERVIEW STATS GRID */
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+      gap: 12px;
+      margin-bottom: 16px;
+    }
+    .stat-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 14px 16px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      box-shadow: var(--shadow-sm);
+      transition: border-color 0.15s ease, transform 0.15s ease;
+    }
+    .stat-card:hover {
+      border-color: rgba(59, 130, 246, 0.4);
+      transform: translateY(-1px);
+    }
+    .stat-info h4 {
+      font-size: 0.72rem;
+      color: var(--text-muted);
+      font-weight: 700;
+      letter-spacing: 0.4px;
+      text-transform: uppercase;
+      margin-bottom: 3px;
+    }
+    .stat-info .stat-val {
+      font-size: 1.55rem;
+      font-weight: 800;
+      color: var(--text);
+      letter-spacing: -0.5px;
+      line-height: 1.2;
+    }
+    .stat-info .stat-sub {
+      font-size: 0.73rem;
+      color: var(--text-dim);
+      margin-top: 3px;
+      font-weight: 500;
+    }
+    .stat-icon {
+      width: 42px;
+      height: 42px;
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: var(--shadow-sm);
+    }
+    .stat-blue { background: rgba(59, 130, 246, 0.12); color: var(--primary); border: 1px solid rgba(59, 130, 246, 0.25); }
+    .stat-green { background: rgba(16, 185, 129, 0.12); color: var(--success); border: 1px solid rgba(16, 185, 129, 0.25); }
+    .stat-amber { background: rgba(245, 158, 11, 0.12); color: var(--warning); border: 1px solid rgba(245, 158, 11, 0.25); }
+    .stat-purple { background: rgba(139, 92, 246, 0.12); color: var(--purple); border: 1px solid rgba(139, 92, 246, 0.25); }
+    .stat-cyan { background: rgba(6, 182, 212, 0.12); color: var(--cyan); border: 1px solid rgba(6, 182, 212, 0.25); }
+
+    /* PLATFORM DAĞILIMI BANNER / KARTI */
+    .platform-distribution-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 12px 16px;
+      margin-bottom: 14px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      flex-wrap: wrap;
+      box-shadow: var(--shadow-sm);
+    }
+    .platform-dist-left {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .platform-dist-title {
+      font-size: 0.8rem;
+      font-weight: 700;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.4px;
+    }
+    .platform-dist-pills {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+    .platform-dist-bar-wrap {
+      flex: 1;
+      min-width: 200px;
+      max-width: 380px;
+    }
+    .platform-multi-bar {
+      height: 8px;
+      border-radius: 4px;
+      overflow: hidden;
+      display: flex;
+      background: rgba(255, 255, 255, 0.08);
+      margin-top: 4px;
+    }
+    .bar-seg-web { background: #3b82f6; height: 100%; transition: width 0.3s; }
+    .bar-seg-android { background: #10b981; height: 100%; transition: width 0.3s; }
+    .bar-seg-ios { background: #a855f7; height: 100%; transition: width 0.3s; }
+    [data-theme="light"] .bar-seg-ios { background: #0f172a; }
+
+    /* PLATFORM ROZETLERİ (iOS, Android, Web) */
+    .platform-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      padding: 3px 8px;
+      border-radius: 6px;
+      font-size: 0.72rem;
+      font-weight: 700;
+      letter-spacing: 0.2px;
+      white-space: nowrap;
+      line-height: 1.2;
+    }
+    .platform-badge svg {
+      width: 13px;
+      height: 13px;
+      fill: currentColor;
+    }
+    .platform-ios {
+      background: rgba(248, 250, 252, 0.09);
+      color: #f1f5f9;
+      border: 1px solid rgba(248, 250, 252, 0.25);
+    }
+    [data-theme="light"] .platform-ios {
+      background: #0f172a;
+      color: #ffffff;
+      border: 1px solid #0f172a;
+    }
+    .platform-android {
+      background: rgba(16, 185, 129, 0.12);
+      color: #34d399;
+      border: 1px solid rgba(16, 185, 129, 0.28);
+    }
+    [data-theme="light"] .platform-android {
+      background: #ecfdf5;
+      color: #047857;
+      border: 1px solid #a7f3d0;
+    }
+    .platform-web {
+      background: rgba(59, 130, 246, 0.12);
+      color: #60a5fa;
+      border: 1px solid rgba(59, 130, 246, 0.28);
+    }
+    [data-theme="light"] .platform-web {
+      background: #eff6ff;
+      color: #1d4ed8;
+      border: 1px solid #bfdbfe;
+    }
+
+    /* FILTERS & CONTROLS ROW */
+    .controls-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 12px;
+      background: var(--bg-card);
+      padding: 10px 14px;
+      border-radius: var(--radius);
+      border: 1px solid var(--border);
+      box-shadow: var(--shadow-sm);
+    }
+    .search-box {
+      flex: 1;
+      min-width: 220px;
+      position: relative;
+    }
+    .search-box input {
+      width: 100%;
+      background: var(--bg-input);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      padding: 7px 12px 7px 32px;
+      color: var(--text);
+      font-size: 0.84rem;
+      font-weight: 500;
+      outline: none;
+      transition: border-color 0.15s, box-shadow 0.15s;
+    }
+    .search-box input:focus { border-color: var(--primary); box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.12); }
+    .search-box .search-icon {
+      position: absolute;
+      left: 10px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--text-dim);
+      display: flex;
+    }
+    .filter-group {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+    .select-input {
+      background: var(--bg-input);
+      border: 1px solid var(--border);
+      color: var(--text);
+      border-radius: var(--radius-sm);
+      padding: 6px 10px;
+      font-size: 0.8rem;
+      font-weight: 600;
+      outline: none;
+      cursor: pointer;
+      transition: border-color 0.15s;
+    }
+    .select-input:focus { border-color: var(--primary); }
+
+    /* DATA TABLE */
+    .table-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      overflow: hidden;
+      box-shadow: var(--shadow-sm);
+      width: 100%;
+    }
+    .table-container {
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+      width: 100%;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      text-align: left;
+    }
+    th {
+      background: var(--bg-surface);
+      color: var(--text-muted);
+      font-size: 0.72rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      padding: 9px 12px;
+      border-bottom: 1px solid var(--border);
+      white-space: nowrap;
+    }
+    th.sortable-th {
+      cursor: pointer;
+      user-select: none;
+      transition: background-color 0.15s ease, color 0.15s ease;
+      position: relative;
+    }
+    th.sortable-th:hover {
+      background: rgba(59, 130, 246, 0.1);
+      color: var(--primary);
+    }
+    th.sortable-th.active-sort {
+      color: var(--primary);
+      background: rgba(59, 130, 246, 0.08);
+      border-bottom: 2px solid var(--primary);
+    }
+    .sort-icon {
+      display: inline-block;
+      margin-left: 3px;
+      font-size: 0.7rem;
+      opacity: 0.4;
+      vertical-align: middle;
+    }
+    th.sortable-th.active-sort .sort-icon {
+      opacity: 1;
+      color: var(--primary);
+      font-weight: 800;
+    }
+    td {
+      padding: 9px 12px;
+      border-bottom: 1px solid var(--border-subtle);
+      font-size: 0.82rem;
+      color: var(--text);
+      vertical-align: middle;
+    }
+    tr:hover td {
+      background: rgba(37, 99, 235, 0.03);
+    }
+
+    .user-cell {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .user-avatar-bubble {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      background: var(--bg-surface);
+      border: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1rem;
+      flex-shrink: 0;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    }
+    .user-meta-name { font-weight: 700; font-size: 0.84rem; color: var(--text); white-space: nowrap; }
+    .user-meta-email { font-size: 0.72rem; color: var(--text-dim); margin-top: 1px; white-space: nowrap; }
+
+    .tag-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      padding: 2px 7px;
+      border-radius: 5px;
+      font-size: 0.72rem;
+      font-weight: 700;
+      white-space: nowrap;
+    }
+    .tag-track { background: rgba(59, 130, 246, 0.12); color: #60a5fa; border: 1px solid rgba(59, 130, 246, 0.28); }
+    [data-theme="light"] .tag-track { background: #eff6ff; color: #2563eb; border: 1px solid #bfdbfe; }
+    .tag-xp { background: rgba(245, 158, 11, 0.12); color: #fbbf24; border: 1px solid rgba(245, 158, 11, 0.28); }
+    [data-theme="light"] .tag-xp { background: #fef3c7; color: #b45309; border: 1px solid #fde68a; }
+    .tag-words { background: rgba(16, 185, 129, 0.12); color: #34d399; border: 1px solid rgba(16, 185, 129, 0.28); }
+    [data-theme="light"] .tag-words { background: #ecfdf5; color: #047857; border: 1px solid #a7f3d0; }
+    .tag-streak { background: rgba(249, 115, 22, 0.12); color: #fb923c; border: 1px solid rgba(249, 115, 22, 0.28); }
+    [data-theme="light"] .tag-streak { background: #fff7ed; color: #c2410c; border: 1px solid #ffedd5; }
+    .tag-unit { background: rgba(6, 182, 212, 0.12); color: #22d3ee; border: 1px solid rgba(6, 182, 212, 0.28); }
+    [data-theme="light"] .tag-unit { background: #ecfeff; color: #0e7490; border: 1px solid #a5f3fc; }
+
+    .date-meta-cell {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+      font-size: 0.74rem;
+    }
+    .date-meta-primary { font-weight: 600; color: var(--text); }
+    .date-meta-secondary { color: var(--text-dim); font-size: 0.7rem; }
+
+    .recency-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      padding: 2px 7px;
+      border-radius: 5px;
+      font-size: 0.7rem;
+      font-weight: 700;
+      white-space: nowrap;
+    }
+    .recency-active { background: rgba(16, 185, 129, 0.15); color: #34d399; border: 1px solid rgba(16, 185, 129, 0.3); }
+    .recency-recent { background: rgba(245, 158, 11, 0.15); color: #fbbf24; border: 1px solid rgba(245, 158, 11, 0.3); }
+    .recency-idle { background: rgba(100, 116, 139, 0.12); color: var(--text-muted); border: 1px solid var(--border); }
+
+    .time-badge-main {
+      font-weight: 700;
+      font-size: 0.82rem;
+      color: var(--cyan);
+    }
+    .time-mini-bar {
+      width: 100%;
+      height: 6px;
+      border-radius: 3px;
+      overflow: hidden;
+      background: rgba(255, 255, 255, 0.08);
+      display: flex;
+      margin-top: 4px;
+    }
+    .time-bar-card { background: #38bdf8; height: 100%; }
+    .time-bar-game { background: #f59e0b; height: 100%; }
+
+    .unit-time-chip {
+      background: var(--bg-surface);
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      padding: 2px 5px;
+      font-size: 0.7rem;
+      color: var(--text-muted);
+      font-weight: 600;
+    }
+
+    /* FEEDBACK CARD / LIST */
+    .feedback-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(360px, 1fr));
+      gap: 14px;
+    }
+    .fb-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 14px 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      box-shadow: var(--shadow-sm);
+    }
+    .fb-card-header {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 10px;
+    }
+    .fb-meta { font-size: 0.72rem; color: var(--text-dim); }
+    .fb-msg {
+      font-size: 0.84rem;
+      color: var(--text);
+      line-height: 1.45;
+      background: var(--bg-surface);
+      padding: 10px 12px;
+      border-radius: var(--radius-sm);
+      border: 1px solid var(--border-subtle);
+    }
+    .fb-actions {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      margin-top: auto;
+      padding-top: 6px;
+    }
+
+    /* MODAL */
+    .modal-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.65);
+      backdrop-filter: blur(4px);
+      -webkit-backdrop-filter: blur(4px);
+      z-index: 1000;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 16px;
+    }
+    .modal-overlay.active { display: flex; }
+    .modal-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      max-width: 780px;
+      width: 100%;
+      max-height: 90vh;
+      overflow-y: auto;
+      padding: 22px;
+      box-shadow: var(--shadow-lg);
+      position: relative;
+    }
+    .modal-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 1px solid var(--border);
+      padding-bottom: 12px;
+      margin-bottom: 14px;
+    }
+    .close-btn {
+      background: var(--bg-surface);
+      border: 1px solid var(--border);
+      color: var(--text-muted);
+      width: 30px;
+      height: 30px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.1rem;
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+    .close-btn:hover { color: var(--text); background: var(--bg-input); }
+
+    .detail-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+      gap: 10px;
+    }
+    .detail-box {
+      background: var(--bg-surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      padding: 10px 12px;
+    }
+    .detail-label {
+      font-size: 0.7rem;
+      color: var(--text-dim);
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.3px;
+      margin-bottom: 3px;
+    }
+    .detail-val {
+      font-size: 1.05rem;
+      font-weight: 800;
+      color: var(--text);
+    }
+
+    .game-stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+      gap: 8px;
+      margin-top: 8px;
+    }
+    .game-stat-item {
+      background: var(--bg-surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      padding: 8px 10px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-size: 0.78rem;
+    }
+    .game-stat-item span { color: var(--text-muted); font-weight: 600; }
+    .game-stat-item strong { color: var(--cyan); font-weight: 800; }
+
+    /* TOAST */
+    .admin-toast {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      padding: 10px 16px;
+      box-shadow: var(--shadow-lg);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      z-index: 10000;
+      transform: translateY(120%);
+      opacity: 0;
+      transition: all 0.25s ease;
+      font-size: 0.84rem;
+      font-weight: 600;
+    }
+    .admin-toast.show {
+      transform: translateY(0);
+      opacity: 1;
+    }
+
+    .empty-state {
+      text-align: center;
+      padding: 38px 20px;
+      color: var(--text-dim);
+      font-size: 0.86rem;
+    }
+    .empty-icon {
+      font-size: 1.8rem;
+      margin-bottom: 8px;
+      opacity: 0.5;
+    }
+
+    @media (max-width: 768px) {
+      .header-actions { width: 100%; justify-content: flex-start; }
+      .stats-grid { grid-template-columns: 1fr 1fr; }
+      .platform-distribution-card { flex-direction: column; align-items: flex-start; }
+      .platform-dist-bar-wrap { width: 100%; max-width: 100%; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- GÜVENLİK GİRİŞ EKRANI (PIN LOCK) -->
+  <div id="pinLockScreen" style="position: fixed; inset: 0; background: var(--bg-main); z-index: 10000; display: flex; align-items: center; justify-content: center; padding: 20px;">
+    <div style="background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius); padding: 36px 30px; max-width: 400px; width: 100%; text-align: center; box-shadow: var(--shadow-lg);">
+      <div style="width: 52px; height: 52px; border-radius: 12px; background: rgba(59, 130, 246, 0.12); color: var(--primary); display: inline-flex; align-items: center; justify-content: center; margin-bottom: 16px;">
+        <svg style="width: 26px; height: 26px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round;" viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>
+      </div>
+      <h2 style="font-size: 1.35rem; font-weight: 800; color: var(--text); margin-bottom: 6px; letter-spacing: -0.3px;">LexiGo Yönetici Paneli</h2>
+      <p style="font-size: 0.84rem; color: var(--text-muted); margin-bottom: 22px;">Eğitmen ve yönetici girişi için PIN kodunuzu giriniz.</p>
+      
+      <form id="pinForm" onsubmit="event.preventDefault(); handlePinSubmit();">
+        <input type="password" id="adminPinInput" placeholder="PIN Kodu (Örn: 1923)" maxlength="12" autofocus
+          style="width: 100%; background: var(--bg-input); border: 1.5px solid var(--border); border-radius: 10px; padding: 12px; font-size: 1.1rem; color: var(--text); text-align: center; letter-spacing: 4px; outline: none; margin-bottom: 14px; font-weight: 700; transition: border-color 0.2s;">
+        <div id="pinErrorMsg" style="color: var(--danger); font-size: 0.8rem; font-weight: 600; margin-bottom: 12px; display: none;">Hatalı PIN kodu! Lütfen tekrar deneyiniz.</div>
+        <button type="submit" class="btn" style="width: 100%; justify-content: center; padding: 11px; font-size: 0.92rem;">
+          <span>Giriş Yap</span>
+        </button>
+      </form>
+      <div style="margin-top: 18px; font-size: 0.75rem; color: var(--text-dim);">Varsayılan Güvenlik Kodu: <strong style="color:var(--text);">1923</strong></div>
+    </div>
+  </div>
+
+  <!-- HEADER -->
+  <header>
+    <div class="brand-group">
+      <img src="logo.jpg" alt="LexiGo" class="brand-logo" onerror="this.src='https://via.placeholder.com/36'">
+      <div>
+        <div class="brand-title">Lexi<span>GO</span> <span class="badge-admin">Admin Hub</span> <span class="badge-ver">v1.9.29</span></div>
+        <div style="font-size: 0.72rem; color: var(--text-dim); font-weight: 600;">Aydın Adnan Menderes Üniversitesi YDYO</div>
+      </div>
+    </div>
+
+    <div class="header-actions">
+      <div class="status-pill">
+        <span class="dot-live"></span>
+        <span id="connectionStatus">Bağlanıyor...</span>
+      </div>
+      <button class="btn-theme" id="themeToggleBtn" title="Temayı Değiştir (Açık / Koyu)">
+        <span id="themeToggleIcon" class="ui-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>
+        </span>
+      </button>
+      <button class="btn btn-secondary" id="changePinBtn" title="Yönetici PIN Kodunu Değiştir">
+        <span class="ui-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 2l-2 2m-1.5 1.5L14 9l-1.5-1.5L11 9l-1.5-1.5L8 9a5.5 5.5 0 1 0 7.8 7.8l5.2-5.2V7l-2-2z"></path><circle cx="7.5" cy="16.5" r="1.5"></circle></svg></span>
+        PIN Değiştir
+      </button>
+      <button class="btn btn-secondary" id="refreshBtn" title="Verileri Canlı Yenile">
+        <span class="ui-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"></polyline><polyline points="1 20 1 14 7 14"></polyline><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"></path></svg></span>
+        Yenile
+      </button>
+      <button class="btn btn-primary" id="exportTimeCsvBtn" title="Öğrenci Giriş ve Süre Verilerini Excel/CSV Olarak İndir">
+        <span class="ui-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg></span>
+        Süre & Giriş CSV
+      </button>
+      <button class="btn btn-success" id="exportCsvBtn" title="Öğrenci Listesini Excel/CSV Olarak İndir">
+        <span class="ui-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg></span>
+        Öğrenci CSV
+      </button>
+      <button class="btn btn-secondary" id="exportFeedbacksCsvBtn" title="Geri Bildirimleri Excel/CSV Olarak İndir">
+        <span class="ui-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path><polyline points="22,6 12,13 2,6"></polyline></svg></span>
+        Bildirim CSV
+      </button>
+    </div>
+  </header>
+
+  <!-- NAVIGATION TABS -->
+  <div class="tabs-bar">
+    <button class="tab-btn active" data-tab="studentsTab">
+      <span class="ui-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg></span>
+      Öğrenci Listesi
+      <span class="tab-counter" id="tabCountStudents">0</span>
+    </button>
+    <button class="tab-btn" data-tab="timeTrackingTab" id="tabBtnTimeTracking">
+      <span class="ui-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg></span>
+      Giriş & Süre Takibi
+      <span class="tab-counter" id="tabCountTimeTracking">0</span>
+    </button>
+    <button class="tab-btn" data-tab="feedbacksTab">
+      <span class="ui-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path><polyline points="22,6 12,13 2,6"></polyline></svg></span>
+      Geri Bildirimler
+      <span class="tab-counter" id="tabCountFeedbacks">0</span>
+    </button>
+    <button class="tab-btn" data-tab="leaderboardTab">
+      <span class="ui-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"></path><path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"></path><path d="M4 22h16"></path><path d="M10 14.66V17c0 .55-.45 1-1 1H8c-.55 0-1 .45-1 1v1c0 .55.45 1 1 1h8c.55 0 1-.45 1-1v-1c0-.55-.45-1-1-1h-1c-.55 0-1-.45-1-1v-2.34"></path><path d="M18 2H6v7a6 6 0 0 0 12 0V2z"></path></svg></span>
+      Liderlik Sıralaması
+    </button>
+    <a href="password-reset-tool.html" target="_blank" class="tab-btn" style="text-decoration:none; margin-left:auto; background:rgba(99,102,241,0.12); border:1px solid rgba(99,102,241,0.25); color:#a5b4fc;" title="Kullanıcı Şifre Sıfırlama & Belirleme Aracı">
+      <span class="ui-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg></span>
+      Şifre Sıfırlama Aracı
+    </a>
+  </div>
+
+  <!-- MAIN CONTAINER -->
+  <div class="container">
+
+    <!-- OVERVIEW STATS -->
+    <div class="stats-grid">
+      <div class="stat-card">
+        <div class="stat-info">
+          <h4>KAYITLI ÖĞRENCİ</h4>
+          <div class="stat-val" id="statTotalUsers">0</div>
+          <div class="stat-sub" id="statActiveUsers">0 aktif öğrenci</div>
+        </div>
+        <div class="stat-icon stat-blue">
+          <span class="ui-icon ui-icon-lg"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg></span>
+        </div>
+      </div>
+
+      <div class="stat-card">
+        <div class="stat-info">
+          <h4>TOPLAM XP KAZANIMI</h4>
+          <div class="stat-val" id="statTotalXp">0</div>
+          <div class="stat-sub">Tüm aktivitelerden kazanılan</div>
+        </div>
+        <div class="stat-icon stat-amber">
+          <span class="ui-icon ui-icon-lg"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg></span>
+        </div>
+      </div>
+
+      <div class="stat-card">
+        <div class="stat-info">
+          <h4>ÖĞRENİLEN KELİMELER</h4>
+          <div class="stat-val" id="statTotalLearned">0</div>
+          <div class="stat-sub">Sözlükten ezberlenen toplam</div>
+        </div>
+        <div class="stat-icon stat-green">
+          <span class="ui-icon ui-icon-lg"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path></svg></span>
+        </div>
+      </div>
+
+      <div class="stat-card">
+        <div class="stat-info">
+          <h4>GERİ BİLDİRİMLER</h4>
+          <div class="stat-val" id="statTotalFeedbacks">0</div>
+          <div class="stat-sub" id="statBugCount">0 hata bildirimi</div>
+        </div>
+        <div class="stat-icon stat-purple">
+          <span class="ui-icon ui-icon-lg"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path><polyline points="22,6 12,13 2,6"></polyline></svg></span>
+        </div>
+      </div>
+    </div>
+
+    <!-- PLATFORM / KANAL DAĞILIMI BİLGİ KARTI -->
+    <div class="platform-distribution-card">
+      <div class="platform-dist-left">
+        <div class="platform-dist-title">GİRİŞ KANALI DAĞILIMI:</div>
+        <div class="platform-dist-pills" id="platformDistPills">
+          <span class="platform-badge platform-web">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="2" y1="12" x2="22" y2="12"></line><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path></svg>
+            Web: <strong id="distCountWeb" style="margin-left:3px;">0 (%0)</strong>
+          </span>
+          <span class="platform-badge platform-android">
+            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M6 18c0 .55.45 1 1 1h1v3.5c0 .83.67 1.5 1.5 1.5s1.5-.67 1.5-1.5V19h2v3.5c0 .83.67 1.5 1.5 1.5s1.5-.67 1.5-1.5V19h1c.55 0 1-.45 1-1V8H6v10zM3.5 8C2.67 8 2 8.67 2 9.5v7c0 .83.67 1.5 1.5 1.5S5 17.33 5 16.5v-7C5 8.67 4.33 8 3.5 8zm17 0c-.83 0-1.5.67-1.5 1.5v7c0 .83.67 1.5 1.5 1.5s1.5-.67 1.5-1.5v-7c0-.83-.67-1.5-1.5-1.5zm-4.97-4.84l1.3-1.3c.2-.2.2-.51 0-.71-.2-.2-.51-.2-.71 0l-1.48 1.48C13.85 2.23 12.95 2 12 2c-.96 0-1.86.23-2.66.63L7.85 1.15c-.2-.2-.51-.2-.71 0-.2.2-.2.51 0 .71l1.31 1.31C6.73 4.19 5.5 6.01 5.5 8h13c0-1.99-1.23-3.81-2.97-4.84zM9 6c-.55 0-1-.45-1-1s.45-1 1-1 1 .45 1 1-.45 1-1 1zm6 0c-.55 0-1-.45-1-1s.45-1 1-1 1 .45 1 1-.45 1-1 1z"/></svg>
+            Android: <strong id="distCountAndroid" style="margin-left:3px;">0 (%0)</strong>
+          </span>
+          <span class="platform-badge platform-ios">
+            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.81-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M15.97 6.37c.61-.75 1.04-1.8 0.92-2.87-.93.04-2.02.63-2.67 1.39-.58.67-.99 1.74-.86 2.78 1.04.08 2.06-.54 2.61-1.3z"/></svg>
+            iOS: <strong id="distCountIos" style="margin-left:3px;">0 (%0)</strong>
+          </span>
+        </div>
+      </div>
+      <div class="platform-dist-bar-wrap">
+        <div style="font-size:0.72rem; color:var(--text-dim); text-align:right;">Dağılım Oranı</div>
+        <div class="platform-multi-bar" id="platformMultiBar">
+          <div class="bar-seg-web" id="barSegWeb" style="width: 33%;" title="Web"></div>
+          <div class="bar-seg-android" id="barSegAndroid" style="width: 33%;" title="Android"></div>
+          <div class="bar-seg-ios" id="barSegIos" style="width: 34%;" title="iOS"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- TAB 1: ÖĞRENCİ LİSTESİ -->
+    <div class="tab-content" id="studentsTab">
+      <!-- Search & Filters -->
+      <div class="controls-row">
+        <div class="search-box">
+          <span class="search-icon">
+            <span class="ui-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg></span>
+          </span>
+          <input type="text" id="searchInput" placeholder="Öğrenci adı, e-posta veya şube ile ara...">
+        </div>
+
+        <div class="filter-group">
+          <!-- Platform / Kanal Filtresi -->
+          <select id="filterPlatform" class="select-input">
+            <option value="all">Tüm Kanallar (Platform)</option>
+            <option value="web">Web Tarayıcı</option>
+            <option value="android">Android</option>
+            <option value="ios">Apple iOS</option>
+          </select>
+
+          <!-- Şube Filtresi -->
+          <select id="filterBranch" class="select-input">
+            <option value="all">Tüm Şubeler</option>
+            <option value="none">Şubesiz (Bireysel)</option>
+            <optgroup label="İngilizce Şubeleri (İHS)">
+              <option value="İHS 101">İHS 101 (B1)</option>
+              <option value="İHS 102">İHS 102 (B1)</option>
+              <option value="İHS 103">İHS 103 (B1)</option>
+              <option value="İHS 104">İHS 104 (B1)</option>
+              <option value="İHS 105">İHS 105 (B1)</option>
+              <option value="İHS 106">İHS 106 (B1)</option>
+              <option value="İHS 107">İHS 107 (B1)</option>
+              <option value="İHS 108">İHS 108 (B1)</option>
+              <option value="İHS 109">İHS 109 (B1)</option>
+              <option value="İHS 110">İHS 110 (B1)</option>
+              <option value="İHS 111">İHS 111 (B1)</option>
+              <option value="İHS 112">İHS 112 (A2)</option>
+              <option value="İHS 113">İHS 113 (A2)</option>
+              <option value="İHS 114">İHS 114 (A2)</option>
+              <option value="İHS 115">İHS 115 (A2)</option>
+              <option value="İHS 116">İHS 116 (A2)</option>
+              <option value="İHS 117">İHS 117 (A2)</option>
+            </optgroup>
+            <optgroup label="Almanca Şubeleri (AHS)">
+              <option value="AHS 101">AHS 101 (A2)</option>
+              <option value="AHS 102">AHS 102 (A2)</option>
+              <option value="AHS 103">AHS 103 (A2)</option>
+            </optgroup>
+            <optgroup label="Fransızca Şubeleri (FHS)">
+              <option value="FHS 101">FHS 101 (B1)</option>
+              <option value="FHS 102">FHS 102 (A2)</option>
+              <option value="FHS 103">FHS 103 (A1)</option>
+            </optgroup>
+          </select>
+
+          <!-- Dil Filtresi -->
+          <select id="filterLang" class="select-input">
+            <option value="all">Tüm Diller</option>
+            <option value="EN-TR">İngilizce (EN-TR)</option>
+            <option value="DE-TR">Almanca (DE-TR)</option>
+            <option value="FR-TR">Fransızca (FR-TR)</option>
+          </select>
+
+          <!-- Kur ve Seviye Filtresi -->
+          <select id="filterTrack" class="select-input">
+            <option value="all">Tüm Kurlar / Seviyeler</option>
+            <option value="4A">4A (İngilizce Alt Kur)</option>
+            <option value="4B">4B (İngilizce Üst Kur)</option>
+            <option value="A1">A1 Seviye</option>
+            <option value="A2">A2 Seviye</option>
+            <option value="B1">B1 Seviye</option>
+          </select>
+
+          <!-- Sıralama -->
+          <select id="sortStudents" class="select-input">
+            <option value="xp_desc">XP (En Yüksek)</option>
+            <option value="time_desc">Toplam Süre (Çoktan Aza)</option>
+            <option value="learned_desc">Öğrenilen Kelime (Çoktan Aza)</option>
+            <option value="streak_desc">Seri (En Yüksek)</option>
+            <option value="platform_asc">Kanal (iOS / Android / Web)</option>
+            <option value="active_desc">Son Aktiflik</option>
+            <option value="name_asc">İsim (A-Z)</option>
+            <option value="branch_asc">Şube (A-Z)</option>
+            <option value="created_desc">Kayıt Tarihi (En Yeni)</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- TOPLU SİLME ÇUBUĞU -->
+      <div id="bulkActionBar" class="bulk-action-bar">
+        <div style="display:flex; align-items:center; gap:10px;">
+          <span class="ui-icon" style="color:var(--danger);"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path><line x1="12" y1="9" x2="12" y2="13"></line><line x1="12" y1="17" x2="12.01" y2="17"></line></svg></span>
+          <div>
+            <strong style="color: var(--text);"><span id="selectedUsersCount" style="color: #ef4444; font-size:1.02rem;">0</span> öğrenci seçildi</strong>
+            <div style="font-size: 0.74rem; color: var(--text-dim);">Seçilen kullanıcıların veritabanı kayıtları kalıcı olarak silinecektir.</div>
+          </div>
+        </div>
+        <div style="display:flex; gap:8px;">
+          <button type="button" class="btn btn-secondary" id="clearSelectionBtn" style="padding: 6px 12px; font-size: 0.8rem;">
+            Vazgeç
+          </button>
+          <button type="button" class="btn btn-danger" id="bulkDeleteBtn" style="padding: 6px 14px; font-size: 0.8rem;">
+            Seçilenleri Sil
+          </button>
+        </div>
+      </div>
+
+      <!-- Students Table -->
+      <div class="table-card">
+        <div class="table-container">
+          <table data-sort-table="students">
+            <thead>
+              <tr>
+                <th style="width: 32px; text-align: center;">
+                  <input type="checkbox" id="selectAllCheckbox" class="user-cb" title="Tümünü Seç / Kaldır">
+                </th>
+                <th class="sortable-th" data-table="students" data-key="name" title="Öğrenci ismine göre sırala">Öğrenci <span class="sort-icon">⇅</span></th>
+                <th class="sortable-th" data-table="students" data-key="platform" title="Giriş kanalına göre sırala">Kanal / Cihaz <span class="sort-icon">⇅</span></th>
+                <th class="sortable-th" data-table="students" data-key="branch" title="Şube koduna göre sırala">Şube & Hedef <span class="sort-icon">⇅</span></th>
+                <th class="sortable-th" data-table="students" data-key="level" title="Kur ve üniteye göre sırala">Seviye & Ünite <span class="sort-icon">⇅</span></th>
+                <th class="sortable-th active-sort" data-table="students" data-key="xp" title="XP puanına göre sırala">İlerleme (XP / Kelime) <span class="sort-icon">▼</span></th>
+                <th class="sortable-th" data-table="students" data-key="streak" title="Seri gününe göre sırala">Seri & Hedef <span class="sort-icon">⇅</span></th>
+                <th class="sortable-th" data-table="students" data-key="activity" title="Son giriş ve kayıt tarihine göre sırala">Giriş & Kayıt <span class="sort-icon">⇅</span></th>
+                <th class="sortable-th" data-table="students" data-key="time" title="Toplam süreye göre sırala">Toplam Süre <span class="sort-icon">⇅</span></th>
+                <th style="text-align: center; width: 90px;">İşlemler</th>
+              </tr>
+            </thead>
+            <tbody id="studentsTableBody">
+              <tr>
+                <td colspan="10" class="empty-state">
+                  <div class="empty-icon">⏳</div>
+                  <div>Öğrenci verileri yükleniyor...</div>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- TAB: GİRİŞ & SÜRE TAKİBİ -->
+    <div class="tab-content" id="timeTrackingTab" style="display: none;">
+      <!-- Time Tracking Overview Stats -->
+      <div class="stats-grid">
+        <div class="stat-card">
+          <div class="stat-info">
+            <h4>TOPLAM PROGRAM SÜRESİ</h4>
+            <div class="stat-val" id="statTotalStudyTime">0 sa</div>
+            <div class="stat-sub" id="statTotalTimeBreakdown">Kart: 0 sa • Pratik: 0 sa</div>
+          </div>
+          <div class="stat-icon stat-cyan">
+            <span class="ui-icon ui-icon-lg"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg></span>
+          </div>
+        </div>
+
+        <div class="stat-card">
+          <div class="stat-info">
+            <h4>ORTALAMA ÇALIŞMA SÜRESİ</h4>
+            <div class="stat-val" id="statAvgStudyTime">0 dk</div>
+            <div class="stat-sub">Öğrenci başına ortalama</div>
+          </div>
+          <div class="stat-icon stat-blue">
+            <span class="ui-icon ui-icon-lg"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"></line><line x1="12" y1="20" x2="12" y2="4"></line><line x1="6" y1="20" x2="6" y2="14"></line></svg></span>
+          </div>
+        </div>
+
+        <div class="stat-card">
+          <div class="stat-info">
+            <h4>SON 24 SAATTE AKTİF</h4>
+            <div class="stat-val" id="statActiveLast24h">0</div>
+            <div class="stat-sub" id="statActiveRatio">Tüm kayıtlıların %0'ı</div>
+          </div>
+          <div class="stat-icon stat-green">
+            <span class="ui-icon ui-icon-lg"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon></svg></span>
+          </div>
+        </div>
+
+        <div class="stat-card">
+          <div class="stat-info">
+            <h4>SON 7 GÜNDE YENİ KAYIT</h4>
+            <div class="stat-val" id="statNewRegistrations7d">0</div>
+            <div class="stat-sub">Bu hafta katılan öğrenciler</div>
+          </div>
+          <div class="stat-icon stat-purple">
+            <span class="ui-icon ui-icon-lg"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><line x1="20" y1="8" x2="20" y2="14"></line><line x1="23" y1="11" x2="17" y2="11"></line></svg></span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Controls Row: Arama, Filtre ve Sıralama -->
+      <div class="controls-row">
+        <div class="search-box">
+          <span class="search-icon">
+            <span class="ui-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg></span>
+          </span>
+          <input type="text" id="timeSearchInput" placeholder="Öğrenci adı, e-posta veya şube ile ara...">
+        </div>
+
+        <div class="filter-group">
+          <!-- Platform Filtresi -->
+          <select id="filterTimePlatform" class="select-input">
+            <option value="all">Tüm Kanallar (Platform)</option>
+            <option value="web">Web Tarayıcı</option>
+            <option value="android">Android</option>
+            <option value="ios">Apple iOS</option>
+          </select>
+
+          <!-- Şube Filtresi -->
+          <select id="filterTimeBranch" class="select-input">
+            <option value="all">Tüm Şubeler</option>
+            <option value="none">Şubesiz (Bireysel)</option>
+            <optgroup label="İngilizce Şubeleri (İHS)">
+              <option value="İHS 101">İHS 101 (B1)</option>
+              <option value="İHS 102">İHS 102 (B1)</option>
+              <option value="İHS 103">İHS 103 (B1)</option>
+              <option value="İHS 104">İHS 104 (B1)</option>
+              <option value="İHS 105">İHS 105 (B1)</option>
+              <option value="İHS 106">İHS 106 (B1)</option>
+              <option value="İHS 107">İHS 107 (B1)</option>
+              <option value="İHS 108">İHS 108 (B1)</option>
+              <option value="İHS 109">İHS 109 (B1)</option>
+              <option value="İHS 110">İHS 110 (B1)</option>
+              <option value="İHS 111">İHS 111 (B1)</option>
+              <option value="İHS 112">İHS 112 (A2)</option>
+              <option value="İHS 113">İHS 113 (A2)</option>
+              <option value="İHS 114">İHS 114 (A2)</option>
+              <option value="İHS 115">İHS 115 (A2)</option>
+              <option value="İHS 116">İHS 116 (A2)</option>
+              <option value="İHS 117">İHS 117 (A2)</option>
+            </optgroup>
+            <optgroup label="Almanca Şubeleri (AHS)">
+              <option value="AHS 101">AHS 101 (A2)</option>
+              <option value="AHS 102">AHS 102 (A2)</option>
+              <option value="AHS 103">AHS 103 (A2)</option>
+            </optgroup>
+            <optgroup label="Fransızca Şubeleri (FHS)">
+              <option value="FHS 101">FHS 101 (B1)</option>
+              <option value="FHS 102">FHS 102 (A2)</option>
+              <option value="FHS 103">FHS 103 (A1)</option>
+            </optgroup>
+          </select>
+
+          <!-- Aktiflik / Giriş Zaman Filtresi -->
+          <select id="filterTimeRecency" class="select-input">
+            <option value="all">Tüm Zamanlar</option>
+            <option value="active24h">Son 24 Saatte Aktif (Bugün)</option>
+            <option value="recent7d">Son 7 Günde Aktif</option>
+            <option value="month30d">Son 30 Günde Aktif</option>
+            <option value="idle30d">30 Günden Fazla Hareketsiz</option>
+          </select>
+
+          <!-- Sıralama -->
+          <select id="sortTimeTracking" class="select-input">
+            <option value="total_desc">Toplam Süre (En Çok)</option>
+            <option value="card_desc">Kart Süresi (En Çok)</option>
+            <option value="game_desc">Pratik Süresi (En Çok)</option>
+            <option value="last_active_desc">Son Giriş (En Yeni)</option>
+            <option value="last_active_asc">Son Giriş (En Eski)</option>
+            <option value="created_desc">Kayıt Tarihi (En Yeni)</option>
+            <option value="created_asc">Kayıt Tarihi (En Eski)</option>
+            <option value="name_asc">İsim (A-Z)</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- Time Tracking Table -->
+      <div class="table-card">
+        <div class="table-container">
+          <table data-sort-table="time">
+            <thead>
+              <tr>
+                <th class="sortable-th" data-table="time" data-key="name" title="Öğrenci ismine göre sırala">Öğrenci <span class="sort-icon">⇅</span></th>
+                <th class="sortable-th" data-table="time" data-key="platform" title="Giriş kanalına göre sırala">Kanal <span class="sort-icon">⇅</span></th>
+                <th class="sortable-th" data-table="time" data-key="branch" title="Şube ve dile göre sırala">Şube & Dil <span class="sort-icon">⇅</span></th>
+                <th class="sortable-th" data-table="time" data-key="created" title="Kayıt tarihine göre sırala">Kayıt Tarihi <span class="sort-icon">⇅</span></th>
+                <th class="sortable-th" data-table="time" data-key="active" title="Son giriş ve oturum aktifliğine göre sırala">Son Giriş / Aktiflik <span class="sort-icon">⇅</span></th>
+                <th class="sortable-th active-sort" data-table="time" data-key="totalTime" title="Toplam süreye göre sırala">Toplam Süre <span class="sort-icon">▼</span></th>
+                <th class="sortable-th" data-table="time" data-key="distribution" title="Kart ve pratik süresi dengesine göre sırala">Kart & Pratik Dağılımı <span class="sort-icon">⇅</span></th>
+                <th class="sortable-th" data-table="time" data-key="units" title="Çalışılan ünite sayısına göre sırala">Ünite Süreleri <span class="sort-icon">⇅</span></th>
+                <th style="text-align: center; width: 80px;">İşlem</th>
+              </tr>
+            </thead>
+            <tbody id="timeTrackingTableBody">
+              <tr>
+                <td colspan="9" class="empty-state">
+                  <div class="empty-icon">⏳</div>
+                  <div>Süre ve oturum verileri yükleniyor...</div>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- TAB 2: GERİ BİLDİRİMLER -->
+    <div class="tab-content" id="feedbacksTab" style="display: none;">
+      <!-- Feedback Controls -->
+      <div class="controls-row" style="display: flex; flex-wrap: wrap; gap: 12px; align-items: center; justify-content: space-between;">
+        <div style="display: flex; flex-wrap: wrap; gap: 10px; align-items: center;">
+          <div class="filter-group">
+            <span style="font-size: 0.8rem; font-weight: 700; color: var(--text-muted);">Kategori:</span>
+            <select id="filterFeedbackType" class="select-input">
+              <option value="all">Tüm Bildirimler</option>
+              <option value="bug">Hata Bildirimi (Bug)</option>
+              <option value="word_fix">Kelime / Çeviri Düzeltmesi</option>
+              <option value="suggestion">Fikir & Öneri</option>
+              <option value="general">Genel Görüş</option>
+            </select>
+          </div>
+          <div class="filter-group">
+            <span style="font-size: 0.8rem; font-weight: 700; color: var(--text-muted);">Durum:</span>
+            <select id="filterFeedbackStatus" class="select-input">
+              <option value="all">Tüm Durumlar</option>
+              <option value="pending">Yanıt Bekleyenler</option>
+              <option value="replied">Yanıtlananlar</option>
+            </select>
+          </div>
+        </div>
+        <div class="filter-group" style="flex: 1; max-width: 320px; min-width: 220px;">
+          <input type="text" id="filterFeedbackSearch" class="search-input" placeholder="Öğrenci veya mesaj içeriği ara..." 
+            style="width: 100%; background: var(--bg-input); border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 6px 12px; color: var(--text); font-size: 0.82rem; outline: none;">
+        </div>
+      </div>
+
+      <div class="feedback-grid" id="feedbackGrid">
+        <div class="empty-state" style="grid-column: 1 / -1;">
+          <div class="empty-icon">⏳</div>
+          <div>Geri bildirimler yükleniyor...</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- TAB 3: LİDERLİK TABLOSU -->
+    <div class="tab-content" id="leaderboardTab" style="display: none;">
+      <div class="table-card">
+        <div class="table-container">
+          <table data-sort-table="leaderboard">
+            <thead>
+              <tr>
+                <th class="sortable-th" data-table="leaderboard" data-key="rank" style="width: 75px;" title="Dereceye göre sırala">Sıra <span class="sort-icon">▲</span></th>
+                <th class="sortable-th" data-table="leaderboard" data-key="name" title="Öğrenci ismine göre sırala">Öğrenci <span class="sort-icon">⇅</span></th>
+                <th class="sortable-th" data-table="leaderboard" data-key="platform" title="Giriş kanalına göre sırala">Kanal <span class="sort-icon">⇅</span></th>
+                <th class="sortable-th" data-table="leaderboard" data-key="lang" title="Dil ve kura göre sırala">Dil & Kur <span class="sort-icon">⇅</span></th>
+                <th class="sortable-th" data-table="leaderboard" data-key="badge" title="Ünvana göre sırala">Ünvan <span class="sort-icon">⇅</span></th>
+                <th class="sortable-th" data-table="leaderboard" data-key="streak" title="Seri gününe göre sırala">Seri <span class="sort-icon">⇅</span></th>
+                <th class="sortable-th active-sort" data-table="leaderboard" data-key="xp" title="Toplam XP puanına göre sırala">Toplam XP <span class="sort-icon">▼</span></th>
+              </tr>
+            </thead>
+            <tbody id="leaderboardTableBody">
+              <tr>
+                <td colspan="7" class="empty-state">
+                  <div class="empty-icon">⏳</div>
+                  <div>Liderlik sıralaması hesaplanıyor...</div>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- ÖĞRENCİ DETAY MODALI -->
+  <div class="modal-overlay" id="studentDetailModal">
+    <div class="modal-card">
+      <div class="modal-header" style="align-items: flex-start;">
+        <div style="display: flex; align-items: center; gap: 14px;">
+          <div id="modalAvatarWrap" style="width: 54px; height: 54px; border-radius: 50%; overflow: hidden; border: 2px solid var(--primary); box-shadow: 0 2px 10px rgba(37,99,235,0.25); flex-shrink: 0; background: var(--bg-surface); display:flex; align-items:center; justify-content:center; font-size:1.6rem;">
+            <span id="modalAvatar">🦊</span>
+          </div>
+          <div>
+            <div style="display: flex; align-items: center; gap: 8px; flex-wrap: wrap;">
+              <h3 id="modalName" style="font-size: 1.25rem; font-weight: 800; color: var(--text);">Öğrenci Adı</h3>
+              <span id="modalPlatformBadge"></span>
+              <span id="modalBranchBadge" class="tag-pill tag-track">Şube: -</span>
+            </div>
+            <div style="display: flex; align-items: center; gap: 10px; margin-top: 3px; font-size: 0.82rem; color: var(--text-dim); flex-wrap: wrap;">
+              <span id="modalEmail">email@adu.edu.tr</span>
+              <span>•</span>
+              <span style="font-family: monospace; font-size: 0.74rem; background: var(--bg-surface); padding: 2px 6px; border-radius: 4px; border: 1px solid var(--border);" id="modalUid">UID: -</span>
+            </div>
+            <div style="font-size: 0.74rem; color: var(--text-dim); margin-top: 3px;" id="modalMetaDates">
+              Kayıt: — • Son Aktiflik: —
+            </div>
+          </div>
+        </div>
+        <button class="close-btn" id="closeDetailModalBtn">&times;</button>
+      </div>
+
+      <!-- AKADEMİK VE MÜFREDAT BİLGİLERİ -->
+      <div style="margin-top: 10px; background: rgba(59, 130, 246, 0.04); border: 1px solid rgba(59, 130, 246, 0.2); border-radius: var(--radius-sm); padding: 12px 14px;">
+        <h4 style="font-size: 0.76rem; color: var(--primary); font-weight: 800; text-transform: uppercase; letter-spacing: 0.4px; margin-bottom: 8px;">Akademik ve Müfredat Durumu:</h4>
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 10px; font-size: 0.84rem;">
+          <div>
+            <div style="color: var(--text-dim); font-size: 0.7rem; font-weight: 700;">HEDEF DİL</div>
+            <strong id="modalLangText" style="color: var(--text);">İngilizce</strong>
+          </div>
+          <div>
+            <div style="color: var(--text-dim); font-size: 0.7rem; font-weight: 700;">MÜFREDAT KURU</div>
+            <strong id="modalTrackText" style="color: var(--text);">4A (Temel Kur)</strong>
+          </div>
+          <div>
+            <div style="color: var(--text-dim); font-size: 0.7rem; font-weight: 700;">SEVİYE</div>
+            <strong id="modalLevelText" style="color: var(--text);">A2 Seviyesi</strong>
+          </div>
+          <div>
+            <div style="color: var(--text-dim); font-size: 0.7rem; font-weight: 700;">ÇALIŞILAN ÜNİTE</div>
+            <strong id="modalUnitText" style="color: var(--cyan);">Ünite 1</strong>
+          </div>
+          <div>
+            <div style="color: var(--text-dim); font-size: 0.7rem; font-weight: 700;">GÜNLÜK HEDEF</div>
+            <strong id="modalDailyGoalText" style="color: var(--success);">15 Kelime/Gün</strong>
+          </div>
+          <div>
+            <div style="color: var(--text-dim); font-size: 0.7rem; font-weight: 700;">SERİ TAAHHÜDÜ</div>
+            <strong id="modalStreakPledgeText" style="color: #f97316;">Yok</strong>
+          </div>
+        </div>
+      </div>
+
+      <!-- TEMEL İSTATİSTİKLER GRID -->
+      <div class="detail-grid" style="margin-top: 12px;">
+        <div class="detail-box">
+          <div class="detail-label">Toplam XP</div>
+          <div class="detail-val" id="modalXp" style="color: var(--warning);">0 XP</div>
+        </div>
+        <div class="detail-box">
+          <div class="detail-label">Öğrenilen Kelime</div>
+          <div class="detail-val" id="modalLearned" style="color: var(--success);">0 Kelime</div>
+        </div>
+        <div class="detail-box">
+          <div class="detail-label">Güncel Seri</div>
+          <div class="detail-val" id="modalStreak" style="color: #f97316;">0 Gün</div>
+        </div>
+        <div class="detail-box">
+          <div class="detail-label">Rekor Seri</div>
+          <div class="detail-val" id="modalMaxStreak" style="color: #f97316;">0 Gün</div>
+        </div>
+        <div class="detail-box">
+          <div class="detail-label">Kart Çalışma Süresi</div>
+          <div class="detail-val" id="modalCardTime">0 dk</div>
+        </div>
+        <div class="detail-box">
+          <div class="detail-label">Pratik / Oyun Süresi</div>
+          <div class="detail-val" id="modalGameTime">0 dk</div>
+        </div>
+        <div class="detail-box">
+          <div class="detail-label">Arenada Çözülen</div>
+          <div class="detail-val" id="modalArenaSolved" style="color: var(--primary);">0 Soru</div>
+        </div>
+        <div class="detail-box">
+          <div class="detail-label">Kusursuz Zafer</div>
+          <div class="detail-val" id="modalCleanWins" style="color: var(--purple);">0 Zafer</div>
+        </div>
+      </div>
+
+      <!-- OTURUM & DETAYLI ZAMAN ANALİZİ -->
+      <div style="margin-top: 12px; background: rgba(6, 182, 212, 0.04); border: 1px solid rgba(6, 182, 212, 0.2); border-radius: var(--radius-sm); padding: 12px 14px;">
+        <h4 style="font-size: 0.76rem; color: var(--cyan); font-weight: 800; text-transform: uppercase; letter-spacing: 0.4px; margin-bottom: 10px; display:flex; align-items:center; justify-content:space-between;">
+          <span>Oturum & Kanal Analizi:</span>
+          <span id="modalRecencyBadge" class="recency-pill recency-active">Aktif</span>
+        </h4>
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 10px; font-size: 0.84rem;">
+          <div>
+            <div style="color: var(--text-dim); font-size: 0.7rem; font-weight: 700;">GİRİŞ KANALI / CİHAZ</div>
+            <div id="modalChannelInfo" style="margin-top:2px;">—</div>
+          </div>
+          <div>
+            <div style="color: var(--text-dim); font-size: 0.7rem; font-weight: 700;">KAYIT TARİHİ</div>
+            <strong id="modalDetailCreatedAt" style="color: var(--text);">—</strong>
+            <div id="modalDetailCreatedAgo" style="color: var(--text-dim); font-size: 0.7rem; margin-top:1px;">—</div>
+          </div>
+          <div>
+            <div style="color: var(--text-dim); font-size: 0.7rem; font-weight: 700;">SON GİRİŞ / AKTİFLİK</div>
+            <strong id="modalDetailLastActive" style="color: var(--text);">—</strong>
+            <div id="modalDetailLastActiveAgo" style="color: var(--text-dim); font-size: 0.7rem; margin-top:1px;">—</div>
+          </div>
+          <div>
+            <div style="color: var(--text-dim); font-size: 0.7rem; font-weight: 700;">TOPLAM SÜRE</div>
+            <strong id="modalDetailTotalTime" style="color: var(--cyan); font-size: 0.98rem;">0 dk</strong>
+            <div id="modalDetailTimeRatio" style="color: var(--text-dim); font-size: 0.7rem; margin-top:1px;">%0 Kart • %0 Pratik</div>
+          </div>
+        </div>
+
+        <!-- Ünite Bazlı Harcanan Süreler -->
+        <div style="margin-top: 12px; border-top: 1px dashed rgba(6, 182, 212, 0.18); padding-top: 8px;">
+          <div style="color: var(--text-dim); font-size: 0.7rem; font-weight: 700; margin-bottom: 5px;">ÜNİTE BAZLI ÇALIŞMA SÜRELERİ:</div>
+          <div id="modalUnitDurationsGrid" style="display:flex; flex-wrap:wrap; gap:5px;">
+            <span style="color:var(--text-dim); font-size:0.75rem;">Kayıt yok.</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- ÖĞRENİLEN KELİMELER LİSTESİ -->
+      <div style="margin-top: 14px; background: var(--bg-surface); border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 12px 14px;">
+        <div style="display:flex; align-items:center; justify-content:space-between; cursor:pointer;" onclick="toggleModalWordsList()">
+          <h4 style="font-size: 0.8rem; color: var(--text-muted); font-weight: 800; text-transform: uppercase; margin:0; display:flex; align-items:center; gap:6px;">
+            Öğrenilen Kelimeler Listesi (<span id="modalWordsCountBadge" style="color:var(--success);">0</span>)
+          </h4>
+          <span id="modalWordsToggleArrow" style="font-size: 0.8rem; color: var(--text-dim);">Aç</span>
+        </div>
+        <div id="modalWordsListContainer" style="display: none; margin-top: 10px; max-height: 200px; overflow-y: auto; padding-right: 4px;">
+          <div id="modalWordsChipsGrid" style="display: flex; flex-wrap: wrap; gap: 5px;">
+            <!-- Dinamik doldurulur -->
+          </div>
+        </div>
+      </div>
+
+      <!-- KELİME ARENASI ALIŞTIRMALARI -->
+      <div style="margin-top: 14px;">
+        <h4 style="font-size: 0.78rem; color: var(--text-muted); font-weight: 800; text-transform: uppercase;">Kelime Arenası Alıştırma Turları:</h4>
+        <div class="game-stats-grid" id="modalGameStatsGrid">
+          <!-- Dinamik doldurulur -->
+        </div>
+      </div>
+
+      <!-- BAŞARI ROZETLERİ -->
+      <div style="margin-top: 14px;">
+        <h4 style="font-size: 0.78rem; color: var(--text-muted); font-weight: 800; text-transform: uppercase; margin-bottom: 6px;">Başarı Rozetleri:</h4>
+        <div id="modalBadgesList" style="display: flex; flex-wrap: wrap; gap: 6px;">
+          <span style="color: var(--text-dim); font-size: 0.8rem;">Henüz rozet kazanılmadı.</span>
+        </div>
+      </div>
+
+      <!-- ÖĞRENCİ ŞİFRE SIFIRLAMA / GEÇİCİ ŞİFRE ALANI -->
+      <div style="margin-top: 16px; padding: 12px 14px; border-radius: var(--radius-sm); background: rgba(99, 102, 241, 0.06); border: 1px solid rgba(99, 102, 241, 0.2); display: flex; justify-content: space-between; align-items: center; gap: 12px;">
+        <div>
+          <div style="font-weight: 700; font-size: 0.86rem; color: #a5b4fc;">Şifre Sıfırlama ve Belirleme</div>
+          <div style="font-size: 0.74rem; color: var(--text-dim); margin-top: 2px;">
+            Şifresini unutan veya e-postasına ulaşamayan öğrenci için geçici şifre belirleyin.
+          </div>
+        </div>
+        <button type="button" class="btn btn-primary" id="modalResetPasswordBtn" style="padding: 6px 14px; font-size: 0.8rem; white-space: nowrap;">
+          Şifre Sıfırla
+        </button>
+      </div>
+
+      <!-- ÖĞRENCİ SİLME ALANI (DANGER ZONE) -->
+      <div style="margin-top: 16px; padding: 12px 14px; border-radius: var(--radius-sm); background: rgba(239, 68, 68, 0.05); border: 1px solid rgba(239, 68, 68, 0.2); display: flex; justify-content: space-between; align-items: center; gap: 12px;">
+        <div>
+          <div style="font-weight: 700; font-size: 0.86rem; color: var(--danger);">Öğrenci Kaydını Sil</div>
+          <div style="font-size: 0.74rem; color: var(--text-dim); margin-top: 2px;">
+            Öğrencinin tüm puanları, kelimeleri ve verileri veritabanından kalıcı olarak silinir.
+          </div>
+        </div>
+        <button type="button" class="btn btn-danger" id="modalDeleteStudentBtn" style="padding: 6px 14px; font-size: 0.8rem; white-space: nowrap;">
+          Öğrenciyi Sil
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- PIN DEĞİŞTİRME MODALI -->
+  <div class="modal-overlay" id="changePinModal">
+    <div class="modal-card" style="max-width: 400px; text-align: center;">
+      <div class="modal-header">
+        <h3 style="font-size: 1.1rem; font-weight: 800;">Yönetici PIN Değiştir</h3>
+        <button class="close-btn" id="closeChangePinModalBtn">&times;</button>
+      </div>
+      <form id="changePinForm" onsubmit="event.preventDefault(); handleChangePinSubmit();">
+        <div style="margin-bottom: 12px; text-align: left;">
+          <label style="font-size: 0.76rem; font-weight: 700; color: var(--text-muted);">Mevcut PIN Kodu:</label>
+          <input type="password" id="currentPinInput" placeholder="Mevcut PIN (Örn: 1923)" required
+            style="width: 100%; background: var(--bg-input); border: 1px solid var(--border); border-radius: 8px; padding: 9px 12px; color: var(--text); font-weight: 600; margin-top: 4px; outline: none;">
+        </div>
+        <div style="margin-bottom: 16px; text-align: left;">
+          <label style="font-size: 0.76rem; font-weight: 700; color: var(--text-muted);">Yeni PIN Kodu (4-10 karakter):</label>
+          <input type="password" id="newPinInput" placeholder="Yeni PIN Kodu" required minlength="4" maxlength="10"
+            style="width: 100%; background: var(--bg-input); border: 1px solid var(--border); border-radius: 8px; padding: 9px 12px; color: var(--text); font-weight: 600; margin-top: 4px; outline: none;">
+        </div>
+        <div id="changePinMsg" style="font-size: 0.8rem; font-weight: 600; margin-bottom: 12px; display: none;"></div>
+        <button type="submit" class="btn" style="width: 100%; justify-content: center; padding: 10px;">
+          Kaydet ve Güncelle
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <!-- GERİ BİLDİRİM YANIT MODALI -->
+  <div class="modal-overlay" id="feedbackReplyModal">
+    <div class="modal-card" style="max-width: 640px;">
+      <div class="modal-header" style="align-items: flex-start;">
+        <div>
+          <h3 style="font-size: 1.15rem; font-weight: 800; color: var(--text);">Geri Bildirimi Yanıtla</h3>
+          <p style="font-size: 0.78rem; color: var(--text-muted); margin-top: 3px;">
+            Öğrenciye e-posta ile dönüş yapın veya yanıt metnini panoya kopyalayın.
+          </p>
+        </div>
+        <button class="close-btn" id="closeFeedbackReplyModalBtn">&times;</button>
+      </div>
+
+      <div style="background: var(--bg-surface); border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 12px; margin-bottom: 14px;">
+        <div style="display:flex; justify-content:space-between; font-size:0.75rem; color:var(--text-dim); margin-bottom:4px;">
+          <strong id="replyStudentName" style="color:var(--text); font-size:0.84rem;">Öğrenci</strong>
+          <span id="replyStudentDate">—</span>
+        </div>
+        <div id="replyOriginalMessage" style="font-size:0.82rem; color:var(--text); line-height:1.45; max-height:100px; overflow-y:auto;">Mesaj içeriği...</div>
+      </div>
+
+      <div style="margin-bottom: 10px;">
+        <label style="font-size: 0.74rem; font-weight: 700; color: var(--text-muted);">Alıcı E-posta:</label>
+        <input type="email" id="replyModalEmailInput" style="width:100%; background:var(--bg-input); border:1px solid var(--border); border-radius:6px; padding:7px 10px; color:var(--text); font-size:0.82rem; outline:none; margin-top:3px;">
+      </div>
+
+      <div style="margin-bottom: 10px;">
+        <label style="font-size: 0.74rem; font-weight: 700; color: var(--text-muted);">Konu:</label>
+        <input type="text" id="replyModalSubjectInput" value="[LexiGo Destek] Geri Bildiriminiz Hakkında" style="width:100%; background:var(--bg-input); border:1px solid var(--border); border-radius:6px; padding:7px 10px; color:var(--text); font-size:0.82rem; outline:none; margin-top:3px;">
+      </div>
+
+      <div style="margin-bottom: 12px;">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:4px;">
+          <label style="font-size: 0.74rem; font-weight: 700; color: var(--text-muted);">Yanıt Metni:</label>
+          <div id="replyQuickTemplates" style="display:flex; gap:6px;">
+            <button type="button" class="btn btn-secondary quick-tpl-btn" data-tpl="bug_fixed" style="padding:2px 7px; font-size:0.7rem;">Hata Giderildi</button>
+            <button type="button" class="btn btn-secondary quick-tpl-btn" data-tpl="word_fixed" style="padding:2px 7px; font-size:0.7rem;">Kelime Düzeltildi</button>
+          </div>
+        </div>
+        <textarea id="replyModalMessageInput" rows="5" placeholder="Öğrenciye iletilecek yanıt metnini yazınız..." style="width:100%; background:var(--bg-input); border:1px solid var(--border); border-radius:6px; padding:8px 10px; color:var(--text); font-size:0.82rem; outline:none; resize:vertical; font-family:inherit;"></textarea>
+      </div>
+
+      <div style="display:flex; justify-content:space-between; align-items:center; gap:8px; flex-wrap:wrap; border-top:1px solid var(--border); padding-top:12px;">
+        <button type="button" class="btn btn-secondary" id="replyMarkOnlyBtn" style="font-size:0.78rem;">
+          Yalnızca Yanıtlandı İşaretle
+        </button>
+        <div style="display:flex; gap:8px;">
+          <button type="button" class="btn btn-secondary" id="replyCopyBtn" style="font-size:0.78rem;">
+            Panoya Kopyala
+          </button>
+          <button type="button" class="btn btn-secondary" id="replyGmailBtn" style="font-size:0.78rem;">
+            Gmail ile Aç
+          </button>
+          <button type="button" class="btn btn-primary" id="replyMailClientBtn" style="font-size:0.78rem;">
+            E-posta Gönder
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- TOAST BİLDİRİMİ -->
+  <div class="admin-toast" id="adminToast">
+    <span id="adminToastIcon" class="ui-icon">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path><path d="M13.73 21a2 2 0 0 1-3.46 0"></path></svg>
+    </span>
+    <span id="adminToastMsg">İşlem tamamlandı.</span>
+  </div>
+
+  <script>
+    // Firebase Yapılandırması (LexiGo Canlı Proje)
+    const firebaseConfig = {
+      apiKey: "AIzaSyB_bpBj_cs-EVR3H97bSj92OYUUKjQraCU",
+      authDomain: "lexiq-6d699.firebaseapp.com",
+      projectId: "lexiq-6d699",
+      storageBucket: "lexiq-6d699.firebasestorage.app",
+      messagingSenderId: "452877974071",
+      appId: "1:452877974071:web:ef6c8cfd5984b8b5a91db2",
+      measurementId: "G-L0WX1FBXL8"
+    };
+
+    // Firebase Başlat
+    let db;
+    try {
+      firebase.initializeApp(firebaseConfig);
+      db = firebase.firestore();
+      document.getElementById('connectionStatus').textContent = "Bağlandı (Canlı)";
+    } catch (e) {
+      console.error("Firebase başlatma hatası:", e);
+      document.getElementById('connectionStatus').textContent = "Bağlantı Hatası";
+    }
+
+    // Kelime Sözlüğü Hızlı Erişim Haritası (WORDS_DATA)
+    const wordsById = new Map();
+    if (typeof WORDS_DATA !== 'undefined' && Array.isArray(WORDS_DATA)) {
+      WORDS_DATA.forEach(w => {
+        if (w && w.id !== undefined) {
+          wordsById.set(String(w.id), w);
+        }
+      });
+    }
+
+    // SVG Simgeler
+    const SVG = {
+      apple: '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.81-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M15.97 6.37c.61-.75 1.04-1.8 0.92-2.87-.93.04-2.02.63-2.67 1.39-.58.67-.99 1.74-.86 2.78 1.04.08 2.06-.54 2.61-1.3z"/></svg>',
+      android: '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M6 18c0 .55.45 1 1 1h1v3.5c0 .83.67 1.5 1.5 1.5s1.5-.67 1.5-1.5V19h2v3.5c0 .83.67 1.5 1.5 1.5s1.5-.67 1.5-1.5V19h1c.55 0 1-.45 1-1V8H6v10zM3.5 8C2.67 8 2 8.67 2 9.5v7c0 .83.67 1.5 1.5 1.5S5 17.33 5 16.5v-7C5 8.67 4.33 8 3.5 8zm17 0c-.83 0-1.5.67-1.5 1.5v7c0 .83.67 1.5 1.5 1.5s1.5-.67 1.5-1.5v-7c0-.83-.67-1.5-1.5-1.5zm-4.97-4.84l1.3-1.3c.2-.2.2-.51 0-.71-.2-.2-.51-.2-.71 0l-1.48 1.48C13.85 2.23 12.95 2 12 2c-.96 0-1.86.23-2.66.63L7.85 1.15c-.2-.2-.51-.2-.71 0-.2.2-.2.51 0 .71l1.31 1.31C6.73 4.19 5.5 6.01 5.5 8h13c0-1.99-1.23-3.81-2.97-4.84zM9 6c-.55 0-1-.45-1-1s.45-1 1-1 1 .45 1 1-.45 1-1 1zm6 0c-.55 0-1-.45-1-1s.45-1 1-1 1 .45 1 1-.45 1-1 1z"/></svg>',
+      globe: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="2" y1="12" x2="22" y2="12"></line><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path></svg>',
+      trash: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>'
+    };
+
+    // Platform Çözümleyici (iOS, Android, Web)
+    function resolveUserPlatform(d) {
+      if (!d) return 'web';
+      let plat = (d.platform || d.lastPlatform || '').toLowerCase().trim();
+      if (plat === 'android' || plat === 'android_web') return 'android';
+      if (plat === 'ios') return 'ios';
+      if (plat === 'web') return 'web';
+
+      // Fallback: User-Agent veya timeTracking
+      const ua = ((d.userAgent || d.lastUserAgent || '') + ' ' + (d.timeTracking && d.timeTracking.userAgent ? d.timeTracking.userAgent : '')).toLowerCase();
+      if (/iphone|ipad|ipod/i.test(ua)) return 'ios';
+      if (/android/i.test(ua)) return 'android';
+      return 'web';
+    }
+
+    function getPlatformBadgeHtml(platform) {
+      const p = (platform || 'web').toLowerCase();
+      if (p === 'ios') {
+        return '<span class="platform-badge platform-ios" title="Apple iOS Cihazı">' + SVG.apple + '<span>iOS</span></span>';
+      }
+      if (p === 'android') {
+        return '<span class="platform-badge platform-android" title="Google Android Cihazı">' + SVG.android + '<span>Android</span></span>';
+      }
+      return '<span class="platform-badge platform-web" title="Web Tarayıcı">' + SVG.globe + '<span>Web</span></span>';
+    }
+
+    // Durum Değişkenleri
+    let rawUsers = [];
+    let rawFeedbacks = [];
+    let selectedUserIds = new Set();
+    let currentActiveDetailUserId = null;
+    let currentReplyFeedbackId = null;
+
+    // TABLO SÜTUN SIRALAMA DURUMLARI
+    let studentSortState = { key: 'xp', dir: 'desc' };
+    let timeSortState = { key: 'totalTime', dir: 'desc' };
+    let leaderboardSortState = { key: 'xp', dir: 'desc' };
+
+    function updateTableSortHeaders(tableName, currentKey, currentDir) {
+      const table = document.querySelector(`table[data-sort-table="${tableName}"]`);
+      if (!table) return;
+      const ths = table.querySelectorAll('th.sortable-th');
+      ths.forEach(th => {
+        const key = th.getAttribute('data-key');
+        const icon = th.querySelector('.sort-icon');
+        if (key === currentKey) {
+          th.classList.add('active-sort');
+          if (icon) icon.textContent = currentDir === 'asc' ? '▲' : '▼';
+        } else {
+          th.classList.remove('active-sort');
+          if (icon) icon.textContent = '⇅';
+        }
+      });
+    }
+
+    function handleTableSortClick(tableName, key) {
+      if (tableName === 'students') {
+        if (studentSortState.key === key) {
+          studentSortState.dir = studentSortState.dir === 'asc' ? 'desc' : 'asc';
+        } else {
+          studentSortState.key = key;
+          studentSortState.dir = (key === 'name' || key === 'branch' || key === 'level' || key === 'platform') ? 'asc' : 'desc';
+        }
+        updateTableSortHeaders('students', studentSortState.key, studentSortState.dir);
+        renderUsers();
+      } else if (tableName === 'time') {
+        if (timeSortState.key === key) {
+          timeSortState.dir = timeSortState.dir === 'asc' ? 'desc' : 'asc';
+        } else {
+          timeSortState.key = key;
+          timeSortState.dir = (key === 'name' || key === 'branch' || key === 'platform') ? 'asc' : 'desc';
+        }
+        updateTableSortHeaders('time', timeSortState.key, timeSortState.dir);
+        renderTimeTracking();
+      } else if (tableName === 'leaderboard') {
+        if (leaderboardSortState.key === key) {
+          leaderboardSortState.dir = leaderboardSortState.dir === 'asc' ? 'desc' : 'asc';
+        } else {
+          leaderboardSortState.key = key;
+          leaderboardSortState.dir = (key === 'rank' || key === 'name' || key === 'lang' || key === 'platform') ? 'asc' : 'desc';
+        }
+        updateTableSortHeaders('leaderboard', leaderboardSortState.key, leaderboardSortState.dir);
+        renderLeaderboard();
+      }
+    }
+
+    function initSortableHeaders() {
+      document.querySelectorAll('th.sortable-th').forEach(th => {
+        th.addEventListener('click', () => {
+          const table = th.getAttribute('data-table');
+          const key = th.getAttribute('data-key');
+          if (!table || !key) return;
+          handleTableSortClick(table, key);
+        });
+      });
+    }
+
+    // AVATAR HTML ÜRETİCİ
+    function getAvatarHtml(avatar) {
+      if (!avatar) return '🦊';
+      if (typeof avatar === 'string' && avatar.startsWith('avatar_')) {
+        return '<img src="assets/avatars/' + avatar + '.jpg" alt="Avatar" style="width:100%; height:100%; object-fit:cover; border-radius:50%;" onerror="this.outerHTML=\'🦊\'">';
+      }
+      return '<span style="font-size:1.2rem; line-height:1;">' + avatar + '</span>';
+    }
+
+    // SEÇİM YÖNETİMİ
+    window.toggleUserSelection = function(userId, isChecked) {
+      if (isChecked) {
+        selectedUserIds.add(userId);
+      } else {
+        selectedUserIds.delete(userId);
+      }
+      updateSelectionUI();
+    };
+
+    function updateSelectionUI() {
+      const countEl = document.getElementById('selectedUsersCount');
+      const barEl = document.getElementById('bulkActionBar');
+      const selectAllEl = document.getElementById('selectAllCheckbox');
+
+      if (countEl) countEl.textContent = selectedUserIds.size;
+      if (barEl) barEl.style.display = selectedUserIds.size > 0 ? 'flex' : 'none';
+
+      if (selectAllEl) {
+        const visibleCbs = document.querySelectorAll('.user-select-cb');
+        if (visibleCbs.length > 0) {
+          const allChecked = Array.from(visibleCbs).every(cb => cb.checked);
+          selectAllEl.checked = allChecked;
+        } else {
+          selectAllEl.checked = false;
+        }
+      }
+    }
+
+    // TEKİL KULLANICI SİLME
+    window.deleteSingleUser = async function(userId, userName) {
+      if (!db) {
+        alert("Firebase bağlantısı mevcut değil.");
+        return;
+      }
+      const displayName = userName || "Öğrenci";
+      const confirmed = confirm("DİKKAT: '" + displayName + "' adlı öğrenciyi silmek istediğinize emin misiniz?\n\nBu işlem öğrencinin tüm puanlarını ve kelime verilerini kalıcı olarak silecektir!");
+      if (!confirmed) return;
+
+      try {
+        await db.collection('users').doc(userId).delete();
+        try {
+          await db.collection('leaderboard').doc(userId).delete();
+        } catch(e) {}
+
+        rawUsers = rawUsers.filter(u => u.id !== userId);
+        selectedUserIds.delete(userId);
+
+        renderUsers();
+        renderTimeTracking();
+        renderLeaderboard();
+        updateStats();
+
+        const modal = document.getElementById('studentDetailModal');
+        if (modal && modal.classList.contains('active')) {
+          modal.classList.remove('active');
+        }
+
+        showAdminToast("'" + displayName + "' başarıyla silindi.", "trash");
+      } catch (err) {
+        console.error("Kullanıcı silme hatası:", err);
+        alert("Kullanıcı silinirken hata oluştu: " + err.message);
+      }
+    };
+
+    // ÇOKLU KULLANICI SİLME
+    window.deleteSelectedUsers = async function() {
+      if (!db) return;
+      if (selectedUserIds.size === 0) {
+        alert("Lütfen silmek istediğiniz öğrencileri seçiniz.");
+        return;
+      }
+
+      const count = selectedUserIds.size;
+      const confirmed = confirm("ONAY: Seçtiğiniz " + count + " adet öğrenci kalıcı olarak silinecektir!\n\nBu işlem geri alınamaz. Devam etmek istiyor musunuz?");
+      if (!confirmed) return;
+
+      const deleteBtn = document.getElementById('bulkDeleteBtn');
+      if (deleteBtn) {
+        deleteBtn.disabled = true;
+        deleteBtn.textContent = "Siliniyor (" + count + ")...";
+      }
+
+      try {
+        const idsToDelete = Array.from(selectedUserIds);
+        const batch = db.batch();
+
+        idsToDelete.forEach(id => {
+          const userRef = db.collection('users').doc(id);
+          batch.delete(userRef);
+          try {
+            const lbRef = db.collection('leaderboard').doc(id);
+            batch.delete(lbRef);
+          } catch(e) {}
+        });
+
+        await batch.commit();
+
+        rawUsers = rawUsers.filter(u => !selectedUserIds.has(u.id));
+        selectedUserIds.clear();
+
+        renderUsers();
+        renderTimeTracking();
+        renderLeaderboard();
+        updateStats();
+
+        showAdminToast(count + " öğrenci başarıyla silindi.", "trash");
+      } catch (err) {
+        console.error("Toplu silme hatası:", err);
+        alert("Toplu silme sırasında hata: " + err.message);
+      } finally {
+        if (deleteBtn) {
+          deleteBtn.disabled = false;
+          deleteBtn.textContent = "Seçilenleri Sil";
+        }
+      }
+    };
+
+    // TEMA YÖNETİMİ
+    const savedTheme = localStorage.getItem('lexiq_admin_theme') || 'dark';
+    setAdminTheme(savedTheme);
+
+    function setAdminTheme(theme) {
+      document.documentElement.setAttribute('data-theme', theme);
+      localStorage.setItem('lexiq_admin_theme', theme);
+      const iconWrap = document.getElementById('themeToggleIcon');
+      if (iconWrap) {
+        if (theme === 'dark') {
+          iconWrap.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></svg>';
+        } else {
+          iconWrap.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>';
+        }
+      }
+    }
+
+    document.getElementById('themeToggleBtn').addEventListener('click', () => {
+      const current = document.documentElement.getAttribute('data-theme') || 'dark';
+      setAdminTheme(current === 'dark' ? 'light' : 'dark');
+    });
+
+    // ZAMAN & SÜRE YARDIMCILARI
+    function parseDate(rawVal) {
+      if (!rawVal) return null;
+      if (rawVal.toDate && typeof rawVal.toDate === 'function') return rawVal.toDate();
+      if (typeof rawVal === 'number') {
+        const d = new Date(rawVal);
+        return isNaN(d.getTime()) ? null : d;
+      }
+      if (typeof rawVal === 'string') {
+        const d = new Date(rawVal);
+        return isNaN(d.getTime()) ? null : d;
+      }
+      if (typeof rawVal === 'object' && rawVal.seconds) return new Date(rawVal.seconds * 1000);
+      return null;
+    }
+
+    function formatDateTime(dateObj) {
+      if (!dateObj || !(dateObj instanceof Date) || isNaN(dateObj.getTime())) return '—';
+      return dateObj.toLocaleDateString('tr-TR', {
+        day: '2-digit',
+        month: 'short',
+        year: 'numeric',
+        hour: '2-digit',
+        minute: '2-digit'
+      });
+    }
+
+    function formatDateOnly(dateObj) {
+      if (!dateObj || !(dateObj instanceof Date) || isNaN(dateObj.getTime())) return '—';
+      return dateObj.toLocaleDateString('tr-TR', {
+        day: '2-digit',
+        month: 'short',
+        year: 'numeric'
+      });
+    }
+
+    function formatDuration(seconds) {
+      const sec = Math.max(0, parseInt(seconds) || 0);
+      if (sec === 0) return '0 dk';
+      if (sec < 60) return sec + ' sn';
+      const totalMins = Math.floor(sec / 60);
+      if (totalMins < 60) return totalMins + ' dk';
+      const hours = Math.floor(totalMins / 60);
+      const remMins = totalMins % 60;
+      return remMins > 0 ? (hours + ' sa ' + remMins + ' dk') : (hours + ' sa');
+    }
+
+    function getRecencyInfo(dateObj) {
+      if (!dateObj || !(dateObj instanceof Date) || isNaN(dateObj.getTime())) {
+        return { label: 'Hareketsiz', sub: 'Giriş yok', cls: 'recency-idle', diffDays: 9999, diffHours: 9999, isOnline: false };
+      }
+      const now = new Date();
+      const diffMs = now.getTime() - dateObj.getTime();
+      const diffSec = Math.floor(diffMs / 1000);
+      const diffMins = Math.floor(diffSec / 60);
+      const diffHours = Math.floor(diffMins / 60);
+      const diffDays = Math.floor(diffHours / 24);
+
+      if (diffSec <= 180) {
+        return { label: 'Çevrimiçi', sub: 'Şu an aktif', cls: 'recency-active', diffDays: 0, diffHours: 0, isOnline: true };
+      }
+      if (diffMins <= 15) {
+        return { label: diffMins + ' dk önce', sub: 'Az önce', cls: 'recency-recent', diffDays: 0, diffHours: 0, isOnline: false };
+      }
+      if (diffHours < 24) {
+        return { label: (diffMins < 60 ? diffMins + ' dk önce' : diffHours + ' sa önce'), sub: 'Bugün', cls: 'recency-idle', diffDays: 0, diffHours: diffHours, isOnline: false };
+      }
+      if (diffDays === 1) {
+        return { label: 'Dün', sub: '1 gün önce', cls: 'recency-idle', diffDays: 1, diffHours: diffHours, isOnline: false };
+      }
+      if (diffDays <= 30) {
+        return { label: diffDays + ' gün önce', sub: 'Bu ay', cls: 'recency-idle', diffDays: diffDays, diffHours: diffHours, isOnline: false };
+      }
+      const months = Math.floor(diffDays / 30);
+      return { label: months + ' ay önce', sub: 'Hareketsiz', cls: 'recency-idle', diffDays: diffDays, diffHours: diffHours, isOnline: false };
+    }
+
+    function getRegistrationAgo(dateObj) {
+      if (!dateObj || !(dateObj instanceof Date) || isNaN(dateObj.getTime())) return '—';
+      const now = new Date();
+      const diffMs = now.getTime() - dateObj.getTime();
+      const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));
+      if (diffDays === 0) return 'Bugün katıldı';
+      if (diffDays === 1) return 'Dün katıldı';
+      if (diffDays < 30) return diffDays + ' gün önce';
+      if (diffDays < 365) return Math.floor(diffDays / 30) + ' ay önce';
+      return Math.floor(diffDays / 365) + ' yıl önce';
+    }
+
+    // SEKME DEĞİŞİMİ
+    document.querySelectorAll('.tab-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        if (btn.tagName.toLowerCase() === 'a') return;
+        document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+        document.querySelectorAll('.tab-content').forEach(c => c.style.display = 'none');
+        btn.classList.add('active');
+        const targetId = btn.getAttribute('data-tab');
+        const target = document.getElementById(targetId);
+        if (target) target.style.display = 'block';
+        if (targetId === 'timeTrackingTab') renderTimeTracking();
+      });
+    });
+
+    // 1. KULLANICILARI ÇEK
+    async function fetchUsers() {
+      if (!db) return;
+      try {
+        const snap = await db.collection('users').get();
+        rawUsers = [];
+        snap.forEach(doc => {
+          const d = doc.data();
+
+          // Öğrenilen kelimeler
+          let learnedIds = [];
+          if (d.learnedMap && typeof d.learnedMap === 'object') {
+            learnedIds = Object.keys(d.learnedMap).filter(k => {
+              const val = d.learnedMap[k];
+              return val === true || (val && val.learned === true) || typeof val === 'number';
+            });
+          }
+          if (learnedIds.length === 0 && Array.isArray(d.learnedWords)) {
+            learnedIds = d.learnedWords.map(String);
+          }
+          const learnedCount = learnedIds.length;
+
+          // Kayıt Tarihi
+          let regDate = parseDate(d.createdAt);
+          if (!regDate && d.timeTracking && d.timeTracking.registeredAt) regDate = parseDate(d.timeTracking.registeredAt);
+          if (!regDate && d.timeTracking && d.timeTracking.firstStartedAt) regDate = parseDate(d.timeTracking.firstStartedAt);
+          if (!regDate && d.firstStartedAt) regDate = parseDate(d.firstStartedAt);
+
+          const createdAtFormatted = formatDateTime(regDate);
+          const createdAtOnly = formatDateOnly(regDate);
+          const createdAgo = getRegistrationAgo(regDate);
+
+          // Son Aktiflik
+          const lastLoginDate = parseDate(d.lastLoginAt);
+          const lastActiveDate = parseDate(d.lastActive);
+          let effectiveActivityDate = (lastLoginDate && lastActiveDate) 
+            ? (lastLoginDate > lastActiveDate ? lastLoginDate : lastActiveDate) 
+            : (lastLoginDate || lastActiveDate);
+
+          if (!effectiveActivityDate && d.lastStudyDate) {
+            effectiveActivityDate = parseDate(d.lastStudyDate);
+          }
+          const lastActiveFormatted = formatDateTime(effectiveActivityDate);
+          const activityRecency = getRecencyInfo(effectiveActivityDate);
+
+          // Süreler
+          const cardSeconds = (d.timeTracking && typeof d.timeTracking.cardSeconds === 'number') ? d.timeTracking.cardSeconds : 0;
+          const gameSeconds = (d.timeTracking && typeof d.timeTracking.gameSeconds === 'number') ? d.timeTracking.gameSeconds : 0;
+          const totalSeconds = cardSeconds + gameSeconds;
+          const unitDurations = (d.timeTracking && typeof d.timeTracking.unitDurations === 'object') ? d.timeTracking.unitDurations : {};
+
+          // Platform / Kanal
+          const platform = resolveUserPlatform(d);
+
+          rawUsers.push({
+            id: doc.id,
+            displayName: d.displayName || 'İsimsiz Öğrenci',
+            email: d.email || '—',
+            avatar: d.avatar || '🦊',
+            branch: d.branch || d.userBranch || '',
+            xp: typeof d.xp === 'number' ? d.xp : 0,
+            track: d.track || d.userTrack || '4A',
+            level: d.level || d.userLevel || 'A2',
+            unitNo: d.unitNo || d.activeUnitNo || 1,
+            dailyGoal: d.dailyGoal || d.targetWordCount || 15,
+            streakPledgeDays: d.streakPledgeDays || d.streakPledge || 0,
+            lang: d.lang || d.language || d.activeLanguage || 'EN-TR',
+            platform: platform,
+            userAgent: d.userAgent || (d.timeTracking && d.timeTracking.userAgent ? d.timeTracking.userAgent : '') || '',
+            learnedIds: learnedIds,
+            learnedMap: d.learnedMap || {},
+            learnedCount: learnedCount,
+            maxStreak: d.maxStreak || d.maxDayStreak || 0,
+            dayStreak: d.dayStreak || 1,
+            maxDayStreak: d.maxDayStreak || d.maxStreak || 1,
+            arenaWordsSolved: d.arenaWordsSolved || 0,
+            cleanWins: d.cleanWins || 0,
+            badges: Array.isArray(d.unlockedBadges) ? d.unlockedBadges : [],
+            timeTracking: d.timeTracking || {},
+            gameStats: d.gameStats || {},
+            regDate: regDate,
+            createdAtFormatted: createdAtFormatted,
+            createdAtOnly: createdAtOnly,
+            createdAgo: createdAgo,
+            lastLoginDate: lastLoginDate,
+            lastActiveDate: lastActiveDate,
+            effectiveActivityDate: effectiveActivityDate,
+            lastActiveFormatted: lastActiveFormatted,
+            activityRecency: activityRecency,
+            cardSeconds: cardSeconds,
+            gameSeconds: gameSeconds,
+            totalSeconds: totalSeconds,
+            unitDurations: unitDurations,
+            totalTimeFormatted: formatDuration(totalSeconds),
+            cardTimeFormatted: formatDuration(cardSeconds),
+            gameTimeFormatted: formatDuration(gameSeconds)
+          });
+        });
+
+        renderUsers();
+        renderTimeTracking();
+        renderLeaderboard();
+        updateStats();
+      } catch (err) {
+        console.error("Kullanıcı çekme hatası:", err);
+        document.getElementById('studentsTableBody').innerHTML = 
+          '<tr><td colspan="10" class="empty-state" style="color:var(--danger)">Veriler yüklenirken hata oluştu: ' + err.message + '</td></tr>';
+      }
+    }
+
+    // 2. GERİ BİLDİRİMLERİ ÇEK
+    async function fetchFeedbacks() {
+      if (!db) return;
+      try {
+        let snap;
+        try {
+          snap = await db.collection('feedbacks').orderBy('createdAt', 'desc').get();
+        } catch (orderErr) {
+          snap = await db.collection('feedbacks').get();
+        }
+
+        rawFeedbacks = [];
+        snap.forEach(doc => {
+          const d = doc.data();
+          let dateStr = d.date || '—';
+          let ts = 0;
+          if (d.createdAt && d.createdAt.toDate) {
+            dateStr = d.createdAt.toDate().toLocaleString('tr-TR');
+            ts = d.createdAt.toDate().getTime();
+          } else if (d.date) {
+            try { 
+              const parsed = new Date(d.date);
+              dateStr = parsed.toLocaleString('tr-TR');
+              ts = parsed.getTime();
+            } catch(e){}
+          }
+
+          const localReplies = getFeedbackReplies();
+          const savedReply = localReplies[doc.id] || null;
+          const isReplied = Boolean(d.replied || (savedReply && savedReply.replied));
+          const replyText = (savedReply && savedReply.replyText) || d.replyText || '';
+          const replyDate = (savedReply && savedReply.date) || d.replyDate || '';
+          const replyTo = (savedReply && savedReply.toEmail) || d.replyTo || d.email || '';
+
+          rawFeedbacks.push({
+            id: doc.id,
+            type: d.type || 'general',
+            name: d.name || 'Öğrenci',
+            email: d.email || '',
+            message: d.message || '',
+            language: d.language || 'EN-TR',
+            track: d.track || '',
+            level: d.level || '',
+            appVersion: d.appVersion || 'v1.9.29',
+            date: dateStr,
+            timestamp: ts,
+            replied: isReplied,
+            replyText: replyText,
+            replyDate: replyDate,
+            replyTo: replyTo
+          });
+        });
+
+        rawFeedbacks.sort((a, b) => (b.timestamp || 0) - (a.timestamp || 0));
+        renderFeedbacks();
+        updateStats();
+      } catch (err) {
+        console.warn("Geri bildirim çekme hatası:", err);
+      }
+    }
+
+    // 3. STATS GÜNCELLE
+    function updateStats() {
+      const totalUsers = rawUsers.length;
+      document.getElementById('statTotalUsers').textContent = totalUsers;
+      document.getElementById('tabCountStudents').textContent = totalUsers;
+      document.getElementById('tabCountTimeTracking').textContent = totalUsers;
+
+      const totalXp = rawUsers.reduce((sum, u) => sum + (u.xp || 0), 0);
+      document.getElementById('statTotalXp').textContent = totalXp.toLocaleString('tr-TR');
+
+      const totalLearned = rawUsers.reduce((sum, u) => sum + (u.learnedCount || 0), 0);
+      document.getElementById('statTotalLearned').textContent = totalLearned.toLocaleString('tr-TR');
+
+      document.getElementById('statTotalFeedbacks').textContent = rawFeedbacks.length;
+      document.getElementById('tabCountFeedbacks').textContent = rawFeedbacks.length;
+
+      const bugCount = rawFeedbacks.filter(f => f.type === 'bug').length;
+      document.getElementById('statBugCount').textContent = bugCount + " hata bildirimi";
+
+      // Platform / Kanal Dağılımı Hesaplama
+      let countWeb = 0;
+      let countAndroid = 0;
+      let countIos = 0;
+
+      rawUsers.forEach(u => {
+        if (u.platform === 'ios') countIos++;
+        else if (u.platform === 'android') countAndroid++;
+        else countWeb++;
+      });
+
+      const pctWeb = totalUsers > 0 ? Math.round((countWeb / totalUsers) * 100) : 0;
+      const pctAndroid = totalUsers > 0 ? Math.round((countAndroid / totalUsers) * 100) : 0;
+      const pctIos = totalUsers > 0 ? (100 - pctWeb - pctAndroid) : 0;
+
+      const distCountWebEl = document.getElementById('distCountWeb');
+      if (distCountWebEl) distCountWebEl.textContent = countWeb + " (%" + pctWeb + ")";
+      const distCountAndroidEl = document.getElementById('distCountAndroid');
+      if (distCountAndroidEl) distCountAndroidEl.textContent = countAndroid + " (%" + pctAndroid + ")";
+      const distCountIosEl = document.getElementById('distCountIos');
+      if (distCountIosEl) distCountIosEl.textContent = countIos + " (%" + pctIos + ")";
+
+      const barSegWeb = document.getElementById('barSegWeb');
+      if (barSegWeb) barSegWeb.style.width = pctWeb + '%';
+      const barSegAndroid = document.getElementById('barSegAndroid');
+      if (barSegAndroid) barSegAndroid.style.width = pctAndroid + '%';
+      const barSegIos = document.getElementById('barSegIos');
+      if (barSegIos) barSegIos.style.width = pctIos + '%';
+
+      // Aktiflik
+      const now = new Date();
+      let active24hCount = 0;
+      let onlineNowCount = 0;
+      let new7dCount = 0;
+      let totalSecondsSum = 0;
+      let cardSecondsSum = 0;
+      let gameSecondsSum = 0;
+
+      rawUsers.forEach(u => {
+        totalSecondsSum += (u.totalSeconds || 0);
+        cardSecondsSum += (u.cardSeconds || 0);
+        gameSecondsSum += (u.gameSeconds || 0);
+
+        if (u.activityRecency) {
+          if (u.activityRecency.isOnline) onlineNowCount++;
+          if (u.activityRecency.diffHours < 24) active24hCount++;
+        }
+        if (u.regDate && !isNaN(u.regDate.getTime())) {
+          const diffDays = Math.floor((now.getTime() - u.regDate.getTime()) / (1000 * 60 * 60 * 24));
+          if (diffDays <= 7) new7dCount++;
+        }
+      });
+
+      const activeRatio = totalUsers > 0 ? Math.round((active24hCount / totalUsers) * 100) : 0;
+      document.getElementById('statActiveUsers').textContent = active24hCount + " aktif öğrenci (son 24s)";
+
+      const statTotalStudyTimeEl = document.getElementById('statTotalStudyTime');
+      if (statTotalStudyTimeEl) statTotalStudyTimeEl.textContent = formatDuration(totalSecondsSum);
+
+      const statTotalTimeBreakdownEl = document.getElementById('statTotalTimeBreakdown');
+      if (statTotalTimeBreakdownEl) {
+        statTotalTimeBreakdownEl.textContent = "Kart: " + formatDuration(cardSecondsSum) + " • Pratik: " + formatDuration(gameSecondsSum);
+      }
+
+      const avgSeconds = totalUsers > 0 ? Math.round(totalSecondsSum / totalUsers) : 0;
+      const statAvgStudyTimeEl = document.getElementById('statAvgStudyTime');
+      if (statAvgStudyTimeEl) statAvgStudyTimeEl.textContent = formatDuration(avgSeconds);
+
+      const statActiveLast24hEl = document.getElementById('statActiveLast24h');
+      if (statActiveLast24hEl) statActiveLast24hEl.textContent = active24hCount;
+
+      const statActiveRatioEl = document.getElementById('statActiveRatio');
+      if (statActiveRatioEl) {
+        statActiveRatioEl.innerHTML = (onlineNowCount > 0 ? '<strong style="color:var(--success);">' + onlineNowCount + ' şu an aktif</strong> • ' : '') + 'Son 24 saat: %' + activeRatio;
+      }
+
+      const statNewRegistrations7dEl = document.getElementById('statNewRegistrations7d');
+      if (statNewRegistrations7dEl) statNewRegistrations7dEl.textContent = new7dCount + " yeni öğrenci";
+    }
+
+    // 4. KULLANICILARI LİSTELE
+    function renderUsers() {
+      const tbody = document.getElementById('studentsTableBody');
+      const search = document.getElementById('searchInput').value.toLowerCase().trim();
+      const platformFilter = document.getElementById('filterPlatform') ? document.getElementById('filterPlatform').value : 'all';
+      const branchFilter = document.getElementById('filterBranch') ? document.getElementById('filterBranch').value : 'all';
+      const trackFilter = document.getElementById('filterTrack').value;
+      const langFilter = document.getElementById('filterLang').value;
+
+      let filtered = rawUsers.filter(u => {
+        const matchesSearch = u.displayName.toLowerCase().includes(search) || 
+                              u.email.toLowerCase().includes(search) || 
+                              (u.branch && u.branch.toLowerCase().includes(search));
+        
+        const matchesPlatform = platformFilter === 'all' || u.platform === platformFilter;
+        const matchesLang = langFilter === 'all' || u.lang === langFilter;
+        
+        let matchesBranch = true;
+        if (branchFilter === 'none') {
+          matchesBranch = !u.branch || u.branch.trim() === '' || u.branch === 'Şubesiz';
+        } else if (branchFilter !== 'all') {
+          matchesBranch = u.branch === branchFilter;
+        }
+
+        let matchesTrack = true;
+        if (trackFilter !== 'all') {
+          matchesTrack = (u.track === trackFilter) || (u.level === trackFilter);
+        }
+        return matchesSearch && matchesPlatform && matchesLang && matchesBranch && matchesTrack;
+      });
+
+      function uTime(d) {
+        return (d && d instanceof Date && !isNaN(d.getTime())) ? d.getTime() : 0;
+      }
+
+      const mult = studentSortState.dir === 'desc' ? -1 : 1;
+      filtered.sort((a, b) => {
+        switch (studentSortState.key) {
+          case 'name':
+            return mult * (a.displayName || '').localeCompare(b.displayName || '', 'tr', { sensitivity: 'base' });
+          case 'platform':
+            return mult * (a.platform || '').localeCompare(b.platform || '');
+          case 'branch':
+            return mult * (a.branch || 'zzz').localeCompare(b.branch || 'zzz', 'tr');
+          case 'level':
+            const levComp = (a.level || '').localeCompare(b.level || '', 'tr');
+            if (levComp !== 0) return mult * levComp;
+            return mult * ((Number(a.unitNo) || 0) - (Number(b.unitNo) || 0));
+          case 'xp':
+            return mult * ((a.xp || 0) - (b.xp || 0));
+          case 'learned':
+            return mult * ((a.learnedCount || 0) - (b.learnedCount || 0));
+          case 'streak':
+            return mult * ((a.dayStreak || a.maxStreak || 0) - (b.dayStreak || b.maxStreak || 0));
+          case 'activity':
+            return mult * (uTime(a.effectiveActivityDate) - uTime(b.effectiveActivityDate));
+          case 'created':
+            return mult * (uTime(a.regDate) - uTime(b.regDate));
+          case 'time':
+            return mult * ((a.totalSeconds || 0) - (b.totalSeconds || 0));
+          default:
+            return mult * ((a.xp || 0) - (b.xp || 0));
+        }
+      });
+
+      updateTableSortHeaders('students', studentSortState.key, studentSortState.dir);
+
+      if (filtered.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="10" class="empty-state"><div class="empty-icon">🔍</div><div>Kriterlere uygun öğrenci bulunamadı.</div></td></tr>';
+        updateSelectionUI();
+        return;
+      }
+
+      tbody.innerHTML = filtered.map(u => {
+        const isChecked = selectedUserIds.has(u.id);
+        const escapedName = (u.displayName || 'Öğrenci').replace(/'/g, "\\'");
+        const branchBadge = u.branch 
+          ? '<span class="tag-pill tag-track">' + u.branch + '</span>'
+          : '<span class="tag-pill" style="background:rgba(100,116,139,0.12); color:var(--text-dim);">Şubesiz</span>';
+
+        const platformBadge = getPlatformBadgeHtml(u.platform);
+
+        const total = u.totalSeconds || 0;
+        const cardPct = total > 0 ? Math.round((u.cardSeconds / total) * 100) : 50;
+        const gamePct = total > 0 ? (100 - cardPct) : 50;
+
+        return '<tr id="userRow_' + u.id + '">' +
+          '<td style="text-align: center;">' +
+            '<input type="checkbox" class="user-cb user-select-cb" data-id="' + u.id + '" ' + (isChecked ? 'checked' : '') + ' onchange="toggleUserSelection(\'' + u.id + '\', this.checked)">' +
+          '</td>' +
+          '<td>' +
+            '<div class="user-cell">' +
+              '<div class="user-avatar-bubble">' + getAvatarHtml(u.avatar) + '</div>' +
+              '<div>' +
+                '<div class="user-meta-name">' + u.displayName + '</div>' +
+                '<div class="user-meta-email">' + u.email + '</div>' +
+              '</div>' +
+            '</div>' +
+          '</td>' +
+          '<td>' + platformBadge + '</td>' +
+          '<td>' +
+            branchBadge +
+            '<span class="tag-pill tag-track" style="display:inline-block; margin-top:2px;">' + u.lang + ' • ' + u.track + '</span>' +
+          '</td>' +
+          '<td>' +
+            '<div>' +
+              '<strong style="color:var(--text); font-size:0.82rem;">' + u.level + '</strong>' +
+              '<span class="tag-pill tag-unit" style="display:block; width:fit-content; margin-top:2px;">Ünite ' + u.unitNo + '</span>' +
+            '</div>' +
+          '</td>' +
+          '<td>' +
+            '<span class="tag-pill tag-xp">' + (u.xp || 0).toLocaleString('tr-TR') + ' XP</span>' +
+            '<span class="tag-pill tag-words" style="display:inline-block; margin-top:2px;">' + u.learnedCount + ' Kelime</span>' +
+          '</td>' +
+          '<td>' +
+            '<div>' +
+              '<span class="tag-pill tag-streak">' + (u.dayStreak || u.maxStreak) + ' Gün Seri</span>' +
+              '<span style="display:block; font-size:0.7rem; color:var(--text-dim); margin-top:2px; font-weight:600;">Hedef: ' + u.dailyGoal + '/gün</span>' +
+            '</div>' +
+          '</td>' +
+          '<td>' +
+            '<div class="date-meta-cell">' +
+              '<div><span class="recency-pill ' + u.activityRecency.cls + '">' + u.activityRecency.label + '</span></div>' +
+              '<span class="date-meta-secondary" style="margin-top:1px;">Son: ' + u.lastActiveFormatted + '</span>' +
+              '<span class="date-meta-secondary">Kayıt: ' + u.createdAtOnly + '</span>' +
+            '</div>' +
+          '</td>' +
+          '<td>' +
+            '<div>' +
+              '<span class="time-badge-main">' + u.totalTimeFormatted + '</span>' +
+              '<div class="time-mini-bar" title="Kart: ' + u.cardTimeFormatted + ' (%' + cardPct + ') • Pratik: ' + u.gameTimeFormatted + ' (%' + gamePct + ')">' +
+                '<div class="time-bar-card" style="width:' + cardPct + '%;"></div>' +
+                '<div class="time-bar-game" style="width:' + gamePct + '%;"></div>' +
+              '</div>' +
+            '</div>' +
+          '</td>' +
+          '<td style="text-align: center; white-space: nowrap;">' +
+            '<div style="display: inline-flex; gap: 4px;">' +
+              '<button class="btn btn-secondary" onclick="openStudentDetail(\'' + u.id + '\')" style="padding:4px 8px; font-size:0.75rem;" title="Detaylı İncele">' +
+                'İncele' +
+              '</button>' +
+              '<button class="btn btn-danger" onclick="deleteSingleUser(\'' + u.id + '\', \'' + escapedName + '\')" style="padding:4px 7px; font-size:0.75rem;" title="Kullanıcıyı Sil">' +
+                '<span class="ui-icon" style="width:13px; height:13px;">' + SVG.trash + '</span>' +
+              '</button>' +
+            '</div>' +
+          '</td>' +
+        '</tr>';
+      }).join('');
+
+      updateSelectionUI();
+    }
+
+    // 5. GİRİŞ VE SÜRE TAKİBİ
+    function renderTimeTracking() {
+      const tbody = document.getElementById('timeTrackingTableBody');
+      if (!tbody) return;
+
+      const searchInput = document.getElementById('timeSearchInput');
+      const search = searchInput ? searchInput.value.toLowerCase().trim() : '';
+      const platformFilter = document.getElementById('filterTimePlatform') ? document.getElementById('filterTimePlatform').value : 'all';
+      const branchFilter = document.getElementById('filterTimeBranch') ? document.getElementById('filterTimeBranch').value : 'all';
+      const recencyFilter = document.getElementById('filterTimeRecency') ? document.getElementById('filterTimeRecency').value : 'all';
+
+      let filtered = rawUsers.filter(u => {
+        const matchesSearch = u.displayName.toLowerCase().includes(search) || 
+                              u.email.toLowerCase().includes(search) || 
+                              (u.branch && u.branch.toLowerCase().includes(search));
+        
+        const matchesPlatform = platformFilter === 'all' || u.platform === platformFilter;
+
+        let matchesBranch = true;
+        if (branchFilter === 'none') {
+          matchesBranch = !u.branch || u.branch.trim() === '' || u.branch === 'Şubesiz';
+        } else if (branchFilter !== 'all') {
+          matchesBranch = u.branch === branchFilter;
+        }
+
+        let matchesRecency = true;
+        if (recencyFilter === 'active24h') {
+          matchesRecency = u.activityRecency && u.activityRecency.diffHours < 24;
+        } else if (recencyFilter === 'recent7d') {
+          matchesRecency = u.activityRecency && u.activityRecency.diffDays <= 7;
+        } else if (recencyFilter === 'month30d') {
+          matchesRecency = u.activityRecency && u.activityRecency.diffDays <= 30;
+        } else if (recencyFilter === 'idle30d') {
+          matchesRecency = !u.activityRecency || u.activityRecency.diffDays > 30;
+        }
+
+        return matchesSearch && matchesPlatform && matchesBranch && matchesRecency;
+      });
+
+      function uTime(d) {
+        return (d && d instanceof Date && !isNaN(d.getTime())) ? d.getTime() : 0;
+      }
+
+      const mult = timeSortState.dir === 'desc' ? -1 : 1;
+      filtered.sort((a, b) => {
+        switch (timeSortState.key) {
+          case 'name':
+            return mult * (a.displayName || '').localeCompare(b.displayName || '', 'tr', { sensitivity: 'base' });
+          case 'platform':
+            return mult * (a.platform || '').localeCompare(b.platform || '');
+          case 'branch':
+            return mult * (a.branch || 'zzz').localeCompare(b.branch || 'zzz', 'tr');
+          case 'created':
+            return mult * (uTime(a.regDate) - uTime(b.regDate));
+          case 'active':
+            return mult * (uTime(a.effectiveActivityDate) - uTime(b.effectiveActivityDate));
+          case 'totalTime':
+            return mult * ((a.totalSeconds || 0) - (b.totalSeconds || 0));
+          case 'cardTime':
+            return mult * ((a.cardSeconds || 0) - (b.cardSeconds || 0));
+          case 'gameTime':
+            return mult * ((a.gameSeconds || 0) - (b.gameSeconds || 0));
+          default:
+            return mult * ((a.totalSeconds || 0) - (b.totalSeconds || 0));
+        }
+      });
+
+      updateTableSortHeaders('time', timeSortState.key, timeSortState.dir);
+
+      if (filtered.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="9" class="empty-state"><div class="empty-icon">🔍</div><div>Kriterlere uygun kayıt bulunamadı.</div></td></tr>';
+        return;
+      }
+
+      tbody.innerHTML = filtered.map(u => {
+        const branchBadge = u.branch 
+          ? '<span class="tag-pill tag-track">' + u.branch + '</span>'
+          : '<span class="tag-pill" style="background:rgba(100,116,139,0.12); color:var(--text-dim);">Şubesiz</span>';
+
+        const platformBadge = getPlatformBadgeHtml(u.platform);
+
+        const total = u.totalSeconds || 0;
+        const cardPct = total > 0 ? Math.round((u.cardSeconds / total) * 100) : 50;
+        const gamePct = total > 0 ? (100 - cardPct) : 50;
+
+        let unitChipsHtml = '<span style="color:var(--text-dim); font-size:0.72rem;">Kayıt yok</span>';
+        if (u.unitDurations && typeof u.unitDurations === 'object') {
+          const uEntries = Object.entries(u.unitDurations).filter(([_, s]) => Number(s) > 0);
+          if (uEntries.length > 0) {
+            unitChipsHtml = uEntries.slice(0, 3).map(([uNo, sec]) => {
+              return '<span class="unit-time-chip" title="Ünite ' + uNo + ': ' + formatDuration(sec) + '">Ü.' + uNo + ': ' + formatDuration(sec) + '</span>';
+            }).join('');
+            if (uEntries.length > 3) {
+              unitChipsHtml += '<span class="unit-time-chip">+' + (uEntries.length - 3) + '</span>';
+            }
+          }
+        }
+
+        return '<tr>' +
+          '<td>' +
+            '<div class="user-cell">' +
+              '<div class="user-avatar-bubble">' + getAvatarHtml(u.avatar) + '</div>' +
+              '<div>' +
+                '<div class="user-meta-name">' + u.displayName + '</div>' +
+                '<div class="user-meta-email">' + u.email + '</div>' +
+              '</div>' +
+            '</div>' +
+          '</td>' +
+          '<td>' + platformBadge + '</td>' +
+          '<td>' +
+            branchBadge +
+            '<span class="tag-pill tag-track" style="display:inline-block; margin-top:2px;">' + u.lang + ' • ' + u.track + ' (' + u.level + ')</span>' +
+          '</td>' +
+          '<td>' +
+            '<div class="date-meta-cell">' +
+              '<span class="date-meta-primary">' + u.createdAtFormatted + '</span>' +
+              '<span class="date-meta-secondary">' + u.createdAgo + '</span>' +
+            '</div>' +
+          '</td>' +
+          '<td>' +
+            '<div class="date-meta-cell">' +
+              '<span class="date-meta-primary">' + u.lastActiveFormatted + '</span>' +
+              '<span class="recency-pill ' + u.activityRecency.cls + '" style="margin-top:2px;">' + u.activityRecency.label + '</span>' +
+            '</div>' +
+          '</td>' +
+          '<td>' +
+            '<div>' +
+              '<span class="time-badge-main">' + u.totalTimeFormatted + '</span>' +
+              '<div class="time-mini-bar" title="Kart: ' + u.cardTimeFormatted + ' • Pratik: ' + u.gameTimeFormatted + '">' +
+                '<div class="time-bar-card" style="width:' + cardPct + '%;"></div>' +
+                '<div class="time-bar-game" style="width:' + gamePct + '%;"></div>' +
+              '</div>' +
+              '<div style="font-size:0.68rem; color:var(--text-dim); margin-top:2px;">%' + cardPct + ' Kart • %' + gamePct + ' Pratik</div>' +
+            '</div>' +
+          '</td>' +
+          '<td>' +
+            '<div style="font-size:0.76rem; line-height:1.4;">' +
+              '<div style="color:#38bdf8; font-weight:600;">Kart: ' + u.cardTimeFormatted + '</div>' +
+              '<div style="color:#f59e0b; font-weight:600;">Pratik: ' + u.gameTimeFormatted + '</div>' +
+            '</div>' +
+          '</td>' +
+          '<td><div style="display:flex; flex-wrap:wrap; gap:3px; max-width:160px;">' + unitChipsHtml + '</div></td>' +
+          '<td style="text-align: center; white-space: nowrap;">' +
+            '<button class="btn btn-secondary" onclick="openStudentDetail(\'' + u.id + '\')" style="padding:4px 8px; font-size:0.75rem;" title="Detaylı İncele">' +
+              'Detay' +
+            '</button>' +
+          '</td>' +
+        '</tr>';
+      }).join('');
+    }
+
+    // 6. GERİ BİLDİRİMLER LİSTELE
+    function renderFeedbacks() {
+      const grid = document.getElementById('feedbackGrid');
+      if (!grid) return;
+
+      const typeFilter = document.getElementById('filterFeedbackType').value;
+      const statusFilter = document.getElementById('filterFeedbackStatus').value;
+      const search = (document.getElementById('filterFeedbackSearch').value || '').toLowerCase().trim();
+
+      const filtered = rawFeedbacks.filter(f => {
+        const matchesType = typeFilter === 'all' || f.type === typeFilter;
+        let matchesStatus = true;
+        if (statusFilter === 'pending') matchesStatus = !f.replied;
+        else if (statusFilter === 'replied') matchesStatus = !!f.replied;
+
+        const matchesSearch = !search || 
+          f.name.toLowerCase().includes(search) || 
+          f.email.toLowerCase().includes(search) || 
+          f.message.toLowerCase().includes(search);
+
+        return matchesType && matchesStatus && matchesSearch;
+      });
+
+      if (filtered.length === 0) {
+        grid.innerHTML = '<div class="empty-state" style="grid-column: 1 / -1;"><div class="empty-icon">📬</div><div>Geri bildirim bulunamadı.</div></div>';
+        return;
+      }
+
+      const typeLabels = {
+        bug: { text: 'Hata Bildirimi', color: 'var(--danger)', bg: 'rgba(239,68,68,0.1)' },
+        word_fix: { text: 'Kelime / Çeviri', color: 'var(--warning)', bg: 'rgba(245,158,11,0.1)' },
+        suggestion: { text: 'Fikir & Öneri', color: 'var(--primary)', bg: 'rgba(59,130,246,0.1)' },
+        general: { text: 'Genel Görüş', color: 'var(--purple)', bg: 'rgba(139,92,246,0.1)' }
+      };
+
+      grid.innerHTML = filtered.map(f => {
+        const meta = typeLabels[f.type] || typeLabels.general;
+        const statusHtml = f.replied 
+          ? '<span style="color:var(--success); font-size:0.72rem; font-weight:700;">Yanıtlandı</span>'
+          : '<span style="color:var(--warning); font-size:0.72rem; font-weight:700;">Yanıt Bekliyor</span>';
+
+        return '<div class="fb-card">' +
+          '<div class="fb-card-header">' +
+            '<div>' +
+              '<span class="tag-pill" style="background:' + meta.bg + '; color:' + meta.color + '; font-size:0.7rem;">' + meta.text + '</span>' +
+              '<strong style="display:block; margin-top:4px; font-size:0.86rem; color:var(--text);">' + f.name + '</strong>' +
+              '<div class="fb-meta">' + (f.email || 'E-posta yok') + ' • ' + f.date + '</div>' +
+            '</div>' +
+            statusHtml +
+          '</div>' +
+          '<div class="fb-msg">' + (f.message || 'Boş mesaj') + '</div>' +
+          '<div class="fb-actions">' +
+            '<span style="font-size:0.7rem; color:var(--text-dim);">' + f.language + ' • ' + f.appVersion + '</span>' +
+            '<button class="btn btn-secondary" onclick="openFeedbackReplyModal(\'' + f.id + '\')" style="padding:4px 10px; font-size:0.76rem;">' +
+              (f.replied ? 'Yanıtı Gör / Güncelle' : 'Yanıtla') +
+            '</button>' +
+          '</div>' +
+        '</div>';
+      }).join('');
+    }
+
+    // 7. LİDERLİK TABLOSU
+    function renderLeaderboard() {
+      const tbody = document.getElementById('leaderboardTableBody');
+      if (!tbody) return;
+
+      const sorted = [...rawUsers].sort((a, b) => (b.xp || 0) - (a.xp || 0));
+      if (sorted.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="7" class="empty-state"><div class="empty-icon">🏆</div><div>Kayıt bulunamadı.</div></td></tr>';
+        return;
+      }
+
+      tbody.innerHTML = sorted.map((u, i) => {
+        const rank = i + 1;
+        const platformBadge = getPlatformBadgeHtml(u.platform);
+
+        let rankBadge = rank;
+        if (rank === 1) rankBadge = '1 🥇';
+        else if (rank === 2) rankBadge = '2 🥈';
+        else if (rank === 3) rankBadge = '3 🥉';
+
+        let badgeTitle = 'Acemi';
+        if (u.xp >= 5000) badgeTitle = 'Üstat';
+        else if (u.xp >= 2000) badgeTitle = 'Kaşif';
+        else if (u.xp >= 1000) badgeTitle = 'Gezgin';
+        else if (u.xp >= 500) badgeTitle = 'Çırak';
+
+        return '<tr>' +
+          '<td style="font-weight:800; font-size:0.95rem; color:' + (rank <= 3 ? 'var(--warning)' : 'var(--text-muted)') + ';">' + rankBadge + '</td>' +
+          '<td>' +
+            '<div class="user-cell">' +
+              '<div class="user-avatar-bubble">' + getAvatarHtml(u.avatar) + '</div>' +
+              '<div>' +
+                '<div style="font-weight:700;">' + u.displayName + '</div>' +
+                '<div style="font-size:0.72rem; color:var(--text-dim);">' + (u.branch ? u.branch : 'Şubesiz') + '</div>' +
+              '</div>' +
+            '</div>' +
+          '</td>' +
+          '<td>' + platformBadge + '</td>' +
+          '<td><span class="tag-pill tag-track">' + u.lang + ' • ' + u.track + '</span></td>' +
+          '<td><span class="tag-pill" style="background:rgba(139,92,246,0.12); color:var(--purple);">' + badgeTitle + '</span></td>' +
+          '<td><span class="tag-pill tag-streak">' + (u.dayStreak || u.maxStreak) + ' Gün</span></td>' +
+          '<td><strong style="color:var(--warning); font-size:0.95rem;">' + (u.xp || 0).toLocaleString('tr-TR') + ' XP</strong></td>' +
+        '</tr>';
+      }).join('');
+    }
+
+    // ÖĞRENCİ DETAY MODALI
+    window.openStudentDetail = function(userId) {
+      currentActiveDetailUserId = userId;
+      const u = rawUsers.find(x => x.id === userId);
+      if (!u) return;
+
+      const avatarWrap = document.getElementById('modalAvatarWrap');
+      if (avatarWrap) avatarWrap.innerHTML = getAvatarHtml(u.avatar);
+
+      document.getElementById('modalName').textContent = u.displayName;
+      document.getElementById('modalBranchBadge').textContent = u.branch ? ('Şube: ' + u.branch) : 'Şubesiz';
+      document.getElementById('modalEmail').textContent = u.email || 'E-posta belirtilmedi';
+      document.getElementById('modalUid').textContent = 'UID: ' + u.id;
+      document.getElementById('modalMetaDates').textContent = 'Kayıt: ' + u.createdAtFormatted + ' • Son Aktiflik: ' + u.lastActiveFormatted;
+
+      const platBadgeWrap = document.getElementById('modalPlatformBadge');
+      if (platBadgeWrap) platBadgeWrap.innerHTML = getPlatformBadgeHtml(u.platform);
+
+      const channelInfo = document.getElementById('modalChannelInfo');
+      if (channelInfo) {
+        const platName = u.platform === 'ios' ? 'Apple iOS' : (u.platform === 'android' ? 'Google Android' : 'Web Tarayıcı');
+        channelInfo.innerHTML = getPlatformBadgeHtml(u.platform) + ' <span style="font-size:0.75rem; color:var(--text-dim); margin-left:4px;">(' + platName + ')</span>';
+      }
+
+      document.getElementById('modalDetailCreatedAt').textContent = u.createdAtFormatted;
+      document.getElementById('modalDetailCreatedAgo').textContent = u.createdAgo;
+      document.getElementById('modalDetailLastActive').textContent = u.lastActiveFormatted;
+      document.getElementById('modalDetailLastActiveAgo').textContent = u.activityRecency.sub || u.activityRecency.label;
+
+      const modalRecencyBadge = document.getElementById('modalRecencyBadge');
+      if (modalRecencyBadge) {
+        modalRecencyBadge.className = 'recency-pill ' + u.activityRecency.cls;
+        modalRecencyBadge.textContent = u.activityRecency.label;
+      }
+
+      const total = u.totalSeconds || 0;
+      const cardPct = total > 0 ? Math.round((u.cardSeconds / total) * 100) : 50;
+      const gamePct = total > 0 ? (100 - cardPct) : 50;
+
+      document.getElementById('modalDetailTotalTime').textContent = u.totalTimeFormatted;
+      document.getElementById('modalDetailTimeRatio').textContent = '%' + cardPct + ' Kart • %' + gamePct + ' Pratik';
+
+      // Ünite bazlı süreler
+      const unitGrid = document.getElementById('modalUnitDurationsGrid');
+      if (unitGrid) {
+        if (u.unitDurations && typeof u.unitDurations === 'object') {
+          const entries = Object.entries(u.unitDurations).filter(([_, s]) => Number(s) > 0);
+          if (entries.length > 0) {
+            unitGrid.innerHTML = entries.map(([uNo, s]) => {
+              return '<div class="unit-time-chip" style="font-size:0.74rem; padding:3px 7px;">' +
+                '<span>Ünite ' + uNo + ':</span> ' +
+                '<strong style="color:var(--cyan);">' + formatDuration(s) + '</strong>' +
+              '</div>';
+            }).join('');
+          } else {
+            unitGrid.innerHTML = '<span style="color:var(--text-dim); font-size:0.75rem;">Kayıt yok.</span>';
+          }
+        } else {
+          unitGrid.innerHTML = '<span style="color:var(--text-dim); font-size:0.75rem;">Kayıt yok.</span>';
+        }
+      }
+
+      // Akademik
+      document.getElementById('modalLangText').textContent = u.lang;
+      document.getElementById('modalTrackText').textContent = u.track || '—';
+      document.getElementById('modalLevelText').textContent = u.level + ' Seviyesi';
+      document.getElementById('modalUnitText').textContent = 'Ünite ' + u.unitNo;
+      document.getElementById('modalDailyGoalText').textContent = u.dailyGoal + ' Kelime/Gün';
+      document.getElementById('modalStreakPledgeText').textContent = u.streakPledgeDays > 0 ? (u.streakPledgeDays + ' Günlük Taahhüt') : 'Taahhüt Yok';
+
+      // İstatistikler
+      document.getElementById('modalXp').textContent = (u.xp || 0).toLocaleString('tr-TR') + ' XP';
+      document.getElementById('modalLearned').textContent = u.learnedCount + ' Kelime';
+      document.getElementById('modalStreak').textContent = (u.dayStreak || 1) + ' Gün';
+      document.getElementById('modalMaxStreak').textContent = (u.maxStreak || u.maxDayStreak || 1) + ' Gün';
+      document.getElementById('modalArenaSolved').textContent = (u.arenaWordsSolved || 0) + ' Soru';
+      document.getElementById('modalCleanWins').textContent = (u.cleanWins || 0) + ' Zafer';
+      document.getElementById('modalCardTime').textContent = u.cardTimeFormatted;
+      document.getElementById('modalGameTime').textContent = u.gameTimeFormatted;
+
+      // Kelime Listesi
+      const wordsCountBadge = document.getElementById('modalWordsCountBadge');
+      if (wordsCountBadge) wordsCountBadge.textContent = u.learnedCount;
+
+      const wordsChipsGrid = document.getElementById('modalWordsChipsGrid');
+      if (wordsChipsGrid) {
+        if (!u.learnedIds || u.learnedIds.length === 0) {
+          wordsChipsGrid.innerHTML = '<span style="font-size:0.78rem; color:var(--text-dim); padding:6px 0;">Henüz öğrenilmiş kelime kaydı yok.</span>';
+        } else {
+          const chipsHtml = u.learnedIds.map(id => {
+            const wordObj = wordsById.get(String(id));
+            if (wordObj) {
+              const wordText = wordObj.kelime || ('ID:' + id);
+              const meaning = wordObj['anlamı'] || wordObj.anlami || '';
+              const unitNo = wordObj.unite_no ? ('(Ü.' + wordObj.unite_no + ')') : '';
+              return '<div style="background:var(--bg-card); border:1px solid var(--border); border-radius:6px; padding:3px 7px; font-size:0.76rem; display:inline-flex; align-items:center; gap:5px;">' +
+                '<span style="font-weight:700; color:var(--text);">' + wordText + '</span>' +
+                '<span style="color:var(--text-dim); font-size:0.72rem;">' + meaning + '</span>' +
+                '<span style="color:var(--cyan); font-size:0.68rem; font-weight:700;">' + unitNo + '</span>' +
+              '</div>';
+            } else {
+              return '<div style="background:var(--bg-card); border:1px solid var(--border); border-radius:6px; padding:3px 7px; font-size:0.76rem; color:var(--text-dim);">Kelime #' + id + '</div>';
+            }
+          }).join('');
+          wordsChipsGrid.innerHTML = chipsHtml;
+        }
+      }
+
+      // Alıştırma Turları
+      const gameNames = {
+        match: 'Eşleştirme',
+        quiz: '4 Şıklı Test',
+        tetris: 'Harf Tetrisi',
+        cloze: 'Boşluk Doldurma',
+        listen: 'Dinle & Yaz',
+        truefalse: 'Doğru/Yanlış',
+        scramble: 'Kelime Karıştırma',
+        anagram: 'Harf Harf'
+      };
+      const statsGrid = document.getElementById('modalGameStatsGrid');
+      if (statsGrid) {
+        statsGrid.innerHTML = Object.entries(gameNames).map(([k, label]) => {
+          const count = (u.gameStats && u.gameStats[k]) ? u.gameStats[k] : 0;
+          return '<div class="game-stat-item">' +
+            '<span>' + label + '</span>' +
+            '<strong>' + count + ' Tur</strong>' +
+          '</div>';
+        }).join('');
+      }
+
+      // Rozetler
+      const badgesContainer = document.getElementById('modalBadgesList');
+      if (badgesContainer) {
+        if (u.badges && u.badges.length > 0) {
+          badgesContainer.innerHTML = u.badges.map(b => 
+            '<span class="tag-pill" style="background:rgba(59,130,246,0.12); color:#60a5fa; border:1px solid rgba(59,130,246,0.25);">' + b + '</span>'
+          ).join('');
+        } else {
+          badgesContainer.innerHTML = '<span style="color:var(--text-dim); font-size:0.8rem;">Henüz rozet kazanılmadı.</span>';
+        }
+      }
+
+      document.getElementById('studentDetailModal').classList.add('active');
+    };
+
+    window.toggleModalWordsList = function() {
+      const c = document.getElementById('modalWordsListContainer');
+      const arrow = document.getElementById('modalWordsToggleArrow');
+      if (!c) return;
+      if (c.style.display === 'none' || !c.style.display) {
+        c.style.display = 'block';
+        if (arrow) arrow.textContent = 'Kapat';
+      } else {
+        c.style.display = 'none';
+        if (arrow) arrow.textContent = 'Aç';
+      }
+    };
+
+    document.getElementById('closeDetailModalBtn').addEventListener('click', () => {
+      document.getElementById('studentDetailModal').classList.remove('active');
+    });
+    document.getElementById('studentDetailModal').addEventListener('click', (e) => {
+      if (e.target === document.getElementById('studentDetailModal')) {
+        document.getElementById('studentDetailModal').classList.remove('active');
+      }
+    });
+
+    // Modal içindeki butonlar
+    const modalResetPwBtn = document.getElementById('modalResetPasswordBtn');
+    if (modalResetPwBtn) {
+      modalResetPwBtn.addEventListener('click', () => {
+        if (!currentActiveDetailUserId) return;
+        const u = rawUsers.find(x => x.id === currentActiveDetailUserId);
+        const email = u && u.email ? encodeURIComponent(u.email) : '';
+        const url = 'password-reset-tool.html' + (email ? `?email=${email}` : '');
+        window.open(url, '_blank');
+      });
+    }
+
+    const modalDelBtn = document.getElementById('modalDeleteStudentBtn');
+    if (modalDelBtn) {
+      modalDelBtn.addEventListener('click', () => {
+        if (!currentActiveDetailUserId) return;
+        const u = rawUsers.find(x => x.id === currentActiveDetailUserId);
+        deleteSingleUser(currentActiveDetailUserId, u ? u.displayName : '');
+      });
+    }
+
+    // Toplu Silme Butonları
+    const clearSelBtn = document.getElementById('clearSelectionBtn');
+    if (clearSelBtn) {
+      clearSelBtn.addEventListener('click', () => {
+        selectedUserIds.clear();
+        renderUsers();
+      });
+    }
+    const bulkDelBtn = document.getElementById('bulkDeleteBtn');
+    if (bulkDelBtn) bulkDelBtn.addEventListener('click', deleteSelectedUsers);
+
+    const selectAllCb = document.getElementById('selectAllCheckbox');
+    if (selectAllCb) {
+      selectAllCb.addEventListener('change', (e) => {
+        const checked = e.target.checked;
+        document.querySelectorAll('.user-select-cb').forEach(cb => {
+          cb.checked = checked;
+          const uid = cb.getAttribute('data-id');
+          if (uid) {
+            if (checked) selectedUserIds.add(uid);
+            else selectedUserIds.delete(uid);
+          }
+        });
+        updateSelectionUI();
+      });
+    }
+
+    // GERİ BİLDİRİM YANIT İŞLEMLERİ
+    function getFeedbackReplies() {
+      try { return JSON.parse(localStorage.getItem('lexiq_admin_feedback_replies') || '{}'); }
+      catch(e) { return {}; }
+    }
+
+    function saveFeedbackReply(id, replyData) {
+      try {
+        const all = getFeedbackReplies();
+        const dateStr = new Date().toLocaleString('tr-TR');
+        all[id] = { replied: true, date: dateStr, timestamp: Date.now(), ...replyData };
+        localStorage.setItem('lexiq_admin_feedback_replies', JSON.stringify(all));
+
+        const f = rawFeedbacks.find(x => x.id === id);
+        if (f) {
+          f.replied = true;
+          f.replyDate = dateStr;
+          f.replyText = all[id].replyText || '';
+          f.replyTo = all[id].toEmail || f.email || '';
+        }
+        if (db) {
+          db.collection('feedbacks').doc(id).update({
+            replied: true,
+            replyDate: dateStr,
+            replyText: all[id].replyText || ''
+          }).catch(() => {});
+        }
+        updateStats();
+        renderFeedbacks();
+      } catch (e) {
+        console.error("Yanıt kaydetme:", e);
+      }
+    }
+
+    window.openFeedbackReplyModal = function(id) {
+      currentReplyFeedbackId = id;
+      const f = rawFeedbacks.find(x => x.id === id);
+      if (!f) return;
+
+      document.getElementById('replyStudentName').textContent = f.name;
+      document.getElementById('replyStudentDate').textContent = f.date;
+      document.getElementById('replyOriginalMessage').textContent = f.message;
+      document.getElementById('replyModalEmailInput').value = f.replyTo || f.email || '';
+      document.getElementById('replyModalMessageInput').value = f.replyText || '';
+
+      document.getElementById('feedbackReplyModal').classList.add('active');
+    };
+
+    function closeReplyModal() {
+      document.getElementById('feedbackReplyModal').classList.remove('active');
+      currentReplyFeedbackId = null;
+    }
+
+    const closeFeedbackReplyModalBtn = document.getElementById('closeFeedbackReplyModalBtn');
+    if (closeFeedbackReplyModalBtn) closeFeedbackReplyModalBtn.addEventListener('click', closeReplyModal);
+
+    // Geri Bildirim Şablonları
+    const tplContainer = document.getElementById('replyQuickTemplates');
+    if (tplContainer) {
+      tplContainer.addEventListener('click', (e) => {
+        const btn = e.target.closest('.quick-tpl-btn');
+        if (!btn) return;
+        const tplKey = btn.getAttribute('data-tpl');
+        const f = rawFeedbacks.find(x => x.id === currentReplyFeedbackId);
+        if (!f) return;
+        const msgInput = document.getElementById('replyModalMessageInput');
+        if (tplKey === 'bug_fixed') {
+          msgInput.value = `Merhaba ${f.name},\n\nİlettiğiniz hata bildirimi incelenmiş ve sorun giderilmiştir.\n\nLexiGo'yu geliştirmemize katkı sağladığınız için teşekkür ederiz.\n\nİyi çalışmalar!\nLexiGo Ekibi`;
+        } else if (tplKey === 'word_fixed') {
+          msgInput.value = `Merhaba ${f.name},\n\nİlettiğiniz kelime / çeviri düzeltmesi veri tabanımıza işlenmiştir.\n\nDikkatiniz ve katkınız için teşekkür ederiz.\n\nİyi dersler!\nLexiGo Ekibi`;
+        }
+        msgInput.focus();
+      });
+    }
+
+    const replyMarkOnlyBtn = document.getElementById('replyMarkOnlyBtn');
+    if (replyMarkOnlyBtn) {
+      replyMarkOnlyBtn.addEventListener('click', () => {
+        const f = rawFeedbacks.find(x => x.id === currentReplyFeedbackId);
+        if (!f) return;
+        const emailInput = document.getElementById('replyModalEmailInput');
+        const msgInput = document.getElementById('replyModalMessageInput');
+        saveFeedbackReply(f.id, {
+          toEmail: (emailInput ? emailInput.value : '').trim(),
+          replyText: (msgInput ? msgInput.value : '').trim()
+        });
+        showAdminToast("Bildirim yanıtlandı olarak kaydedildi.");
+        closeReplyModal();
+      });
+    }
+
+    const replyCopyBtn = document.getElementById('replyCopyBtn');
+    if (replyCopyBtn) {
+      replyCopyBtn.addEventListener('click', () => {
+        const msgInput = document.getElementById('replyModalMessageInput');
+        const text = msgInput ? msgInput.value : '';
+        if (navigator.clipboard) {
+          navigator.clipboard.writeText(text).then(() => showAdminToast("Yanıt panoya kopyalandı."));
+        }
+      });
+    }
+
+    const replyGmailBtn = document.getElementById('replyGmailBtn');
+    if (replyGmailBtn) {
+      replyGmailBtn.addEventListener('click', () => {
+        const f = rawFeedbacks.find(x => x.id === currentReplyFeedbackId);
+        if (!f) return;
+        const toEmail = document.getElementById('replyModalEmailInput').value.trim();
+        const subject = document.getElementById('replyModalSubjectInput').value.trim();
+        const body = document.getElementById('replyModalMessageInput').value.trim();
+        saveFeedbackReply(f.id, { toEmail, replyText: body });
+        const gmailUrl = `https://mail.google.com/mail/?view=cm&fs=1&to=${encodeURIComponent(toEmail)}&su=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+        window.open(gmailUrl, '_blank');
+        closeReplyModal();
+      });
+    }
+
+    const replyMailClientBtn = document.getElementById('replyMailClientBtn');
+    if (replyMailClientBtn) {
+      replyMailClientBtn.addEventListener('click', () => {
+        const f = rawFeedbacks.find(x => x.id === currentReplyFeedbackId);
+        if (!f) return;
+        const toEmail = document.getElementById('replyModalEmailInput').value.trim();
+        const subject = document.getElementById('replyModalSubjectInput').value.trim();
+        const body = document.getElementById('replyModalMessageInput').value.trim();
+        saveFeedbackReply(f.id, { toEmail, replyText: body });
+        window.location.href = `mailto:${encodeURIComponent(toEmail)}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+        closeReplyModal();
+      });
+    }
+
+    // CSV İNDİRME (ÖĞRENCİLER - KANAL / PLATFORM DAHİL)
+    document.getElementById('exportCsvBtn').addEventListener('click', () => {
+      if (rawUsers.length === 0) {
+        alert("İndirilecek veri bulunamadı.");
+        return;
+      }
+      let csv = "\uFEFF";
+      csv += "Öğrenci Adı;E-posta;Kanal (Platform);Resmi Şube;Hedef Dil;Kur;Seviye;Çalışılan Ünite;Günlük Hedef;Seri Taahhüdü;Toplam XP;Öğrenilen Kelime;Güncel Seri;Maks Seri;Kart Süresi (Dk);Pratik Süresi (Dk);Arenada Çözülen;Kusursuz Zaferler;Kayıt Tarihi;Son Aktiflik;UID\n";
+
+      rawUsers.forEach(u => {
+        const cardMins = Math.round((u.cardSeconds || 0) / 60);
+        const gameMins = Math.round((u.gameSeconds || 0) / 60);
+        const platLabel = u.platform === 'ios' ? 'iOS' : (u.platform === 'android' ? 'Android' : 'Web');
+        csv += '"' + u.displayName + '";"' + u.email + '";"' + platLabel + '";"' + (u.branch || 'Şubesiz') + '";"' + u.lang + '";"' + u.track + '";"' + u.level + '";' + u.unitNo + ';' + u.dailyGoal + ';' + u.streakPledgeDays + ';' + u.xp + ';' + u.learnedCount + ';' + (u.dayStreak || 1) + ';' + (u.maxStreak || 0) + ';' + cardMins + ';' + gameMins + ';' + (u.arenaWordsSolved || 0) + ';' + (u.cleanWins || 0) + ';"' + u.createdAtOnly + '";"' + u.lastActiveFormatted + '";"' + u.id + '"\n';
+      });
+
+      const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'LexiGo_Ogrenci_Raporu_' + new Date().toISOString().slice(0,10) + '.csv';
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+    });
+
+    // CSV İNDİRME (SÜRE VE GİRİŞ - KANAL / PLATFORM DAHİL)
+    document.getElementById('exportTimeCsvBtn').addEventListener('click', () => {
+      if (rawUsers.length === 0) return;
+      let csv = "\uFEFF";
+      csv += "Öğrenci Adı;E-posta;Kanal (Platform);Resmi Şube;Hedef Dil;Kur;Seviye;Kayıt Tarihi;Kayıt Gün Farkı;Son Giriş;Durum;Toplam Süre;Toplam Dk;Kart Dk;Pratik Dk;Ünite Süreleri;Toplam XP;Öğrenilen Kelime;UID\n";
+
+      rawUsers.forEach(u => {
+        const cardMins = Math.round((u.cardSeconds || 0) / 60);
+        const gameMins = Math.round((u.gameSeconds || 0) / 60);
+        const totalMins = Math.round((u.totalSeconds || 0) / 60);
+        const platLabel = u.platform === 'ios' ? 'iOS' : (u.platform === 'android' ? 'Android' : 'Web');
+
+        let unitDetailStr = '';
+        if (u.unitDurations && typeof u.unitDurations === 'object') {
+          unitDetailStr = Object.entries(u.unitDurations)
+            .filter(([_, s]) => Number(s) > 0)
+            .map(([uNo, s]) => 'Ü.' + uNo + ':' + Math.round(Number(s) / 60) + 'dk')
+            .join(' | ');
+        }
+
+        csv += '"' + u.displayName + '";"' +
+               u.email + '";"' +
+               platLabel + '";"' +
+               (u.branch || 'Şubesiz') + '";"' +
+               u.lang + '";"' +
+               u.track + '";"' +
+               u.level + '";"' +
+               u.createdAtFormatted + '";"' +
+               u.createdAgo + '";"' +
+               u.lastActiveFormatted + '";"' +
+               (u.activityRecency ? u.activityRecency.label : '') + '";"' +
+               u.totalTimeFormatted + '";' +
+               totalMins + ';' +
+               cardMins + ';' +
+               gameMins + ';"' +
+               unitDetailStr + '";' +
+               (u.xp || 0) + ';' +
+               u.learnedCount + ';"' +
+               u.id + '"\n';
+      });
+
+      const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'LexiGo_Giris_ve_Sure_Takibi_' + new Date().toISOString().slice(0, 10) + '.csv';
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+    });
+
+    // CSV İNDİRME (GERİ BİLDİRİMLER)
+    document.getElementById('exportFeedbacksCsvBtn').addEventListener('click', () => {
+      if (rawFeedbacks.length === 0) return;
+      let csv = "\uFEFF";
+      csv += "Tarih;Kategori;Öğrenci;E-posta;Dil;Kur/Seviye;Sürüm;Mesaj;Yanıt Durumu;Yanıt Tarihi;Yanıt Metni\n";
+
+      rawFeedbacks.forEach(f => {
+        const cleanMsg = (f.message || '').replace(/"/g, '""').replace(/\n/g, ' ');
+        const cleanReply = (f.replyText || '').replace(/"/g, '""').replace(/\n/g, ' ');
+        csv += '"' + f.date + '";"' + f.type + '";"' + f.name + '";"' + f.email + '";"' + f.language + '";"' + f.track + '/' + f.level + '";"' + f.appVersion + '";"' + cleanMsg + '";"' + (f.replied ? 'Yanıtlandı' : 'Yanıt Bekliyor') + '";"' + (f.replyDate || '') + '";"' + cleanReply + '"\n';
+      });
+
+      const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'LexiGo_Geri_Bildirimler_' + new Date().toISOString().slice(0,10) + '.csv';
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+    });
+
+    // PIN DEĞİŞTİRME
+    const changePinModal = document.getElementById('changePinModal');
+    document.getElementById('changePinBtn').addEventListener('click', () => {
+      document.getElementById('currentPinInput').value = '';
+      document.getElementById('newPinInput').value = '';
+      document.getElementById('changePinMsg').style.display = 'none';
+      changePinModal.classList.add('active');
+    });
+    document.getElementById('closeChangePinModalBtn').addEventListener('click', () => {
+      changePinModal.classList.remove('active');
+    });
+
+    function handleChangePinSubmit() {
+      const current = document.getElementById('currentPinInput').value.trim();
+      const newPin = document.getElementById('newPinInput').value.trim();
+      const msg = document.getElementById('changePinMsg');
+      const validPin = localStorage.getItem('lexiq_admin_custom_pin') || '1923';
+
+      if (current !== validPin) {
+        msg.style.display = 'block';
+        msg.style.color = 'var(--danger)';
+        msg.textContent = 'Mevcut PIN kodu hatalı!';
+        return;
+      }
+      if (newPin.length < 4) {
+        msg.style.display = 'block';
+        msg.style.color = 'var(--danger)';
+        msg.textContent = 'Yeni PIN en az 4 karakter olmalıdır.';
+        return;
+      }
+
+      localStorage.setItem('lexiq_admin_custom_pin', newPin);
+      msg.style.display = 'block';
+      msg.style.color = 'var(--success)';
+      msg.textContent = 'PIN kodu başarıyla güncellendi!';
+      setTimeout(() => changePinModal.classList.remove('active'), 1200);
+    }
+
+    // TOAST BİLDİRİMİ
+    let toastTimeout = null;
+    function showAdminToast(msg, icon = 'info') {
+      const toast = document.getElementById('adminToast');
+      const toastMsg = document.getElementById('adminToastMsg');
+      if (!toast || !toastMsg) return;
+      toastMsg.textContent = msg;
+      toast.classList.add('show');
+      if (toastTimeout) clearTimeout(toastTimeout);
+      toastTimeout = setTimeout(() => toast.classList.remove('show'), 2800);
+    }
+
+    // Filtre Olay Dinleyicileri
+    document.getElementById('searchInput').addEventListener('input', renderUsers);
+    const filterPlatformEl = document.getElementById('filterPlatform');
+    if (filterPlatformEl) filterPlatformEl.addEventListener('change', renderUsers);
+    const filterBranchEl = document.getElementById('filterBranch');
+    if (filterBranchEl) filterBranchEl.addEventListener('change', renderUsers);
+    document.getElementById('filterTrack').addEventListener('change', renderUsers);
+    document.getElementById('filterLang').addEventListener('change', renderUsers);
+
+    const sortStudentsEl = document.getElementById('sortStudents');
+    if (sortStudentsEl) {
+      sortStudentsEl.addEventListener('change', (e) => {
+        const val = e.target.value;
+        if (val === 'xp_desc') studentSortState = { key: 'xp', dir: 'desc' };
+        else if (val === 'time_desc') studentSortState = { key: 'time', dir: 'desc' };
+        else if (val === 'learned_desc') studentSortState = { key: 'learned', dir: 'desc' };
+        else if (val === 'streak_desc') studentSortState = { key: 'streak', dir: 'desc' };
+        else if (val === 'platform_asc') studentSortState = { key: 'platform', dir: 'asc' };
+        else if (val === 'active_desc') studentSortState = { key: 'activity', dir: 'desc' };
+        else if (val === 'name_asc') studentSortState = { key: 'name', dir: 'asc' };
+        else if (val === 'branch_asc') studentSortState = { key: 'branch', dir: 'asc' };
+        else if (val === 'created_desc') studentSortState = { key: 'created', dir: 'desc' };
+        renderUsers();
+      });
+    }
+
+    const timeSearchInput = document.getElementById('timeSearchInput');
+    if (timeSearchInput) timeSearchInput.addEventListener('input', renderTimeTracking);
+    const filterTimePlatform = document.getElementById('filterTimePlatform');
+    if (filterTimePlatform) filterTimePlatform.addEventListener('change', renderTimeTracking);
+    const filterTimeBranch = document.getElementById('filterTimeBranch');
+    if (filterTimeBranch) filterTimeBranch.addEventListener('change', renderTimeTracking);
+    const filterTimeRecency = document.getElementById('filterTimeRecency');
+    if (filterTimeRecency) filterTimeRecency.addEventListener('change', renderTimeTracking);
+    
+    const sortTimeTracking = document.getElementById('sortTimeTracking');
+    if (sortTimeTracking) {
+      sortTimeTracking.addEventListener('change', (e) => {
+        const val = e.target.value;
+        if (val === 'total_desc') timeSortState = { key: 'totalTime', dir: 'desc' };
+        else if (val === 'card_desc') timeSortState = { key: 'cardTime', dir: 'desc' };
+        else if (val === 'game_desc') timeSortState = { key: 'gameTime', dir: 'desc' };
+        else if (val === 'last_active_desc') timeSortState = { key: 'active', dir: 'desc' };
+        else if (val === 'last_active_asc') timeSortState = { key: 'active', dir: 'asc' };
+        else if (val === 'created_desc') timeSortState = { key: 'created', dir: 'desc' };
+        else if (val === 'created_asc') timeSortState = { key: 'created', dir: 'asc' };
+        else if (val === 'name_asc') timeSortState = { key: 'name', dir: 'asc' };
+        renderTimeTracking();
+      });
+    }
+
+    document.getElementById('filterFeedbackType').addEventListener('change', renderFeedbacks);
+    document.getElementById('filterFeedbackStatus').addEventListener('change', renderFeedbacks);
+    document.getElementById('filterFeedbackSearch').addEventListener('input', renderFeedbacks);
+
+    document.getElementById('refreshBtn').addEventListener('click', () => {
+      document.getElementById('refreshBtn').disabled = true;
+      Promise.all([fetchUsers(), fetchFeedbacks()]).finally(() => {
+        document.getElementById('refreshBtn').disabled = false;
+        showAdminToast("Veriler güncellendi.");
+      });
+    });
+
+    // Başlangıç PIN Kontrolü
+    function checkPinAuth() {
+      const isAuth = sessionStorage.getItem('lexiq_admin_auth') === 'true';
+      const pinLock = document.getElementById('pinLockScreen');
+      if (isAuth && pinLock) {
+        pinLock.style.display = 'none';
+        fetchUsers();
+        fetchFeedbacks();
+      } else if (pinLock) {
+        pinLock.style.display = 'flex';
+      }
+    }
+
+    function handlePinSubmit() {
+      const input = document.getElementById('adminPinInput');
+      const errorMsg = document.getElementById('pinErrorMsg');
+      const val = (input ? input.value : '').trim();
+      const validPin = localStorage.getItem('lexiq_admin_custom_pin') || '1923';
+
+      if (val === validPin) {
+        sessionStorage.setItem('lexiq_admin_auth', 'true');
+        if (errorMsg) errorMsg.style.display = 'none';
+        const pinLock = document.getElementById('pinLockScreen');
+        if (pinLock) pinLock.style.display = 'none';
+        fetchUsers();
+        fetchFeedbacks();
+      } else {
+        if (errorMsg) errorMsg.style.display = 'block';
+        if (input) {
+          input.value = '';
+          input.focus();
+        }
+      }
+    }
+
+    initSortableHeaders();
+    checkPinAuth();
+  </script>
+</body>
+</html>
