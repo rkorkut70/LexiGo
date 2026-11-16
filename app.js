@@ -161,6 +161,20 @@
     return Object.values(s.learnedMap).filter(v => v && v.learned === true).length;
   }
 
+  // ==========================================
+  // ŞARTLI KİLİT KONTROLÜ (SEÇENEK 2)
+  // Şubesi olan, şubesi kilitli olan veya puan kazanmış öğrenciler kilitlidir!
+  // Sadece henüz başlamamış ve şubesiz öğrenciler ilk hatalarını düzeltebilir.
+  // ==========================================
+  function isStudentProfileLocked() {
+    const hasBranch = !!(state.userBranch && state.userBranch.trim());
+    const isBranchLocked = state.branchLocked === true;
+    const learnedCount = (typeof getLearnedCount === 'function') ? getLearnedCount(state) : 0;
+    const hasXpOrProgress = (state.xp || 0) > 0 || learnedCount > 0;
+    return hasBranch || isBranchLocked || hasXpOrProgress;
+  }
+  window.isStudentProfileLocked = isStudentProfileLocked;
+
   function getLearnedCountFor(s, lang, level = null) {
     if (!s || !s.learnedMap) return 0;
     const allWords = getWordsData();
@@ -2403,20 +2417,34 @@
     if (branchBadge) {
       updateStudentProfileBranchBadge();
     }
+    const isLocked = isStudentProfileLocked();
     if (langBadge) {
       const meta = LANG_META[state.activeLanguage] || { flag: '🇬🇧', name: 'İngilizce' };
       const langName = meta.name ? meta.name.split('→')[0].trim() : 'İngilizce';
-      langBadge.innerHTML = `<span style="margin-right:4px;">${meta.flag}</span>${langName} <span style="font-size:0.72rem;opacity:0.85;margin-left:4px;font-weight:700;">(Değiştir)</span>`;
-      langBadge.style.cursor = 'pointer';
-      langBadge.onclick = () => openLanguageModal(false);
+      if (!isLocked) {
+        langBadge.innerHTML = `<span style="margin-right:4px;">${meta.flag}</span>${langName} <span style="font-size:0.72rem;opacity:0.85;margin-left:4px;font-weight:700;">(Değiştir)</span>`;
+        langBadge.style.cursor = 'pointer';
+        langBadge.title = 'Öğrenilen Dili Değiştir (İngilizce / Fransızca / Almanca)';
+        langBadge.onclick = () => openLanguageModal(false);
+      } else {
+        langBadge.innerHTML = `<span style="margin-right:4px;">${meta.flag}</span>${langName} <span style="font-size:0.72rem;opacity:0.85;margin-left:4px;">🔒</span>`;
+        langBadge.style.cursor = 'default';
+        langBadge.title = 'Resmi müfredat ve şubeniz kilitlidir.';
+        langBadge.onclick = () => showToast('🔒 Şubeniz veya ilerlemeniz kilitli olduğu için dil değiştirilemez.');
+      }
     }
     const profQuickChangeBtn = document.getElementById('profQuickChangeLangBtn');
     const profQuickChangeText = document.getElementById('profQuickChangeLangText');
     if (profQuickChangeBtn) {
-      const meta = LANG_META[state.activeLanguage] || { flag: '🇬🇧', name: 'İngilizce' };
-      const langName = meta.name ? meta.name.split('→')[0].trim() : 'İngilizce';
-      if (profQuickChangeText) profQuickChangeText.textContent = `Dili Değiştir (Aktif: ${langName})`;
-      profQuickChangeBtn.onclick = () => openLanguageModal(false);
+      if (!isLocked) {
+        profQuickChangeBtn.style.display = 'flex';
+        const meta = LANG_META[state.activeLanguage] || { flag: '🇬🇧', name: 'İngilizce' };
+        const langName = meta.name ? meta.name.split('→')[0].trim() : 'İngilizce';
+        if (profQuickChangeText) profQuickChangeText.textContent = `Dili Değiştir (Aktif: ${langName})`;
+        profQuickChangeBtn.onclick = () => openLanguageModal(false);
+      } else {
+        profQuickChangeBtn.style.display = 'none';
+      }
     }
 
     const isFbLoggedIn = typeof fbUser !== 'undefined' && fbUser !== null;
@@ -3348,17 +3376,35 @@ let activeAvatarCategory = 'all';
       switchSettingsTab(defaultTab);
       populateProfileSettingsTab();
 
-      // Ayarlar Dil Rozeti ve Butonları
+      // Ayarlar Dil Rozeti ve Butonları (Şartlı Kilitli)
+      const isLocked = isStudentProfileLocked();
       const currentLangBadge = document.getElementById('settingsCurrentLangBadge');
       const meta = LANG_META[state.activeLanguage] || { flag: '🇬🇧', name: 'İngilizce' };
-      if (currentLangBadge) currentLangBadge.textContent = `${meta.flag} ${meta.name ? meta.name.split('→')[0].trim() : state.activeLanguage}`;
-      document.querySelectorAll('#settingsLangSegmentGroup .setting-segment-btn').forEach(btn => {
-        if (btn.getAttribute('data-lang') === state.activeLanguage) {
-          btn.classList.add('active');
+      const langName = meta.name ? meta.name.split('→')[0].trim() : state.activeLanguage;
+      if (currentLangBadge) {
+        currentLangBadge.textContent = isLocked ? `🔒 ${meta.flag} ${langName} (Kilitli)` : `${meta.flag} ${langName}`;
+      }
+      const segmentGroup = document.getElementById('settingsLangSegmentGroup');
+      const hintText = document.getElementById('settingsLangHintText');
+      if (segmentGroup) {
+        segmentGroup.style.display = isLocked ? 'none' : 'flex';
+      }
+      if (hintText) {
+        if (isLocked) {
+          hintText.textContent = '🔒 Resmi şubeniz veya ilerlemeniz kilitlenmiştir. Turnuva ve şube ligi adaletini korumak için dil veya şube değişikliği yapılamaz.';
         } else {
-          btn.classList.remove('active');
+          hintText.textContent = 'Çalışmak istediğiniz yabancı dili dilediğiniz an değiştirebilirsiniz. Bir şube seçtiğinizde veya ilerleme kaydettiğinizde dil kilitlenir.';
         }
-      });
+      }
+      if (!isLocked) {
+        document.querySelectorAll('#settingsLangSegmentGroup .setting-segment-btn').forEach(btn => {
+          if (btn.getAttribute('data-lang') === state.activeLanguage) {
+            btn.classList.add('active');
+          } else {
+            btn.classList.remove('active');
+          }
+        });
+      }
 
       applyCardTheme(state.cardTheme);
       applyCardFont(state.cardFont);
@@ -3429,6 +3475,14 @@ let activeAvatarCategory = 'all';
   window.setLanguage = setLanguage;
   function setLanguage(langCode, isUserSelection) {
     if (!LANG_META[langCode]) return;
+
+    // Şartlı Kilit Kontrolü (Seçenek 2):
+    // Öğrenci bir şubeye kilitlenmişse veya puan kazanmışsa dil değiştirilemez!
+    if (isUserSelection && (typeof isStudentProfileLocked === 'function') && isStudentProfileLocked()) {
+      showToast('🔒 Resmi şubeniz veya ilerlemeniz kilitli olduğu için dil değiştirilemez.');
+      if (typeof closeLanguageModal === 'function') closeLanguageModal();
+      return;
+    }
 
     state.activeLanguage = langCode;
     localStorage.setItem('kelime_active_lang', langCode);
@@ -7117,6 +7171,10 @@ let activeAvatarCategory = 'all';
   window.closeLanguageModal = closeLanguageModal;
   function openLanguageModal(mandatory = false) {
     if (!dom.langModal) return;
+    if (!mandatory && (typeof isStudentProfileLocked === 'function') && isStudentProfileLocked()) {
+      showToast('🔒 Resmi şubeniz veya ilerlemeniz kilitli olduğu için dil değiştirilemez.');
+      return;
+    }
     dom.langModal.classList.add('active');
     // Eğer zorunluysa dışa tıklamayla kapanmaz
     dom.langModal.dataset.mandatory = mandatory ? 'true' : 'false';
