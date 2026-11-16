@@ -1,11 +1,11 @@
 {
-  "version": "v1.9.45",
-  "versionCode": 152,
-  "releaseDate": "2026-11-16",
-  "notes": [
-    "Almanca Müfredatı (DaF): A1, A2 ve B1 seviyelerindeki 4.742 kelimenin tamamı denetlendi; şablon cümleler, imla ve tür etiketleri (%100) standardize edildi.",
-    "Fransızca Müfredatı (FLE): A1, A2 ve B1 seviyelerindeki 4.285 kelimenin tamamı elden geçirildi; eksik isim cinsiyetleri, türler ve örnek cümleler düzeltildi.",
-    "Oyun Motoru & Tipografi: Anagram, Boşluk Doldurma ve Cümle Kurma motorunu bozan tüm apostrof, tırnak ve iki nokta karakterleri klavye ve motorla tam uyumlu hâle getirildi.",
-    "Performans & Stabilite: Hızlı, kararlı ve kesintisiz çalışma deneyimi."
-  ]
+    "version":  "v1.9.46",
+    "versionCode":  153,
+    "releaseDate":  "2026-11-16",
+    "notes":  [
+                  "Güncelleme Ekranı \u0026 İkonlar: Yeni Sürüm Yayında ekranındaki Türkçe karakter sorunları giderildi; çocuksu emojiler yerine modern minimalist SVG simgeler entegre edildi.",
+                  "Tek Mesaj Sistemi: Güncelleme esnasında ve sonrasında üst üste binen çoklu bildirimler tekleştirildi; tek bir temiz ve net bilgilendirme akışı sağlandı.",
+                  "Almanca \u0026 Fransızca Müfredatı: 9.000+ kelimenin tamamı DaF ve FLE standartlarında temizlenmiş ve onaylanmış olarak pakete dahil edildi.",
+                  "Performans \u0026 Stabilite: Hızlı, kararlı ve kesintisiz çalışma deneyimi."
+              ]
 }
