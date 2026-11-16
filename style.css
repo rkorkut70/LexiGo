@@ -12366,6 +12366,21 @@ html:not([data-theme="dark"]) .card-unlearn-pill {
   background: rgba(16, 185, 129, 0.12);
   color: #059669;
   border-color: rgba(16, 185, 129, 0.25);
+  cursor: pointer;
+  user-select: none;
+  transition: all 0.2s ease;
+}
+
+.student-lang-badge:hover,
+.student-lang-pill:hover {
+  transform: translateY(-1px);
+  filter: brightness(1.1);
+  box-shadow: 0 2px 8px rgba(16, 185, 129, 0.25);
+}
+
+.student-lang-badge:active,
+.student-lang-pill:active {
+  transform: translateY(0);
 }
 
 [data-theme="dark"] .student-lang-badge {

@@ -2405,7 +2405,18 @@
     }
     if (langBadge) {
       const meta = LANG_META[state.activeLanguage] || { flag: '🇬🇧', name: 'İngilizce' };
-      langBadge.textContent = `${meta.flag} ${meta.name.split('→')[0].trim()}`;
+      const langName = meta.name ? meta.name.split('→')[0].trim() : 'İngilizce';
+      langBadge.innerHTML = `<span style="margin-right:4px;">${meta.flag}</span>${langName} <span style="font-size:0.72rem;opacity:0.85;margin-left:4px;font-weight:700;">(Değiştir)</span>`;
+      langBadge.style.cursor = 'pointer';
+      langBadge.onclick = () => openLanguageModal(false);
+    }
+    const profQuickChangeBtn = document.getElementById('profQuickChangeLangBtn');
+    const profQuickChangeText = document.getElementById('profQuickChangeLangText');
+    if (profQuickChangeBtn) {
+      const meta = LANG_META[state.activeLanguage] || { flag: '🇬🇧', name: 'İngilizce' };
+      const langName = meta.name ? meta.name.split('→')[0].trim() : 'İngilizce';
+      if (profQuickChangeText) profQuickChangeText.textContent = `Dili Değiştir (Aktif: ${langName})`;
+      profQuickChangeBtn.onclick = () => openLanguageModal(false);
     }
 
     const isFbLoggedIn = typeof fbUser !== 'undefined' && fbUser !== null;
@@ -3336,6 +3347,19 @@ let activeAvatarCategory = 'all';
     if (dom.settingsModal) {
       switchSettingsTab(defaultTab);
       populateProfileSettingsTab();
+
+      // Ayarlar Dil Rozeti ve Butonları
+      const currentLangBadge = document.getElementById('settingsCurrentLangBadge');
+      const meta = LANG_META[state.activeLanguage] || { flag: '🇬🇧', name: 'İngilizce' };
+      if (currentLangBadge) currentLangBadge.textContent = `${meta.flag} ${meta.name ? meta.name.split('→')[0].trim() : state.activeLanguage}`;
+      document.querySelectorAll('#settingsLangSegmentGroup .setting-segment-btn').forEach(btn => {
+        if (btn.getAttribute('data-lang') === state.activeLanguage) {
+          btn.classList.add('active');
+        } else {
+          btn.classList.remove('active');
+        }
+      });
+
       applyCardTheme(state.cardTheme);
       applyCardFont(state.cardFont);
       applyGameFont(state.gameFont);
@@ -3409,19 +3433,94 @@ let activeAvatarCategory = 'all';
     state.activeLanguage = langCode;
     localStorage.setItem('kelime_active_lang', langCode);
 
+    // Eğer kullanıcının mevcut şubesi yeni dille uyuşmuyorsa şubeyi temizle
+    if (state.userBranch) {
+      const allBranches = window.SCHOOL_BRANCHES || (typeof SCHOOL_BRANCHES !== 'undefined' ? SCHOOL_BRANCHES : []);
+      const curB = allBranches.find(b => b.code === state.userBranch);
+      if (curB && curB.lang !== langCode) {
+        state.userBranch = '';
+        state.branchLocked = false;
+        localStorage.removeItem('lexiq_user_branch');
+        localStorage.removeItem('lexiq_branch_locked');
+        if (typeof window.updateUserBranch === 'function') {
+          window.updateUserBranch('').catch(() => {});
+        }
+      }
+    }
+
     // Üst bar bayrak ve etiket güncellemesi
     const meta = LANG_META[langCode];
     if (dom.activeLangFlag) dom.activeLangFlag.textContent = meta.flag;
     if (dom.activeLangLabel) dom.activeLangLabel.textContent = meta.label;
 
+    // Hedef dilin geçerli seviyelerini kontrol et ve seviyeyi uyarla
+    const unitsForLang = getUnitsData().filter(u => u.dil === langCode);
+    const validLevels = [...new Set(unitsForLang.map(u => u.seviye).filter(Boolean))];
+    if (validLevels.length > 0 && (!state.userLevel || !validLevels.includes(state.userLevel))) {
+      state.userLevel = validLevels.includes('A2') ? 'A2' : validLevels[0];
+      localStorage.setItem('lexiq_user_level', state.userLevel);
+      if (langCode === 'EN-TR') {
+        state.userTrack = state.userLevel === 'A2' ? '4A' : '4B';
+        localStorage.setItem('lexiq_user_track', state.userTrack);
+      }
+    }
+
     // Tarihe göre aktif üniteyi dinamik hesapla (Kural 4) eğer mevcut ünite geçerli değilse
     const targetLevel = state.userLevel || getLevelForTrack(langCode, state.userTrack);
-    const unitsForLang = getUnitsData().filter(u => u.dil === langCode);
     const unitBelongsToLangAndLevel = unitsForLang.some(u => u.unite_no === state.activeUnitNo && (!targetLevel || u.seviye === targetLevel));
     const isUnlocked = isUnitUnlocked(state.activeUnitNo, langCode, targetLevel);
     if (!state.activeUnitNo || !unitBelongsToLangAndLevel || !isUnlocked) {
       state.activeUnitNo = calculateCurrentUnitByDate(langCode, targetLevel);
     }
+
+    // Firebase Kullanıcı Profilini ve Bulutu Güncelle
+    if (typeof window.updateFirebaseProfile === 'function') {
+      window.updateFirebaseProfile(state.userName, state.userAvatar, state.userTrack, state.userLevel, langCode);
+    }
+    if (typeof db !== 'undefined' && db && window.fbUser) {
+      db.collection('users').doc(window.fbUser.uid).set({
+        lang: langCode,
+        branch: state.userBranch || '',
+        level: state.userLevel || 'A2',
+        track: state.userTrack || '4A',
+        lastActive: firebase.firestore.FieldValue.serverTimestamp()
+      }, { merge: true }).catch(err => console.warn('Firebase lang sync:', err));
+    }
+
+    // Profil ve UI rozetlerini tazele
+    if (typeof updateUserProfileUI === 'function') updateUserProfileUI();
+    if (typeof updateStudentProfileBranchBadge === 'function') updateStudentProfileBranchBadge();
+
+    const heroLangBadge = document.getElementById('profHeroLangBadge');
+    if (heroLangBadge) {
+      const cleanLangName = meta.name ? meta.name.split('→')[0].trim() : langCode;
+      heroLangBadge.innerHTML = `<span style="margin-right:4px;">${meta.flag}</span>${cleanLangName} <span style="font-size:0.72rem;opacity:0.85;margin-left:4px;font-weight:700;">(Değiştir)</span>`;
+    }
+    const profQuickChangeText = document.getElementById('profQuickChangeLangText');
+    if (profQuickChangeText) {
+      const cleanLangName = meta.name ? meta.name.split('→')[0].trim() : langCode;
+      profQuickChangeText.textContent = `Dili Değiştir (Aktif: ${cleanLangName})`;
+    }
+
+    const currentLangBadge = document.getElementById('settingsCurrentLangBadge');
+    if (currentLangBadge) {
+      currentLangBadge.textContent = `${meta.flag} ${meta.name ? meta.name.split('→')[0].trim() : langCode}`;
+    }
+    document.querySelectorAll('#settingsLangSegmentGroup .setting-segment-btn').forEach(btn => {
+      if (btn.getAttribute('data-lang') === langCode) {
+        btn.classList.add('active');
+      } else {
+        btn.classList.remove('active');
+      }
+    });
+
+    document.querySelectorAll('.lang-option-card').forEach(c => {
+      if (c.getAttribute('data-lang') === langCode) {
+        c.classList.add('selected');
+      } else {
+        c.classList.remove('selected');
+      }
+    });
 
     // Kelime listesini hazırla ve kartı güncelle
     refreshWordsList();
@@ -7014,13 +7113,28 @@ let activeAvatarCategory = 'all';
   // ==========================================
   // MODAL YÖNETİMİ
   // ==========================================
+  window.openLanguageModal = openLanguageModal;
+  window.closeLanguageModal = closeLanguageModal;
   function openLanguageModal(mandatory = false) {
+    if (!dom.langModal) return;
     dom.langModal.classList.add('active');
     // Eğer zorunluysa dışa tıklamayla kapanmaz
     dom.langModal.dataset.mandatory = mandatory ? 'true' : 'false';
+    const closeBtn = document.getElementById('closeLangModalBtn');
+    if (closeBtn) {
+      closeBtn.style.display = mandatory ? 'none' : 'flex';
+    }
+    document.querySelectorAll('.lang-option-card').forEach(c => {
+      if (c.getAttribute('data-lang') === state.activeLanguage) {
+        c.classList.add('selected');
+      } else {
+        c.classList.remove('selected');
+      }
+    });
   }
 
   function closeLanguageModal() {
+    if (!dom.langModal) return;
     dom.langModal.classList.remove('active');
   }
 
@@ -12698,6 +12812,18 @@ let activeAvatarCategory = 'all';
     if (dom.langSelectBtn) {
       dom.langSelectBtn.addEventListener('click', () => openLanguageModal(false));
     }
+
+    const closeLangModalBtn = document.getElementById('closeLangModalBtn');
+    if (closeLangModalBtn) {
+      closeLangModalBtn.addEventListener('click', () => closeLanguageModal());
+    }
+
+    document.querySelectorAll('#settingsLangSegmentGroup .setting-segment-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const selectedLang = btn.getAttribute('data-lang');
+        if (selectedLang) setLanguage(selectedLang, true);
+      });
+    });
 
     document.querySelectorAll('.lang-option-card').forEach(card => {
       card.addEventListener('click', () => {

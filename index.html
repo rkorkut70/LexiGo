@@ -1809,14 +1809,20 @@
     </div>
   </div>
 
-  <!-- ZORUNLU AÇILIŞ DİL SEÇİM MODALI (Geriye Dönük Uyumluluk için Gizli) -->
-  <div id="langModal" class="modal-overlay" style="display: none;">
+  <!-- DİL SEÇİM MODALI -->
+  <div id="langModal" class="modal-overlay">
     <div class="modal-card">
       <div class="modal-header">
         <div>
-          <h2 class="modal-title">Dil Çiftini Seçin</h2>
-          <p class="modal-subtitle">Öğrenmek istediğiniz dili belirleyin. Bu ayarı daha sonra dilediğiniz zaman değiştirebilirsiniz.</p>
+          <h2 class="modal-title">Öğrenmek İstediğiniz Dil</h2>
+          <p class="modal-subtitle">Çalışmak istediğiniz yabancı dili seçin. Dilediğiniz zaman değiştirebilirsiniz.</p>
         </div>
+        <button id="closeLangModalBtn" class="icon-btn" aria-label="Kapat" title="Kapat" onclick="if(window.closeLanguageModal) window.closeLanguageModal();">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="18" y1="6" x2="6" y2="18"></line>
+            <line x1="6" y1="6" x2="18" y2="18"></line>
+          </svg>
+        </button>
       </div>
 
       <div class="modal-options-list">
@@ -2893,7 +2899,15 @@
           <div class="student-hero-badges-row">
             <span class="student-track-badge" id="profHeroTrackBadge">4A (A2 Temel)</span>
             <span class="student-track-badge student-branch-pill" id="profHeroBranchBadge"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align: -1px; margin-right: 5px;"><path d="M3 21h18"/><path d="M5 21V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v16"/><line x1="9" y1="9" x2="9.01" y2="9"/><line x1="15" y1="9" x2="15.01" y2="9"/><line x1="9" y1="13" x2="9.01" y2="13"/><line x1="15" y1="13" x2="15.01" y2="13"/><path d="M11 21v-4a1 1 0 0 1 1-1h0a1 1 0 0 1 1 1v4"/></svg>Şube: -</span>
-            <span class="student-lang-badge" id="profHeroLangBadge">🇬🇧 İngilizce</span>
+            <span class="student-lang-badge student-lang-pill clickable" id="profHeroLangBadge" title="Öğrenilen Dili Değiştir (İngilizce / Fransızca / Almanca)" onclick="if(window.openLanguageModal) window.openLanguageModal(false);">🇬🇧 İngilizce <span style="font-size:0.72rem;opacity:0.85;margin-left:4px;font-weight:700;">(Değiştir)</span></span>
+          </div>
+
+          <!-- Dil Değiştirme Hızlı Aksiyon Butonu -->
+          <div style="margin-top: 10px; width: 100%;">
+            <button type="button" id="profQuickChangeLangBtn" class="pill-btn" style="width: 100%; padding: 9px 14px; font-size: 0.82rem; font-weight: 700; background: rgba(16, 185, 129, 0.12); color: #059669; border: 1.5px solid rgba(16, 185, 129, 0.35); border-radius: 12px; display: flex; align-items: center; justify-content: center; gap: 8px; cursor: pointer; transition: all 0.2s ease;" onclick="if(window.openLanguageModal) window.openLanguageModal(false);">
+              <span style="font-size: 1.05rem;">🌐</span>
+              <span id="profQuickChangeLangText">Dili Değiştir (Aktif: İngilizce)</span>
+            </button>
           </div>
 
           <!-- İsim Düzenleme Alanı -->
@@ -3198,6 +3212,22 @@
         <div class="settings-tab-panels">
           <!-- 1. SEKME: KARTLAR & GÖRÜNÜM -->
           <div class="settings-tab-panel active" id="tabPanelCards">
+            <!-- Öğrenilen Yabancı Dil (Müfredat) -->
+            <div class="setting-block" style="border-bottom: 1.5px solid var(--border-color); padding-bottom: 14px; margin-bottom: 14px;">
+              <div class="setting-block-header">
+                <span class="setting-block-label">🌐 Öğrenilen Dil (Müfredat)</span>
+                <span class="setting-badge-pill" id="settingsCurrentLangBadge">🇬🇧 İngilizce</span>
+              </div>
+              <div class="setting-segment-compact" id="settingsLangSegmentGroup">
+                <button type="button" class="setting-segment-btn active" data-lang="EN-TR" onclick="if(window.setLanguage) window.setLanguage('EN-TR', true);">🇬🇧 İngilizce</button>
+                <button type="button" class="setting-segment-btn" data-lang="FR-TR" onclick="if(window.setLanguage) window.setLanguage('FR-TR', true);">🇫🇷 Fransızca</button>
+                <button type="button" class="setting-segment-btn" data-lang="DE-TR" onclick="if(window.setLanguage) window.setLanguage('DE-TR', true);">🇩🇪 Almanca</button>
+              </div>
+              <p class="setting-block-hint" style="font-size: 0.74rem; color: var(--text-muted); margin-top: 6px; line-height: 1.35;">
+                Çalışmak istediğiniz yabancı dili dilediğiniz an değiştirebilirsiniz. Seviyeniz ve üniteleriniz otomatik olarak seçilen dile uyarlanır.
+              </p>
+            </div>
+
             <!-- Kağıt Rengi -->
             <div class="setting-block">
               <span class="setting-block-label">Kağıt Rengi</span>
