@@ -1,11 +1,11 @@
 {
-    "version":  "v1.9.47",
-    "versionCode":  154,
+    "version":  "v1.9.48",
+    "versionCode":  155,
     "releaseDate":  "2026-11-17",
     "notes":  [
-                  "Google Play Güvenlik ve Uyumluluk: Play Store inceleme standartları ve test erişim protokolleri %100 uyumlu hâle getirildi.",
+                  "Dil Seçim Güvenliği \u0026 Onay: Dil seçim ekranına tek seferlik işlem uyarısı ve geçiş öncesi onay diyalogu eklendi.",
+                  "Arayüz \u0026 Katman Önceliği: Dil seçim penceresi (z-index) tüm açık pencerelerin en üstüne taşındı; akıcı ve pürüzsüz geçiş sağlandı.",
                   "Akıllı Şube ve Dil Kilidi: Turnuva ligi ve şube düellosu adaletini korumak için dil ve şube kilidi şartlı olarak güçlendirildi; yeni başlayan öğrenciler için ilk kurulum emniyeti sağlandı.",
-                  "Almanca \u0026 Fransızca Müfredatı: 9.000+ kelimenin tamamı DaF ve FLE standartlarında temizlenmiş ve onaylanmış olarak pakete dahil edildi.",
                   "Performans \u0026 Stabilite: Hızlı, kararlı ve kesintisiz çalışma deneyimi."
               ]
 }
