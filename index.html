@@ -1815,7 +1815,7 @@
       <div class="modal-header">
         <div>
           <h2 class="modal-title">Öğrenmek İstediğiniz Dil</h2>
-          <p class="modal-subtitle">Çalışmak istediğiniz yabancı dili seçin. Dilediğiniz zaman değiştirebilirsiniz.</p>
+          <p class="modal-subtitle">Çalışmak istediğiniz yabancı dili belirleyin.</p>
         </div>
         <button id="closeLangModalBtn" class="icon-btn" aria-label="Kapat" title="Kapat" onclick="if(window.closeLanguageModal) window.closeLanguageModal();">
           <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
@@ -1823,6 +1823,15 @@
             <line x1="6" y1="6" x2="18" y2="18"></line>
           </svg>
         </button>
+      </div>
+
+      <!-- Tek Seferlik Seçim Uyarı Kartı -->
+      <div class="lang-warning-note" style="display: flex; align-items: flex-start; gap: 10px; margin-bottom: 14px; padding: 12px 14px; background: rgba(245, 158, 11, 0.12); border: 1.5px solid rgba(245, 158, 11, 0.35); border-radius: 14px; font-size: 0.8rem; line-height: 1.45; text-align: left;">
+        <span style="font-size: 1.15rem; line-height: 1;">⚠️</span>
+        <div>
+          <strong style="color: #f59e0b; display: block; margin-bottom: 2px;">Önemli: Bu İşlem Yalnızca 1 Kez Yapılabilir!</strong>
+          <span style="color: var(--text-main);">Turnuva ve şube ligi adaletini korumak amacıyla dil seçimi <strong>yalnızca bir kez</strong> yapılabilir. Bir hazırlık şubesi seçtiğinizde veya puan kazandığınızda diliniz profilinize <strong>kalıcı olarak kilitlenecektir</strong>.</span>
+        </div>
       </div>
 
       <div class="modal-options-list">
@@ -4362,7 +4371,7 @@
 
   <!-- Kelime Verisi ve Uygulama Mantığı (Sadece Standart Vanilla JS) -->
   <script src="words_data.js?v=1.9.47"></script>
-  <script src="app.js?v=1.9.47"></script>
+  <script src="app.js?v=1.9.47_w1"></script>
 
   </body>
 </html>

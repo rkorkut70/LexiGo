@@ -12877,16 +12877,49 @@ let activeAvatarCategory = 'all';
     }
 
     document.querySelectorAll('#settingsLangSegmentGroup .setting-segment-btn').forEach(btn => {
-      btn.addEventListener('click', () => {
+      btn.addEventListener('click', async () => {
         const selectedLang = btn.getAttribute('data-lang');
-        if (selectedLang) setLanguage(selectedLang, true);
+        if (!selectedLang || selectedLang === state.activeLanguage) return;
+        const meta = LANG_META[selectedLang] || { name: selectedLang };
+        let confirmed = true;
+        if (typeof showAppConfirm === 'function') {
+          confirmed = await showAppConfirm({
+            title: 'Dili Onayla',
+            message: `"${meta.name}" müfredatını seçmek üzeresiniz.\n\n⚠️ Bu işlem yalnızca 1 kez yapılabilir! Bir şube seçtiğinizde veya kelime öğrendiğinizde dil kalıcı olarak kilitlenecektir.\n\nDevam etmek istiyor musunuz?`,
+            icon: '🌐',
+            okText: 'Evet, Seç',
+            cancelText: 'Vazgeç',
+            isDanger: false
+          });
+        }
+        if (confirmed) {
+          setLanguage(selectedLang, true);
+        }
       });
     });
 
     document.querySelectorAll('.lang-option-card').forEach(card => {
-      card.addEventListener('click', () => {
+      card.addEventListener('click', async () => {
         const selectedLang = card.getAttribute('data-lang');
-        setLanguage(selectedLang, true);
+        if (!selectedLang || selectedLang === state.activeLanguage) {
+          closeLanguageModal();
+          return;
+        }
+        const meta = LANG_META[selectedLang] || { name: selectedLang };
+        let confirmed = true;
+        if (typeof showAppConfirm === 'function') {
+          confirmed = await showAppConfirm({
+            title: 'Dili Onayla',
+            message: `"${meta.name}" müfredatını seçmek üzeresiniz.\n\n⚠️ Bu işlem yalnızca 1 kez yapılabilir! Bir şube seçtiğinizde veya kelime öğrendiğinizde dil kalıcı olarak kilitlenecektir.\n\nDevam etmek istiyor musunuz?`,
+            icon: '🌐',
+            okText: 'Evet, Seç',
+            cancelText: 'Vazgeç',
+            isDanger: false
+          });
+        }
+        if (confirmed) {
+          setLanguage(selectedLang, true);
+        }
       });
     });
 
