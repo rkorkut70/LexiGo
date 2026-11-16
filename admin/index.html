@@ -1727,26 +1727,31 @@
 
     // Platform Çözümleyici (iOS, Android, Web)
     function resolveUserPlatform(d) {
-      if (!d) return 'web';
+      if (!d) return { platform: 'web', isExplicit: false };
       let plat = (d.platform || d.lastPlatform || '').toLowerCase().trim();
-      if (plat === 'android' || plat === 'android_web') return 'android';
-      if (plat === 'ios') return 'ios';
-      if (plat === 'web') return 'web';
+      if (plat === 'android' || plat === 'android_web') return { platform: 'android', isExplicit: true };
+      if (plat === 'ios') return { platform: 'ios', isExplicit: true };
+      if (plat === 'web') return { platform: 'web', isExplicit: true };
 
       // Fallback: User-Agent veya timeTracking
       const ua = ((d.userAgent || d.lastUserAgent || '') + ' ' + (d.timeTracking && d.timeTracking.userAgent ? d.timeTracking.userAgent : '')).toLowerCase();
-      if (/iphone|ipad|ipod/i.test(ua)) return 'ios';
-      if (/android/i.test(ua)) return 'android';
-      return 'web';
+      if (/iphone|ipad|ipod/i.test(ua)) return { platform: 'ios', isExplicit: true };
+      if (/android/i.test(ua)) return { platform: 'android', isExplicit: true };
+      return { platform: 'web', isExplicit: false };
     }
 
-    function getPlatformBadgeHtml(platform) {
-      const p = (platform || 'web').toLowerCase();
+    function getPlatformBadgeHtml(platformInfo) {
+      const p = typeof platformInfo === 'string' ? platformInfo : (platformInfo?.platform || 'web');
+      const isExplicit = typeof platformInfo === 'object' ? platformInfo.isExplicit : true;
+
       if (p === 'ios') {
         return '<span class="platform-badge platform-ios" title="Apple iOS Cihazı">' + SVG.apple + '<span>iOS</span></span>';
       }
       if (p === 'android') {
         return '<span class="platform-badge platform-android" title="Google Android Cihazı">' + SVG.android + '<span>Android</span></span>';
+      }
+      if (!isExplicit) {
+        return '<span class="platform-badge platform-web" style="opacity:0.85;" title="Eski Kayıt: Kullanıcı yeni güncellemeden önce girmiştir. Uygulamayı ilk açtığında cihazı (Android / iOS / Web) otomatik netleşecektir.">' + SVG.globe + '<span>Web (İlk Giriş Bekleniyor)</span></span>';
       }
       return '<span class="platform-badge platform-web" title="Web Tarayıcı">' + SVG.globe + '<span>Web</span></span>';
     }
@@ -2126,7 +2131,7 @@
           const unitDurations = (d.timeTracking && typeof d.timeTracking.unitDurations === 'object') ? d.timeTracking.unitDurations : {};
 
           // Platform / Kanal
-          const platform = resolveUserPlatform(d);
+          const platformInfo = resolveUserPlatform(d);
 
           rawUsers.push({
             id: doc.id,
@@ -2141,7 +2146,8 @@
             dailyGoal: d.dailyGoal || d.targetWordCount || 15,
             streakPledgeDays: d.streakPledgeDays || d.streakPledge || 0,
             lang: d.lang || d.language || d.activeLanguage || 'EN-TR',
-            platform: platform,
+            platform: platformInfo.platform,
+            platformInfo: platformInfo,
             userAgent: d.userAgent || (d.timeTracking && d.timeTracking.userAgent ? d.timeTracking.userAgent : '') || '',
             learnedIds: learnedIds,
             learnedMap: d.learnedMap || {},
@@ -2424,7 +2430,7 @@
           ? '<span class="tag-pill tag-track">' + u.branch + '</span>'
           : '<span class="tag-pill" style="background:rgba(100,116,139,0.12); color:var(--text-dim);">Şubesiz</span>';
 
-        const platformBadge = getPlatformBadgeHtml(u.platform);
+        const platformBadge = getPlatformBadgeHtml(u.platformInfo || u.platform);
 
         const total = u.totalSeconds || 0;
         const cardPct = total > 0 ? Math.round((u.cardSeconds / total) * 100) : 50;
@@ -2575,7 +2581,7 @@
           ? '<span class="tag-pill tag-track">' + u.branch + '</span>'
           : '<span class="tag-pill" style="background:rgba(100,116,139,0.12); color:var(--text-dim);">Şubesiz</span>';
 
-        const platformBadge = getPlatformBadgeHtml(u.platform);
+        const platformBadge = getPlatformBadgeHtml(u.platformInfo || u.platform);
 
         const total = u.totalSeconds || 0;
         const cardPct = total > 0 ? Math.round((u.cardSeconds / total) * 100) : 50;
@@ -2721,7 +2727,7 @@
 
       tbody.innerHTML = sorted.map((u, i) => {
         const rank = i + 1;
-        const platformBadge = getPlatformBadgeHtml(u.platform);
+        const platformBadge = getPlatformBadgeHtml(u.platformInfo || u.platform);
 
         let rankBadge = rank;
         if (rank === 1) rankBadge = '1 🥇';
@@ -2770,12 +2776,13 @@
       document.getElementById('modalMetaDates').textContent = 'Kayıt: ' + u.createdAtFormatted + ' • Son Aktiflik: ' + u.lastActiveFormatted;
 
       const platBadgeWrap = document.getElementById('modalPlatformBadge');
-      if (platBadgeWrap) platBadgeWrap.innerHTML = getPlatformBadgeHtml(u.platform);
+      if (platBadgeWrap) platBadgeWrap.innerHTML = getPlatformBadgeHtml(u.platformInfo || u.platform);
 
       const channelInfo = document.getElementById('modalChannelInfo');
       if (channelInfo) {
-        const platName = u.platform === 'ios' ? 'Apple iOS' : (u.platform === 'android' ? 'Google Android' : 'Web Tarayıcı');
-        channelInfo.innerHTML = getPlatformBadgeHtml(u.platform) + ' <span style="font-size:0.75rem; color:var(--text-dim); margin-left:4px;">(' + platName + ')</span>';
+        const isExp = u.platformInfo ? u.platformInfo.isExplicit : true;
+        const platName = u.platform === 'ios' ? 'Apple iOS' : (u.platform === 'android' ? 'Google Android' : (isExp ? 'Web Tarayıcı' : 'Web (İlk Giriş Bekleniyor)'));
+        channelInfo.innerHTML = getPlatformBadgeHtml(u.platformInfo || u.platform) + ' <span style="font-size:0.75rem; color:var(--text-dim); margin-left:4px;">(' + platName + ')</span>';
       }
 
       document.getElementById('modalDetailCreatedAt').textContent = u.createdAtFormatted;
