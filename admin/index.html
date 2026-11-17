@@ -1645,6 +1645,10 @@
               <option value="replied">Yanıtlananlar</option>
             </select>
           </div>
+          <button type="button" class="btn btn-secondary" id="syncFeedbacksBtn" onclick="syncFeedbacksWithCloud()" title="Geri bildirim yanıtlarını bulut (GitHub/Canlı) ile eşitle" style="padding: 6px 11px; font-size: 0.74rem; font-weight: 600; white-space: nowrap; display: inline-flex; align-items: center; gap: 5px;">
+            <span class="ui-icon ui-icon-xs"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.57-8.38l5.67-5.67"/></svg></span>
+            <span>Bulutla Eşitle</span>
+          </button>
         </div>
         <div class="filter-group" style="flex: 1; max-width: 320px; min-width: 220px;">
           <input type="text" id="filterFeedbackSearch" class="search-input" placeholder="Öğrenci veya mesaj içeriği ara..." 
@@ -2725,6 +2729,9 @@
         }
 
         rawFeedbacks = [];
+        const localReplies = getFeedbackReplies();
+        let pendingCloudSyncCount = 0;
+
         snap.forEach(doc => {
           const d = doc.data();
           let dateStr = d.date || '—';
@@ -2740,8 +2747,33 @@
             } catch(e){}
           }
 
-          const localReplies = getFeedbackReplies();
           const savedReply = localReplies[doc.id] || null;
+
+          // 1. Bulutta yanıt varsa ama yerel tarayıcı hafızasında henüz yoksa yerel hafızayı güncelle
+          if (d.replied && !savedReply) {
+            localReplies[doc.id] = {
+              replied: true,
+              date: d.replyDate || dateStr,
+              replyText: d.replyText || '',
+              toEmail: d.replyTo || d.email || ''
+            };
+          }
+
+          // 2. Yerel tarayıcıda yanıt var ama Firestore bulutuna henüz yazılmamışsa buluta otomatik eşitle
+          if (savedReply && savedReply.replied && !d.replied && db) {
+            pendingCloudSyncCount++;
+            db.collection('feedbacks').doc(doc.id).set({
+              replied: true,
+              replyDate: savedReply.date || new Date().toLocaleString('tr-TR'),
+              replyText: savedReply.replyText || '',
+              replyTo: savedReply.toEmail || d.email || ''
+            }, { merge: true }).then(() => {
+              console.log('Yerel yanıt Firestore bulutuna başarıyla eşitlendi:', doc.id);
+            }).catch(err => {
+              console.warn('Buluta eşitleme hatası:', err);
+            });
+          }
+
           const isReplied = Boolean(d.replied || (savedReply && savedReply.replied));
           const replyText = (savedReply && savedReply.replyText) || d.replyText || '';
           const replyDate = (savedReply && savedReply.date) || d.replyDate || '';
@@ -2765,6 +2797,10 @@
             replyTo: replyTo
           });
         });
+
+        try {
+          localStorage.setItem('lexiq_admin_feedback_replies', JSON.stringify(localReplies));
+        } catch(e) {}
 
         rawFeedbacks.sort((a, b) => (b.timestamp || 0) - (a.timestamp || 0));
         renderFeedbacks();
@@ -3570,7 +3606,7 @@
       catch(e) { return {}; }
     }
 
-    function saveFeedbackReply(id, replyData) {
+    async function saveFeedbackReply(id, replyData) {
       try {
         const all = getFeedbackReplies();
         const dateStr = new Date().toLocaleString('tr-TR');
@@ -3585,11 +3621,20 @@
           f.replyTo = all[id].toEmail || f.email || '';
         }
         if (db) {
-          db.collection('feedbacks').doc(id).update({
-            replied: true,
-            replyDate: dateStr,
-            replyText: all[id].replyText || ''
-          }).catch(() => {});
+          try {
+            await db.collection('feedbacks').doc(id).set({
+              replied: true,
+              replyDate: dateStr,
+              replyText: all[id].replyText || '',
+              replyTo: all[id].toEmail || (f ? f.email : '')
+            }, { merge: true });
+            showAdminToast("Yanıt buluta ve yerel hafızaya kaydedildi.");
+          } catch(cloudErr) {
+            console.warn("Bulut kayıt uyarısı:", cloudErr);
+            showAdminToast("Yanıt yerel olarak kaydedildi.");
+          }
+        } else {
+          showAdminToast("Yanıt yerel kaydedildi.");
         }
         updateStats();
         renderFeedbacks();
@@ -3597,6 +3642,12 @@
         console.error("Yanıt kaydetme:", e);
       }
     }
+
+    window.syncFeedbacksWithCloud = async function() {
+      showAdminToast("Bulut ile eşitleniyor...", "info");
+      await fetchFeedbacks();
+      showAdminToast("Geri bildirimler ve yanıtlar bulut ile eşitlendi.");
+    };
 
     window.openFeedbackReplyModal = function(id) {
       currentReplyFeedbackId = id;
