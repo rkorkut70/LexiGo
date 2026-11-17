@@ -927,14 +927,21 @@ window.syncProgressToFirebase = function(customData, immediate = false) {
 window.fetchLeaderboard = async function() {
   if (!db) return [];
   try {
+    // orderBy('xp') kullanılmaz: Firestore kuralı gereği orderBy alanı olmayan dokümanlar elenir.
+    // Tüm kayıtlı öğrencileri almak için doğrudan çekip hafızada sıralıyoruz.
     const snapshot = await db.collection('users')
-                             .orderBy('xp', 'desc')
                              .limit(300)
                              .get();
     
     const leaders = [];
     snapshot.forEach(doc => {
       const data = doc.data() || {};
+      const xpVal = Number(data.xp) || 0;
+
+      // Tamamen boş ve puansız anonim oturum artıklarını turnuva listesine dahil etme
+      const hasIdentity = (data.displayName && data.displayName.trim() && data.displayName !== 'Öğrenci') || data.email || data.branch || xpVal > 0;
+      if (!hasIdentity && xpVal === 0) return;
+
       let regTime = 0;
       if (data.createdAt) {
         if (typeof data.createdAt.toMillis === 'function') regTime = data.createdAt.toMillis();
@@ -950,12 +957,16 @@ window.fetchLeaderboard = async function() {
         uid: doc.id,
         displayName: data.displayName || 'İsimsiz Kahraman',
         avatar: data.avatar || 'avatar_default',
-        xp: Number(data.xp) || 0,
+        xp: xpVal,
         lang: data.lang || data.activeLanguage || 'EN-TR',
         branch: data.branch || '',
         registeredAt: regTime
       });
     });
+
+    // XP'ye göre azalan sırada sırala (XP eşitse kayıt zamanına göre)
+    leaders.sort((a, b) => (b.xp - a.xp) || (b.registeredAt - a.registeredAt));
+
     return leaders;
   } catch (e) {
     console.error("Liderlik tablosu alınamadı:", e);
@@ -974,6 +985,9 @@ window.updateFirebaseProfile = function(name, avatar, track, level, lang) {
   if (track) updateData.track = track;
   if (level) updateData.level = level;
   if (lang) updateData.lang = lang;
+  
+  const localXp = (window.state && typeof window.state.xp === 'number') ? window.state.xp : parseInt(localStorage.getItem('kelime_xp') || '0', 10);
+  if (!isNaN(localXp)) updateData.xp = localXp;
 
   db.collection('users').doc(window.fbUser.uid).set(updateData, { merge: true })
     .catch(err => console.error("Profil güncelleme hatası:", err));
